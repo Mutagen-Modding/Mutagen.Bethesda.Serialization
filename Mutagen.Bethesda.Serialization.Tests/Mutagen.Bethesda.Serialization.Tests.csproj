@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Newtonsoft\Mutagen.Bethesda.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization.SourceGenerator\Mutagen.Bethesda.Serialization.SourceGenerator.csproj" />
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Yaml\Mutagen.Bethesda.Serialization.Yaml.csproj" />
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization\Mutagen.Bethesda.Serialization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GitInfo" Version="2.2.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+        <PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.39.0" />
+        <PackageReference Include="Noggog.Testing" Version="2.49.0" />
+        <PackageReference Include="NuGetizer" Version="0.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
+        <PackageReference Include="Verify.SourceGenerators" Version="1.5.0" />
+        <PackageReference Include="Verify.Xunit" Version="17.2.1" />
+    </ItemGroup>
+
+</Project>
