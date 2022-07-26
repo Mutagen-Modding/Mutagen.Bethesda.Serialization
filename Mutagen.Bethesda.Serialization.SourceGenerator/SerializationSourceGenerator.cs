@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using System.Linq.Expressions;
 using System.Text;
+using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -15,51 +15,52 @@ public class SerializationSourceGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var bootstraps = GetBootstraps()
-            .Select(x => x.Name)
-            .ToImmutableHashSet();
-        if (bootstraps.Count == 0) return;
-        
-        IncrementalValuesProvider<MemberAccessExpressionSyntax> bootstrapInvocations = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                predicate: (s, _) => IsBootstrapInvocation(s, bootstraps),
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx));
-
-        context.RegisterSourceOutput(
-            context.CompilationProvider.Combine(bootstrapInvocations.Collect()),
-            static (context, source) => GenerateStub(source.Item1, source.Item2, context));
-    }
-
-    private IEnumerable<Type> GetBootstraps()
-    {
-        foreach (var type in TypeExt.IterateTypes())
+        try
         {
-            if (!type.IsClass) continue;
-            foreach (var interf in type.GetInterfaces())
-            {
-                if (!interf.IsGenericType) continue;
-                if (interf.GenericTypeArguments.Length != 2) continue;
-                if (interf.Name != "IMutagenSerializationBootstrap`2") continue;
-                yield return type;
-                break;
-            }
+            File.AppendAllText("C:\\Test\\Log.txt", $"{nameof(SerializationSourceGenerator)}\n");
+
+            IncrementalValuesProvider<BootstrapInvocation> bootstrapSymbols = context.SyntaxProvider
+                .CreateSyntaxProvider(
+                    predicate: static (node, _) => node is MemberAccessExpressionSyntax,
+                    transform: GetBootstrapInvocation)
+                .Where(x => x != null)!;
+
+            context.RegisterSourceOutput(
+                context.CompilationProvider.Combine(bootstrapSymbols.Collect()),
+                static (context, source) => GenerateStub(source.Item1, source.Item2, context));
+        }
+        catch (Exception ex)
+        {
+            File.AppendAllText("C:\\Test\\Log.txt", $"{ex}\n");
         }
     }
 
-    private static bool IsBootstrapInvocation(SyntaxNode node, IReadOnlyCollection<string> bootstrapNames)
+    record BootstrapInvocation(INamedTypeSymbol NamedTypeSymbol, ILoquiRegistration? ModRegistration);
+    
+    static BootstrapInvocation? GetBootstrapInvocation(GeneratorSyntaxContext context, CancellationToken cancel)
     {
-        if (node is not MemberAccessExpressionSyntax memberExpression) return false;
-        return bootstrapNames.Contains(memberExpression.Expression.ToString());
+        var memberAccessSyntax = (MemberAccessExpressionSyntax)context.Node;
+        var expressionSymbol = context.SemanticModel.GetSymbolInfo(memberAccessSyntax.Expression).Symbol;
+        if (expressionSymbol is not INamedTypeSymbol namedTypeSymbol) return default;
+        if (!namedTypeSymbol.AllInterfaces.Any(x => x.Name == "IMutagenSerializationBootstrap")) return default;
+        if (memberAccessSyntax.Parent is InvocationExpressionSyntax invocationExpressionSyntax
+            && invocationExpressionSyntax.ArgumentList.Arguments.Count == 1)
+        {
+            var symb = context.SemanticModel
+                .GetSymbolInfo(invocationExpressionSyntax.ArgumentList.Arguments[0].Expression).Symbol;
+            var type = symb.TryGetTypeSymbol()?.Name;
+            if (LoquiRegistration.TryGetRegisterByFullName($"{symb.ContainingNamespace}.{type}", out var regis))
+            {
+                return new(namedTypeSymbol, regis);
+            }
+        }
+        return new(namedTypeSymbol, default);
     }
 
-    static MemberAccessExpressionSyntax GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    static void GenerateStub(Compilation compilation, ImmutableArray<BootstrapInvocation> bootstraps, SourceProductionContext context)
     {
-        return (MemberAccessExpressionSyntax)context.Node;
-    }
-    
-    static void GenerateStub(Compilation compilation, ImmutableArray<MemberAccessExpressionSyntax> bootstrapInvocations, SourceProductionContext context)
-    {
-        var distinctBootstraps = bootstrapInvocations.Select(x => x.Expression.ToString()).Distinct().ToArray();
+        File.AppendAllText("C:\\Test\\Log.txt", "Stub\n");
+        var distinctBootstraps = bootstraps.Select(x => x.NamedTypeSymbol.Name).Distinct().ToArray();
         if (distinctBootstraps.Length == 0) return;
         StructuredStringBuilder sb = new();
         foreach (var bootstrapClass in distinctBootstraps)
@@ -84,6 +85,5 @@ public class SerializationSourceGenerator : IIncrementalGenerator
             sb.AppendLine();
         }
         context.AddSource("StubMixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
-
     }
 }

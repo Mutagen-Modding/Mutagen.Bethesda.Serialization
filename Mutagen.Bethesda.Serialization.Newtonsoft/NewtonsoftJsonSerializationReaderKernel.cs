@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
@@ -6,6 +6,6 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
 {
     public string GetString(JTokenReader reader)
     {
-        return reader.CurrentToken.ToString();
+        return reader.CurrentToken?.ToString() ?? String.Empty;
     }
 }

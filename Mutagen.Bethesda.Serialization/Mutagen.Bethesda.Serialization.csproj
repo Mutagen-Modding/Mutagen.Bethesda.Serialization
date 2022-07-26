@@ -4,10 +4,27 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPackable>true</IsPackable>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
+	<PropertyGroup>
+		<Authors>Noggog</Authors>
+		<Company>Mutagen</Company>
+		<Product>Mutagen</Product>
+		<Description>Common library components for making serialization source generators for Mutagen classes</Description>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<IsPackable>true</IsPackable>
+		<Copyright>2022</Copyright>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="Mutagen.Bethesda.Core" Version="0.39.0" />
+        <PackageReference Include="Mutagen.Bethesda.Core" Version="0.39.2.1-dev" />
         <PackageReference Include="GitInfo" Version="2.2.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,5 +34,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.serialization&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
+	</Target>
 
 </Project>

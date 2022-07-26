@@ -1,6 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.SourceGenerator;
+using Mutagen.Bethesda.Serialization.Yaml;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
@@ -11,11 +13,17 @@ public static class TestHelper
         // Parse the provided string into a C# syntax tree
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
+        IEnumerable<PortableExecutableReference> references = new[]
+        {
+            MetadataReference.CreateFromFile(typeof(MutagenJsonConverter).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(MutagenYamlConverter).Assembly.Location),
+        };
+        
         // Create a Roslyn compilation for the syntax tree.
         CSharpCompilation compilation = CSharpCompilation.Create(
             assemblyName: "Tests",
-            syntaxTrees: new[] { syntaxTree });
-
+            syntaxTrees: new[] { syntaxTree },
+            references: references);
 
         // Create an instance of our EnumGenerator incremental source generator
         var generator = new SerializationSourceGenerator();
