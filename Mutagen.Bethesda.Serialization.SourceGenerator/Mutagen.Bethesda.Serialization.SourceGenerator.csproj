@@ -17,12 +17,10 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPackable>true</IsPackable>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Loqui" Version="2.49.0.1-dev" GeneratePathProperty="true" />
-		<PackageReference Include="Loqui.Generation" Version="2.49.0.1-dev" GeneratePathProperty="true" />
 		<PackageReference Include="Noggog.CSharpExt" Version="2.49.0.1-dev" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" PrivateAssets="all" />
@@ -30,6 +28,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="StrongInject" Version="1.4.4" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,9 +39,10 @@
 		<None Include="$(PkgNoggog_CSharpExt)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgLoqui)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgLoqui_Generation)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgStrongInject)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-        <Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.sourcegenerators&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
+        <Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.serialization.sourcegenerator&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
     </Target>
 </Project>

@@ -10,6 +10,6 @@ public class SerializationTests
     public void EmptySkyrimMod()
     {
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
-        //MutagenJsonConverter.C
+        MutagenJsonConverter.Instance.Convert(mod);
     }
 }

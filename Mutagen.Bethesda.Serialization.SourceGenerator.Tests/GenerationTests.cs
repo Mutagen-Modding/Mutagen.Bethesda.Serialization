@@ -1,4 +1,8 @@
-﻿namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+﻿using System.Threading.Tasks;
+using VerifyXunit;
+using Xunit;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
 [UsesVerify]
 public class GenerationTests
@@ -86,7 +90,7 @@ public class BasicPassthroughs
     public void BasicPassthrough()
     {
         string someVariable = null!;
-        MutagenJsonConverter.Convert(someVariable);
+        MutagenJsonConverter.Instance.Convert(someVariable);
     }
 }";
        
@@ -116,5 +120,25 @@ public class BasicPassthroughs
 }";
        
         return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public async Task SkyrimModGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Skyrim;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptySkyrimMod()
+    {
+        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        MutagenJsonConverter.Instance.Convert(mod);
+    }
+}";
+        TestHelper.RunSourceGenerator(source);
     }
 }

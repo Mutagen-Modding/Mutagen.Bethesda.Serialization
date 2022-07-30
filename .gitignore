@@ -294,3 +294,4 @@ GenerationLines.txt
 *.bak
 
 *.received.*
+Mutagen.Bethesda.Serialization.Tests/Generated/

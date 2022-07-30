@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 public static class Extensions
 {

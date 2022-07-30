@@ -6,7 +6,6 @@
         <Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPackable>true</IsPackable>
-		<IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
 	<PropertyGroup>

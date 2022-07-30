@@ -2,7 +2,11 @@
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
-public partial class MutagenJsonConverter : IMutagenSerializationBootstrap<NewtonsoftJsonSerializationReaderKernel, JTokenReader>
+public class MutagenJsonConverter : IMutagenSerializationBootstrap<NewtonsoftJsonSerializationReaderKernel, JTokenReader>
 {
+    public static readonly MutagenJsonConverter Instance = new();
     
+    private MutagenJsonConverter()
+    {
+    }
 }
