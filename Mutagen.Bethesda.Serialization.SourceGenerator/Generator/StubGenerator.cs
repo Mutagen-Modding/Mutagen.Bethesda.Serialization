@@ -17,32 +17,32 @@ public class StubGenerator
             .SelectMany((allSymbols, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                var dict = new Dictionary<ClassDetails, List<BootstrapInvocation>>();
+                var dict = new Dictionary<INamedTypeSymbol, List<BootstrapInvocation>>(SymbolEqualityComparer.Default);
                 foreach (var bootstrap in allSymbols)
                 {
-                    dict.GetOrAdd(bootstrap.NamedTypeSymbol).Add(bootstrap);
+                    dict.GetOrAdd(bootstrap.Bootstrap).Add(bootstrap);
                 }
 
                 cancel.ThrowIfCancellationRequested();
                 return dict
                     .Where(kv => kv.Value.All(x => x.ModRegistration == null))
                     .Select(x => x.Key)
-                    .ToImmutableHashSet();
+                    .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
             });
         
         context.RegisterSourceOutput(allSymbols, Generate);
     }
     
-    public void Generate(SourceProductionContext context, ClassDetails bootstrap)
+    public void Generate(SourceProductionContext context, INamedTypeSymbol bootstrap)
     {
         StructuredStringBuilder sb = new();
         sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
         sb.AppendLine();
-        using (sb.Namespace(bootstrap.Namespace))
+        using (sb.Namespace(bootstrap.ContainingNamespace.ToString()))
         {
         }
         
-        using (var c = sb.Class($"{bootstrap.ClassName}MixIns"))
+        using (var c = sb.Class($"{bootstrap.Name}MixIns"))
         {
             c.AccessModifier = AccessModifier.Public;
             c.Static = true;
@@ -63,6 +63,6 @@ public class StubGenerator
         }
         sb.AppendLine();
 
-        context.AddSource($"{bootstrap.ClassName}StubMixIn.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+        context.AddSource($"{bootstrap.Name}StubMixIn.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 }

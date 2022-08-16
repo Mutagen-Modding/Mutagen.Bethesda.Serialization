@@ -1,55 +1,41 @@
-﻿using System.Collections.Immutable;
-using System.Text;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using Noggog.StructuredStrings;
-using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class SerializationForLoquiGenerator
 {
-    public void Initialize(IncrementalGeneratorInitializationContext context, IncrementalValuesProvider<BootstrapInvocation> modBootstrapInvocations)
+    private readonly RelatedObjectAccumulator _accumulator;
+    private readonly SerializationForObjectGenerator _serializationForObjectGenerator;
+
+    public SerializationForLoquiGenerator(
+        RelatedObjectAccumulator accumulator,
+        SerializationForObjectGenerator serializationForObjectGenerator)
     {
-        context.RegisterSourceOutput(
-            modBootstrapInvocations.SelectMany(x =>
-            {
-                
-            }),
-            Generate);
+        _accumulator = accumulator;
+        _serializationForObjectGenerator = serializationForObjectGenerator;
     }
     
-    public void Generate(SourceProductionContext context, ImmutableArray<BootstrapInvocation> bootstrap)
+    public void Initialize(IncrementalGeneratorInitializationContext context, IncrementalValuesProvider<BootstrapInvocation> modBootstrapInvocations)
     {
-        if (bootstrap.ModRegistration == null) return;
-        var sb = new StructuredStringBuilder();
-
-        sb.AppendLine($"using {bootstrap.ModRegistration.Namespace};");
-        
-        using (sb.Namespace(bootstrap.NamedTypeSymbol.Namespace))
-        {
-        }
-        
-        using (var c = sb.Class($"{bootstrap.NamedTypeSymbol.ClassName}{bootstrap.ModRegistration.ClassName}MixIns"))
-        {
-            c.AccessModifier = AccessModifier.Public;
-            c.Static = true;
-        }
-        using (sb.CurlyBrace())
-        {
-            using (var args = sb.Function($"public static string Convert"))
+        var distinctModInvocations = modBootstrapInvocations.Collect()
+            .Select((allSymbols, cancel) =>
             {
-                args.Add($"this {bootstrap.NamedTypeSymbol} converterBootstrap");
-                args.Add($"{bootstrap.ModRegistration} mod");
-            }
-
-            using (sb.CurlyBrace())
+                cancel.ThrowIfCancellationRequested();
+                return allSymbols
+                    .Where(x => x.ModRegistration != null)
+                    .ToImmutableHashSet();
+            });
+        var allClassesToGenerate = distinctModInvocations
+            .SelectMany((mods, _) => mods)
+            .SelectMany((mod, cancel) =>
             {
-                sb.AppendLine("throw new NotImplementedException();");
-            }
-        }
-        sb.AppendLine();
-
-        context.AddSource($"{bootstrap.NamedTypeSymbol.ClassName}_{bootstrap.ModRegistration.ClassName}_MixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+                cancel.ThrowIfCancellationRequested();
+                return _accumulator.GetRelatedObjects(mod.ModRegistration!, cancel)
+                    .Select(x => (x, mod.Bootstrap));
+            });
+        context.RegisterSourceOutput(
+            allClassesToGenerate,
+            (c, i) => _serializationForObjectGenerator.Generate(c, i.x, i.Bootstrap));
     }
 }

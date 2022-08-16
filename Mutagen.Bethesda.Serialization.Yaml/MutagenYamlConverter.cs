@@ -2,7 +2,10 @@
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
-public partial class MutagenYamlConverter : IMutagenSerializationBootstrap<YamlSerializationReaderKernel, YamlNode>
+public partial class MutagenYamlConverter
+    : IMutagenSerializationBootstrap<
+        YamlSerializationReaderKernel, YamlNode,
+        YamlSerializationWriterKernel, YamlNode>
 {
 
 }

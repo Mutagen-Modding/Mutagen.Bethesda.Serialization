@@ -4,8 +4,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+		<!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
+		<!--<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>-->
     </PropertyGroup>
 
 	<ItemGroup>
@@ -18,11 +18,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-		<PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.39.2.1-dev" />
-		<PackageReference Include="Noggog.Testing" Version="2.49.0.1-dev" />
+		<PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.39.4.1-dev" />
+		<PackageReference Include="Noggog.Testing" Version="2.50.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
-		<PackageReference Include="Loqui.Analyzers" Version="2.49.0.1-dev" />
-		<PackageReference Include="Noggog.CSharpExt.Analyzers" Version="2.49.0.1-dev" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-dev" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-dev" />

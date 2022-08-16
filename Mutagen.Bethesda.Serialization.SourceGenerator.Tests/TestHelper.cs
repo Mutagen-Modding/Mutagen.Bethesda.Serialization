@@ -1,17 +1,13 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using StrongInject;
-using VerifyXunit;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 

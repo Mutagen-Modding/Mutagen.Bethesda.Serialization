@@ -38,6 +38,14 @@
       <ProjectReference Include="..\Mutagen.Bethesda.Serialization\Mutagen.Bethesda.Serialization.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="NewtonsoftJsonSerializationWriterKernel.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+    </ItemGroup>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.serialization.newtonsoft&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
 	</Target>

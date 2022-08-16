@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Noggog.StructuredStrings;
@@ -20,13 +20,13 @@ public class MixinForModGenerator
         if (bootstrap.ModRegistration == null) return;
         var sb = new StructuredStringBuilder();
 
-        sb.AppendLine($"using {bootstrap.ModRegistration.Namespace};");
+        sb.AppendLine($"using {bootstrap.ModRegistration.ContainingNamespace};");
         
-        using (sb.Namespace(bootstrap.NamedTypeSymbol.Namespace))
+        using (sb.Namespace(bootstrap.Bootstrap.ContainingNamespace.ToString()))
         {
         }
         
-        using (var c = sb.Class($"{bootstrap.NamedTypeSymbol.ClassName}{bootstrap.ModRegistration.ClassName}MixIns"))
+        using (var c = sb.Class($"{bootstrap.Bootstrap.Name}{bootstrap.ModRegistration.Name}MixIns"))
         {
             c.AccessModifier = AccessModifier.Public;
             c.Static = true;
@@ -35,7 +35,7 @@ public class MixinForModGenerator
         {
             using (var args = sb.Function($"public static string Convert"))
             {
-                args.Add($"this {bootstrap.NamedTypeSymbol} converterBootstrap");
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ModRegistration} mod");
             }
 
@@ -46,6 +46,6 @@ public class MixinForModGenerator
         }
         sb.AppendLine();
 
-        context.AddSource($"{bootstrap.NamedTypeSymbol.ClassName}_{bootstrap.ModRegistration.ClassName}_MixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+        context.AddSource($"{bootstrap.Bootstrap.Name}_{bootstrap.ModRegistration.Name}_MixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 }

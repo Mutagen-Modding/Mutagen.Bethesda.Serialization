@@ -4,15 +4,21 @@ using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
-public record BootstrapInvocation(
-    ClassDetails NamedTypeSymbol,
-    ClassDetails? ModRegistration);
-
-public record ClassDetails(string ClassName, string Namespace)
+public record BootstrapInvocation(INamedTypeSymbol Bootstrap, INamedTypeSymbol? ModRegistration)
 {
-    public override string ToString()
+    public virtual bool Equals(BootstrapInvocation? other)
     {
-        return $"{Namespace}.{ClassName}";
+        return SymbolEqualityComparer.IncludeNullability.Equals(ModRegistration, other?.ModRegistration)
+               && Bootstrap.Equals(other?.Bootstrap, SymbolEqualityComparer.Default);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (SymbolEqualityComparer.Default.GetHashCode(Bootstrap) * 397)
+                   ^ (ModRegistration != null ? SymbolEqualityComparer.IncludeNullability.GetHashCode(ModRegistration) : 0);
+        }
     }
 }
 
@@ -38,7 +44,7 @@ public class BootstrapInvocationDetector
         if (expressionSymbol is not INamedTypeSymbol namedTypeSymbol) return default;
         if (!namedTypeSymbol.AllInterfaces.Any(x => x.Name == "IMutagenSerializationBootstrap")) return default;
         
-        var ret = new BootstrapInvocation(new ClassDetails(namedTypeSymbol.Name, namedTypeSymbol.ContainingNamespace.ToString()), default);
+        var ret = new BootstrapInvocation(namedTypeSymbol, default);
         if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
         if (invocationExpressionSyntax.ArgumentList.Arguments.Count != 1) return ret;
         
@@ -54,6 +60,6 @@ public class BootstrapInvocationDetector
                         SymbolEqualityComparer.Default.Equals(x.ContainingNamespace, type.ContainingNamespace));
         if (getterInterface == null) return ret;
 
-        return ret with { ModRegistration = new ClassDetails(getterInterface.Name, getterInterface.ContainingNamespace.Name) };
+        return ret with { ModRegistration = getterInterface };
     }
 }
