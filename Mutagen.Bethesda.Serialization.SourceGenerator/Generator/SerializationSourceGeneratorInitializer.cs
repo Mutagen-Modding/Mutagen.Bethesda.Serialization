@@ -7,20 +7,20 @@ public class SerializationSourceGeneratorInitializer
     private readonly BootstrapInvocationDetector _invocationDetector;
     private readonly MixinForModGenerator _mixinForModGenerator;
     private readonly ModInvocationDetector _modInvocationDetector;
-    private readonly SerializationForLoquiGenerator _serializationForLoquiGenerator;
+    private readonly SerializationForObjectsGenerator _serializationForObjectsGenerator;
     private readonly StubGenerator _stubGenerator;
 
     public SerializationSourceGeneratorInitializer(
         BootstrapInvocationDetector invocationDetector,
         MixinForModGenerator mixinForModGenerator,
         ModInvocationDetector modInvocationDetector,
-        SerializationForLoquiGenerator serializationForLoquiGenerator,
+        SerializationForObjectsGenerator serializationForObjectsGenerator,
         StubGenerator stubGenerator)
     {
         _invocationDetector = invocationDetector;
         _mixinForModGenerator = mixinForModGenerator;
         _modInvocationDetector = modInvocationDetector;
-        _serializationForLoquiGenerator = serializationForLoquiGenerator;
+        _serializationForObjectsGenerator = serializationForObjectsGenerator;
         _stubGenerator = stubGenerator;
     }
     
@@ -30,6 +30,6 @@ public class SerializationSourceGeneratorInitializer
         _stubGenerator.Initialize(context, bootstrapSymbols);
         var modBootstraps = _modInvocationDetector.Detect(bootstrapSymbols);
         _mixinForModGenerator.Initialize(context, modBootstraps);
-        _serializationForLoquiGenerator.Initialize(context, modBootstraps);
+        _serializationForObjectsGenerator.Initialize(context, modBootstraps);
     }
 }

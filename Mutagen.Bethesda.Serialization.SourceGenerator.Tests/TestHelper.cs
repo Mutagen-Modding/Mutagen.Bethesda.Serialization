@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
@@ -25,6 +26,7 @@ public static class TestHelper
             MetadataReference.CreateFromFile(typeof(FilePath).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(LoquiRegistration).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(SkyrimMod).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(TestMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(MutagenYamlConverter).Assembly.Location),
         };
         
@@ -60,6 +62,7 @@ public static class TestHelper
             MetadataReference.CreateFromFile(typeof(ISerializationReaderKernel<>).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(LoquiRegistration).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(FilePath).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(TestMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(NewtonsoftJsonSerializationReaderKernel).Assembly.Location)
         };
 

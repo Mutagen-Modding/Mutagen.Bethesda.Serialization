@@ -17,6 +17,7 @@ public class RelatedObjectAccumulator
         CancellationToken cancel)
     {
         var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
+        objs.Add(details);
         GetRelatedObjects(details, objs, cancel);
         return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
     }

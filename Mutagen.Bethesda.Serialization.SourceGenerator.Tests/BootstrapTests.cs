@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
+using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 using VerifyXunit;
 using Xunit;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
 [UsesVerify]
-public class GenerationTests
+public class BootstrapTests
 {
     [Fact]
     public Task NoGeneration()
@@ -140,5 +142,23 @@ public class SerializationTests
     }
 }";
         TestHelper.RunSourceGenerator(source);
+    }
+    
+    private string GetModWithMember(Action<StructuredStringBuilder> memberBuilder)
+    {
+        var sb = new StructuredStringBuilder();
+        using var ns = sb.Namespace("SomeNamespace");
+        
+        using (var c = sb.Class("ModForTest"))
+        {
+            c.BaseClass = "TestModz";
+        }
+
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+
+        return sb.ToString();
     }
 }

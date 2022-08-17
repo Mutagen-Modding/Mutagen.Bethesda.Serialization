@@ -71,6 +71,10 @@ public class SerializationForObjectGenerator
                     {
                         _loquiFieldGenerator.GenerateForSerialize(obj, bootstrap, prop, "item", "writer", "kernel", sb);
                     }
+                    else
+                    {
+                        sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {prop.Type}\");");
+                    }
                 }
             }
             

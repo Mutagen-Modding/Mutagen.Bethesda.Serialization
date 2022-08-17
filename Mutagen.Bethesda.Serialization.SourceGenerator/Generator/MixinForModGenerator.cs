@@ -33,10 +33,20 @@ public class MixinForModGenerator
         }
         using (sb.CurlyBrace())
         {
-            using (var args = sb.Function($"public static string Convert"))
+            using (var args = sb.Function($"public static string Serialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ModRegistration} mod");
+            }
+
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("throw new NotImplementedException();");
+            }
+            using (var args = sb.Function($"public static {bootstrap.ModRegistration} Deserialize"))
+            {
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                args.Add($"string str");
             }
 
             using (sb.CurlyBrace())

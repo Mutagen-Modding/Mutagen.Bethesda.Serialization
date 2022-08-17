@@ -3,12 +3,12 @@ using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
-public class SerializationForLoquiGenerator
+public class SerializationForObjectsGenerator
 {
     private readonly RelatedObjectAccumulator _accumulator;
     private readonly SerializationForObjectGenerator _serializationForObjectGenerator;
 
-    public SerializationForLoquiGenerator(
+    public SerializationForObjectsGenerator(
         RelatedObjectAccumulator accumulator,
         SerializationForObjectGenerator serializationForObjectGenerator)
     {
