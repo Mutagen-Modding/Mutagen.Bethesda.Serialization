@@ -46,16 +46,16 @@ public class SerializationForObjectGenerator
         {
         }
         
-        using (var c = sb.Class($"{obj.Name}_{bootstrap.Name}_MixIns"))
+        using (var c = sb.Class($"{obj.Name}_{bootstrap.Name}_Serialization"))
         {
-            c.AccessModifier = AccessModifier.Public;
+            c.AccessModifier = AccessModifier.Internal;
             c.Static = true;
         }
         using (sb.CurlyBrace())
         {
             using (var args = sb.Function($"public static void Serialize"))
             {
-                args.Add($"this {obj} item");
+                args.Add($"{obj} item");
                 args.Add($"{writer} writer");
                 args.Add($"ISerializationWriterKernel<{writer}> kernel");
             }

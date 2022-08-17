@@ -3,10 +3,10 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-public static class ITestModGetter_MutagenJsonConverter_MixIns
+internal static class ITestModGetter_MutagenJsonConverter_Serialization
 {
     public static void Serialize(
-        this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         Newtonsoft.Json.Linq.JTokenWriter writer,
         ISerializationWriterKernel<Newtonsoft.Json.Linq.JTokenWriter> kernel)
     {

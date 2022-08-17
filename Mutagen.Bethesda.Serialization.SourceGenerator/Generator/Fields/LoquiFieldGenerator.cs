@@ -15,7 +15,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{obj.Name}_{bootstrap.Name}_MixIns.Serialize({itemAccessor}.{propertySymbol.Name}, {writerAccessor}, {kernelAccessor});");
+        sb.AppendLine($"{obj.Name}_{bootstrap.Name}_Serialization.Serialize({itemAccessor}.{propertySymbol.Name}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(
