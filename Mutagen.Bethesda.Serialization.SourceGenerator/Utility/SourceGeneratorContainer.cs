@@ -14,6 +14,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<IsLoquiObjectTester>]
 [Register<SerializationForObjectGenerator>]
 [Register<PropertyFilter>]
+[Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(LoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(EnumFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(StringFieldGenerator), typeof(ISerializationForFieldGenerator))]

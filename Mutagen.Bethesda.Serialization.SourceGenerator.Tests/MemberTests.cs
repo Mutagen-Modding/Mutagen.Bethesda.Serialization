@@ -200,4 +200,28 @@ public class MemberTests
        
         return TestHelper.Verify(source);
     }
+    
+    [Fact]
+    public Task Bool()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public bool SomeBool { get; set; }");
+            sb.AppendLine("public Boolean SomeBool2 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task Float()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public float SomeFloat { get; set; }");
+            sb.AppendLine("public Single SomeFloat2 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
 }
