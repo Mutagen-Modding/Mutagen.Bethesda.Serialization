@@ -176,4 +176,28 @@ public class MemberTests
        
         return TestHelper.Verify(source);
     }
+    
+    [Fact]
+    public Task Enum()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public enum MyEnum { }");
+            sb.AppendLine("public MyEnum SomeEnum { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task Loqui()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public class MyLoqui : SomeBaseClass, ILoquiObject { }");
+            sb.AppendLine("public MyLoqui SomeLoqui { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
 }

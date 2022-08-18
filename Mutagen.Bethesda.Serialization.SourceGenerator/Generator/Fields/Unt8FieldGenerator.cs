@@ -12,6 +12,8 @@ public class UInt8FieldGenerator : ISerializationForFieldGenerator
         "UInt8"
     };
 
+    public bool Applicable(ITypeSymbol typeSymbol) => false;
+
     public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
         string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
     {

@@ -11,6 +11,8 @@ public class UInt32FieldGenerator : ISerializationForFieldGenerator
         "uint"
     };
 
+    public bool Applicable(ITypeSymbol typeSymbol) => false;
+    
     public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
         string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
     {

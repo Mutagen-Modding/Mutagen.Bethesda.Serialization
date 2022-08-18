@@ -5,7 +5,16 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class LoquiFieldGenerator : ISerializationForFieldGenerator
 {
+    private readonly IsLoquiObjectTester _isLoquiObjectTester;
     public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
+
+    public LoquiFieldGenerator(IsLoquiObjectTester isLoquiObjectTester)
+    {
+        _isLoquiObjectTester = isLoquiObjectTester;
+    }
+
+    public bool Applicable(ITypeSymbol typeSymbol) => _isLoquiObjectTester.IsLoqui(typeSymbol);
+    
     public void GenerateForSerialize(
         ITypeSymbol obj,
         IPropertySymbol propertySymbol,
@@ -14,7 +23,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{obj.Name}_Serialization.Serialize({itemAccessor}.{propertySymbol.Name}, {writerAccessor}, {kernelAccessor});");
+        sb.AppendLine($"{propertySymbol.Type.Name}_Serialization.Serialize({itemAccessor}.{propertySymbol.Name}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(

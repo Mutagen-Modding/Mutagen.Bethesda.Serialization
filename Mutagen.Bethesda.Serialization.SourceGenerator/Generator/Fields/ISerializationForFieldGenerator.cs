@@ -6,6 +6,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 public interface ISerializationForFieldGenerator
 {
     IEnumerable<string> AssociatedTypes { get; }
+
+    bool Applicable(ITypeSymbol typeSymbol);
     
     void GenerateForSerialize(
         ITypeSymbol obj,

@@ -11,6 +11,8 @@ public class Int64FieldGenerator : ISerializationForFieldGenerator
         "Int64"
     };
 
+    public bool Applicable(ITypeSymbol typeSymbol) => false;
+
     public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
         string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
     {

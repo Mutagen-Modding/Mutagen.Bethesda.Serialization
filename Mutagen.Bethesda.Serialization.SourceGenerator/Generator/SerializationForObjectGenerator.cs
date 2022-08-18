@@ -10,22 +10,23 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class SerializationForObjectGenerator
 {
-    private readonly IsLoquiObjectTester _isLoquiObjectTester;
-    private readonly LoquiFieldGenerator _loquiFieldGenerator;
-    private readonly Dictionary<string, ISerializationForFieldGenerator> _fieldGenerators = new();
+    private readonly PropertyFilter _propertyFilter;
+    private readonly ISerializationForFieldGenerator[] _variableFieldGenerators;
+    private readonly Dictionary<string, ISerializationForFieldGenerator> _fieldGeneratorDict = new();
 
     public SerializationForObjectGenerator(
-        IsLoquiObjectTester isLoquiObjectTester,
-        LoquiFieldGenerator loquiFieldGenerator,
+        PropertyFilter propertyFilter,
         ISerializationForFieldGenerator[] fieldGenerators)
     {
-        _isLoquiObjectTester = isLoquiObjectTester;
-        _loquiFieldGenerator = loquiFieldGenerator;
+        _propertyFilter = propertyFilter;
+        _variableFieldGenerators = fieldGenerators
+            .Where(x => !x.AssociatedTypes.Any())
+            .ToArray();
         foreach (var f in fieldGenerators)
         {
             foreach (var associatedType in f.AssociatedTypes)
             {
-                _fieldGenerators[associatedType] = f;
+                _fieldGeneratorDict[associatedType] = f;
             }
         }
     }
@@ -57,18 +58,7 @@ public class SerializationForObjectGenerator
             {
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
-                    if (_fieldGenerators.TryGetValue(prop.Type.Name, out var gen))
-                    {
-                        gen.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
-                    }
-                    else if (_isLoquiObjectTester.IsLoqui(prop.Type))
-                    {
-                        _loquiFieldGenerator.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
-                    }
-                    else
-                    {
-                        sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {prop.Type}\");");
-                    }
+                    GenerateForProperty(obj, prop, sb);
                 }
             }
             sb.AppendLine();
@@ -94,5 +84,26 @@ public class SerializationForObjectGenerator
         }
         
         context.AddSource($"{sanitizedName}_Serializations.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+    }
+
+    private void GenerateForProperty(ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb)
+    {
+        if (_propertyFilter.Skip(prop)) return;
+        if (_fieldGeneratorDict.TryGetValue(prop.Type.Name, out var gen))
+        {
+            gen.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
+        }
+        else
+        {
+            foreach (var fieldGenerator in _variableFieldGenerators)
+            {
+                if (fieldGenerator.Applicable(prop.Type))
+                {
+                    fieldGenerator.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
+                    return;
+                }
+            }
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {prop.Type}\");");
+        }
     }
 }
