@@ -4,6 +4,11 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKernel<JTokenWriter>
 {
+    public JTokenWriter GetNewObject()
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteString(JTokenWriter writer, string item)
     {
         throw new NotImplementedException();

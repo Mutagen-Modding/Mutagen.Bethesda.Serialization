@@ -4,6 +4,11 @@ namespace Mutagen.Bethesda.Serialization.Yaml;
 
 public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode>
 {
+    public YamlNode GetNewObject()
+    {
+        throw new NotImplementedException();
+    }
+
     public string ReadString(YamlNode reader)
     {
         return reader.Anchor.Value;

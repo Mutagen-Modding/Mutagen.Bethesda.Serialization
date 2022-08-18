@@ -4,6 +4,11 @@ namespace Mutagen.Bethesda.Serialization.Yaml;
 
 public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode>
 {
+    public YamlNode GetNewObject()
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteString(YamlNode writer, string item)
     {
         throw new NotImplementedException();

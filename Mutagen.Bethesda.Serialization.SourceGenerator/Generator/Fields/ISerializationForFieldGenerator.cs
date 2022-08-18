@@ -9,7 +9,6 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForSerialize(
         ITypeSymbol obj,
-        INamedTypeSymbol bootstrap,
         IPropertySymbol propertySymbol, 
         string itemAccessor,
         string writerAccessor,
@@ -18,7 +17,6 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForDeserialize(
         ITypeSymbol obj,
-        INamedTypeSymbol bootstrap,
         IPropertySymbol propertySymbol, 
         string itemAccessor,
         string writerAccessor,

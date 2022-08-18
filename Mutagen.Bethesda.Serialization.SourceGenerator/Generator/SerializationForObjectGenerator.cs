@@ -29,15 +29,9 @@ public class SerializationForObjectGenerator
             }
         }
     }
-    
-    public void Generate(SourceProductionContext context, ITypeSymbol obj, INamedTypeSymbol bootstrap)
+    public void Generate(SourceProductionContext context, ITypeSymbol obj)
     {
         var sb = new StructuredStringBuilder();
-
-        var interf = bootstrap.Interfaces.First(x => x.Name == "IMutagenSerializationBootstrap");
-        
-        var reader = interf.TypeArguments[1];
-        var writer = interf.TypeArguments[3];
         
         sb.AppendLine($"using Mutagen.Bethesda.Serialization;");
         sb.AppendLine($"using {obj.ContainingNamespace};");
@@ -46,18 +40,18 @@ public class SerializationForObjectGenerator
         {
         }
         
-        using (var c = sb.Class($"{obj.Name}_{bootstrap.Name}_Serialization"))
+        using (var c = sb.Class($"{obj.Name}_Serialization"))
         {
             c.AccessModifier = AccessModifier.Internal;
             c.Static = true;
         }
         using (sb.CurlyBrace())
         {
-            using (var args = sb.Function($"public static void Serialize"))
+            using (var args = sb.Function($"public static void Serialize<TWriteObject>"))
             {
                 args.Add($"{obj} item");
-                args.Add($"{writer} writer");
-                args.Add($"ISerializationWriterKernel<{writer}> kernel");
+                args.Add($"TWriteObject writer");
+                args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
             }
             using (sb.CurlyBrace())
             {
@@ -65,11 +59,11 @@ public class SerializationForObjectGenerator
                 {
                     if (_fieldGenerators.TryGetValue(prop.Type.Name, out var gen))
                     {
-                        gen.GenerateForSerialize(obj, bootstrap, prop, "item", "writer", "kernel", sb);
+                        gen.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
                     }
                     else if (_isLoquiObjectTester.IsLoqui(prop.Type))
                     {
-                        _loquiFieldGenerator.GenerateForSerialize(obj, bootstrap, prop, "item", "writer", "kernel", sb);
+                        _loquiFieldGenerator.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
                     }
                     else
                     {
@@ -77,26 +71,28 @@ public class SerializationForObjectGenerator
                     }
                 }
             }
+            sb.AppendLine();
             
-            using (var args = sb.Function($"public static {obj} Deserialize"))
+            using (var args = sb.Function($"public static {obj} Deserialize<TReadObject>"))
             {
-                args.Add($"{reader} reader");
-                args.Add($"ISerializationReaderKernel<{reader}> kernel");
+                args.Add($"TReadObject reader");
+                args.Add($"ISerializationReaderKernel<TReadObject> kernel");
             }
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("throw new NotImplementedException();");
             }
+            sb.AppendLine();
         }
         sb.AppendLine();
-
+        
         var sanitizedName = obj.MetadataName;
         var genericIndex = sanitizedName.IndexOf('`');
         if (genericIndex != -1)
         {
             sanitizedName = sanitizedName.Substring(0, genericIndex);
         }
-
-        context.AddSource($"{sanitizedName}_{bootstrap.Name}_Serializations.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+        
+        context.AddSource($"{sanitizedName}_Serializations.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 }

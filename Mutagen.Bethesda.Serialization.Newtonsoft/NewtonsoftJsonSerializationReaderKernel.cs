@@ -4,6 +4,11 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKernel<JTokenReader>
 {
+    public JTokenReader GetNewObject()
+    {
+        throw new NotImplementedException();
+    }
+
     public string ReadString(JTokenReader reader)
     {
         return reader.CurrentToken?.ToString() ?? String.Empty;

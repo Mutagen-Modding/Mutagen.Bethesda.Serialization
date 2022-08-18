@@ -11,13 +11,13 @@ public class UInt16FieldGenerator : ISerializationForFieldGenerator
         "ushort"
     };
 
-    public void GenerateForSerialize(ITypeSymbol obj, INamedTypeSymbol bootstrap, IPropertySymbol propertySymbol,
+    public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
         string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
     {
         sb.AppendLine($"{kernelAccessor}.WriteUInt16({writerAccessor}, {itemAccessor}.{propertySymbol.Name});");
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, INamedTypeSymbol bootstrap, IPropertySymbol propertySymbol,
+    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
         string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
     {
         throw new NotImplementedException();

@@ -2,6 +2,7 @@
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
+    public TReaderObject GetNewObject();
     public string ReadString(TReaderObject reader);
     public sbyte ReadInt8(TReaderObject reader);
     public short ReadInt16(TReaderObject reader);
@@ -15,6 +16,7 @@ public interface ISerializationReaderKernel<TReaderObject>
 
 public interface ISerializationWriterKernel<TWriterObject>
 {
+    public TWriterObject GetNewObject();
     public void WriteString(TWriterObject writer, string item);
     public void WriteInt8(TWriterObject writer, sbyte item);
     public void WriteInt16(TWriterObject writer, short item);
