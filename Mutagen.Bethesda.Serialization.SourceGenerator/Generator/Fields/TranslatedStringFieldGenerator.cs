@@ -3,16 +3,16 @@ using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
-public class EnumFieldGenerator : ISerializationForFieldGenerator
+public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
 {
-    public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
-
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public IEnumerable<string> AssociatedTypes => new string[]
     {
-        return typeSymbol.TypeKind == TypeKind.Enum
-            || (typeSymbol.BaseType is { Name: "Enum" } 
-                && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
-    }
+        "TranslatedString",
+        "ITranslatedStringGetter",
+        "ITranslatedString"
+    };
+
+    public bool Applicable(ITypeSymbol typeSymbol) => false;
 
     public void GenerateForSerialize(
         ITypeSymbol obj, 
@@ -22,7 +22,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor, 
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteEnum({writerAccessor}, {fieldAccessor});");
+        sb.AppendLine($"{kernelAccessor}.WriteTranslatedString({writerAccessor}, {fieldAccessor});");
     }
 
     public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,

@@ -1,27 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
-using Noggog.StructuredStrings;
+﻿namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
-
-public class Int32FieldGenerator : ISerializationForFieldGenerator
+public class Int32FieldGenerator : PrimitiveFieldGenerator
 {
-    public IEnumerable<string> AssociatedTypes => new string[]
+    public static readonly string[] AssociatedTypes = new string[]
     {
         "int",
         "Int32"
     };
-
-    public bool Applicable(ITypeSymbol typeSymbol) => false;
-
-    public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    
+    public Int32FieldGenerator()
+        : base("Int32", AssociatedTypes)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteInt32({writerAccessor}, {itemAccessor}.{propertySymbol.Name});");
-    }
-
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
-    {
-        throw new NotImplementedException();
     }
 }

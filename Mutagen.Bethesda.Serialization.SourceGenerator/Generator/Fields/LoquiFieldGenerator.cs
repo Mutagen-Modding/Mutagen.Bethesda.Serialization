@@ -17,13 +17,13 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     
     public void GenerateForSerialize(
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol,
-        string itemAccessor,
+        ITypeSymbol field, 
+        string fieldAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{propertySymbol.Type.Name}_Serialization.Serialize({itemAccessor}.{propertySymbol.Name}, {writerAccessor}, {kernelAccessor});");
+        sb.AppendLine($"{field.Name}_Serialization.Serialize({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(

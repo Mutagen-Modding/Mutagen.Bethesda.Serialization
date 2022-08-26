@@ -1,4 +1,5 @@
-﻿using YamlDotNet.RepresentationModel;
+﻿using Mutagen.Bethesda.Plugins;
+using YamlDotNet.RepresentationModel;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
@@ -50,6 +51,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
     }
 
     public ulong ReadUInt64(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public FormKey ReadFormKey(YamlNode reader)
     {
         throw new NotImplementedException();
     }

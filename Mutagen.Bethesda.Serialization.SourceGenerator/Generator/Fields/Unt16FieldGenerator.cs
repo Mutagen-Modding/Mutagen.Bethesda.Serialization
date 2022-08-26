@@ -1,27 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
-using Noggog.StructuredStrings;
+﻿namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
-
-public class UInt16FieldGenerator : ISerializationForFieldGenerator
+public class UInt16FieldGenerator : PrimitiveFieldGenerator
 {
-    public IEnumerable<string> AssociatedTypes => new string[]
+    public static readonly string[] AssociatedTypes = new string[]
     {
         "UInt16",
         "ushort"
     };
-
-    public bool Applicable(ITypeSymbol typeSymbol) => false;
-
-    public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    
+    public UInt16FieldGenerator()
+        : base("UInt16", AssociatedTypes)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteUInt16({writerAccessor}, {itemAccessor}.{propertySymbol.Name});");
-    }
-
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
-    {
-        throw new NotImplementedException();
     }
 }

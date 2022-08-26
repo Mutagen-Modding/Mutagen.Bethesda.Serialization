@@ -1,27 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
-using Noggog.StructuredStrings;
+﻿namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
-
-public class FloatFieldGenerator : ISerializationForFieldGenerator
+public class FloatFieldGenerator : PrimitiveFieldGenerator
 {
-    public IEnumerable<string> AssociatedTypes => new string[]
+    public static readonly string[] AssociatedTypes = new string[]
     {
         "float",
         "Single"
     };
-
-    public bool Applicable(ITypeSymbol typeSymbol) => false;
-
-    public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    
+    public FloatFieldGenerator()
+        : base("Float", AssociatedTypes)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteFloat({writerAccessor}, {itemAccessor}.{propertySymbol.Name});");
-    }
-
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
-    {
-        throw new NotImplementedException();
     }
 }

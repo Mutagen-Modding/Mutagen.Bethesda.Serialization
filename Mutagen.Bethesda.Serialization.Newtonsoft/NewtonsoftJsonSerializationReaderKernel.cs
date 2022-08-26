@@ -1,3 +1,4 @@
+using Mutagen.Bethesda.Plugins;
 using Newtonsoft.Json.Linq;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
@@ -50,6 +51,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     }
 
     public ulong ReadUInt64(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public FormKey ReadFormKey(JTokenReader reader)
     {
         throw new NotImplementedException();
     }

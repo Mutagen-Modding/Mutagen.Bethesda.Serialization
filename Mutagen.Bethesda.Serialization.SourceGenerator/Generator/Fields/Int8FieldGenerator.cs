@@ -1,28 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using Noggog.StructuredStrings;
+﻿namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
-
-public class Int8FieldGenerator : ISerializationForFieldGenerator
+public class Int8FieldGenerator : PrimitiveFieldGenerator
 {
-    public IEnumerable<string> AssociatedTypes => new string[]
+    public static readonly string[] AssociatedTypes = new string[]
     {
         "sbyte",
         "SByte",
-        "Int8"
+        "Int8",
     };
-
-    public bool Applicable(ITypeSymbol typeSymbol) => false;
-
-    public void GenerateForSerialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    
+    public Int8FieldGenerator()
+        : base("Int8", AssociatedTypes)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteInt8({writerAccessor}, {itemAccessor}.{propertySymbol.Name});");
-    }
-
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
-    {
-        throw new NotImplementedException();
     }
 }

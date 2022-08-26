@@ -1,4 +1,5 @@
-﻿using YamlDotNet.RepresentationModel;
+﻿using Mutagen.Bethesda.Plugins;
+using YamlDotNet.RepresentationModel;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
@@ -9,47 +10,52 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public void WriteString(YamlNode writer, string item)
+    public void WriteString(YamlNode writer, string fieldName, string? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt8(YamlNode writer, sbyte item)
+    public void WriteInt8(YamlNode writer, string fieldName, sbyte? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt16(YamlNode writer, short item)
+    public void WriteInt16(YamlNode writer, string fieldName, short? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt32(YamlNode writer, int item)
+    public void WriteInt32(YamlNode writer, string fieldName, int? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt64(YamlNode writer, long item)
+    public void WriteInt64(YamlNode writer, string fieldName, long? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt8(YamlNode writer, byte item)
+    public void WriteUInt8(YamlNode writer, string fieldName, byte? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt16(YamlNode writer, ushort item)
+    public void WriteUInt16(YamlNode writer, string fieldName, ushort? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt32(YamlNode writer, uint item)
+    public void WriteUInt32(YamlNode writer, string fieldName, uint? item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt64(YamlNode writer, ulong item)
+    public void WriteUInt64(YamlNode writer, string fieldName, ulong? item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteFormKey(TextWriter writer, string fieldName, FormKey? formKey)
     {
         throw new NotImplementedException();
     }

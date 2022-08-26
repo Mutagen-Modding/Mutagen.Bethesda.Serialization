@@ -11,8 +11,8 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForSerialize(
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol, 
-        string itemAccessor,
+        ITypeSymbol field,
+        string fieldAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb);

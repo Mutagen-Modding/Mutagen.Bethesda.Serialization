@@ -13,7 +13,9 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<RelatedObjectAccumulator>]
 [Register<IsLoquiObjectTester>]
 [Register<SerializationForObjectGenerator>]
+[Register<SerializationFieldGenerator>]
 [Register<PropertyFilter>]
+[Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(LoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -27,6 +29,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(UInt16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt32FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt64FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(FormLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

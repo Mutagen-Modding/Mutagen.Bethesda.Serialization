@@ -11,6 +11,8 @@ public class MemberTests
     {
         var sb = new StructuredStringBuilder();
         
+        sb.AppendLine("using Noggog;");
+        sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
         sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
         sb.AppendLine();
@@ -47,6 +49,26 @@ public class MemberTests
 
         return sb.ToString();
     }
+
+    private string GetPrimitiveTest(params string[] nicknames)
+    {
+        return GetModWithMember(sb =>
+        {
+            int i = 0;
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public {nickname} SomeMember{i++} {{ get; set; }}");
+            }
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public {nickname}? SomeMember{i++} {{ get; set; }}");
+            }
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public Nullable<{nickname}> SomeMember{i++} {{ get; set; }}");
+            }
+        });
+    }
     
     [Fact]
     public Task NoGeneration()
@@ -70,111 +92,55 @@ public class MemberTests
     [Fact]
     public Task String()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public string SomeString { get; set; }");
-            sb.AppendLine("public String SomeString2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("string", "String"));
     }
     
     [Fact]
     public Task UInt8()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public byte SomeInt8 { get; set; }");
-            sb.AppendLine("public Byte SomeInt82 { get; set; }");
-            sb.AppendLine("public UInt8 SomeInt83 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("byte", "Byte", "UInt8"));
     }
     
     [Fact]
     public Task Int8()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public sbyte SomeUInt8 { get; set; }");
-            sb.AppendLine("public SByte SomeUInt82 { get; set; }");
-            sb.AppendLine("public Int8 SomeUInt83 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("sbyte", "SByte", "Int8"));
     }
     
     [Fact]
     public Task UInt16()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public ushort SomeUShort { get; set; }");
-            sb.AppendLine("public UInt16 SomeUShort2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("ushort", "UInt16"));
     }
     
     [Fact]
     public Task Int16()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public short SomeShort { get; set; }");
-            sb.AppendLine("public Int16 SomeShort2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("short", "Int16"));
     }
     
     [Fact]
     public Task UInt32()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public uint SomeUInt { get; set; }");
-            sb.AppendLine("public UInt32 SomeUInt2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("uint", "UInt32"));
     }
     
     [Fact]
     public Task Int32()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public int SomeInt { get; set; }");
-            sb.AppendLine("public Int32 SomeInt2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("int", "Int32"));
     }
     
     [Fact]
     public Task UInt64()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public ulong SomeULong { get; set; }");
-            sb.AppendLine("public UInt64 SomeULong2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("ulong", "UInt64"));
     }
     
     [Fact]
     public Task Int64()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public long SomeLong { get; set; }");
-            sb.AppendLine("public Int64 SomeLong2 { get; set; }");
-        });
-       
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(GetPrimitiveTest("long", "Int64"));
     }
     
     [Fact]
@@ -184,6 +150,13 @@ public class MemberTests
         {
             sb.AppendLine("public enum MyEnum { }");
             sb.AppendLine("public MyEnum SomeEnum { get; set; }");
+            
+            sb.AppendLine("public enum MyEnum2 : uint { }");
+            sb.AppendLine("public MyEnum2 SomeEnum2 { get; set; }");
+            
+            sb.AppendLine("[System.Flags]");
+            sb.AppendLine("public enum MyEnum3 { }");
+            sb.AppendLine("public MyEnum3 SomeEnum3 { get; set; }");
         });
        
         return TestHelper.Verify(source);
@@ -204,22 +177,65 @@ public class MemberTests
     [Fact]
     public Task Bool()
     {
+        return TestHelper.Verify(GetPrimitiveTest("bool", "Boolean"));
+    }
+    
+    [Fact]
+    public Task Float()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("float", "Single"));
+    }
+    
+    [Fact]
+    public Task TranslatedString()
+    {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public bool SomeBool { get; set; }");
-            sb.AppendLine("public Boolean SomeBool2 { get; set; }");
+            sb.AppendLine("public TranslatedString TranslatedString { get; set; }");
+            sb.AppendLine("public ITranslatedString TranslatedString2 { get; set; }");
+            sb.AppendLine("public ITranslatedStringGetter TranslatedString3 { get; set; }");
         });
        
         return TestHelper.Verify(source);
     }
     
     [Fact]
-    public Task Float()
+    public Task List()
     {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public float SomeFloat { get; set; }");
-            sb.AppendLine("public Single SomeFloat2 { get; set; }");
+            sb.AppendLine("public List<string> SomeList { get; set; }");
+            sb.AppendLine("public IReadOnlyList<string> SomeList2 { get; set; }");
+            sb.AppendLine("public ExtendedList<string> SomeList3 { get; set; }");
+            sb.AppendLine("public string[] SomeList4 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task FormLink()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public FormLink<INpcGetter> SomeFormKey { get; set; }");
+            sb.AppendLine("public FormLinkNullable<INpcGetter> SomeFormKey2 { get; set; }");
+            sb.AppendLine("public IFormLink<INpcGetter> SomeFormKey3 { get; set; }");
+            sb.AppendLine("public IFormLinkNullable<INpcGetter> SomeFormKey4 { get; set; }");
+            sb.AppendLine("public IFormLinkGetter<INpcGetter> SomeFormKey5 { get; set; }");
+            sb.AppendLine("public IFormLinkNullableGetter<INpcGetter> SomeFormKey6 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task SkippedProperty()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public int StaticRegistration { get; set; }");
+            sb.AppendLine("public int SomeInt { get; set; }");
         });
        
         return TestHelper.Verify(source);

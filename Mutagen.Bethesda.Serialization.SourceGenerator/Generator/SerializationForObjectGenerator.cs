@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -11,24 +10,14 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 public class SerializationForObjectGenerator
 {
     private readonly PropertyFilter _propertyFilter;
-    private readonly ISerializationForFieldGenerator[] _variableFieldGenerators;
-    private readonly Dictionary<string, ISerializationForFieldGenerator> _fieldGeneratorDict = new();
+    private readonly SerializationFieldGenerator _forFieldGenerator;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
-        ISerializationForFieldGenerator[] fieldGenerators)
+        SerializationFieldGenerator forFieldGenerator)
     {
         _propertyFilter = propertyFilter;
-        _variableFieldGenerators = fieldGenerators
-            .Where(x => !x.AssociatedTypes.Any())
-            .ToArray();
-        foreach (var f in fieldGenerators)
-        {
-            foreach (var associatedType in f.AssociatedTypes)
-            {
-                _fieldGeneratorDict[associatedType] = f;
-            }
-        }
+        _forFieldGenerator = forFieldGenerator;
     }
     public void Generate(SourceProductionContext context, ITypeSymbol obj)
     {
@@ -58,7 +47,8 @@ public class SerializationForObjectGenerator
             {
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
-                    GenerateForProperty(obj, prop, sb);
+                    if (_propertyFilter.Skip(prop)) continue;
+                    _forFieldGenerator.GenerateForField(obj, prop.Type, $"item.{prop.Name}", sb);
                 }
             }
             sb.AppendLine();
@@ -84,26 +74,5 @@ public class SerializationForObjectGenerator
         }
         
         context.AddSource($"{sanitizedName}_Serializations.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
-    }
-
-    private void GenerateForProperty(ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb)
-    {
-        if (_propertyFilter.Skip(prop)) return;
-        if (_fieldGeneratorDict.TryGetValue(prop.Type.Name, out var gen))
-        {
-            gen.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
-        }
-        else
-        {
-            foreach (var fieldGenerator in _variableFieldGenerators)
-            {
-                if (fieldGenerator.Applicable(prop.Type))
-                {
-                    fieldGenerator.GenerateForSerialize(obj, prop, "item", "writer", "kernel", sb);
-                    return;
-                }
-            }
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {prop.Type}\");");
-        }
     }
 }

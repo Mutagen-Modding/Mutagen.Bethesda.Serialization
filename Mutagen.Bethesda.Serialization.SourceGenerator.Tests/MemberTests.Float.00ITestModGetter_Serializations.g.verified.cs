@@ -10,8 +10,12 @@ internal static class ITestModGetter_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteFloat(writer, item.SomeFloat);
-        kernel.WriteFloat(writer, item.SomeFloat2);
+        kernel.WriteFloat(writer, item.SomeMember0);
+        kernel.WriteFloat(writer, item.SomeMember1);
+        kernel.WriteFloat(writer, item.SomeMember2);
+        kernel.WriteFloat(writer, item.SomeMember3);
+        kernel.WriteFloat(writer, item.SomeMember4);
+        kernel.WriteFloat(writer, item.SomeMember5);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
