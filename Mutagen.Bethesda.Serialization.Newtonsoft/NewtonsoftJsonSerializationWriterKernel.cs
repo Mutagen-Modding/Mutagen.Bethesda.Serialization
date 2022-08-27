@@ -1,5 +1,8 @@
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json.Linq;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
@@ -55,7 +58,22 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
-    public void WriteFormKey(TextWriter writer, string fieldName, FormKey? formKey)
+    public void WriteFormKey(JTokenWriter writer, string fieldName, FormKey? formKey)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteColor(JTokenWriter writer, string fieldName, Color? color)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteTranslatedString(JTokenWriter writer, string fieldName, ITranslatedStringGetter? translatedString)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteBytes(JTokenWriter writer, string fieldName, ReadOnlyMemorySlice<byte>? bytes)
     {
         throw new NotImplementedException();
     }

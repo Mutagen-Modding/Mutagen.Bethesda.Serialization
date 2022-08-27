@@ -181,9 +181,30 @@ public class MemberTests
     }
     
     [Fact]
+    public Task Bytes()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public byte[] SomeBytes { get; set; }");
+            sb.AppendLine("public ReadOnlyMemorySlice<byte> SomeBytes2 { get; set; }");
+            sb.AppendLine("public byte[]? SomeBytes3 { get; set; }");
+            sb.AppendLine("public ReadOnlyMemorySlice<byte>? SomeBytes4 { get; set; }");
+            sb.AppendLine("public Nullable<ReadOnlyMemorySlice<byte>> SomeBytes5 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task Float()
     {
         return TestHelper.Verify(GetPrimitiveTest("float", "Single"));
+    }
+    
+    [Fact]
+    public Task Color()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("System.Drawing.Color", "Color"));
     }
     
     [Fact]
@@ -194,6 +215,15 @@ public class MemberTests
             sb.AppendLine("public TranslatedString TranslatedString { get; set; }");
             sb.AppendLine("public ITranslatedString TranslatedString2 { get; set; }");
             sb.AppendLine("public ITranslatedStringGetter TranslatedString3 { get; set; }");
+            sb.AppendLine("public TranslatedString? TranslatedString4 { get; set; }");
+            sb.AppendLine("public ITranslatedString? TranslatedString5 { get; set; }");
+            sb.AppendLine("public ITranslatedStringGetter? TranslatedString6 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.TranslatedString TranslatedString7 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.ITranslatedString TranslatedString8 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.ITranslatedStringGetter TranslatedString9 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.TranslatedString? TranslatedString10 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.ITranslatedString? TranslatedString11 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Strings.ITranslatedStringGetter? TranslatedString12 { get; set; }");
         });
        
         return TestHelper.Verify(source);

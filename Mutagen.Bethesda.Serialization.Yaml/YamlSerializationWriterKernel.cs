@@ -1,4 +1,7 @@
-﻿using Mutagen.Bethesda.Plugins;
+﻿using System.Drawing;
+using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Strings;
+using Noggog;
 using YamlDotNet.RepresentationModel;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
@@ -55,7 +58,22 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public void WriteFormKey(TextWriter writer, string fieldName, FormKey? formKey)
+    public void WriteFormKey(YamlNode writer, string fieldName, FormKey? formKey)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteColor(YamlNode writer, string fieldName, Color? color)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteTranslatedString(YamlNode writer, string fieldName, ITranslatedStringGetter? translatedString)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteBytes(YamlNode writer, string fieldName, ReadOnlyMemorySlice<byte>? bytes)
     {
         throw new NotImplementedException();
     }

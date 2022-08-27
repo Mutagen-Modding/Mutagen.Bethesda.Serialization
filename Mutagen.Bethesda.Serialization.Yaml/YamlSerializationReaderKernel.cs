@@ -1,4 +1,7 @@
-﻿using Mutagen.Bethesda.Plugins;
+﻿using System.Drawing;
+using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Strings;
+using Noggog;
 using YamlDotNet.RepresentationModel;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
@@ -56,6 +59,21 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
     }
 
     public FormKey ReadFormKey(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Color ReadColor(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TranslatedString ReadTranslatedString(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ReadOnlyMemorySlice<byte> ReadBytes(YamlNode reader)
     {
         throw new NotImplementedException();
     }

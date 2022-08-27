@@ -13,6 +13,15 @@ internal static class ITestModGetter_Serialization
         kernel.WriteTranslatedString(writer, item.TranslatedString);
         kernel.WriteTranslatedString(writer, item.TranslatedString2);
         kernel.WriteTranslatedString(writer, item.TranslatedString3);
+        kernel.WriteTranslatedString(writer, item.TranslatedString4);
+        kernel.WriteTranslatedString(writer, item.TranslatedString5);
+        kernel.WriteTranslatedString(writer, item.TranslatedString6);
+        kernel.WriteTranslatedString(writer, item.TranslatedString7);
+        kernel.WriteTranslatedString(writer, item.TranslatedString8);
+        kernel.WriteTranslatedString(writer, item.TranslatedString9);
+        kernel.WriteTranslatedString(writer, item.TranslatedString10);
+        kernel.WriteTranslatedString(writer, item.TranslatedString11);
+        kernel.WriteTranslatedString(writer, item.TranslatedString12);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

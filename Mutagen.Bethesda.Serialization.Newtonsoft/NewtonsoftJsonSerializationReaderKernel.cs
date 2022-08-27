@@ -1,5 +1,8 @@
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json.Linq;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
@@ -56,6 +59,21 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     }
 
     public FormKey ReadFormKey(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Color ReadColor(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TranslatedString ReadTranslatedString(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ReadOnlyMemorySlice<byte> ReadBytes(JTokenReader reader)
     {
         throw new NotImplementedException();
     }

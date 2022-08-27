@@ -9,7 +9,16 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
     {
         "TranslatedString",
         "ITranslatedStringGetter",
-        "ITranslatedString"
+        "ITranslatedString",
+        "TranslatedString?",
+        "ITranslatedStringGetter?",
+        "ITranslatedString?",
+        "Mutagen.Bethesda.Strings.TranslatedString",
+        "Mutagen.Bethesda.Strings.ITranslatedStringGetter",
+        "Mutagen.Bethesda.Strings.ITranslatedString",
+        "Mutagen.Bethesda.Strings.TranslatedString?",
+        "Mutagen.Bethesda.Strings.ITranslatedStringGetter?",
+        "Mutagen.Bethesda.Strings.ITranslatedString?",
     };
 
     public bool Applicable(ITypeSymbol typeSymbol) => false;
