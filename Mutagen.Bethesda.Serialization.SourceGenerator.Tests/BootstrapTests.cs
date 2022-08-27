@@ -144,19 +144,69 @@ public class SerializationTests
         TestHelper.RunSourceGenerator(source);
     }
     
-    private string GetModWithMember(Action<StructuredStringBuilder> memberBuilder)
+    [Fact]
+    public async Task TestMod()
+    {
+        await TestHelper.Verify(GetModWith((sb) =>
+        {
+            using (var c = sb.Class("SubObject"))
+            {
+                c.Interfaces.Add("ILoquiObject");
+            }
+
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("public string SubField { get; set; }");
+            }
+            
+            sb.AppendLine("int SomeInt { get; set; }");
+            sb.AppendLine("List<int> SomeList { get; set; }");
+            sb.AppendLine("SubObject SomeObject { get; set; }");
+        }));
+    }
+    
+    private string GetModWith(Action<StructuredStringBuilder> memberBuilder)
     {
         var sb = new StructuredStringBuilder();
-        using var ns = sb.Namespace("SomeNamespace");
         
-        using (var c = sb.Class("ModForTest"))
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        using (var c = sb.Class("ISomeModGetter"))
         {
-            c.BaseClass = "TestModz";
+            c.Type = ObjectType.Interface;
+            c.Interfaces.Add("IModGetter");
+            c.Interfaces.Add("ILoquiObjectGetter");
+        }
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+        
+        using (var c = sb.Class("SomeMod"))
+        {
+            c.BaseClass = "TestMod";
+            c.Interfaces.Add("ISomeModGetter");
+        }
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+
+        using (var c = sb.Class("SerializationTests"))
+        {
+            c.Static = true;
         }
 
         using (sb.CurlyBrace())
         {
-            memberBuilder(sb);
+            sb.AppendLine("public static void TestCall()");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var mod = new SomeMod();");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(mod);");
+            }
         }
 
         return sb.ToString();

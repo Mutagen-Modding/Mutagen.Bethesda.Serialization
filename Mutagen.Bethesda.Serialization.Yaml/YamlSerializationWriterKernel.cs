@@ -77,4 +77,9 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
     {
         throw new NotImplementedException();
     }
+
+    public IDisposable StartListSection(YamlNode writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -63,10 +63,14 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
-        sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
+        sb.AppendLine($"using ({kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\")");
         using (sb.CurlyBrace())
         {
-            _forFieldGenerator().Value.GenerateForField(obj, subType, null, "listItem", sb);
+            sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
+            using (sb.CurlyBrace())
+            {
+                _forFieldGenerator().Value.GenerateForField(obj, subType, null, "listItem", sb);
+            }
         }
     }
 

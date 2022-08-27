@@ -39,4 +39,5 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
+    public IDisposable StartListSection(TWriterObject writer, string? fieldName);
 }

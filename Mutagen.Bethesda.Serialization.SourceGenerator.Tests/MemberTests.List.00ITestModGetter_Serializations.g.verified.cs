@@ -10,21 +10,33 @@ internal static class ITestModGetter_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        foreach (var listItem in item.SomeList)
+        using (kernel.StartListSection(writer, "SomeList")
         {
-            kernel.WriteString(writer, null, listItem);
+            foreach (var listItem in item.SomeList)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
         }
-        foreach (var listItem in item.SomeList2)
+        using (kernel.StartListSection(writer, "SomeList2")
         {
-            kernel.WriteString(writer, null, listItem);
+            foreach (var listItem in item.SomeList2)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
         }
-        foreach (var listItem in item.SomeList3)
+        using (kernel.StartListSection(writer, "SomeList3")
         {
-            kernel.WriteString(writer, null, listItem);
+            foreach (var listItem in item.SomeList3)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
         }
-        foreach (var listItem in item.SomeList4)
+        using (kernel.StartListSection(writer, "SomeList4")
         {
-            kernel.WriteString(writer, null, listItem);
+            foreach (var listItem in item.SomeList4)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
         }
     }
 

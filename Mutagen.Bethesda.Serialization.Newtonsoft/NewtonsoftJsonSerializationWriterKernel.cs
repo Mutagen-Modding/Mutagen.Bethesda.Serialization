@@ -77,4 +77,9 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     {
         throw new NotImplementedException();
     }
+
+    public IDisposable StartListSection(JTokenWriter writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
 }

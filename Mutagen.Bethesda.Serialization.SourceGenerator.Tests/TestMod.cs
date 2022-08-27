@@ -8,7 +8,7 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-public partial class TestMod : AMod, IModGetter, ILoquiObject
+public partial class TestMod : AMod, ILoquiObject, IModGetter
 {
     public IEnumerable<IMajorRecordGetter> EnumerateMajorRecords()
     {

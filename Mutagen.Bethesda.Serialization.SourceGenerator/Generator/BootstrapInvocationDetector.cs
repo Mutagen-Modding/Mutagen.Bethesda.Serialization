@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
+using CSharpExtensions = Microsoft.CodeAnalysis.CSharp.CSharpExtensions;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
@@ -53,7 +54,6 @@ public class BootstrapInvocationDetector
         
         var type = symb.TryGetTypeSymbol();
         if (type == null) return ret;
-        if (type.BaseType?.Name != "AMod") return ret;
 
         var getterInterface = type.AllInterfaces
             .FirstOrDefault(x => x.Name.EndsWith("ModGetter") &&
