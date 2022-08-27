@@ -33,6 +33,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(FormLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ColorFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ByteArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(RecordTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

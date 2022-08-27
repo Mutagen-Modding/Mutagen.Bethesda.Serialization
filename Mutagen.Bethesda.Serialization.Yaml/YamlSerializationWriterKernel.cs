@@ -63,6 +63,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteRecordType(YamlNode writer, string? fieldName, RecordType? recordType)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteColor(YamlNode writer, string? fieldName, Color? color)
     {
         throw new NotImplementedException();

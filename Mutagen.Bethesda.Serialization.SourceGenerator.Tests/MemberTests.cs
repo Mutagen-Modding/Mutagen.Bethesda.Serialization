@@ -208,6 +208,12 @@ public class MemberTests
     }
     
     [Fact]
+    public Task RecordType()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("RecordType"));
+    }
+    
+    [Fact]
     public Task TranslatedString()
     {
         var source = GetModWithMember(sb =>

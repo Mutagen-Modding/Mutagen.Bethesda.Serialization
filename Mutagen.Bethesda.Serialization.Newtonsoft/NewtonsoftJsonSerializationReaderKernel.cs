@@ -68,6 +68,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new NotImplementedException();
     }
 
+    public RecordType ReadRecordType(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public TranslatedString ReadTranslatedString(JTokenReader reader)
     {
         throw new NotImplementedException();

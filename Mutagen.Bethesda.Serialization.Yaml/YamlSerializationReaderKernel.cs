@@ -68,6 +68,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public RecordType ReadRecordType(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public TranslatedString ReadTranslatedString(YamlNode reader)
     {
         throw new NotImplementedException();

@@ -19,6 +19,7 @@ public interface ISerializationReaderKernel<TReaderObject>
     public ulong ReadUInt64(TReaderObject reader);
     public FormKey ReadFormKey(TReaderObject reader);
     public Color ReadColor(TReaderObject reader);
+    public RecordType ReadRecordType(TReaderObject reader);
     public TranslatedString ReadTranslatedString(TReaderObject reader);
     public ReadOnlyMemorySlice<byte> ReadBytes(TReaderObject reader);
 }
@@ -36,6 +37,7 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item);
     public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item);
     public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? formKey);
+    public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? recordType);
     public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);

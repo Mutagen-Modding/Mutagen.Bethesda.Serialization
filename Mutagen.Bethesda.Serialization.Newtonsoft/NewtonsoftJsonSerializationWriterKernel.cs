@@ -63,6 +63,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void WriteRecordType(JTokenWriter writer, string? fieldName, RecordType? recordType)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteColor(JTokenWriter writer, string? fieldName, Color? color)
     {
         throw new NotImplementedException();
