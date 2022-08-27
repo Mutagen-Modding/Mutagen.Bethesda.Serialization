@@ -250,6 +250,19 @@ public class MemberTests
     }
     
     [Fact]
+    public Task GenderedItem()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public GenderedItem<string> SomeGenderedInt { get; set; }");
+            sb.AppendLine("public IGenderedItem<string> SomeGenderedInt2 { get; set; }");
+            sb.AppendLine("public IGenderedItemGetter<string> SomeGenderedInt3 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task FormLink()
     {
         var source = GetModWithMember(sb =>
