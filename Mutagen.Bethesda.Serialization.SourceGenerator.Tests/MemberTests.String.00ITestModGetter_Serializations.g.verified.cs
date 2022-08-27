@@ -10,12 +10,12 @@ internal static class ITestModGetter_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteString(writer, item.SomeMember0);
-        kernel.WriteString(writer, item.SomeMember1);
-        kernel.WriteString(writer, item.SomeMember2);
-        kernel.WriteString(writer, item.SomeMember3);
-        kernel.WriteString(writer, item.SomeMember4);
-        kernel.WriteString(writer, item.SomeMember5);
+        kernel.WriteString(writer, "SomeMember0", item.SomeMember0);
+        kernel.WriteString(writer, "SomeMember1", item.SomeMember1);
+        kernel.WriteString(writer, "SomeMember2", item.SomeMember2);
+        kernel.WriteString(writer, "SomeMember3", item.SomeMember3);
+        kernel.WriteString(writer, "SomeMember4", item.SomeMember4);
+        kernel.WriteString(writer, "SomeMember5", item.SomeMember5);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

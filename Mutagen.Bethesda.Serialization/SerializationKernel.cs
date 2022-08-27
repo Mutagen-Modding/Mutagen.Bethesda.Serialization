@@ -26,17 +26,17 @@ public interface ISerializationReaderKernel<TReaderObject>
 public interface ISerializationWriterKernel<TWriterObject>
 {
     public TWriterObject GetNewObject();
-    public void WriteString(TWriterObject writer, string fieldName, string? item);
-    public void WriteInt8(TWriterObject writer, string fieldName, sbyte? item);
-    public void WriteInt16(TWriterObject writer, string fieldName, short? item);
-    public void WriteInt32(TWriterObject writer, string fieldName, int? item);
-    public void WriteInt64(TWriterObject writer, string fieldName, long? item);
-    public void WriteUInt8(TWriterObject writer, string fieldName, byte? item);
-    public void WriteUInt16(TWriterObject writer, string fieldName, ushort? item);
-    public void WriteUInt32(TWriterObject writer, string fieldName, uint? item);
-    public void WriteUInt64(TWriterObject writer, string fieldName, ulong? item);
-    public void WriteFormKey(TWriterObject writer, string fieldName, FormKey? formKey);
-    public void WriteColor(TWriterObject writer, string fieldName, Color? color);
-    public void WriteTranslatedString(TWriterObject writer, string fieldName, ITranslatedStringGetter? translatedString);
-    public void WriteBytes(TWriterObject writer, string fieldName, ReadOnlyMemorySlice<byte>? bytes);
+    public void WriteString(TWriterObject writer, string? fieldName, string? item);
+    public void WriteInt8(TWriterObject writer, string? fieldName, sbyte? item);
+    public void WriteInt16(TWriterObject writer, string? fieldName, short? item);
+    public void WriteInt32(TWriterObject writer, string? fieldName, int? item);
+    public void WriteInt64(TWriterObject writer, string? fieldName, long? item);
+    public void WriteUInt8(TWriterObject writer, string? fieldName, byte? item);
+    public void WriteUInt16(TWriterObject writer, string? fieldName, ushort? item);
+    public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item);
+    public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item);
+    public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? formKey);
+    public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
+    public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
+    public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
 }

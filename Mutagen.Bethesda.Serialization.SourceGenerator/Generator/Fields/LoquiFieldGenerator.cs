@@ -18,6 +18,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForSerialize(
         ITypeSymbol obj,
         ITypeSymbol field, 
+        string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor,

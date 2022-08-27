@@ -23,11 +23,11 @@ public class SerializationFieldGenerator
         }
     }
     
-    public void GenerateForField(ITypeSymbol obj, ITypeSymbol fieldType, string accessor, StructuredStringBuilder sb)
+    public void GenerateForField(ITypeSymbol obj, ITypeSymbol fieldType, string? fieldName, string accessor, StructuredStringBuilder sb)
     {
         if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
         {
-            gen.GenerateForSerialize(obj, fieldType, accessor, "writer", "kernel", sb);
+            gen.GenerateForSerialize(obj, fieldType, fieldName, accessor, "writer", "kernel", sb);
         }
         else
         {
@@ -35,7 +35,7 @@ public class SerializationFieldGenerator
             {
                 if (fieldGenerator.Applicable(fieldType))
                 {
-                    fieldGenerator.GenerateForSerialize(obj, fieldType, accessor, "writer", "kernel", sb);
+                    fieldGenerator.GenerateForSerialize(obj, fieldType, fieldName, accessor, "writer", "kernel", sb);
                     return;
                 }
             }

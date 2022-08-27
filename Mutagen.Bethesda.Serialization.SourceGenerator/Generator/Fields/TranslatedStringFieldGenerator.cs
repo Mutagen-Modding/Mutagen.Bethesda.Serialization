@@ -26,12 +26,13 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForSerialize(
         ITypeSymbol obj, 
         ITypeSymbol field,
+        string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteTranslatedString({writerAccessor}, {fieldAccessor});");
+        sb.AppendLine($"{kernelAccessor}.WriteTranslatedString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
     }
 
     public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,

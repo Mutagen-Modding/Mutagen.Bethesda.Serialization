@@ -10,18 +10,18 @@ internal static class ITestModGetter_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteTranslatedString(writer, item.TranslatedString);
-        kernel.WriteTranslatedString(writer, item.TranslatedString2);
-        kernel.WriteTranslatedString(writer, item.TranslatedString3);
-        kernel.WriteTranslatedString(writer, item.TranslatedString4);
-        kernel.WriteTranslatedString(writer, item.TranslatedString5);
-        kernel.WriteTranslatedString(writer, item.TranslatedString6);
-        kernel.WriteTranslatedString(writer, item.TranslatedString7);
-        kernel.WriteTranslatedString(writer, item.TranslatedString8);
-        kernel.WriteTranslatedString(writer, item.TranslatedString9);
-        kernel.WriteTranslatedString(writer, item.TranslatedString10);
-        kernel.WriteTranslatedString(writer, item.TranslatedString11);
-        kernel.WriteTranslatedString(writer, item.TranslatedString12);
+        kernel.WriteTranslatedString(writer, "TranslatedString", item.TranslatedString);
+        kernel.WriteTranslatedString(writer, "TranslatedString2", item.TranslatedString2);
+        kernel.WriteTranslatedString(writer, "TranslatedString3", item.TranslatedString3);
+        kernel.WriteTranslatedString(writer, "TranslatedString4", item.TranslatedString4);
+        kernel.WriteTranslatedString(writer, "TranslatedString5", item.TranslatedString5);
+        kernel.WriteTranslatedString(writer, "TranslatedString6", item.TranslatedString6);
+        kernel.WriteTranslatedString(writer, "TranslatedString7", item.TranslatedString7);
+        kernel.WriteTranslatedString(writer, "TranslatedString8", item.TranslatedString8);
+        kernel.WriteTranslatedString(writer, "TranslatedString9", item.TranslatedString9);
+        kernel.WriteTranslatedString(writer, "TranslatedString10", item.TranslatedString10);
+        kernel.WriteTranslatedString(writer, "TranslatedString11", item.TranslatedString11);
+        kernel.WriteTranslatedString(writer, "TranslatedString12", item.TranslatedString12);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

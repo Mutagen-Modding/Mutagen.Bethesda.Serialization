@@ -12,19 +12,19 @@ internal static class ITestModGetter_Serialization
     {
         foreach (var listItem in item.SomeList)
         {
-            kernel.WriteString(writer, listItem);
+            kernel.WriteString(writer, null, listItem);
         }
         foreach (var listItem in item.SomeList2)
         {
-            kernel.WriteString(writer, listItem);
+            kernel.WriteString(writer, null, listItem);
         }
         foreach (var listItem in item.SomeList3)
         {
-            kernel.WriteString(writer, listItem);
+            kernel.WriteString(writer, null, listItem);
         }
         foreach (var listItem in item.SomeList4)
         {
-            kernel.WriteString(writer, listItem);
+            kernel.WriteString(writer, null, listItem);
         }
     }
 

@@ -28,12 +28,13 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForSerialize(
         ITypeSymbol obj, 
         ITypeSymbol field,
+        string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteFormKey({writerAccessor}, {fieldAccessor}.FormKey);");
+        sb.AppendLine($"{kernelAccessor}.WriteFormKey({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}.FormKey);");
     }
 
     public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,

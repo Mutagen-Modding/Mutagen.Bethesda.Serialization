@@ -17,12 +17,13 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForSerialize(
         ITypeSymbol obj, 
         ITypeSymbol field,
+        string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteEnum({writerAccessor}, {fieldAccessor});");
+        sb.AppendLine($"{kernelAccessor}.WriteEnum({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
     }
 
     public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol,

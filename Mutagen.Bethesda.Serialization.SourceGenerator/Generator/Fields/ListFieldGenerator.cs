@@ -44,6 +44,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForSerialize(
         ITypeSymbol obj, 
         ITypeSymbol field,
+        string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
@@ -65,7 +66,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
         using (sb.CurlyBrace())
         {
-            _forFieldGenerator().Value.GenerateForField(obj, subType, "listItem", sb);
+            _forFieldGenerator().Value.GenerateForField(obj, subType, null, "listItem", sb);
         }
     }
 
