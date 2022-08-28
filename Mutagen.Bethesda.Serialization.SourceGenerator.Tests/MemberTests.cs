@@ -150,13 +150,16 @@ public class MemberTests
         {
             sb.AppendLine("public enum MyEnum { }");
             sb.AppendLine("public MyEnum SomeEnum { get; set; }");
+            sb.AppendLine("public System.Nullable<MyEnum> SomeEnum2 { get; set; }");
             
             sb.AppendLine("public enum MyEnum2 : uint { }");
-            sb.AppendLine("public MyEnum2 SomeEnum2 { get; set; }");
+            sb.AppendLine("public MyEnum2 SomeEnum3 { get; set; }");
+            sb.AppendLine("public System.Nullable<MyEnum2> SomeEnum4 { get; set; }");
             
             sb.AppendLine("[System.Flags]");
             sb.AppendLine("public enum MyEnum3 { }");
-            sb.AppendLine("public MyEnum3 SomeEnum3 { get; set; }");
+            sb.AppendLine("public MyEnum3 SomeEnum5 { get; set; }");
+            sb.AppendLine("public System.Nullable<MyEnum3> SomeEnum6 { get; set; }");
         });
        
         return TestHelper.Verify(source);
@@ -210,7 +213,7 @@ public class MemberTests
     [Fact]
     public Task RecordType()
     {
-        return TestHelper.Verify(GetPrimitiveTest("RecordType"));
+        return TestHelper.Verify(GetPrimitiveTest("RecordType", "Mutagen.Bethesda.Plugins.RecordType"));
     }
     
     [Fact]
@@ -273,6 +276,34 @@ public class MemberTests
             sb.AppendLine("public IFormLinkNullable<INpcGetter> SomeFormKey4 { get; set; }");
             sb.AppendLine("public IFormLinkGetter<INpcGetter> SomeFormKey5 { get; set; }");
             sb.AppendLine("public IFormLinkNullableGetter<INpcGetter> SomeFormKey6 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task AssetLink()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public AssetLink<INpcGetter> SomeFormKey { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter> SomeFormKey2 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey3 { get; set; }");
+            sb.AppendLine("public IAssetLink<INpcGetter> SomeFormKey4 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeFormKey5 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey6 { get; set; }");
+            sb.AppendLine("public IAssetLinkGetter<INpcGetter> SomeFormKey7 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeFormKey8 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey9 { get; set; }");
+            sb.AppendLine("public AssetLink<INpcGetter>? SomeFormKey10 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>? SomeFormKey11 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey12 { get; set; }");
+            sb.AppendLine("public IAssetLink<INpcGetter>? SomeFormKey13 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeFormKey14 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey15 { get; set; }");
+            sb.AppendLine("public IAssetLinkGetter<INpcGetter>? SomeFormKey16 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeFormKey17 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey18 { get; set; }");
         });
        
         return TestHelper.Verify(source);

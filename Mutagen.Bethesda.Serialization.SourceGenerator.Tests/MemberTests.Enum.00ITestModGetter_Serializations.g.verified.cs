@@ -13,6 +13,9 @@ internal static class ITestModGetter_Serialization
         kernel.WriteEnum(writer, "SomeEnum", item.SomeEnum);
         kernel.WriteEnum(writer, "SomeEnum2", item.SomeEnum2);
         kernel.WriteEnum(writer, "SomeEnum3", item.SomeEnum3);
+        kernel.WriteEnum(writer, "SomeEnum4", item.SomeEnum4);
+        kernel.WriteEnum(writer, "SomeEnum5", item.SomeEnum5);
+        kernel.WriteEnum(writer, "SomeEnum6", item.SomeEnum6);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

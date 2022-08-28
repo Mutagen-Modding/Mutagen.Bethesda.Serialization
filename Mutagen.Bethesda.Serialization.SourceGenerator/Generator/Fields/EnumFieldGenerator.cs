@@ -9,6 +9,12 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(ITypeSymbol typeSymbol)
     {
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol
+            && namedTypeSymbol.TypeArguments.Length == 1
+            && namedTypeSymbol.Name == "Nullable")
+        {
+            typeSymbol = namedTypeSymbol.TypeArguments[0];
+        }
         return typeSymbol.TypeKind == TypeKind.Enum
             || (typeSymbol.BaseType is { Name: "Enum" } 
                 && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
