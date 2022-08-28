@@ -371,7 +371,8 @@ public class MemberTests
     {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public int StaticRegistration { get; set; }");
+            sb.AppendLine("public ILoquiRegistration StaticRegistration { get; set; }");
+            sb.AppendLine("public ILoquiRegistration Registration { get; set; }");
             sb.AppendLine("public int SomeInt { get; set; }");
         });
        
