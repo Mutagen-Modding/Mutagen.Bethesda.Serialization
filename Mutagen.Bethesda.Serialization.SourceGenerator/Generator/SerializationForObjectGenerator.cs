@@ -1,5 +1,4 @@
 using System.Text;
-using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Noggog;
@@ -12,27 +11,21 @@ public class SerializationForObjectGenerator
 {
     private readonly PropertyFilter _propertyFilter;
     private readonly SerializationFieldGenerator _forFieldGenerator;
-    private readonly IsLoquiObjectTester _isLoquiObjectTester;
+    private readonly LoquiMapping _loquiMapping;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
         SerializationFieldGenerator forFieldGenerator,
-        IsLoquiObjectTester isLoquiObjectTester)
+        LoquiMapping loquiMapping)
     {
         _propertyFilter = propertyFilter;
         _forFieldGenerator = forFieldGenerator;
-        _isLoquiObjectTester = isLoquiObjectTester;
+        _loquiMapping = loquiMapping;
     }
     
     public void Generate(SourceProductionContext context, ITypeSymbol obj)
     {
-        Type? baseType = null;
-        if (LoquiRegistration.StaticRegister.TryGetRegisterByFullName(obj.ToString(), out var regis)
-            && regis.ClassType.BaseType != null
-            && _isLoquiObjectTester.IsLoqui(regis.ClassType.BaseType))
-        {
-            baseType = regis.ClassType.BaseType;
-        }
+        var baseType = _loquiMapping.TryGetBaseClass(obj);
         
         var sb = new StructuredStringBuilder();
         
