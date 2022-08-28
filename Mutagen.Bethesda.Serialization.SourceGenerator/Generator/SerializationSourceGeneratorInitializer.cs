@@ -9,19 +9,22 @@ public class SerializationSourceGeneratorInitializer
     private readonly ModInvocationDetector _modInvocationDetector;
     private readonly SerializationForObjectsGenerator _serializationForObjectsGenerator;
     private readonly StubGenerator _stubGenerator;
+    private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public SerializationSourceGeneratorInitializer(
         BootstrapInvocationDetector invocationDetector,
         MixinForModGenerator mixinForModGenerator,
         ModInvocationDetector modInvocationDetector,
         SerializationForObjectsGenerator serializationForObjectsGenerator,
-        StubGenerator stubGenerator)
+        StubGenerator stubGenerator,
+        IsLoquiObjectTester isLoquiObjectTester)
     {
         _invocationDetector = invocationDetector;
         _mixinForModGenerator = mixinForModGenerator;
         _modInvocationDetector = modInvocationDetector;
         _serializationForObjectsGenerator = serializationForObjectsGenerator;
         _stubGenerator = stubGenerator;
+        _isLoquiObjectTester = isLoquiObjectTester;
     }
     
     public void Initialize(IncrementalGeneratorInitializationContext context)

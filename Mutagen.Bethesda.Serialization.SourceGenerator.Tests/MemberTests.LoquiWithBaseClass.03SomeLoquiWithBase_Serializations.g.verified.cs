@@ -1,19 +1,19 @@
-﻿//HintName: ITestModGetter_Serializations.g.cs
+﻿//HintName: SomeLoquiWithBase_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class ITestModGetter_Serialization
+internal static class SomeLoquiWithBase_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase item,
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        SomeLoqui_Serialization.Serialize(item.MyLoqui, writer, kernel);
+        BaseLoqui_Serialization.Serialize<TWriteObject>(item, writer, kernel);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

@@ -200,8 +200,18 @@ public class MemberTests
     {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public class MyLoqui : SomeBaseClass, ILoquiObject { }");
-            sb.AppendLine("public MyLoqui SomeLoqui { get; set; }");
+            sb.AppendLine("public SomeLoqui MyLoqui { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task LoquiWithBaseClass()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public SomeLoquiWithBase MyLoqui { get; set; }");
         });
        
         return TestHelper.Verify(source);

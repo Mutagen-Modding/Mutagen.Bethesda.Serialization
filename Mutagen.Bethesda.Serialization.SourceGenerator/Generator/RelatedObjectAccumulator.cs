@@ -30,6 +30,10 @@ public class RelatedObjectAccumulator
         cancel.ThrowIfCancellationRequested();
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
+        if (details.BaseType != null)
+        {
+            GetRelatedObjects(details.BaseType, processedDetails, cancel);
+        }
         foreach (var memb in details.GetMembers())
         {
             cancel.ThrowIfCancellationRequested();

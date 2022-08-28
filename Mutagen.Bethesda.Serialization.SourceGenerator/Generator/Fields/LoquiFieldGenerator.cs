@@ -13,7 +13,24 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         _isLoquiObjectTester = isLoquiObjectTester;
     }
 
-    public bool Applicable(ITypeSymbol typeSymbol) => _isLoquiObjectTester.IsLoqui(typeSymbol);
+    private static HashSet<string> _genericTestTypes = new()
+    {
+        "IMajorRecordInternal"
+    };
+
+    public bool Applicable(ITypeSymbol typeSymbol)
+    {
+        if (_isLoquiObjectTester.IsLoqui(typeSymbol)) return true;
+        if (typeSymbol is ITypeParameterSymbol typeParameterSymbol)
+        {
+            if (typeParameterSymbol.ConstraintTypes.Any(x => _genericTestTypes.Contains(x.Name)))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
     
     public void GenerateForSerialize(
         ITypeSymbol obj,

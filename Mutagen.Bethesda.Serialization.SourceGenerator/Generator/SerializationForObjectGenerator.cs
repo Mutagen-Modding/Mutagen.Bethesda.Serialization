@@ -1,4 +1,5 @@
 using System.Text;
+using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Noggog;
@@ -11,16 +12,28 @@ public class SerializationForObjectGenerator
 {
     private readonly PropertyFilter _propertyFilter;
     private readonly SerializationFieldGenerator _forFieldGenerator;
+    private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
-        SerializationFieldGenerator forFieldGenerator)
+        SerializationFieldGenerator forFieldGenerator,
+        IsLoquiObjectTester isLoquiObjectTester)
     {
         _propertyFilter = propertyFilter;
         _forFieldGenerator = forFieldGenerator;
+        _isLoquiObjectTester = isLoquiObjectTester;
     }
+    
     public void Generate(SourceProductionContext context, ITypeSymbol obj)
     {
+        Type? baseType = null;
+        if (LoquiRegistration.StaticRegister.TryGetRegisterByFullName(obj.ToString(), out var regis)
+            && regis.ClassType.BaseType != null
+            && _isLoquiObjectTester.IsLoqui(regis.ClassType.BaseType))
+        {
+            baseType = regis.ClassType.BaseType;
+        }
+        
         var sb = new StructuredStringBuilder();
         
         sb.AppendLine($"using Mutagen.Bethesda.Serialization;");
@@ -45,6 +58,10 @@ public class SerializationForObjectGenerator
             }
             using (sb.CurlyBrace())
             {
+                if (baseType != null)
+                {
+                    sb.AppendLine($"{baseType.Name}_Serialization.Serialize<TWriteObject>(item, writer, kernel);");
+                }
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
                     if (_propertyFilter.Skip(prop)) continue;
