@@ -10,6 +10,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     private static readonly HashSet<string> _expectedStrings = new()
     {
         "AssetLink",
+        "AssetLinkGetter",
         "IAssetLink",
         "IAssetLinkGetter",
         "Mutagen.Bethesda.Plugins.Assets.AssetLink",

@@ -29,7 +29,12 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(UInt16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt32FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt64FieldGenerator), typeof(ISerializationForFieldGenerator))]
-[Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P3FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P3Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P2IntFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P2Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(PercentFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ListFieldGenerator))]
 [Register(typeof(FormLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ColorFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ByteArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -37,6 +42,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(GenderedTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(AssetLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(DictFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(ArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

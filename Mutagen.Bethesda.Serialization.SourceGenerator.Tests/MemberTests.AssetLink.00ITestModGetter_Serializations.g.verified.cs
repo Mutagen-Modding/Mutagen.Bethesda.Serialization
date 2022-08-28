@@ -28,6 +28,9 @@ internal static class ITestModGetter_Serialization
         kernel.WriteString(writer, "SomeFormKey16", item.SomeFormKey16.RawPath);
         kernel.WriteString(writer, "SomeFormKey17", item.SomeFormKey17.RawPath);
         kernel.WriteString(writer, "SomeFormKey18", item.SomeFormKey18.RawPath);
+        kernel.WriteString(writer, "SomeFormKey19", item.SomeFormKey19.RawPath);
+        kernel.WriteString(writer, "SomeFormKey20", item.SomeFormKey20.RawPath);
+        kernel.WriteString(writer, "SomeFormKey21", item.SomeFormKey21.RawPath);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

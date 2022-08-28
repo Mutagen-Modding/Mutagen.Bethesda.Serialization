@@ -68,6 +68,31 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteP2Int(YamlNode writer, string? fieldName, P2Int? p2)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteP2Int16(YamlNode writer, string? fieldName, P2Int16? p2)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteP3Float(YamlNode writer, string? fieldName, P3Float? p3Float)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteP3Int16(YamlNode writer, string? fieldName, P3Int16? p3)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WritePercent(YamlNode writer, string? fieldName, Percent? percent)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteColor(YamlNode writer, string? fieldName, Color? color)
     {
         throw new NotImplementedException();

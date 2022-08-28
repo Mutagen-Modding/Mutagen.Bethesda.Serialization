@@ -38,6 +38,11 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item);
     public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? formKey);
     public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? recordType);
+    public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? p2);
+    public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? p2);
+    public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? p3);
+    public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? p3);
+    public void WritePercent(TWriterObject writer, string? fieldName, Percent? percent);
     public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
