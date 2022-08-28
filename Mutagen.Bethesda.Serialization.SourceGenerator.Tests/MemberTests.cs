@@ -19,7 +19,7 @@ public class MemberTests
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
-        sb.AppendLine("public interface ITestModGetter : IModGetter");
+        sb.AppendLine("public interface ITestModGetter : IModGetter, ILoquiObject");
         using (sb.CurlyBrace())
         {
             memberBuilder(sb);
