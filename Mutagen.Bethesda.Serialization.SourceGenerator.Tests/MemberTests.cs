@@ -253,6 +253,19 @@ public class MemberTests
     }
     
     [Fact]
+    public Task Dictionary()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public Dictionary<int, string> SomeDict { get; set; }");
+            sb.AppendLine("public IReadOnlyDictionary<int, string> SomeDict1 { get; set; }");
+            sb.AppendLine("public IDictionary<int, string> SomeDict2 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task GenderedItem()
     {
         var source = GetModWithMember(sb =>

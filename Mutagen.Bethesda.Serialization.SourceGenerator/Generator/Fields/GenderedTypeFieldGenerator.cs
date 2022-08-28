@@ -48,8 +48,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
-        _forFieldGenerator().Value.GenerateForField(obj, subType, fieldName == null ? null : $"{fieldName}Male", $"{fieldAccessor}.Male", sb);
-        _forFieldGenerator().Value.GenerateForField(obj, subType, fieldName == null ? null : $"{fieldName}Female", $"{fieldAccessor}.Female", sb);
+        _forFieldGenerator().Value.GenerateForField(obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Male", $"{fieldAccessor}.Male", sb);
+        _forFieldGenerator().Value.GenerateForField(obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Female", $"{fieldAccessor}.Female", sb);
     }
 
     public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,

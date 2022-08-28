@@ -11,12 +11,13 @@ internal static class ISomeModGetter_Serialization
         ISerializationWriterKernel<TWriteObject> kernel)
     {
         kernel.WriteInt32(writer, "SomeInt", item.SomeInt);
-        using (kernel.StartListSection(writer, "SomeList")
         {
+            var listWriter = kernel.StartListSection(writer, "SomeList");
             foreach (var listItem in item.SomeList)
             {
-                kernel.WriteInt32(writer, null, listItem);
+                kernel.WriteInt32(listWriter, null, listItem);
             }
+            kernel.EndListSection();
         }
         SubObject_Serialization.Serialize(item.SomeObject, writer, kernel);
     }

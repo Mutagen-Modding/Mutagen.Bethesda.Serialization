@@ -83,7 +83,42 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public IDisposable StartListSection(YamlNode writer, string? fieldName)
+    public YamlNode StartListSection(YamlNode writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndListSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartDictionarySection(YamlNode writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartDictionaryItem(YamlNode writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartDictionaryKey(YamlNode writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryKey()
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartDictionaryValue(YamlNode writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryValue()
     {
         throw new NotImplementedException();
     }

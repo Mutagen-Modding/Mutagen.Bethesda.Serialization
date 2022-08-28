@@ -83,7 +83,42 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
-    public IDisposable StartListSection(JTokenWriter writer, string? fieldName)
+    public JTokenWriter StartListSection(JTokenWriter writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndListSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartDictionarySection(JTokenWriter writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartDictionaryItem(JTokenWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartDictionaryKey(JTokenWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryKey()
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartDictionaryValue(JTokenWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryValue()
     {
         throw new NotImplementedException();
     }

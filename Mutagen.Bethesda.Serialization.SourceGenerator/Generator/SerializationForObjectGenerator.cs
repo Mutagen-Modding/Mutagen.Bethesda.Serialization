@@ -48,7 +48,7 @@ public class SerializationForObjectGenerator
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
                     if (_propertyFilter.Skip(prop)) continue;
-                    _forFieldGenerator.GenerateForField(obj, prop.Type, prop.Name, $"item.{prop.Name}", sb);
+                    _forFieldGenerator.GenerateForField(obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb);
                 }
             }
             sb.AppendLine();

@@ -36,6 +36,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(RecordTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(GenderedTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(AssetLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(DictFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }
