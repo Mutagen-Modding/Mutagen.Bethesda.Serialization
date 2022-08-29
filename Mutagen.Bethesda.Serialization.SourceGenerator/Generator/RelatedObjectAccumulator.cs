@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
@@ -13,16 +13,18 @@ public class RelatedObjectAccumulator
     }
     
     public ImmutableHashSet<ITypeSymbol> GetRelatedObjects(
+        Compilation compilation,
         ITypeSymbol details, 
         CancellationToken cancel)
     {
         var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
-        GetRelatedObjects(details, objs, cancel);
+        GetRelatedObjects(compilation, details, objs, cancel);
         objs.Add(details);
         return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     private void GetRelatedObjects(
+        Compilation compilation,
         ITypeSymbol details, 
         HashSet<ITypeSymbol> processedDetails,
         CancellationToken cancel)
@@ -32,7 +34,7 @@ public class RelatedObjectAccumulator
         if (!processedDetails.Add(details.OriginalDefinition)) return;
         if (details.BaseType != null)
         {
-            GetRelatedObjects(details.BaseType, processedDetails, cancel);
+            GetRelatedObjects(compilation, details.BaseType, processedDetails, cancel);
         }
         foreach (var memb in details.GetMembers())
         {
@@ -42,7 +44,7 @@ public class RelatedObjectAccumulator
             
             var type = TransformSymbol(prop.Type);
             
-            GetRelatedObjects(type, processedDetails, cancel);
+            GetRelatedObjects(compilation, type, processedDetails, cancel);
         }
     }
 

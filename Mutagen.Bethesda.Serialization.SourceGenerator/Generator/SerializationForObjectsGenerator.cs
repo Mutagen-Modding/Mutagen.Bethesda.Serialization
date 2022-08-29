@@ -29,10 +29,11 @@ public class SerializationForObjectsGenerator
             });
         var allClassesToGenerate = distinctMods
             .SelectMany((mods, _) => mods)
+            .Combine(context.CompilationProvider)
             .SelectMany((mod, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                return _accumulator.GetRelatedObjects(mod!, cancel);
+                return _accumulator.GetRelatedObjects(mod.Right, mod.Left!, cancel);
             });
         context.RegisterSourceOutput(
             allClassesToGenerate,
