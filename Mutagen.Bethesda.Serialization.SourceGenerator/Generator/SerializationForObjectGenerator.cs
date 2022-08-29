@@ -26,6 +26,7 @@ public class SerializationForObjectGenerator
     public void Generate(SourceProductionContext context, ITypeSymbol obj)
     {
         var baseType = _loquiMapping.TryGetBaseClass(obj);
+        var inheriting = _loquiMapping.TryGetInheritingClasses(obj);
         
         var sb = new StructuredStringBuilder();
         
@@ -43,6 +44,48 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
+            if (inheriting.Count > 0)
+            {
+                using (var args = sb.Function($"public static void SerializeWithCheck<TWriteObject>"))
+                {
+                    args.Add($"{obj} item");
+                    args.Add($"TWriteObject writer");
+                    args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("switch (item)");
+                    using (sb.CurlyBrace())
+                    {
+                        foreach (var inherit in inheriting)
+                        {
+                            sb.AppendLine($"case {inherit.GetterType} {inherit.ClassType.Name}Getter:");
+                            using (sb.IncreaseDepth())
+                            {
+                                sb.AppendLine($"{inherit.ClassType.Name}_Serialization.Serialize({inherit.ClassType.Name}Getter, writer, kernel);");
+                                sb.AppendLine("break;");
+                            }
+                        }
+
+                        if (!obj.IsAbstract)
+                        {
+                            sb.AppendLine($"case {obj} {obj}Getter:");
+                            using (sb.IncreaseDepth())
+                            {
+                                sb.AppendLine($"{obj.Name}_Serialization.Serialize({obj}Getter, writer, kernel);");
+                                sb.AppendLine("break;");
+                            }
+                        }
+                        sb.AppendLine("default:");
+                        using (sb.IncreaseDepth())
+                        {
+                            sb.AppendLine($"throw new NotImplementedException();");
+                        }
+                    }
+                }
+                sb.AppendLine();
+            }
+            
             using (var args = sb.Function($"public static void Serialize<TWriteObject>"))
             {
                 args.Add($"{obj} item");

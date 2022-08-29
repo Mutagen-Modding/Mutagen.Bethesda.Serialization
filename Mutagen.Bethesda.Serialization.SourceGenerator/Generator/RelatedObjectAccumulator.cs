@@ -1,14 +1,18 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class RelatedObjectAccumulator
 {
+    private readonly LoquiMapping _loquiMapping;
     private readonly IsLoquiObjectTester _loquiObjectTester;
 
-    public RelatedObjectAccumulator(IsLoquiObjectTester loquiObjectTester)
+    public RelatedObjectAccumulator(
+        LoquiMapping loquiMapping,
+        IsLoquiObjectTester loquiObjectTester)
     {
+        _loquiMapping = loquiMapping;
         _loquiObjectTester = loquiObjectTester;
     }
     
@@ -32,9 +36,24 @@ public class RelatedObjectAccumulator
         cancel.ThrowIfCancellationRequested();
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
-        if (details.BaseType != null)
+        var baseType = _loquiMapping.TryGetBaseClass(details);
+        if (baseType != null)
         {
-            GetRelatedObjects(compilation, details.BaseType, processedDetails, cancel);
+            var baseTypeSymbol = compilation.GetTypeByMetadataName(baseType.FullName!);
+            if (baseTypeSymbol != null)
+            {
+                GetRelatedObjects(compilation, baseTypeSymbol, processedDetails, cancel);
+            }
+        }
+
+        var inheriting = _loquiMapping.TryGetInheritingClasses(details);
+        foreach (var inherit in inheriting)
+        {
+            var inheritTypeSymbol = compilation.GetTypeByMetadataName(inherit.FullName!);
+            if (inheritTypeSymbol != null)
+            {
+                GetRelatedObjects(compilation, inheritTypeSymbol, processedDetails, cancel);
+            }
         }
         foreach (var memb in details.GetMembers())
         {

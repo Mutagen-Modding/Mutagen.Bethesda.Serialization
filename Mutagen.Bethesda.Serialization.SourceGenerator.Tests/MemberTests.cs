@@ -218,6 +218,17 @@ public class MemberTests
     }
     
     [Fact]
+    public Task LoquiWithMultipleBaseClasses()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public AbstractBaseLoqui MyLoqui { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task Bool()
     {
         return TestHelper.Verify(GetPrimitiveTest("bool", "Boolean"));

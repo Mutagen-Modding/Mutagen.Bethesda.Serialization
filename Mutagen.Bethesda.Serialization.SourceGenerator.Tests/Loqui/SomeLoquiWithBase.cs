@@ -2,11 +2,11 @@
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-public interface ISomeLoquiWithBase : ISomeLoquiWithBaseGetter, ILoquiObject
+public interface ISomeLoquiWithBase : ISomeLoquiWithBaseGetter, IBaseLoqui
 {
 }
 
-public interface ISomeLoquiWithBaseGetter : ILoquiObjectGetter
+public interface ISomeLoquiWithBaseGetter : IBaseLoquiGetter
 {
 }
 
