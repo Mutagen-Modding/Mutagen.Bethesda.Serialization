@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
-using Noggog.StructuredStrings.CSharp;
 using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;

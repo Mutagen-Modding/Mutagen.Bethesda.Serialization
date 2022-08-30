@@ -5,12 +5,18 @@ using Mutagen.Bethesda.Plugins.Binary.Parameters;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
 using Noggog;
+using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-public partial class TestMod : AMod, ILoquiObject, IModGetter
+public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnumerable
 {
     public IEnumerable<IMajorRecordGetter> EnumerateMajorRecords()
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerable<TMajor> IMajorRecordEnumerable.EnumerateMajorRecords<TMajor>(bool throwIfUnknown)
     {
         throw new NotImplementedException();
     }
@@ -87,4 +93,8 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter
     public override bool CanUseLocalization { get; }
     public override bool UsingLocalization { get; set; }
     public ILoquiRegistration Registration { get; }
+    public void Print(StructuredStringBuilder sb, string? name = null)
+    {
+        throw new NotImplementedException();
+    }
 }

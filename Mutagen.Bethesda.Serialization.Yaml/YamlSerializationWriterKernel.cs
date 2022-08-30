@@ -58,6 +58,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteFloat(YamlNode writer, string? fieldName, float? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteFormKey(YamlNode writer, string? fieldName, FormKey? formKey)
     {
         throw new NotImplementedException();
@@ -104,6 +109,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
     }
 
     public void WriteBytes(YamlNode writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item) where TEnum : Enum
     {
         throw new NotImplementedException();
     }

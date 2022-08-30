@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Noggog;

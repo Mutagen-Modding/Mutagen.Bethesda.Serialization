@@ -58,6 +58,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void WriteFloat(JTokenWriter writer, string? fieldName, float? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteFormKey(JTokenWriter writer, string? fieldName, FormKey? formKey)
     {
         throw new NotImplementedException();
@@ -104,6 +109,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     }
 
     public void WriteBytes(JTokenWriter writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteEnum<TEnum>(JTokenWriter writer, string? fieldName, TEnum? item) where TEnum : Enum
     {
         throw new NotImplementedException();
     }

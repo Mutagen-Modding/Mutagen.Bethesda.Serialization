@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
-using CSharpExtensions = Microsoft.CodeAnalysis.CSharp.CSharpExtensions;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
