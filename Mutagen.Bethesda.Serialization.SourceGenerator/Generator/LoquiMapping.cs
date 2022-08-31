@@ -16,8 +16,9 @@ public class LoquiMapping
         _inheritingClassMapping = new Lazy<Dictionary<ObjectKey, List<ILoquiRegistration>>>(PopulateInheritingClassMapping);
     }
 
-    public ITypeSymbol? TryGetBaseClass(ITypeSymbol typeSymbol)
+    public ITypeSymbol? TryGetBaseClass(ITypeSymbol typeSymbol, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (typeSymbol.BaseType != null
             && _isLoquiObjectTester.IsLoqui(typeSymbol.BaseType))
         {
@@ -27,14 +28,15 @@ public class LoquiMapping
         return default;
     }
 
-    public IReadOnlyList<ILoquiRegistration> TryGetInheritingClasses(ITypeSymbol typeSymbol)
+    public IReadOnlyList<ILoquiRegistration> TryGetInheritingClasses(ITypeSymbol typeSymbol, CancellationToken cancel)
     {
+        cancel.ThrowIfCancellationRequested();
         if (!LoquiRegistration.StaticRegister.TryGetRegisterByFullName(typeSymbol.ToString(), out var regis)) return Array.Empty<ILoquiRegistration>();
         if (_inheritingClassMapping.Value.TryGetValue(regis.ObjectKey, out var inheriting)) return inheriting;
         return Array.Empty<ILoquiRegistration>();
     }
 
-    public bool HasInheritingClasses(ITypeSymbol typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
+    public bool HasInheritingClasses(ITypeSymbol typeSymbol, CancellationToken cancel) => TryGetInheritingClasses(typeSymbol, cancel).Count > 0;
 
     private Dictionary<ObjectKey, List<ILoquiRegistration>> PopulateInheritingClassMapping()
     {

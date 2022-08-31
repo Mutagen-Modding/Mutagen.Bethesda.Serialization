@@ -33,10 +33,11 @@ public class SerializationForObjectsGenerator
             .SelectMany((mod, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                return _accumulator.GetRelatedObjects(mod.Right, mod.Left!, cancel);
+                return _accumulator.GetRelatedObjects(mod.Right, mod.Left!, cancel)
+                    .Select(x => (Type: x, Compilation: mod.Right));
             });
         context.RegisterSourceOutput(
             allClassesToGenerate,
-            (c, i) => _serializationForObjectGenerator.Generate(c, i));
+            (c, i) => _serializationForObjectGenerator.Generate(i.Compilation, c, i.Type));
     }
 }

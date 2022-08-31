@@ -35,19 +35,28 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
     public void GenerateForSerialize(
+        Compilation compilation,
         ITypeSymbol obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         sb.AppendLine($"{kernelAccessor}.WriteBytes({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,
-        string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForDeserialize(
+        Compilation compilation,
+        ITypeSymbol obj, 
+        IPropertySymbol propertySymbol, 
+        string itemAccessor,
+        string writerAccessor,
+        string kernelAccessor, 
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }

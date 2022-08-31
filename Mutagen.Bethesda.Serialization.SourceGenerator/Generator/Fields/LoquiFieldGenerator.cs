@@ -40,13 +40,15 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     }
     
     public void GenerateForSerialize(
+        Compilation compilation,
         ITypeSymbol obj,
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor,
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         if (field is ITypeParameterSymbol namedTypeSymbol
             && namedTypeSymbol.ConstraintTypes.Length == 1)
@@ -56,16 +58,18 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
 
-        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: _loquiMapping.HasInheritingClasses(field))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
+        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: _loquiMapping.HasInheritingClasses(field, cancel))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(
+        Compilation compilation,
         ITypeSymbol obj,
         IPropertySymbol propertySymbol,
         string itemAccessor,
         string writerAccessor,
         string kernelAccessor,
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }

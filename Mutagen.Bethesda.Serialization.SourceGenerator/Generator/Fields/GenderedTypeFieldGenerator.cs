@@ -31,8 +31,16 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
-    public void GenerateForSerialize(ITypeSymbol obj, ITypeSymbol field, string? fieldName, string fieldAccessor,
-        string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForSerialize(
+        Compilation compilation,
+        ITypeSymbol obj, 
+        ITypeSymbol field, 
+        string? fieldName,
+        string fieldAccessor,
+        string writerAccessor, 
+        string kernelAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
@@ -47,12 +55,19 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
-        _forFieldGenerator().Value.GenerateForField(obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Male", $"{fieldAccessor}.Male", sb);
-        _forFieldGenerator().Value.GenerateForField(obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Female", $"{fieldAccessor}.Female", sb);
+        _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Male", $"{fieldAccessor}.Male", sb, cancel);
+        _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Female", $"{fieldAccessor}.Female", sb, cancel);
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,
-        string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForDeserialize(
+        Compilation compilation,
+        ITypeSymbol obj,
+        IPropertySymbol propertySymbol,
+        string itemAccessor, 
+        string writerAccessor,
+        string kernelAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }

@@ -36,15 +36,16 @@ public class RelatedObjectAccumulator
         cancel.ThrowIfCancellationRequested();
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
-        var baseType = _loquiMapping.TryGetBaseClass(details);
+        var baseType = _loquiMapping.TryGetBaseClass(details, cancel);
         if (baseType != null)
         {
             GetRelatedObjects(compilation, baseType, processedDetails, cancel);
         }
 
-        var inheriting = _loquiMapping.TryGetInheritingClasses(details);
+        var inheriting = _loquiMapping.TryGetInheritingClasses(details, cancel);
         foreach (var inherit in inheriting)
         {
+            cancel.ThrowIfCancellationRequested();
             var inheritTypeSymbol = compilation.GetTypeByMetadataName(inherit.FullName!);
             if (inheritTypeSymbol != null)
             {

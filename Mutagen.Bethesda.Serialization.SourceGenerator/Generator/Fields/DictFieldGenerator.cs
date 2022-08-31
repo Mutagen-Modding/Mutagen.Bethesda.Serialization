@@ -33,13 +33,15 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
     public void GenerateForSerialize(
+        Compilation compilation,
         ITypeSymbol obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
@@ -67,10 +69,10 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 var dictValueWriterName = "valueWriter";
                 sb.AppendLine($"var {dictItemWriterName} = {kernelAccessor}.StartDictionaryItem({dictWriterName});");
                 sb.AppendLine($"var {dictKeyWriterName} = {kernelAccessor}.StartDictionaryKey({dictItemWriterName});");
-                _forFieldGenerator().Value.GenerateForField(obj, subType, dictKeyWriterName, null, "kv.Key", sb);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, dictKeyWriterName, null, "kv.Key", sb, cancel);
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryKey();");
                 sb.AppendLine($"var {dictValueWriterName} = {kernelAccessor}.StartDictionaryValue({dictItemWriterName});");
-                _forFieldGenerator().Value.GenerateForField(obj, subType, dictValueWriterName, null, "kv.Value", sb);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, dictValueWriterName, null, "kv.Value", sb, cancel);
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryValue();");
                 sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({writerAccessor});");
             }
@@ -78,8 +80,15 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"{kernelAccessor}.EndDictionarySection({writerAccessor});");
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,
-        string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForDeserialize(
+        Compilation compilation,
+        ITypeSymbol obj,
+        IPropertySymbol propertySymbol,
+        string itemAccessor,
+        string writerAccessor,
+        string kernelAccessor, 
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }

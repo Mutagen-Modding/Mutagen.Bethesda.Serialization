@@ -42,13 +42,15 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
     public void GenerateForSerialize(
+        Compilation compilation,
         ITypeSymbol obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
         string writerAccessor,
         string kernelAccessor, 
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
@@ -71,14 +73,21 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
-                _forFieldGenerator().Value.GenerateForField(obj, subType, listWriterName, null, "listItem", sb);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, listWriterName, null, "listItem", sb, cancel);
             }
             sb.AppendLine($"{kernelAccessor}.EndListSection();");
         }
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,
-        string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForDeserialize(
+        Compilation compilation,
+        ITypeSymbol obj,
+        IPropertySymbol propertySymbol, 
+        string itemAccessor,
+        string writerAccessor,
+        string kernelAccessor, 
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }

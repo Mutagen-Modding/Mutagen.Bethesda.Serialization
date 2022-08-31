@@ -26,10 +26,14 @@ public class SerializationForObjectGenerator
         _loquiMapping = loquiMapping;
     }
     
-    public void Generate(SourceProductionContext context, ITypeSymbol obj)
+    public void Generate(
+        Compilation compilation, 
+        SourceProductionContext context, 
+        ITypeSymbol obj)
     {
-        var baseType = _loquiMapping.TryGetBaseClass(obj);
-        var inheriting = _loquiMapping.TryGetInheritingClasses(obj);
+        context.CancellationToken.ThrowIfCancellationRequested();
+        var baseType = _loquiMapping.TryGetBaseClass(obj, context.CancellationToken);
+        var inheriting = _loquiMapping.TryGetInheritingClasses(obj, context.CancellationToken);
         
         var sb = new StructuredStringBuilder();
         
@@ -76,6 +80,7 @@ public class SerializationForObjectGenerator
                     {
                         foreach (var inherit in inheriting)
                         {
+                            context.CancellationToken.ThrowIfCancellationRequested();
                             if (!_loquiSerializationNaming.TryGetSerializationItems(inherit.GetterType, out var inheritSerializeItems)) continue;
                             sb.AppendLine($"case {inherit.GetterType} {inherit.ClassType.Name}Getter:");
                             using (sb.IncreaseDepth())
@@ -121,7 +126,7 @@ public class SerializationForObjectGenerator
                 }
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
-                    GenerateForProperty(obj, prop, sb);
+                    GenerateForProperty(compilation, obj, prop, sb, context.CancellationToken);
                 }
             }
             sb.AppendLine();
@@ -143,9 +148,10 @@ public class SerializationForObjectGenerator
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private void GenerateForProperty(ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb)
+    private void GenerateForProperty(Compilation compilation, ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb, CancellationToken cancel)
     {
+        cancel.ThrowIfCancellationRequested();
         if (_propertyFilter.Skip(prop)) return;
-        _forFieldGenerator.GenerateForField(obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb);
+        _forFieldGenerator.GenerateForField(compilation, obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb, cancel);
     }
 }

@@ -24,24 +24,28 @@ public class SerializationFieldGenerator
     }
     
     public void GenerateForField(
+        Compilation compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,
         string writerAccessor,
         string? fieldName,
         string fieldAccessor, 
-        StructuredStringBuilder sb)
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
+        cancel.ThrowIfCancellationRequested();
         if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
         {
-            gen.GenerateForSerialize(obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb);
+            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb, cancel);
         }
         else
         {
             foreach (var fieldGenerator in _variableFieldGenerators)
             {
+                cancel.ThrowIfCancellationRequested();
                 if (fieldGenerator.Applicable(fieldType))
                 {
-                    fieldGenerator.GenerateForSerialize(obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb);
+                    fieldGenerator.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb, cancel);
                     return;
                 }
             }

@@ -32,14 +32,29 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         return _expectedStrings.Contains(namedTypeSymbol.Name);
     }
 
-    public void GenerateForSerialize(ITypeSymbol obj, ITypeSymbol field, string? fieldName, string fieldAccessor,
-        string writerAccessor, string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForSerialize(
+        Compilation compilation,
+        ITypeSymbol obj, 
+        ITypeSymbol field, 
+        string? fieldName,
+        string fieldAccessor,
+        string writerAccessor,
+        string kernelAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         sb.AppendLine($"{kernelAccessor}.WriteString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}.RawPath);");
     }
 
-    public void GenerateForDeserialize(ITypeSymbol obj, IPropertySymbol propertySymbol, string itemAccessor, string writerAccessor,
-        string kernelAccessor, StructuredStringBuilder sb)
+    public void GenerateForDeserialize(
+        Compilation compilation,
+        ITypeSymbol obj,
+        IPropertySymbol propertySymbol, 
+        string itemAccessor,
+        string writerAccessor,
+        string kernelAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
     {
         throw new NotImplementedException();
     }
