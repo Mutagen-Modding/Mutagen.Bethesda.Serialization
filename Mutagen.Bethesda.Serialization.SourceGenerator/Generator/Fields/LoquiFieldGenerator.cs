@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
@@ -6,13 +6,18 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 public class LoquiFieldGenerator : ISerializationForFieldGenerator
 {
     private readonly LoquiMapping _loquiMapping;
+    private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
     public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
 
-    public LoquiFieldGenerator(IsLoquiObjectTester isLoquiObjectTester, LoquiMapping loquiMapping)
+    public LoquiFieldGenerator(
+        IsLoquiObjectTester isLoquiObjectTester,
+        LoquiMapping loquiMapping,
+        LoquiSerializationNaming loquiSerializationNaming)
     {
         _isLoquiObjectTester = isLoquiObjectTester;
         _loquiMapping = loquiMapping;
+        _loquiSerializationNaming = loquiSerializationNaming;
     }
 
     private static HashSet<string> _genericTestTypes = new()
@@ -43,14 +48,15 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         StructuredStringBuilder sb)
     {
-        if (_loquiMapping.HasInheritingClasses(field))
+        if (field is ITypeParameterSymbol namedTypeSymbol
+            && namedTypeSymbol.ConstraintTypes.Length == 1)
         {
-            sb.AppendLine($"{field.Name}_Serialization.SerializeWithCheck({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
+            return;
         }
-        else
-        {
-            sb.AppendLine($"{field.Name}_Serialization.Serialize({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
-        }
+
+        if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
+
+        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: _loquiMapping.HasInheritingClasses(field))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(

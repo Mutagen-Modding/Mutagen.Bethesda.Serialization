@@ -11,15 +11,18 @@ public class SerializationForObjectGenerator
 {
     private readonly PropertyFilter _propertyFilter;
     private readonly SerializationFieldGenerator _forFieldGenerator;
+    private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly LoquiMapping _loquiMapping;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
         SerializationFieldGenerator forFieldGenerator,
+        LoquiSerializationNaming loquiSerializationNaming,
         LoquiMapping loquiMapping)
     {
         _propertyFilter = propertyFilter;
         _forFieldGenerator = forFieldGenerator;
+        _loquiSerializationNaming = loquiSerializationNaming;
         _loquiMapping = loquiMapping;
     }
     
@@ -37,7 +40,20 @@ public class SerializationForObjectGenerator
         {
         }
         
-        using (var c = sb.Class($"{obj.Name}_Serialization"))
+        string writeObjectGenerics = "<TWriteObject>";
+        string readObjectGenerics = "<TReadObject>";
+        IEnumerable<string> wheres = Enumerable.Empty<string>();
+        if (obj is INamedTypeSymbol namedTypeSymbol
+            && namedTypeSymbol.TypeArguments.Length > 0)
+        {
+            var generics = string.Join(", ", namedTypeSymbol.TypeArguments);
+            writeObjectGenerics = $"<{string.Join(", ", "TWriteObject", generics)}>";
+            readObjectGenerics = $"<{string.Join(", ", "TReadObject", generics)}>";
+        }
+
+        if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
+        
+        using (var c = sb.Class(objSerializationItems.SerializationHousingClassName))
         {
             c.AccessModifier = AccessModifier.Internal;
             c.Static = true;
@@ -46,11 +62,12 @@ public class SerializationForObjectGenerator
         {
             if (inheriting.Count > 0)
             {
-                using (var args = sb.Function($"public static void SerializeWithCheck<TWriteObject>"))
+                using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenerics}"))
                 {
                     args.Add($"{obj} item");
                     args.Add($"TWriteObject writer");
                     args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
+                    args.Wheres.AddRange(wheres);
                 }
                 using (sb.CurlyBrace())
                 {
@@ -59,20 +76,22 @@ public class SerializationForObjectGenerator
                     {
                         foreach (var inherit in inheriting)
                         {
+                            if (!_loquiSerializationNaming.TryGetSerializationItems(inherit.GetterType, out var inheritSerializeItems)) continue;
                             sb.AppendLine($"case {inherit.GetterType} {inherit.ClassType.Name}Getter:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{inherit.ClassType.Name}_Serialization.Serialize({inherit.ClassType.Name}Getter, writer, kernel);");
+                                sb.AppendLine($"{inheritSerializeItems.SerializationCall(serialize: true)}({inherit.ClassType.Name}Getter, writer, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
 
-                        if (!obj.IsAbstract)
+                        if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                            && !curSerializationItems.LoquiRegistration.ClassType.IsAbstract)
                         {
                             sb.AppendLine($"case {obj} {obj}Getter:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{obj.Name}_Serialization.Serialize({obj}Getter, writer, kernel);");
+                                sb.AppendLine($"{curSerializationItems.SerializationCall(serialize: true)}({obj}Getter, writer, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
@@ -86,30 +105,32 @@ public class SerializationForObjectGenerator
                 sb.AppendLine();
             }
             
-            using (var args = sb.Function($"public static void Serialize<TWriteObject>"))
+            using (var args = sb.Function($"public static void Serialize{writeObjectGenerics}"))
             {
                 args.Add($"{obj} item");
                 args.Add($"TWriteObject writer");
                 args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
+                args.Wheres.AddRange(wheres);
             }
             using (sb.CurlyBrace())
             {
-                if (baseType != null)
+                if (baseType != null
+                    && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
                 {
-                    sb.AppendLine($"{baseType.Name}_Serialization.Serialize<TWriteObject>(item, writer, kernel);");
+                    sb.AppendLine($"{baseSerializationItems.SerializationCall(serialize: true)}<TWriteObject>(item, writer, kernel);");
                 }
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
-                    if (_propertyFilter.Skip(prop)) continue;
-                    _forFieldGenerator.GenerateForField(obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb);
+                    GenerateForProperty(obj, prop, sb);
                 }
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {obj} Deserialize<TReadObject>"))
+            using (var args = sb.Function($"public static {obj} Deserialize{readObjectGenerics}"))
             {
                 args.Add($"TReadObject reader");
                 args.Add($"ISerializationReaderKernel<TReadObject> kernel");
+                args.Wheres.AddRange(wheres);
             }
             using (sb.CurlyBrace())
             {
@@ -119,13 +140,12 @@ public class SerializationForObjectGenerator
         }
         sb.AppendLine();
         
-        var sanitizedName = obj.MetadataName;
-        var genericIndex = sanitizedName.IndexOf('`');
-        if (genericIndex != -1)
-        {
-            sanitizedName = sanitizedName.Substring(0, genericIndex);
-        }
-        
-        context.AddSource($"{sanitizedName}_Serializations.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+        context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
+    }
+
+    private void GenerateForProperty(ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb)
+    {
+        if (_propertyFilter.Skip(prop)) return;
+        _forFieldGenerator.GenerateForField(obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb);
     }
 }

@@ -16,13 +16,12 @@ public class LoquiMapping
         _inheritingClassMapping = new Lazy<Dictionary<ObjectKey, List<ILoquiRegistration>>>(PopulateInheritingClassMapping);
     }
 
-    public Type? TryGetBaseClass(ITypeSymbol typeSymbol)
+    public ITypeSymbol? TryGetBaseClass(ITypeSymbol typeSymbol)
     {
-        if (LoquiRegistration.StaticRegister.TryGetRegisterByFullName(typeSymbol.ToString(), out var regis)
-            && regis.ClassType.BaseType != null
-            && _isLoquiObjectTester.IsLoqui(regis.ClassType.BaseType))
+        if (typeSymbol.BaseType != null
+            && _isLoquiObjectTester.IsLoqui(typeSymbol.BaseType))
         {
-            return regis.ClassType.BaseType;
+            return typeSymbol.BaseType;
         }
 
         return default;

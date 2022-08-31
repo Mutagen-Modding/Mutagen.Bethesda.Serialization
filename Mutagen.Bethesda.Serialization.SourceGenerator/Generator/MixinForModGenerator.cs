@@ -8,6 +8,14 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class MixinForModGenerator
 {
+    private readonly LoquiSerializationNaming _serializationNaming;
+
+    public MixinForModGenerator(
+        LoquiSerializationNaming serializationNaming)
+    {
+        _serializationNaming = serializationNaming;
+    }
+    
     public void Initialize(
         IncrementalGeneratorInitializationContext context,
         IncrementalValuesProvider<BootstrapInvocation> modBootstrapInvocations)
@@ -20,6 +28,7 @@ public class MixinForModGenerator
     public void Generate(SourceProductionContext context, BootstrapInvocation bootstrap)
     {
         if (bootstrap.ModRegistration == null) return;
+        if (!_serializationNaming.TryGetSerializationItems(bootstrap.ModRegistration, out var modSerializationItems)) return;
         
         var interf = bootstrap.Bootstrap.Interfaces.First(x => x.Name == "IMutagenSerializationBootstrap");
         
@@ -36,7 +45,7 @@ public class MixinForModGenerator
         {
         }
 
-        var className = $"{bootstrap.Bootstrap.Name}{bootstrap.ModRegistration.Name}MixIns";
+        var className = $"{bootstrap.Bootstrap.Name}{modSerializationItems.TermName}MixIns";
         using (var c = sb.Class(className))
         {
             c.AccessModifier = AccessModifier.Public;
@@ -55,7 +64,7 @@ public class MixinForModGenerator
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"{bootstrap.ModRegistration.Name}_Serialization.Serialize<{writer}>(mod, WriterKernel.GetNewObject(), WriterKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer}>(mod, WriterKernel.GetNewObject(), WriterKernel);");
             }
             sb.AppendLine();
             
@@ -66,12 +75,12 @@ public class MixinForModGenerator
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"{bootstrap.ModRegistration.Name}_Serialization.Deserialize<{reader}>(mod, ReaderKernel.GetNewObject(), ReaderKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: false)}<{reader}>(mod, ReaderKernel.GetNewObject(), ReaderKernel);");
             }
             sb.AppendLine();
         }
         sb.AppendLine();
 
-        context.AddSource($"{bootstrap.Bootstrap.Name}_{bootstrap.ModRegistration.Name}_MixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+        context.AddSource($"{bootstrap.Bootstrap.Name}_{modSerializationItems.TermName}_MixIns.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 }

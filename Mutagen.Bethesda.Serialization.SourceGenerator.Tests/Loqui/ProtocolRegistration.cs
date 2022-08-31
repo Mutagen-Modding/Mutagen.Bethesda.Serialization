@@ -12,6 +12,8 @@ public class ProtocolRegistration : IProtocolRegistration
             new SomeLoquiWithBase_Registration(),
             new AbstractBaseLoqui_Registration(),
             new SubclassLoquiA_Registration(),
-            new SubclassLoquiB_Registration());
+            new SubclassLoquiB_Registration(),
+            new TestMajorRecord_Registration(),
+            new TestMod_Registration());
     }
 }

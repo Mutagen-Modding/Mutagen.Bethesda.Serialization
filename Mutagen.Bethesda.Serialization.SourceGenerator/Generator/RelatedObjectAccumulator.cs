@@ -39,11 +39,7 @@ public class RelatedObjectAccumulator
         var baseType = _loquiMapping.TryGetBaseClass(details);
         if (baseType != null)
         {
-            var baseTypeSymbol = compilation.GetTypeByMetadataName(baseType.FullName!);
-            if (baseTypeSymbol != null)
-            {
-                GetRelatedObjects(compilation, baseTypeSymbol, processedDetails, cancel);
-            }
+            GetRelatedObjects(compilation, baseType, processedDetails, cancel);
         }
 
         var inheriting = _loquiMapping.TryGetInheritingClasses(details);
