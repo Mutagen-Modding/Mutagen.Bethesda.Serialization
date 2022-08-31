@@ -12,28 +12,26 @@ public class SerializationForObjectGenerator
     private readonly PropertyFilter _propertyFilter;
     private readonly SerializationFieldGenerator _forFieldGenerator;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
-    private readonly LoquiMapping _loquiMapping;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
         SerializationFieldGenerator forFieldGenerator,
-        LoquiSerializationNaming loquiSerializationNaming,
-        LoquiMapping loquiMapping)
+        LoquiSerializationNaming loquiSerializationNaming)
     {
         _propertyFilter = propertyFilter;
         _forFieldGenerator = forFieldGenerator;
         _loquiSerializationNaming = loquiSerializationNaming;
-        _loquiMapping = loquiMapping;
     }
     
     public void Generate(
+        LoquiMapping loquiMapping,
         Compilation compilation, 
         SourceProductionContext context, 
         ITypeSymbol obj)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
-        var baseType = _loquiMapping.TryGetBaseClass(obj, context.CancellationToken);
-        var inheriting = _loquiMapping.TryGetInheritingClasses(obj, context.CancellationToken);
+        var baseType = loquiMapping.TryGetBaseClass(obj, context.CancellationToken);
+        var inheriting = loquiMapping.TryGetInheritingClasses(obj, context.CancellationToken);
         
         var sb = new StructuredStringBuilder();
         

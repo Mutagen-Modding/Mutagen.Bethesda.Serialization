@@ -5,29 +5,28 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class RelatedObjectAccumulator
 {
-    private readonly LoquiMapping _loquiMapping;
     private readonly IsLoquiObjectTester _loquiObjectTester;
 
     public RelatedObjectAccumulator(
-        LoquiMapping loquiMapping,
         IsLoquiObjectTester loquiObjectTester)
     {
-        _loquiMapping = loquiMapping;
         _loquiObjectTester = loquiObjectTester;
     }
     
     public ImmutableHashSet<ITypeSymbol> GetRelatedObjects(
+        LoquiMapping mapping,
         Compilation compilation,
         ITypeSymbol details, 
         CancellationToken cancel)
     {
         var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
-        GetRelatedObjects(compilation, details, objs, cancel);
+        GetRelatedObjects(mapping, compilation, details, objs, cancel);
         objs.Add(details);
         return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     private void GetRelatedObjects(
+        LoquiMapping mapping,
         Compilation compilation,
         ITypeSymbol details, 
         HashSet<ITypeSymbol> processedDetails,
@@ -36,20 +35,20 @@ public class RelatedObjectAccumulator
         cancel.ThrowIfCancellationRequested();
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
-        var baseType = _loquiMapping.TryGetBaseClass(details, cancel);
+        var baseType = mapping.TryGetBaseClass(details, cancel);
         if (baseType != null)
         {
-            GetRelatedObjects(compilation, baseType, processedDetails, cancel);
+            GetRelatedObjects(mapping, compilation, baseType, processedDetails, cancel);
         }
 
-        var inheriting = _loquiMapping.TryGetInheritingClasses(details, cancel);
+        var inheriting = mapping.TryGetInheritingClasses(details, cancel);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
             var inheritTypeSymbol = compilation.GetTypeByMetadataName(inherit.FullName!);
             if (inheritTypeSymbol != null)
             {
-                GetRelatedObjects(compilation, inheritTypeSymbol, processedDetails, cancel);
+                GetRelatedObjects(mapping, compilation, inheritTypeSymbol, processedDetails, cancel);
             }
         }
         foreach (var memb in details.GetMembers())
@@ -60,7 +59,7 @@ public class RelatedObjectAccumulator
             
             var type = TransformSymbol(prop.Type);
             
-            GetRelatedObjects(compilation, type, processedDetails, cancel);
+            GetRelatedObjects(mapping, compilation, type, processedDetails, cancel);
         }
     }
 
