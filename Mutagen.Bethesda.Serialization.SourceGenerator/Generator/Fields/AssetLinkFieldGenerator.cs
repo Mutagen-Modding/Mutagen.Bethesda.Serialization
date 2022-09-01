@@ -21,12 +21,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
-        if (namedTypeSymbol.Name == "Nullable" 
-            && namedTypeSymbol.TypeArguments.Length == 1
-            && namedTypeSymbol.TypeArguments[0] is INamedTypeSymbol nullableType)
-        {
-            namedTypeSymbol = nullableType;
-        }
+        namedTypeSymbol = Utility.PeelNullable(namedTypeSymbol);
         var typeMembers = namedTypeSymbol.TypeArguments;
         if (typeMembers.Length != 1) return false;
         return _expectedStrings.Contains(namedTypeSymbol.Name);

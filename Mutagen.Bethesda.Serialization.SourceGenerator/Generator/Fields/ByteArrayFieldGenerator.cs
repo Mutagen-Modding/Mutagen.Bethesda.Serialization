@@ -24,10 +24,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             var typeMembers = namedTypeSymbol.TypeArguments;
             if (typeMembers.Length != 1) return false;
-            if (namedTypeSymbol.Name == "Nullable" && typeMembers[0] is INamedTypeSymbol nullabeNamedTypeSymbol)
-            {
-                namedTypeSymbol = nullabeNamedTypeSymbol;
-            }
+            namedTypeSymbol = Utility.PeelNullable(namedTypeSymbol);
             return _listStrings.Contains(namedTypeSymbol.Name) && namedTypeSymbol.TypeArguments[0].Name == "Byte";
         }
     }

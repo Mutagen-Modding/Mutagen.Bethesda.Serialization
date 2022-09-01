@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
@@ -9,12 +9,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(ITypeSymbol typeSymbol)
     {
-        if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && namedTypeSymbol.TypeArguments.Length == 1
-            && namedTypeSymbol.Name == "Nullable")
-        {
-            typeSymbol = namedTypeSymbol.TypeArguments[0];
-        }
+        typeSymbol = Utility.PeelNullable(typeSymbol);
         return typeSymbol.TypeKind == TypeKind.Enum
             || (typeSymbol.BaseType is { Name: "Enum" } 
                 && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
