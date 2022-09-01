@@ -37,7 +37,7 @@ public class SerializationForObjectsGenerator
             {
                 cancel.ThrowIfCancellationRequested();
                 var mapping = _loquiMapper.GetMappings(mod.Right, cancel);
-                return _accumulator.GetRelatedObjects(mapping, mod.Right, mod.Left!, cancel)
+                return _accumulator.GetRelatedObjects(mapping, mod.Left!, cancel)
                     .Select(x => (Type: x, Compilation: new CompilationUnit(mod.Right, mapping)));
             });
         context.RegisterSourceOutput(

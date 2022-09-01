@@ -1,51 +1,54 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class RelatedObjectAccumulator
 {
+    private readonly ListFieldGenerator _listFieldGenerator;
     private readonly IsLoquiObjectTester _loquiObjectTester;
 
     public RelatedObjectAccumulator(
+        ListFieldGenerator listFieldGenerator,
         IsLoquiObjectTester loquiObjectTester)
     {
+        _listFieldGenerator = listFieldGenerator;
         _loquiObjectTester = loquiObjectTester;
     }
     
     public ImmutableHashSet<ITypeSymbol> GetRelatedObjects(
         LoquiMapping mapper,
-        Compilation compilation,
         ITypeSymbol details, 
         CancellationToken cancel)
     {
         var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
-        GetRelatedObjects(mapper, compilation, details, objs, cancel);
+        GetRelatedObjects(mapper, details, objs, cancel);
         objs.Add(details);
         return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     private void GetRelatedObjects(
         LoquiMapping mapper,
-        Compilation compilation,
         ITypeSymbol details, 
         HashSet<ITypeSymbol> processedDetails,
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
+        details = PeelList(details);
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
         var baseType = mapper.TryGetBaseClass(details);
         if (baseType != null)
         {
-            GetRelatedObjects(mapper, compilation, baseType, processedDetails, cancel);
+            GetRelatedObjects(mapper, baseType, processedDetails, cancel);
         }
 
         var inheriting = mapper.TryGetInheritingClasses(details);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
-            GetRelatedObjects(mapper, compilation, inherit, processedDetails, cancel);
+            GetRelatedObjects(mapper, inherit, processedDetails, cancel);
         }
         foreach (var memb in details.GetMembers())
         {
@@ -55,8 +58,19 @@ public class RelatedObjectAccumulator
             
             var type = TransformSymbol(prop.Type);
             
-            GetRelatedObjects(mapper, compilation, type, processedDetails, cancel);
+            GetRelatedObjects(mapper, type, processedDetails, cancel);
         }
+    }
+
+    private ITypeSymbol PeelList(ITypeSymbol typeSymbol)
+    {
+        if (_listFieldGenerator.Applicable(typeSymbol)
+            && typeSymbol is INamedTypeSymbol namedTypeSymbol)
+        {
+            return namedTypeSymbol.TypeArguments[0];
+        }
+
+        return typeSymbol;
     }
 
     private ITypeSymbol TransformSymbol(ITypeSymbol typeSymbol)

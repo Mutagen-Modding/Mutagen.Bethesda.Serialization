@@ -12,6 +12,7 @@ public class MemberTests
         var sb = new StructuredStringBuilder();
         
         sb.AppendLine("using Noggog;");
+        sb.AppendLine("using Loqui;");
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
         sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
@@ -19,7 +20,7 @@ public class MemberTests
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
-        sb.AppendLine("public interface ITestModGetter : IModGetter, ILoquiObject");
+        sb.AppendLine("public partial interface ITestModGetter : IModGetter, ILoquiObject");
         using (sb.CurlyBrace())
         {
             memberBuilder(sb);
@@ -298,6 +299,20 @@ public class MemberTests
             sb.AppendLine("public IReadOnlyList<string> SomeList2 { get; set; }");
             sb.AppendLine("public ExtendedList<string> SomeList3 { get; set; }");
             sb.AppendLine("public string[] SomeList4 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
+    public Task LoquiList()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public List<SomeLoqui> SomeList { get; set; }");
+            sb.AppendLine("public IReadOnlyList<SomeLoqui> SomeList2 { get; set; }");
+            sb.AppendLine("public ExtendedList<SomeLoqui> SomeList3 { get; set; }");
+            sb.AppendLine("public SomeLoqui[] SomeList4 { get; set; }");
         });
        
         return TestHelper.Verify(source);

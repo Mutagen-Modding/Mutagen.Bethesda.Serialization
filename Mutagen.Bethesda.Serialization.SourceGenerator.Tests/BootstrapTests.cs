@@ -136,7 +136,7 @@ namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 public class SerializationTests
 {
     public void EmptySkyrimMod()
-    {
+    { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         MutagenJsonConverter.Instance.Convert(mod);
     }
