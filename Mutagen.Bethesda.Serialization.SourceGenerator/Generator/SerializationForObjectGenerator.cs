@@ -13,17 +13,20 @@ public class SerializationForObjectGenerator
     private readonly PropertyFilter _propertyFilter;
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly SerializationFieldGenerator _forFieldGenerator;
+    private readonly WhereClauseGenerator _whereClauseGenerator;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
         LoquiNameRetriever nameRetriever,
         SerializationFieldGenerator forFieldGenerator,
+        WhereClauseGenerator whereClauseGenerator,
         LoquiSerializationNaming loquiSerializationNaming)
     {
         _propertyFilter = propertyFilter;
         _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
+        _whereClauseGenerator = whereClauseGenerator;
         _loquiSerializationNaming = loquiSerializationNaming;
     }
     
@@ -54,6 +57,7 @@ public class SerializationForObjectGenerator
             var generics = string.Join(", ", namedTypeSymbol.TypeArguments);
             writeObjectGenerics = $"<{string.Join(", ", "TWriteObject", generics)}>";
             readObjectGenerics = $"<{string.Join(", ", "TReadObject", generics)}>";
+            wheres = _whereClauseGenerator.GetWheres(namedTypeSymbol);
         }
 
         if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
