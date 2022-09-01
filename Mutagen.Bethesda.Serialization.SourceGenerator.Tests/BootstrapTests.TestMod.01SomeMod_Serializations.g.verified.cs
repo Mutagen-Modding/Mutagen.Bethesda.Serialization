@@ -1,9 +1,9 @@
-﻿//HintName: ISomeModGetter_Serializations.g.cs
+﻿//HintName: SomeMod_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class ISomeModGetter_Serialization
+internal static class SomeMod_Serialization
 {
     public static void Serialize<TWriteObject>(
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter item,

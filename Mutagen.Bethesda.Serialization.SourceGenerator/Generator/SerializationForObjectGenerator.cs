@@ -93,7 +93,8 @@ public class SerializationForObjectGenerator
                         }
 
                         if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
-                            && !curSerializationItems.LoquiRegistration.ClassType.IsAbstract)
+                            && compilation.Mapping.TryGetDirectClass(obj, out var objDirect)
+                            && !objDirect.IsAbstract)
                         {
                             sb.AppendLine($"case {obj} {obj}Getter:");
                             using (sb.IncreaseDepth())
