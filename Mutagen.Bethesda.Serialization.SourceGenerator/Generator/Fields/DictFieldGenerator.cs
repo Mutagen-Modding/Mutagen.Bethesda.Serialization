@@ -53,10 +53,10 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        var dictWriterName = $"{fieldName}DictWriter";
-        sb.AppendLine($"var {dictWriterName} = {kernelAccessor}.StartDictionarySection({writerAccessor}, \"{fieldName}\");");
         using (sb.CurlyBrace())
         {
+            var dictWriterName = $"{fieldName}DictWriter";
+            sb.AppendLine($"var {dictWriterName} = {kernelAccessor}.StartDictionarySection({writerAccessor}, \"{fieldName}\");");
             sb.AppendLine($"foreach (var kv in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
@@ -72,8 +72,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryValue();");
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryItem();");
             }
+            sb.AppendLine($"{kernelAccessor}.StopDictionarySection();");
         }
-        sb.AppendLine($"{kernelAccessor}.StopDictionarySection();");
     }
 
     public void GenerateForDeserialize(

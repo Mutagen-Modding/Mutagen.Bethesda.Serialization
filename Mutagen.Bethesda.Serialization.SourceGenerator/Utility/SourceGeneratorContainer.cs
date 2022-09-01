@@ -34,12 +34,17 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(UInt16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt32FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(UInt64FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P2FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P3FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P3UInt8FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P3Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P3UInt16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P2IntFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P2Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(PercentFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ListFieldGenerator))]
+[Register(typeof(ModKeyFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(FormKeyFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FormLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ColorFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ByteArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -49,6 +54,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(DictFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(GroupFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(CharFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

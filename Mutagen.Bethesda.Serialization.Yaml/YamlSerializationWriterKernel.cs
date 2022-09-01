@@ -13,6 +13,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteChar(YamlNode writer, string? fieldName, char? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteBool(YamlNode writer, string? fieldName, bool? item)
     {
         throw new NotImplementedException();
@@ -88,12 +93,27 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteP2Float(YamlNode writer, string? fieldName, P2Float? p3)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteP3Float(YamlNode writer, string? fieldName, P3Float? p3)
     {
         throw new NotImplementedException();
     }
 
+    public void WriteP3UInt8(YamlNode writer, string? fieldName, P3UInt8? p3)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteP3Int16(YamlNode writer, string? fieldName, P3Int16? p3)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteP3UInt16(YamlNode writer, string? fieldName, P3UInt16? p3)
     {
         throw new NotImplementedException();
     }
@@ -169,6 +189,31 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
     }
 
     public void StopDictionaryValue()
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartArray2dSection(YamlNode writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopArray2dSectionSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionarySectionSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public YamlNode StartArray2dItem(YamlNode writer, int x, int y)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopArray2dItem()
     {
         throw new NotImplementedException();
     }

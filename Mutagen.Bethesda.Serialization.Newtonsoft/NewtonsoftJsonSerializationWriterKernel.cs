@@ -13,6 +13,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void WriteChar(JTokenWriter writer, string? fieldName, char? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteBool(JTokenWriter writer, string? fieldName, bool? item)
     {
         throw new NotImplementedException();
@@ -88,12 +93,27 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void WriteP2Float(JTokenWriter writer, string? fieldName, P2Float? p3)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteP3Float(JTokenWriter writer, string? fieldName, P3Float? p3Float)
     {
         throw new NotImplementedException();
     }
 
+    public void WriteP3UInt8(JTokenWriter writer, string? fieldName, P3UInt8? p3)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteP3Int16(JTokenWriter writer, string? fieldName, P3Int16? p3)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteP3UInt16(JTokenWriter writer, string? fieldName, P3UInt16? p3)
     {
         throw new NotImplementedException();
     }
@@ -169,6 +189,31 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     }
 
     public void StopDictionaryValue()
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartArray2dSection(JTokenWriter writer, string? fieldName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopArray2dSectionSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionarySectionSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public JTokenWriter StartArray2dItem(JTokenWriter writer, int x, int y)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopArray2dItem()
     {
         throw new NotImplementedException();
     }

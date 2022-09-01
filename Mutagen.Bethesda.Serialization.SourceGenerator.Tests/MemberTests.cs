@@ -151,9 +151,27 @@ public class MemberTests
     }
     
     [Fact]
+    public Task P2Float()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("P2Float"));
+    }
+    
+    [Fact]
+    public Task P3UInt8()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("P3UInt8"));
+    }
+    
+    [Fact]
     public Task P3Int16()
     {
         return TestHelper.Verify(GetPrimitiveTest("P3Int16"));
+    }
+    
+    [Fact]
+    public Task P3UInt16()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("P3UInt16"));
     }
     
     [Fact]
@@ -251,6 +269,12 @@ public class MemberTests
     }
     
     [Fact]
+    public Task Char()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("char", "Char"));
+    }
+    
+    [Fact]
     public Task Float()
     {
         return TestHelper.Verify(GetPrimitiveTest("float", "Single"));
@@ -345,6 +369,18 @@ public class MemberTests
     }
     
     [Fact]
+    public Task ModKey()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("ModKey", "Mutagen.Bethesda.Plugins.ModKey"));
+    }
+    
+    [Fact]
+    public Task FormKey()
+    {
+        return TestHelper.Verify(GetPrimitiveTest("FormKey", "Mutagen.Bethesda.Plugins.FormKey"));
+    }
+    
+    [Fact]
     public Task FormLink()
     {
         var source = GetModWithMember(sb =>
@@ -403,6 +439,19 @@ public class MemberTests
     }
     
     [Fact]
+    public Task Array2d()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public Array2d<string> SomeArray { get; set; }");
+            sb.AppendLine("public IArray2d<string> SomeArray2 { get; set; }");
+            sb.AppendLine("public IReadOnlyArray2d<string> SomeArray3 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task SkippedProperty()
     {
         var source = GetModWithMember(sb =>
@@ -439,6 +488,8 @@ public class MemberTests
             }
             
             sb.AppendLine("public Group<MajorRecord> SomeGroup { get; set; }");
+            sb.AppendLine("public IGroup<MajorRecord> SomeGroup2 { get; set; }");
+            sb.AppendLine("public IGroupGetter<MajorRecord> SomeGroup3 { get; set; }");
         });
        
         return TestHelper.Verify(source);

@@ -10,21 +10,12 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        Group_Serialization.Serialize(item.SomeGroup, writer, kernel);
-        foreach (var rec in item.SomeGroup.Records)
-        {
-            MajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
-        Group_Serialization.Serialize(item.SomeGroup2, writer, kernel);
-        foreach (var rec in item.SomeGroup2.Records)
-        {
-            MajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
-        Group_Serialization.Serialize(item.SomeGroup3, writer, kernel);
-        foreach (var rec in item.SomeGroup3.Records)
-        {
-            MajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
+        kernel.WriteChar(writer, "SomeMember0", item.SomeMember0);
+        kernel.WriteChar(writer, "SomeMember1", item.SomeMember1);
+        kernel.WriteChar(writer, "SomeMember2", item.SomeMember2);
+        kernel.WriteChar(writer, "SomeMember3", item.SomeMember3);
+        kernel.WriteChar(writer, "SomeMember4", item.SomeMember4);
+        kernel.WriteChar(writer, "SomeMember5", item.SomeMember5);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

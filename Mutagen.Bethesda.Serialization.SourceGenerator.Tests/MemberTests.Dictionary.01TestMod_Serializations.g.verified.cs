@@ -10,8 +10,8 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        var SomeDictDictWriter = kernel.StartDictionarySection(writer, "SomeDict");
         {
+            var SomeDictDictWriter = kernel.StartDictionarySection(writer, "SomeDict");
             foreach (var kv in item.SomeDict)
             {
                 var itemWriter = kernel.StartDictionaryItem(SomeDictDictWriter);
@@ -23,10 +23,10 @@ internal static class TestMod_Serialization
                 kernel.StopDictionaryValue();
                 kernel.StopDictionaryItem();
             }
+            kernel.StopDictionarySection();
         }
-        kernel.StopDictionarySection();
-        var SomeDict1DictWriter = kernel.StartDictionarySection(writer, "SomeDict1");
         {
+            var SomeDict1DictWriter = kernel.StartDictionarySection(writer, "SomeDict1");
             foreach (var kv in item.SomeDict1)
             {
                 var itemWriter = kernel.StartDictionaryItem(SomeDict1DictWriter);
@@ -38,10 +38,10 @@ internal static class TestMod_Serialization
                 kernel.StopDictionaryValue();
                 kernel.StopDictionaryItem();
             }
+            kernel.StopDictionarySection();
         }
-        kernel.StopDictionarySection();
-        var SomeDict2DictWriter = kernel.StartDictionarySection(writer, "SomeDict2");
         {
+            var SomeDict2DictWriter = kernel.StartDictionarySection(writer, "SomeDict2");
             foreach (var kv in item.SomeDict2)
             {
                 var itemWriter = kernel.StartDictionaryItem(SomeDict2DictWriter);
@@ -53,8 +53,8 @@ internal static class TestMod_Serialization
                 kernel.StopDictionaryValue();
                 kernel.StopDictionaryItem();
             }
+            kernel.StopDictionarySection();
         }
-        kernel.StopDictionarySection();
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

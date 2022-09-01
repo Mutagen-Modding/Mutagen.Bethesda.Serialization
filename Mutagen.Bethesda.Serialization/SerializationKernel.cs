@@ -30,6 +30,7 @@ public interface ISerializationReaderKernel<TReaderObject>
 public interface ISerializationWriterKernel<TWriterObject>
 {
     public TWriterObject GetNewObject();
+    public void WriteChar(TWriterObject writer, string? fieldName, char? item);
     public void WriteBool(TWriterObject writer, string? fieldName, bool? item);
     public void WriteString(TWriterObject writer, string? fieldName, string? item);
     public void WriteInt8(TWriterObject writer, string? fieldName, sbyte? item);
@@ -45,16 +46,27 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? recordType);
     public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? p2);
     public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? p2);
+    public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? p3);
     public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? p3);
+    public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? p3);
     public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? p3);
+    public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? p3);
     public void WritePercent(TWriterObject writer, string? fieldName, Percent? percent);
     public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)
         where TEnum : struct, Enum, IConvertible;
+
+    #region List
+    
     public TWriterObject StartListSection(TWriterObject writer, string? fieldName);
     public void EndListSection();
+    
+    #endregion
+
+    #region Dict
+
     public TWriterObject StartDictionarySection(TWriterObject writer, string? fieldName);
     public void StopDictionarySection();
     public TWriterObject StartDictionaryItem(TWriterObject writer);
@@ -63,4 +75,15 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void StopDictionaryKey();
     public TWriterObject StartDictionaryValue(TWriterObject writer);
     public void StopDictionaryValue();
+
+    #endregion
+
+    #region Array2d
+
+    public TWriterObject StartArray2dSection(TWriterObject writer, string? fieldName);
+    public void StopArray2dSectionSection();
+    public TWriterObject StartArray2dItem(TWriterObject writer, int x, int y);
+    public void StopArray2dItem();
+
+    #endregion
 }
