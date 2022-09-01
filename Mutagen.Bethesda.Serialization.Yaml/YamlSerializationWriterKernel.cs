@@ -88,7 +88,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public void WriteP3Float(YamlNode writer, string? fieldName, P3Float? p3Float)
+    public void WriteP3Float(YamlNode writer, string? fieldName, P3Float? p3)
     {
         throw new NotImplementedException();
     }
@@ -118,8 +118,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item)
-        where TEnum : struct, Enum, IConvertible
+    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item) where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }
@@ -139,7 +138,17 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void StopDictionarySection()
+    {
+        throw new NotImplementedException();
+    }
+
     public YamlNode StartDictionaryItem(YamlNode writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryItem()
     {
         throw new NotImplementedException();
     }

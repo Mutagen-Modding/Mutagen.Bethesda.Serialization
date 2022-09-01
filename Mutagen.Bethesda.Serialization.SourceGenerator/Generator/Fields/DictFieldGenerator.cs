@@ -30,8 +30,6 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         return _listStrings.Contains(typeSymbol.Name);
     }
 
-    private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
-
     public void GenerateForSerialize(
         CompilationUnit compilation,
         ITypeSymbol obj, 
@@ -43,14 +41,12 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        ITypeSymbol subType;
-        if (field is IArrayTypeSymbol arr)
+        ITypeSymbol keyType;
+        ITypeSymbol valType;
+        if (field is INamedTypeSymbol namedTypeSymbol)
         {
-            subType = arr.ElementType;
-        }
-        else if (field is INamedTypeSymbol namedTypeSymbol)
-        {
-            subType = GetSubtype(namedTypeSymbol);
+            keyType = namedTypeSymbol.TypeArguments[0];
+            valType = namedTypeSymbol.TypeArguments[1];
         }
         else
         {
@@ -69,15 +65,15 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 var dictValueWriterName = "valueWriter";
                 sb.AppendLine($"var {dictItemWriterName} = {kernelAccessor}.StartDictionaryItem({dictWriterName});");
                 sb.AppendLine($"var {dictKeyWriterName} = {kernelAccessor}.StartDictionaryKey({dictItemWriterName});");
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, dictKeyWriterName, null, "kv.Key", sb, cancel);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, keyType, dictKeyWriterName, null, "kv.Key", sb, cancel);
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryKey();");
                 sb.AppendLine($"var {dictValueWriterName} = {kernelAccessor}.StartDictionaryValue({dictItemWriterName});");
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, dictValueWriterName, null, "kv.Value", sb, cancel);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, valType, dictValueWriterName, null, "kv.Value", sb, cancel);
                 sb.AppendLine($"{kernelAccessor}.StopDictionaryValue();");
-                sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({writerAccessor});");
+                sb.AppendLine($"{kernelAccessor}.StopDictionaryItem();");
             }
         }
-        sb.AppendLine($"{kernelAccessor}.EndDictionarySection({writerAccessor});");
+        sb.AppendLine($"{kernelAccessor}.StopDictionarySection();");
     }
 
     public void GenerateForDeserialize(

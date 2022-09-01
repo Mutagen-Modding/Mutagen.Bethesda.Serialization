@@ -56,7 +56,9 @@ public interface ISerializationWriterKernel<TWriterObject>
     public TWriterObject StartListSection(TWriterObject writer, string? fieldName);
     public void EndListSection();
     public TWriterObject StartDictionarySection(TWriterObject writer, string? fieldName);
+    public void StopDictionarySection();
     public TWriterObject StartDictionaryItem(TWriterObject writer);
+    public void StopDictionaryItem();
     public TWriterObject StartDictionaryKey(TWriterObject writer);
     public void StopDictionaryKey();
     public TWriterObject StartDictionaryValue(TWriterObject writer);

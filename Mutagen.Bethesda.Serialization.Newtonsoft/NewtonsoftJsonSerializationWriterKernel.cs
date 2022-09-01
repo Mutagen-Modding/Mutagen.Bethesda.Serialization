@@ -138,7 +138,17 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void StopDictionarySection()
+    {
+        throw new NotImplementedException();
+    }
+
     public JTokenWriter StartDictionaryItem(JTokenWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopDictionaryItem()
     {
         throw new NotImplementedException();
     }
