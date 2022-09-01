@@ -19,6 +19,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<LoquiSerializationNaming>]
 [Register<LoquiNameRetriever>]
 [Register<WhereClauseGenerator>]
+[Register<IsGroupTester>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -47,6 +48,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(AssetLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(DictFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(GroupFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

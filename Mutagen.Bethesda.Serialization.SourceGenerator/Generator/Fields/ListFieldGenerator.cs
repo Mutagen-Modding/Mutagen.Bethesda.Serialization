@@ -7,12 +7,17 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class ListFieldGenerator : ISerializationForFieldGenerator
 {
+    private readonly IsGroupTester _groupTester;
+    
     private readonly Func<IOwned<SerializationFieldGenerator>> _forFieldGenerator;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
-    public ListFieldGenerator(Func<IOwned<SerializationFieldGenerator>> forFieldGenerator)
+    public ListFieldGenerator(
+        Func<IOwned<SerializationFieldGenerator>> forFieldGenerator, 
+        IsGroupTester groupTester)
     {
         _forFieldGenerator = forFieldGenerator;
+        _groupTester = groupTester;
     }
 
     private static readonly HashSet<string> _listStrings = new()
@@ -52,6 +57,8 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        if (_groupTester.IsGroup(obj)) return;
+        
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
         {

@@ -19,12 +19,12 @@ internal static class TestMod_Serialization
                 kernel.WriteInt32(keyWriter, null, kv.Key);
                 kernel.StopDictionaryKey();
                 var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteInt32(valueWriter, null, kv.Value);
+                kernel.WriteString(valueWriter, null, kv.Value);
                 kernel.StopDictionaryValue();
-                kernel.EndDictionaryItem(writer);
+                kernel.StopDictionaryItem();
             }
         }
-        kernel.EndDictionarySection(writer);
+        kernel.StopDictionarySection();
         var SomeDict1DictWriter = kernel.StartDictionarySection(writer, "SomeDict1");
         {
             foreach (var kv in item.SomeDict1)
@@ -34,12 +34,12 @@ internal static class TestMod_Serialization
                 kernel.WriteInt32(keyWriter, null, kv.Key);
                 kernel.StopDictionaryKey();
                 var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteInt32(valueWriter, null, kv.Value);
+                kernel.WriteString(valueWriter, null, kv.Value);
                 kernel.StopDictionaryValue();
-                kernel.EndDictionaryItem(writer);
+                kernel.StopDictionaryItem();
             }
         }
-        kernel.EndDictionarySection(writer);
+        kernel.StopDictionarySection();
         var SomeDict2DictWriter = kernel.StartDictionarySection(writer, "SomeDict2");
         {
             foreach (var kv in item.SomeDict2)
@@ -49,12 +49,12 @@ internal static class TestMod_Serialization
                 kernel.WriteInt32(keyWriter, null, kv.Key);
                 kernel.StopDictionaryKey();
                 var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteInt32(valueWriter, null, kv.Value);
+                kernel.WriteString(valueWriter, null, kv.Value);
                 kernel.StopDictionaryValue();
-                kernel.EndDictionaryItem(writer);
+                kernel.StopDictionaryItem();
             }
         }
-        kernel.EndDictionarySection(writer);
+        kernel.StopDictionarySection();
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

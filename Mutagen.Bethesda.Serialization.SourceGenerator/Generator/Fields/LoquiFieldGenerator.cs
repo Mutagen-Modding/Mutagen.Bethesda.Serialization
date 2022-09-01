@@ -5,19 +5,19 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class LoquiFieldGenerator : ISerializationForFieldGenerator
 {
-    private readonly LoquiMapper _loquiMapper;
+    private readonly IsGroupTester _groupTester;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
     public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
 
     public LoquiFieldGenerator(
         IsLoquiObjectTester isLoquiObjectTester,
-        LoquiMapper loquiMapper,
-        LoquiSerializationNaming loquiSerializationNaming)
+        LoquiSerializationNaming loquiSerializationNaming,
+        IsGroupTester groupTester)
     {
         _isLoquiObjectTester = isLoquiObjectTester;
-        _loquiMapper = loquiMapper;
         _loquiSerializationNaming = loquiSerializationNaming;
+        _groupTester = groupTester;
     }
 
     private static HashSet<string> _genericTestTypes = new()
@@ -27,6 +27,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(ITypeSymbol typeSymbol)
     {
+        if (_groupTester.IsGroup(typeSymbol)) return false;
         if (_isLoquiObjectTester.IsLoqui(typeSymbol)) return true;
         if (typeSymbol is ITypeParameterSymbol typeParameterSymbol)
         {

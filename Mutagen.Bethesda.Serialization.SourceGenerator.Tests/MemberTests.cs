@@ -414,4 +414,33 @@ public class MemberTests
        
         return TestHelper.Verify(source);
     }
+    
+    [Fact]
+    public Task TypicalGroup()
+    {
+        var source = GetModWithMember(sb =>
+        {
+            sb.AppendLine("public class Group<T> : SomeBaseClass, ILoquiObject");
+            using (sb.IncreaseDepth())
+            {
+                sb.AppendLine("where T : class, IMajorRecordInternal");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("public int SomeInt { get; set; }");
+                sb.AppendLine("public List<T> Items { get; set; }");
+                sb.AppendLine("public int SomeInt2 { get; set; }");
+            }
+            
+            sb.AppendLine("public class MajorRecord : SomeBaseClass, ILoquiObject");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("public int Item { get; set; }");
+            }
+            
+            sb.AppendLine("public Group<MajorRecord> SomeGroup { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
 }
