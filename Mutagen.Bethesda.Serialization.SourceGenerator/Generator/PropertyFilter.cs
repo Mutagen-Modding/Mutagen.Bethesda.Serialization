@@ -1,19 +1,36 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class PropertyFilter
 {
+    private readonly EnumFieldGenerator _enumFieldGenerator;
+
+    public PropertyFilter(EnumFieldGenerator enumFieldGenerator)
+    {
+        _enumFieldGenerator = enumFieldGenerator;
+    }
+    
     public bool Skip(IPropertySymbol propertySymbol)
     {
-        if (propertySymbol.Type.Name != "ILoquiRegistration") return false;
-        switch (propertySymbol.Name)
+        if (propertySymbol.Type.Name == "ILoquiRegistration")
         {
-            case "StaticRegistration":
-            case "Registration":
-                return true;
-            default:
-                return false;
+            switch (propertySymbol.Name)
+            {
+                case "StaticRegistration":
+                case "Registration":
+                    return true;
+                default:
+                    return false;
+            }
         }
+
+        if (propertySymbol.Name.EndsWith("Release")
+            && _enumFieldGenerator.Applicable(propertySymbol.Type))
+        {
+            return true;
+        }
+        return false;
     }
 }
