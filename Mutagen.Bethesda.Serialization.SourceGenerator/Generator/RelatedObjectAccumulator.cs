@@ -14,19 +14,19 @@ public class RelatedObjectAccumulator
     }
     
     public ImmutableHashSet<ITypeSymbol> GetRelatedObjects(
-        LoquiMapping mapping,
+        LoquiMapping mapper,
         Compilation compilation,
         ITypeSymbol details, 
         CancellationToken cancel)
     {
         var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
-        GetRelatedObjects(mapping, compilation, details, objs, cancel);
+        GetRelatedObjects(mapper, compilation, details, objs, cancel);
         objs.Add(details);
         return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     private void GetRelatedObjects(
-        LoquiMapping mapping,
+        LoquiMapping mapper,
         Compilation compilation,
         ITypeSymbol details, 
         HashSet<ITypeSymbol> processedDetails,
@@ -35,21 +35,17 @@ public class RelatedObjectAccumulator
         cancel.ThrowIfCancellationRequested();
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(details.OriginalDefinition)) return;
-        var baseType = mapping.TryGetBaseClass(details, cancel);
+        var baseType = mapper.TryGetBaseClass(details);
         if (baseType != null)
         {
-            GetRelatedObjects(mapping, compilation, baseType, processedDetails, cancel);
+            GetRelatedObjects(mapper, compilation, baseType, processedDetails, cancel);
         }
 
-        var inheriting = mapping.TryGetInheritingClasses(details, cancel);
+        var inheriting = mapper.TryGetInheritingClasses(details);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
-            var inheritTypeSymbol = compilation.GetTypeByMetadataName(inherit.FullName!);
-            if (inheritTypeSymbol != null)
-            {
-                GetRelatedObjects(mapping, compilation, inheritTypeSymbol, processedDetails, cancel);
-            }
+            GetRelatedObjects(mapper, compilation, inherit, processedDetails, cancel);
         }
         foreach (var memb in details.GetMembers())
         {
@@ -59,7 +55,7 @@ public class RelatedObjectAccumulator
             
             var type = TransformSymbol(prop.Type);
             
-            GetRelatedObjects(mapping, compilation, type, processedDetails, cancel);
+            GetRelatedObjects(mapper, compilation, type, processedDetails, cancel);
         }
     }
 

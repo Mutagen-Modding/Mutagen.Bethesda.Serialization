@@ -35,7 +35,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
     public void GenerateForSerialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj, 
         ITypeSymbol field,
         string? fieldName,
@@ -49,7 +49,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     }
 
     public void GenerateForDeserialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj, 
         IPropertySymbol propertySymbol, 
         string itemAccessor,

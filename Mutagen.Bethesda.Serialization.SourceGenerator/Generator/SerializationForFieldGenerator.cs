@@ -24,7 +24,7 @@ public class SerializationFieldGenerator
     }
     
     public void GenerateForField(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,
         string writerAccessor,

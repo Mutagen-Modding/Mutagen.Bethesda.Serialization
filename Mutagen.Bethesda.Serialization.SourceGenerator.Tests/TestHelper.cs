@@ -24,6 +24,7 @@ public static class TestHelper
             MetadataReference.CreateFromFile(typeof(Owned<>).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(MutagenJsonConverter).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(FilePath).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(SkyrimMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(LoquiRegistration).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(TestMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(MutagenYamlConverter).Assembly.Location),

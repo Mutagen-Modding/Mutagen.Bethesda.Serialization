@@ -6,16 +6,16 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 public class SerializationForObjectsGenerator
 {
     private readonly RelatedObjectAccumulator _accumulator;
-    private readonly LoquiMapping _loquiMapping;
+    private readonly LoquiMapper _loquiMapper;
     private readonly SerializationForObjectGenerator _serializationForObjectGenerator;
 
     public SerializationForObjectsGenerator(
         RelatedObjectAccumulator accumulator,
-        LoquiMapping loquiMapping,
+        LoquiMapper loquiMapper,
         SerializationForObjectGenerator serializationForObjectGenerator)
     {
         _accumulator = accumulator;
-        _loquiMapping = loquiMapping;
+        _loquiMapper = loquiMapper;
         _serializationForObjectGenerator = serializationForObjectGenerator;
     }
     
@@ -36,11 +36,12 @@ public class SerializationForObjectsGenerator
             .SelectMany((mod, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                return _accumulator.GetRelatedObjects(_loquiMapping, mod.Right, mod.Left!, cancel)
-                    .Select(x => (Type: x, Compilation: mod.Right));
+                var mapping = _loquiMapper.GetMappings(mod.Right, cancel);
+                return _accumulator.GetRelatedObjects(mapping, mod.Right, mod.Left!, cancel)
+                    .Select(x => (Type: x, Compilation: new CompilationUnit(mod.Right, mapping)));
             });
         context.RegisterSourceOutput(
             allClassesToGenerate,
-            (c, i) => _serializationForObjectGenerator.Generate(_loquiMapping, i.Compilation, c, i.Type));
+            (c, i) => _serializationForObjectGenerator.Generate(i.Compilation, c, i.Type));
     }
 }

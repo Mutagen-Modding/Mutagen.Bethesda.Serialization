@@ -10,7 +10,7 @@ public interface ISerializationForFieldGenerator
     bool Applicable(ITypeSymbol typeSymbol);
     
     void GenerateForSerialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol field,
         string? fieldName,
@@ -21,7 +21,7 @@ public interface ISerializationForFieldGenerator
         CancellationToken cancel);
     
     void GenerateForDeserialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         IPropertySymbol propertySymbol, 
         string itemAccessor,

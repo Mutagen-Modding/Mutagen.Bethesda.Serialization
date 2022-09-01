@@ -27,7 +27,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(ITypeSymbol typeSymbol) => false;
 
     public void GenerateForSerialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol field,
         string? fieldName,
@@ -41,7 +41,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     }
 
     public void GenerateForDeserialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         IPropertySymbol propertySymbol, 
         string itemAccessor,

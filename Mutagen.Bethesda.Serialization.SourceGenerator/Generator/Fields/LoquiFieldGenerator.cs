@@ -5,18 +5,18 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class LoquiFieldGenerator : ISerializationForFieldGenerator
 {
-    private readonly LoquiMapping _loquiMapping;
+    private readonly LoquiMapper _loquiMapper;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
     public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
 
     public LoquiFieldGenerator(
         IsLoquiObjectTester isLoquiObjectTester,
-        LoquiMapping loquiMapping,
+        LoquiMapper loquiMapper,
         LoquiSerializationNaming loquiSerializationNaming)
     {
         _isLoquiObjectTester = isLoquiObjectTester;
-        _loquiMapping = loquiMapping;
+        _loquiMapper = loquiMapper;
         _loquiSerializationNaming = loquiSerializationNaming;
     }
 
@@ -40,7 +40,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     }
     
     public void GenerateForSerialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol field, 
         string? fieldName,
@@ -58,11 +58,11 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
 
-        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: _loquiMapping.HasInheritingClasses(field, cancel))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
+        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: compilation.Mapping.HasInheritingClasses(field))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
     }
 
     public void GenerateForDeserialize(
-        Compilation compilation,
+        CompilationUnit compilation,
         ITypeSymbol obj,
         IPropertySymbol propertySymbol,
         string itemAccessor,

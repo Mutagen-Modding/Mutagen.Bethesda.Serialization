@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -10,28 +11,30 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 public class SerializationForObjectGenerator
 {
     private readonly PropertyFilter _propertyFilter;
+    private readonly LoquiNameRetriever _nameRetriever;
     private readonly SerializationFieldGenerator _forFieldGenerator;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
 
     public SerializationForObjectGenerator(
         PropertyFilter propertyFilter,
+        LoquiNameRetriever nameRetriever,
         SerializationFieldGenerator forFieldGenerator,
         LoquiSerializationNaming loquiSerializationNaming)
     {
         _propertyFilter = propertyFilter;
+        _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
         _loquiSerializationNaming = loquiSerializationNaming;
     }
     
     public void Generate(
-        LoquiMapping loquiMapping,
-        Compilation compilation, 
+        CompilationUnit compilation, 
         SourceProductionContext context, 
         ITypeSymbol obj)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
-        var baseType = loquiMapping.TryGetBaseClass(obj, context.CancellationToken);
-        var inheriting = loquiMapping.TryGetInheritingClasses(obj, context.CancellationToken);
+        var baseType = compilation.Mapping.TryGetBaseClass(obj);
+        var inheriting = compilation.Mapping.TryGetInheritingClasses(obj);
         
         var sb = new StructuredStringBuilder();
         
@@ -79,11 +82,12 @@ public class SerializationForObjectGenerator
                         foreach (var inherit in inheriting)
                         {
                             context.CancellationToken.ThrowIfCancellationRequested();
-                            if (!_loquiSerializationNaming.TryGetSerializationItems(inherit.GetterType, out var inheritSerializeItems)) continue;
-                            sb.AppendLine($"case {inherit.GetterType} {inherit.ClassType.Name}Getter:");
+                            var names = _nameRetriever.GetNames(inherit);
+                            if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems)) continue;
+                            sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{inheritSerializeItems.SerializationCall(serialize: true)}({inherit.ClassType.Name}Getter, writer, kernel);");
+                                sb.AppendLine($"{inheritSerializeItems.SerializationCall(serialize: true)}({names.Direct}Getter, writer, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
@@ -146,7 +150,7 @@ public class SerializationForObjectGenerator
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private void GenerateForProperty(Compilation compilation, ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb, CancellationToken cancel)
+    private void GenerateForProperty(CompilationUnit compilation, ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb, CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
         if (_propertyFilter.Skip(prop)) return;
