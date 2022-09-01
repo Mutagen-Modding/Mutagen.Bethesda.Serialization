@@ -13,6 +13,16 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public bool ReadBool(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TEnum ReadEnum<TEnum>(YamlNode reader) where TEnum : struct, Enum, IConvertible
+    {
+        throw new NotImplementedException();
+    }
+
     public string ReadString(YamlNode reader)
     {
         return reader.Anchor.Value;

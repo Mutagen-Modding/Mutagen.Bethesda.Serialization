@@ -10,12 +10,12 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteEnum(writer, "SomeEnum", item.SomeEnum);
-        kernel.WriteEnum(writer, "SomeEnum2", item.SomeEnum2);
-        kernel.WriteEnum(writer, "SomeEnum3", item.SomeEnum3);
-        kernel.WriteEnum(writer, "SomeEnum4", item.SomeEnum4);
-        kernel.WriteEnum(writer, "SomeEnum5", item.SomeEnum5);
-        kernel.WriteEnum(writer, "SomeEnum6", item.SomeEnum6);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>(writer, "SomeEnum", item.SomeEnum);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>(writer, "SomeEnum2", item.SomeEnum2);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2>(writer, "SomeEnum3", item.SomeEnum3);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2>(writer, "SomeEnum4", item.SomeEnum4);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum3>(writer, "SomeEnum5", item.SomeEnum5);
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum3>(writer, "SomeEnum6", item.SomeEnum6);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(

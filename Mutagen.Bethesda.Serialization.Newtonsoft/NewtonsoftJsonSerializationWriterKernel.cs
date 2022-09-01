@@ -13,6 +13,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
+    public void WriteBool(JTokenWriter writer, string? fieldName, bool? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteString(JTokenWriter writer, string? fieldName, string? item)
     {
         throw new NotImplementedException();
@@ -113,7 +118,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         throw new NotImplementedException();
     }
 
-    public void WriteEnum<TEnum>(JTokenWriter writer, string? fieldName, TEnum? item) where TEnum : Enum
+    public void WriteEnum<TEnum>(JTokenWriter writer, string? fieldName, TEnum? item) where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }

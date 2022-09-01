@@ -13,6 +13,16 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new NotImplementedException();
     }
 
+    public bool ReadBool(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TEnum ReadEnum<TEnum>(JTokenReader reader) where TEnum : struct, Enum, IConvertible
+    {
+        throw new NotImplementedException();
+    }
+
     public string ReadString(JTokenReader reader)
     {
         return reader.CurrentToken?.ToString() ?? String.Empty;

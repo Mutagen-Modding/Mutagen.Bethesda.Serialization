@@ -13,6 +13,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public void WriteBool(YamlNode writer, string? fieldName, bool? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteString(YamlNode writer, string? fieldName, string? item)
     {
         throw new NotImplementedException();
@@ -113,7 +118,8 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item) where TEnum : Enum
+    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item)
+        where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }

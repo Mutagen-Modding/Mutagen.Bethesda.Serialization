@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Mutagen.Bethesda.Skyrim;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using VerifyXunit;
@@ -143,7 +144,7 @@ public class SerializationTests
 }";
         TestHelper.RunSourceGenerator(source);
     }
-    
+
     [Fact]
     public async Task TestMod()
     {

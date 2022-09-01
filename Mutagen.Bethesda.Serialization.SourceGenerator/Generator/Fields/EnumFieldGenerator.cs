@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
@@ -26,7 +26,8 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteEnum({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
+        field = Utility.PeelNullable(field);
+        sb.AppendLine($"{kernelAccessor}.WriteEnum<{field}>({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
     }
 
     public void GenerateForDeserialize(

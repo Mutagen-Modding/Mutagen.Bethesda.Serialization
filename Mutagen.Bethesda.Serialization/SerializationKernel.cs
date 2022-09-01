@@ -8,6 +8,9 @@ namespace Mutagen.Bethesda.Serialization;
 public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject();
+    public bool ReadBool(TReaderObject reader);
+    public TEnum ReadEnum<TEnum>(TReaderObject reader)
+        where TEnum : struct, Enum, IConvertible;
     public string ReadString(TReaderObject reader);
     public sbyte ReadInt8(TReaderObject reader);
     public short ReadInt16(TReaderObject reader);
@@ -27,6 +30,7 @@ public interface ISerializationReaderKernel<TReaderObject>
 public interface ISerializationWriterKernel<TWriterObject>
 {
     public TWriterObject GetNewObject();
+    public void WriteBool(TWriterObject writer, string? fieldName, bool? item);
     public void WriteString(TWriterObject writer, string? fieldName, string? item);
     public void WriteInt8(TWriterObject writer, string? fieldName, sbyte? item);
     public void WriteInt16(TWriterObject writer, string? fieldName, short? item);
@@ -48,7 +52,7 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)
-        where TEnum : Enum;
+        where TEnum : struct, Enum, IConvertible;
     public TWriterObject StartListSection(TWriterObject writer, string? fieldName);
     public void EndListSection();
     public TWriterObject StartDictionarySection(TWriterObject writer, string? fieldName);
