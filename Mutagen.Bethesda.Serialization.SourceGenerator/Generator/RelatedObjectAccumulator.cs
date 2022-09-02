@@ -6,13 +6,16 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class RelatedObjectAccumulator
 {
+    private readonly IsGroupTester _isGroupTester;
     private readonly ListFieldGenerator _listFieldGenerator;
     private readonly IsLoquiObjectTester _loquiObjectTester;
 
     public RelatedObjectAccumulator(
+        IsGroupTester isGroupTester,
         ListFieldGenerator listFieldGenerator,
         IsLoquiObjectTester loquiObjectTester)
     {
+        _isGroupTester = isGroupTester;
         _listFieldGenerator = listFieldGenerator;
         _loquiObjectTester = loquiObjectTester;
     }
@@ -55,6 +58,11 @@ public class RelatedObjectAccumulator
             cancel.ThrowIfCancellationRequested();
             if (memb is not IPropertySymbol prop) continue;
             if (prop.IsStatic) continue;
+
+            if (_isGroupTester.IsGroup(prop.Type))
+            {
+                processedDetails.Add(prop.Type.OriginalDefinition);
+            }
             
             var type = TransformSymbol(prop.Type);
             
@@ -103,9 +111,7 @@ public class RelatedObjectAccumulator
     private bool TryGetAsGroup(ITypeSymbol typeSymbol, out ITypeSymbol replacement)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && namedTypeSymbol.IsGenericType
-            && namedTypeSymbol.TypeArguments.Length == 1
-            && typeSymbol.Interfaces.Any(x => x.Name == "IGroupGetter"))
+            && _isGroupTester.IsGroup(namedTypeSymbol))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;

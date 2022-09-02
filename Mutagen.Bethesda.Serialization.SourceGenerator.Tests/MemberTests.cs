@@ -469,7 +469,7 @@ public class MemberTests
     {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public class Group<T> : SomeBaseClass, ILoquiObject");
+            sb.AppendLine("public class Group<T> : SomeBaseClass, ILoquiObject, IGroupGetter");
             using (sb.IncreaseDepth())
             {
                 sb.AppendLine("where T : class, IMajorRecordInternal");
