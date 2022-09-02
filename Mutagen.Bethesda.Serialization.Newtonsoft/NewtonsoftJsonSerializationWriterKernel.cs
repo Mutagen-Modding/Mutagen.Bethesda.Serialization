@@ -8,7 +8,12 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKernel<JTokenWriter>
 {
-    public JTokenWriter GetNewObject()
+    public JTokenWriter GetNewObject(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Finalize(Stream stream, JTokenWriter writer)
     {
         throw new NotImplementedException();
     }
@@ -69,6 +74,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     }
 
     public void WriteFloat(JTokenWriter writer, string? fieldName, float? item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteModKey(JTokenWriter writer, string? fieldName, ModKey? modKey)
     {
         throw new NotImplementedException();
     }

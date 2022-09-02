@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -8,7 +8,12 @@ namespace Mutagen.Bethesda.Serialization.Yaml;
 
 public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode>
 {
-    public YamlNode GetNewObject()
+    public YamlNode GetNewObject(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Finalize(Stream stream, YamlNode writer)
     {
         throw new NotImplementedException();
     }

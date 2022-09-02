@@ -40,6 +40,11 @@ public class MixinForModGenerator
         var sb = new StructuredStringBuilder();
 
         sb.AppendLine($"using {bootstrap.ModRegistration.ContainingNamespace};");
+        sb.AppendLine($"using {reader.ContainingNamespace};");
+        if (!SymbolEqualityComparer.Default.Equals(writer.ContainingNamespace, reader.ContainingNamespace))
+        {
+            sb.AppendLine($"using {writer.ContainingNamespace};");
+        }
         
         using (sb.Namespace(bootstrap.Bootstrap.ContainingNamespace.ToString()))
         {
@@ -57,25 +62,28 @@ public class MixinForModGenerator
             sb.AppendLine($"private readonly static {writerKernel} WriterKernel = new();");
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static string Serialize"))
+            using (var args = sb.Function($"public static void Serialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ModRegistration} mod");
+                args.Add($"Stream stream");
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer}>(mod, WriterKernel.GetNewObject(), WriterKernel);");
+                sb.AppendLine($"var writer = WriterKernel.GetNewObject(stream);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(mod, writer, WriterKernel);");
+                sb.AppendLine($"WriterKernel.Finalize(stream, writer);");
             }
             sb.AppendLine();
             
             using (var args = sb.Function($"public static {bootstrap.ModRegistration} Deserialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"string str");
+                args.Add($"Stream stream");
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: false)}<{reader}>(mod, ReaderKernel.GetNewObject(), ReaderKernel);");
+                sb.AppendLine($"return {modSerializationItems.SerializationCall(serialize: false)}<{reader.Name}>(ReaderKernel.GetNewObject(stream), ReaderKernel);");
             }
             sb.AppendLine();
         }

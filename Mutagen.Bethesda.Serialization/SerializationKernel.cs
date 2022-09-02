@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -7,7 +7,7 @@ namespace Mutagen.Bethesda.Serialization;
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
-    public TReaderObject GetNewObject();
+    public TReaderObject GetNewObject(Stream stream);
     public bool ReadBool(TReaderObject reader);
     public TEnum ReadEnum<TEnum>(TReaderObject reader)
         where TEnum : struct, Enum, IConvertible;
@@ -29,7 +29,8 @@ public interface ISerializationReaderKernel<TReaderObject>
 
 public interface ISerializationWriterKernel<TWriterObject>
 {
-    public TWriterObject GetNewObject();
+    public TWriterObject GetNewObject(Stream stream);
+    public void Finalize(Stream stream, TWriterObject writer);
     public void WriteChar(TWriterObject writer, string? fieldName, char? item);
     public void WriteBool(TWriterObject writer, string? fieldName, bool? item);
     public void WriteString(TWriterObject writer, string? fieldName, string? item);

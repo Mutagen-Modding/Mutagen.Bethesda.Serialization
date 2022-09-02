@@ -8,7 +8,7 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKernel<JTokenReader>
 {
-    public JTokenReader GetNewObject()
+    public JTokenReader GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }

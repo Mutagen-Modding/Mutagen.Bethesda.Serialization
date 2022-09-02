@@ -8,7 +8,7 @@ namespace Mutagen.Bethesda.Serialization.Yaml;
 
 public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode>
 {
-    public YamlNode GetNewObject()
+    public YamlNode GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
