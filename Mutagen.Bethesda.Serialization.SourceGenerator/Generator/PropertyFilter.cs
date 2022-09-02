@@ -14,6 +14,7 @@ public class PropertyFilter
     
     public bool Skip(IPropertySymbol propertySymbol)
     {
+        if (propertySymbol.IsIndexer) return true;
         if (propertySymbol.Type.Name == "ILoquiRegistration")
         {
             switch (propertySymbol.Name)

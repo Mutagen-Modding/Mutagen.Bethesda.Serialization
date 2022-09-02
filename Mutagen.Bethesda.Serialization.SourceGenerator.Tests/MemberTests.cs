@@ -458,6 +458,7 @@ public class MemberTests
         {
             sb.AppendLine("public ILoquiRegistration StaticRegistration { get; set; }");
             sb.AppendLine("public ILoquiRegistration Registration { get; set; }");
+            sb.AppendLine("public string this[string str] => throw new NotImplementedException();");
             sb.AppendLine("public int SomeInt { get; set; }");
         });
        
