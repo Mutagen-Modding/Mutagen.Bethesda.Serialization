@@ -9,7 +9,7 @@ public class P2IntFieldGenerator : PrimitiveFieldGenerator
     };
     
     public P2IntFieldGenerator()
-        : base("PInt", AssociatedTypes)
+        : base("P2Int", AssociatedTypes)
     {
     }
 }
