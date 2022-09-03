@@ -24,7 +24,7 @@ public class StubGenerator
 
                 cancel.ThrowIfCancellationRequested();
                 return dict
-                    .Where(kv => kv.Value.All(x => x.ModRegistration == null))
+                    .Where(kv => kv.Value.All(x => x.ObjectRegistration == null))
                     .Select(x => x.Key)
                     .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
             });
@@ -36,6 +36,7 @@ public class StubGenerator
     {
         StructuredStringBuilder sb = new();
         sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
+        sb.AppendLine("using Loqui;");
         sb.AppendLine();
         using (sb.Namespace(bootstrap.ContainingNamespace.ToString()))
         {
@@ -49,16 +50,28 @@ public class StubGenerator
 
         using (sb.CurlyBrace())
         {
-            using (var args = sb.Function($"public static string Convert"))
+            using (var args = sb.Function($"public static void Serialize"))
             {
                 args.Add($"this {bootstrap} converterBootstrap");
-                args.Add("IModGetter mod");
+                args.Add("ILoquiObject mod");
+                args.Add($"Stream stream");
             }
-
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("throw new NotImplementedException();");
             }
+            sb.AppendLine();
+            
+            using (var args = sb.Function($"public static ILoquiObject Deserialize"))
+            {
+                args.Add($"this {bootstrap} converterBootstrap");
+                args.Add($"Stream stream");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("throw new NotImplementedException();");
+            }
+            sb.AppendLine();
         }
         sb.AppendLine();
 

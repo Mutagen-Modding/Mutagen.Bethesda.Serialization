@@ -57,7 +57,7 @@ internal static class TestMod_Serialization
         }
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

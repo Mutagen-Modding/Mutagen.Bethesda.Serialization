@@ -6,14 +6,13 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 internal static class SomeLoquiWithBase_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter item,
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        BaseLoqui_Serialization.Serialize<TWriteObject>(item, writer, kernel);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBase Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

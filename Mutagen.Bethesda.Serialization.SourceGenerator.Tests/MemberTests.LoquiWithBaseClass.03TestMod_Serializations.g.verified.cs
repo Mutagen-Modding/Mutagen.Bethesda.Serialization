@@ -10,10 +10,10 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        SomeLoquiWithBase_Serialization.Serialize(item.MyLoqui, writer, kernel);
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Serialize(item.MyLoqui, writer, kernel);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

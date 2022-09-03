@@ -8,7 +8,7 @@ public class ModInvocationDetector
     public IncrementalValuesProvider<BootstrapInvocation> Detect(IncrementalValuesProvider<BootstrapInvocation> bootstrapSymbols)
     {
         return bootstrapSymbols
-            .Where(x => x.ModRegistration != null)
+            .Where(x => x.ObjectRegistration != null)
             .Collect()
             .SelectMany((x, cancel) =>
             {

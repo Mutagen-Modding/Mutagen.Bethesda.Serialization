@@ -3,6 +3,7 @@
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public record SerializationItems(
+    string Namespace,
     string TermName)
 {
     public string SerializationHousingClassName => $"{TermName}_Serialization";
@@ -10,7 +11,7 @@ public record SerializationItems(
 
     public string SerializationCall(bool serialize, bool withCheck = false)
     {
-        return $"{SerializationHousingClassName}.{(serialize ? "Serialize" : "Deserialize")}{(withCheck ? "WithCheck" : null)}";
+        return $"{Namespace}.{SerializationHousingClassName}.{(serialize ? "Serialize" : "Deserialize")}{(withCheck ? "WithCheck" : null)}";
     }
 }
 
@@ -28,7 +29,7 @@ public class LoquiSerializationNaming
     {
         var names = _nameRetriever.GetNames(obj);
 
-        items = new(names.Direct);
+        items = new(obj.ContainingNamespace.ToString(), names.Direct);
         return true;
     }
 }

@@ -49,7 +49,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register(typeof(ColorFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ByteArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(RecordTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
-[Register(typeof(GenderedTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(GenderedTypeFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(GenderedTypeFieldGenerator))]
 [Register(typeof(AssetLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(DictFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ArrayFieldGenerator), typeof(ISerializationForFieldGenerator))]

@@ -1,19 +1,18 @@
-﻿//HintName: SubclassLoquiB_Serializations.g.cs
+﻿//HintName: SomeLoqui_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class SubclassLoquiB_Serialization
+internal static class SomeLoqui_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        AbstractBaseLoqui_Serialization.Serialize<TWriteObject>(item, writer, kernel);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

@@ -7,7 +7,7 @@ public class IsLoquiObjectTester
     public bool IsLoqui(ITypeSymbol typeSymbol)
     {
         if (typeSymbol.Name.StartsWith("ILoquiObject")) return false;
-        return typeSymbol.Interfaces.Any(x => x.Name.StartsWith("ILoquiObject")) 
+        return typeSymbol.AllInterfaces.Any(x => x.Name.StartsWith("ILoquiObject")) 
                || (typeSymbol.BaseType?.Name?.StartsWith("ILoquiObject") ?? false);
     }
     

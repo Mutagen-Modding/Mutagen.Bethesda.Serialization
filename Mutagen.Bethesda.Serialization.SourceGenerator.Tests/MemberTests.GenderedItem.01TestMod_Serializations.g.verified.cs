@@ -18,7 +18,7 @@ internal static class TestMod_Serialization
         kernel.WriteString(writer, "SomeGenderedInt3Female", item.SomeGenderedInt3.Female);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

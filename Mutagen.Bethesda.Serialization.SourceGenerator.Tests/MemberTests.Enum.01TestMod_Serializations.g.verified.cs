@@ -18,7 +18,7 @@ internal static class TestMod_Serialization
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum3>(writer, "SomeEnum6", item.SomeEnum6);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

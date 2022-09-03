@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -43,6 +43,7 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item);
     public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item);
     public void WriteFloat(TWriterObject writer, string? fieldName, float? item);
+    public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? modKey);
     public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? formKey);
     public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? recordType);
     public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? p2);

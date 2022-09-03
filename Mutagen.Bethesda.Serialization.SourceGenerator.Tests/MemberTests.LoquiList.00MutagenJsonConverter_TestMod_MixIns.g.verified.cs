@@ -10,19 +10,19 @@ public static class MutagenJsonConverterTestModMixIns
 
     public static void Serialize(
         this Mutagen.Bethesda.Serialization.Newtonsoft.MutagenJsonConverter converterBootstrap,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter mod,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         Stream stream)
     {
         var writer = WriterKernel.GetNewObject(stream);
-        TestMod_Serialization.Serialize<JTokenWriter>(mod, writer, WriterKernel);
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Serialize<JTokenWriter>(item, writer, WriterKernel);
         WriterKernel.Finalize(stream, writer);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize(
         this Mutagen.Bethesda.Serialization.Newtonsoft.MutagenJsonConverter converterBootstrap,
         Stream stream)
     {
-        return TestMod_Serialization.Deserialize<JTokenReader>(ReaderKernel.GetNewObject(stream), ReaderKernel);
+        return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Deserialize<JTokenReader>(ReaderKernel.GetNewObject(stream), ReaderKernel);
     }
 
 }

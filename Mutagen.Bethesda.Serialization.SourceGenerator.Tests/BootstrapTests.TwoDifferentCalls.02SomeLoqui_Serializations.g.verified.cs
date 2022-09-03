@@ -1,19 +1,18 @@
-﻿//HintName: SubObject_Serializations.g.cs
+﻿//HintName: SomeLoqui_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class SubObject_Serialization
+internal static class SomeLoqui_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter.SubObject item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteString(writer, "SubField", item.SubField);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter.SubObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

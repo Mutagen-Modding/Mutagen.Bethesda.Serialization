@@ -4,11 +4,11 @@ using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
-public record BootstrapInvocation(INamedTypeSymbol Bootstrap, INamedTypeSymbol? ModRegistration)
+public record BootstrapInvocation(INamedTypeSymbol Bootstrap, INamedTypeSymbol? ObjectRegistration)
 {
     public virtual bool Equals(BootstrapInvocation? other)
     {
-        return SymbolEqualityComparer.IncludeNullability.Equals(ModRegistration, other?.ModRegistration)
+        return SymbolEqualityComparer.IncludeNullability.Equals(ObjectRegistration, other?.ObjectRegistration)
                && Bootstrap.Equals(other?.Bootstrap, SymbolEqualityComparer.Default);
     }
 
@@ -17,13 +17,21 @@ public record BootstrapInvocation(INamedTypeSymbol Bootstrap, INamedTypeSymbol? 
         unchecked
         {
             return (SymbolEqualityComparer.Default.GetHashCode(Bootstrap) * 397)
-                   ^ (ModRegistration != null ? SymbolEqualityComparer.IncludeNullability.GetHashCode(ModRegistration) : 0);
+                   ^ (ObjectRegistration != null ? SymbolEqualityComparer.IncludeNullability.GetHashCode(ObjectRegistration) : 0);
         }
     }
 }
 
 public class BootstrapInvocationDetector
 {
+    private readonly IsLoquiObjectTester _loquiObjectTester;
+
+    public BootstrapInvocationDetector(
+        IsLoquiObjectTester loquiObjectTester)
+    {
+        _loquiObjectTester = loquiObjectTester;
+    }
+    
     public IncrementalValuesProvider<BootstrapInvocation> GetBootstrapInvocations(IncrementalGeneratorInitializationContext context)
     {
         return context.SyntaxProvider
@@ -46,7 +54,7 @@ public class BootstrapInvocationDetector
         
         var ret = new BootstrapInvocation(namedTypeSymbol, default);
         if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
-        if (invocationExpressionSyntax.ArgumentList.Arguments.Count != 1) return ret;
+        if (invocationExpressionSyntax.ArgumentList.Arguments.Count is not (2 or 1)) return ret;
         
         var symb = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax.ArgumentList.Arguments[0].Expression).Symbol;
         if (symb == null) return ret;
@@ -54,11 +62,13 @@ public class BootstrapInvocationDetector
         var type = symb.TryGetTypeSymbol();
         if (type == null) return ret;
 
+        if (!_loquiObjectTester.IsLoqui(type)) return ret;
+        
         var getterInterface = type.AllInterfaces
-            .FirstOrDefault(x => x.Name.EndsWith("ModGetter") &&
+            .FirstOrDefault(x => x.Name.EndsWith("Getter") &&
                         SymbolEqualityComparer.Default.Equals(x.ContainingNamespace, type.ContainingNamespace));
         if (getterInterface == null) return ret;
 
-        return ret with { ModRegistration = getterInterface };
+        return ret with { ObjectRegistration = getterInterface };
     }
 }

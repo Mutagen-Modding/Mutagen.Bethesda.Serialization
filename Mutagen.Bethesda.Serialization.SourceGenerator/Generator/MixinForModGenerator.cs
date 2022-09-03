@@ -8,11 +8,14 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public class MixinForModGenerator
 {
+    private readonly LoquiNameRetriever _nameRetriever;
     private readonly LoquiSerializationNaming _serializationNaming;
 
     public MixinForModGenerator(
+        LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming)
     {
+        _nameRetriever = nameRetriever;
         _serializationNaming = serializationNaming;
     }
     
@@ -27,8 +30,8 @@ public class MixinForModGenerator
     
     public void Generate(SourceProductionContext context, BootstrapInvocation bootstrap)
     {
-        if (bootstrap.ModRegistration == null) return;
-        if (!_serializationNaming.TryGetSerializationItems(bootstrap.ModRegistration, out var modSerializationItems)) return;
+        if (bootstrap.ObjectRegistration == null) return;
+        if (!_serializationNaming.TryGetSerializationItems(bootstrap.ObjectRegistration, out var modSerializationItems)) return;
         
         var interf = bootstrap.Bootstrap.Interfaces.First(x => x.Name == "IMutagenSerializationBootstrap");
         
@@ -36,10 +39,12 @@ public class MixinForModGenerator
         var reader = interf.TypeArguments[1];
         var writerKernel = interf.TypeArguments[2];
         var writer = interf.TypeArguments[3];
+
+        var names = _nameRetriever.GetNames(bootstrap.ObjectRegistration);
         
         var sb = new StructuredStringBuilder();
 
-        sb.AppendLine($"using {bootstrap.ModRegistration.ContainingNamespace};");
+        sb.AppendLine($"using {bootstrap.ObjectRegistration.ContainingNamespace};");
         sb.AppendLine($"using {reader.ContainingNamespace};");
         if (!SymbolEqualityComparer.Default.Equals(writer.ContainingNamespace, reader.ContainingNamespace))
         {
@@ -65,18 +70,18 @@ public class MixinForModGenerator
             using (var args = sb.Function($"public static void Serialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"{bootstrap.ModRegistration} mod");
+                args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"Stream stream");
             }
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(stream);");
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(mod, writer, WriterKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(item, writer, WriterKernel);");
                 sb.AppendLine($"WriterKernel.Finalize(stream, writer);");
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {bootstrap.ModRegistration} Deserialize"))
+            using (var args = sb.Function($"public static {bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter} Deserialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"Stream stream");

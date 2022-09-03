@@ -17,7 +17,7 @@ internal static class TestMod_Serialization
         kernel.WriteBytes(writer, "SomeBytes5", item.SomeBytes5);
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

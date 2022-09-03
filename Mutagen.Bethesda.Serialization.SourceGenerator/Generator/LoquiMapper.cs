@@ -1,23 +1,27 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
+public record LoquiTypeSet(
+    ITypeSymbol Direct,
+    ITypeSymbol Getter,
+    ITypeSymbol Setter);
+
 public class LoquiMapping
 {
     private readonly Dictionary<ITypeSymbol, List<ITypeSymbol>> _inheritingClassMapping;
-    private readonly Dictionary<ITypeSymbol, ITypeSymbol> _toDirectMapping;
+    private readonly Dictionary<ITypeSymbol, LoquiTypeSet> _typeSetMapping;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public LoquiMapping(
-        Dictionary<ITypeSymbol, ITypeSymbol> toDirectMapping,
+        Dictionary<ITypeSymbol, LoquiTypeSet> typeSetMapping,
         Dictionary<ITypeSymbol, List<ITypeSymbol>> inheritingClassMapping, 
         IsLoquiObjectTester isLoquiObjectTester)
     {
         _inheritingClassMapping = inheritingClassMapping;
         _isLoquiObjectTester = isLoquiObjectTester;
-        _toDirectMapping = toDirectMapping;
+        _typeSetMapping = typeSetMapping;
     }
 
     public ITypeSymbol? TryGetBaseClass(ITypeSymbol typeSymbol)
@@ -39,7 +43,7 @@ public class LoquiMapping
 
     public bool HasInheritingClasses(ITypeSymbol typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
 
-    public bool TryGetDirectClass(ITypeSymbol typeSymbol, out ITypeSymbol directClass) => _toDirectMapping.TryGetValue(typeSymbol, out directClass);
+    public bool TryGetTypeSet(ITypeSymbol typeSymbol, out LoquiTypeSet typeSet) => _typeSetMapping.TryGetValue(typeSymbol, out typeSet);
 }
 
 public class LoquiMapper
@@ -58,7 +62,7 @@ public class LoquiMapper
     public LoquiMapping GetMappings(Compilation compilation, CancellationToken cancel)
     {
         var inheritingClassMapping = new Dictionary<ITypeSymbol, List<ITypeSymbol>>(SymbolEqualityComparer.Default);
-        var toDirectMapping = new Dictionary<ITypeSymbol, ITypeSymbol>(SymbolEqualityComparer.Default);
+        var typeSets = new Dictionary<ITypeSymbol, LoquiTypeSet>(SymbolEqualityComparer.Default);
         foreach (var symb in IterateAllMutagenSymbols(compilation, cancel)
                      .WhereCastable<ITypeSymbol, INamedTypeSymbol>())
         {
@@ -68,15 +72,20 @@ public class LoquiMapper
             ProcessInheritance(symb, inheritingClassMapping);
 
             var names = _nameRetriever.GetNames(symb);
-            var direct = compilation.GetTypeByMetadataName($"{symb.ContainingNamespace}.{names.Direct}");
-            if (direct != null)
+            var generic = symb.TypeArguments.Length > 0 ? $"`{symb.TypeArguments.Length}" : string.Empty;
+            var direct = compilation.GetTypeByMetadataName($"{symb.ContainingNamespace}.{names.Direct}{generic}");
+            var getter = compilation.GetTypeByMetadataName($"{symb.ContainingNamespace}.{names.Getter}{generic}");
+            var setter = compilation.GetTypeByMetadataName($"{symb.ContainingNamespace}.{names.Setter}{generic}");
+            if (direct != null
+                && getter != null
+                && setter != null)
             {
-                toDirectMapping[symb] = direct;
+                typeSets[symb] = new(direct, getter, setter);
             }
         }
 
         return new LoquiMapping(
-            toDirectMapping,
+            typeSets,
             inheritingClassMapping,
             _isLoquiObjectTester);
     }

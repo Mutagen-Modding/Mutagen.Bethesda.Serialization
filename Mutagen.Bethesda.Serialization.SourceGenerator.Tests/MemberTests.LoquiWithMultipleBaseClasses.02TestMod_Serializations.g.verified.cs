@@ -10,9 +10,7 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteP3UInt16(writer, "SomeMember0", item.SomeMember0);
-        kernel.WriteP3UInt16(writer, "SomeMember1", item.SomeMember1);
-        kernel.WriteP3UInt16(writer, "SomeMember2", item.SomeMember2);
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.SerializeWithCheck(item.MyLoqui, writer, kernel);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -36,8 +35,10 @@ public class SerializationForObjectGenerator
         ITypeSymbol obj)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
+        
+        if (!compilation.Mapping.TryGetTypeSet(obj, out var typeSet)) return;
         var baseType = compilation.Mapping.TryGetBaseClass(obj);
-        var inheriting = compilation.Mapping.TryGetInheritingClasses(obj);
+        var inheriting = compilation.Mapping.TryGetInheritingClasses(typeSet.Direct);
         
         var sb = new StructuredStringBuilder();
         
@@ -73,7 +74,7 @@ public class SerializationForObjectGenerator
             {
                 using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenerics}"))
                 {
-                    args.Add($"{obj} item");
+                    args.Add($"{typeSet.Getter} item");
                     args.Add($"TWriteObject writer");
                     args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
                     args.Wheres.AddRange(wheres);
@@ -97,8 +98,7 @@ public class SerializationForObjectGenerator
                         }
 
                         if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
-                            && compilation.Mapping.TryGetDirectClass(obj, out var objDirect)
-                            && !objDirect.IsAbstract)
+                            && !typeSet.Direct.IsAbstract)
                         {
                             sb.AppendLine($"case {obj} {obj}Getter:");
                             using (sb.IncreaseDepth())
@@ -119,7 +119,7 @@ public class SerializationForObjectGenerator
             
             using (var args = sb.Function($"public static void Serialize{writeObjectGenerics}"))
             {
-                args.Add($"{obj} item");
+                args.Add($"{typeSet.Getter} item");
                 args.Add($"TWriteObject writer");
                 args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
                 args.Wheres.AddRange(wheres);
@@ -138,7 +138,7 @@ public class SerializationForObjectGenerator
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {obj} Deserialize{readObjectGenerics}"))
+            using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{readObjectGenerics}"))
             {
                 args.Add($"TReadObject reader");
                 args.Add($"ISerializationReaderKernel<TReadObject> kernel");

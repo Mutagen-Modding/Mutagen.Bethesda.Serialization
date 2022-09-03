@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -74,6 +74,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode
     }
 
     public void WriteFloat(YamlNode writer, string? fieldName, float? item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteModKey(YamlNode writer, string? fieldName, ModKey? modKey)
     {
         throw new NotImplementedException();
     }

@@ -7,7 +7,9 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 [UsesVerify]
 public class MemberTests
 {
-    private string GetModWithMember(Action<StructuredStringBuilder> memberBuilder)
+    private string GetModWithMember(
+        Action<StructuredStringBuilder> memberBuilder,
+        Action<StructuredStringBuilder> outsideBuilder = null)
     {
         var sb = new StructuredStringBuilder();
         
@@ -19,6 +21,8 @@ public class MemberTests
         sb.AppendLine();
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        outsideBuilder?.Invoke(sb);
         
         sb.AppendLine("public partial interface ITestModGetter : IModGetter, ILoquiObject");
         using (sb.CurlyBrace())
@@ -468,30 +472,51 @@ public class MemberTests
     [Fact]
     public Task TypicalGroup()
     {
-        var source = GetModWithMember(sb =>
-        {
-            sb.AppendLine("public class Group<T> : SomeBaseClass, ILoquiObject, IGroupGetter");
-            using (sb.IncreaseDepth())
+        var source = GetModWithMember(
+            sb =>
             {
-                sb.AppendLine("where T : class, IMajorRecordInternal");
-            }
-            using (sb.CurlyBrace())
+                sb.AppendLine("public Group<TestMajorRecord> SomeGroup { get; set; }");
+                sb.AppendLine("public IGroup<TestMajorRecord> SomeGroup2 { get; set; }");
+                sb.AppendLine("public IGroupGetter<TestMajorRecord> SomeGroup3 { get; set; }");
+            },
+            sb =>
             {
-                sb.AppendLine("public int SomeInt { get; set; }");
-                sb.AppendLine("public List<T> Items { get; set; }");
-                sb.AppendLine("public int SomeInt2 { get; set; }");
-            }
-            
-            sb.AppendLine("public class MajorRecord : SomeBaseClass, ILoquiObject");
-            using (sb.CurlyBrace())
-            {
-                sb.AppendLine("public int Item { get; set; }");
-            }
-            
-            sb.AppendLine("public Group<MajorRecord> SomeGroup { get; set; }");
-            sb.AppendLine("public IGroup<MajorRecord> SomeGroup2 { get; set; }");
-            sb.AppendLine("public IGroupGetter<MajorRecord> SomeGroup3 { get; set; }");
-        });
+                sb.AppendLine("public interface IGroupGetter<T> : ILoquiObjectGetter, IGroupGetter");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+                
+                sb.AppendLine("public interface IGroup<T> : ILoquiObject, IGroupGetter<T>");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+                
+                sb.AppendLine("public class Group<T> : SomeBaseClass, IGroup<T>");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+            });
        
         return TestHelper.Verify(source);
     }

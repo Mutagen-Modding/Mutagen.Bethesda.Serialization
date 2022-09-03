@@ -139,7 +139,8 @@ public class SerializationTests
     public void EmptySkyrimMod()
     { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
-        MutagenJsonConverter.Instance.Convert(mod);
+        var stream = new MemoryStream();
+        MutagenJsonConverter.Instance.Serialize(mod, stream);
     }
 }";
         TestHelper.RunSourceGenerator(source);
@@ -150,20 +151,111 @@ public class SerializationTests
     {
         await TestHelper.Verify(GetModWith((sb) =>
         {
-            using (var c = sb.Class("SubObject"))
-            {
-                c.Interfaces.Add("ILoquiObject");
-            }
-
-            using (sb.CurlyBrace())
-            {
-                sb.AppendLine("public string SubField { get; set; }");
-            }
-            
             sb.AppendLine("int SomeInt { get; set; }");
             sb.AppendLine("List<int> SomeList { get; set; }");
-            sb.AppendLine("SubObject SomeObject { get; set; }");
+            sb.AppendLine("SomeLoqui SomeObject { get; set; }");
         }));
+    }
+
+    [Fact]
+    public async Task SomeLoqui()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        using (var c = sb.Class("SerializationTests"))
+        {
+            c.Static = true;
+        }
+
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public static void TestCall()");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var obj = new SomeLoqui();");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+            }
+        }
+
+        await TestHelper.Verify(sb.ToString());
+    }
+
+    [Fact]
+    public async Task DoubleCall()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        using (var c = sb.Class("SerializationTests"))
+        {
+            c.Static = true;
+        }
+
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public static void TestCall()");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var obj = new SomeLoqui();");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+            }
+        }
+
+        await TestHelper.Verify(sb.ToString());
+    }
+
+    [Fact]
+    public async Task TwoDifferentCalls()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        sb.AppendLine("public partial interface ITestModGetter : IModGetter, ILoquiObject");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("SomeLoqui SomeObject { get; set; }");
+        }
+        
+        using (var c = sb.Class("TestMod"))
+        {
+            c.Partial = true;
+            c.BaseClass = "AMod";
+            c.Interfaces.Add("ITestModGetter");
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("SomeLoqui SomeObject { get; set; }");
+        }
+        
+        using (var c = sb.Class("SerializationTests"))
+        {
+            c.Static = true;
+        }
+
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public static void TestCall()");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var mod = new TestMod();");
+                sb.AppendLine("var obj = new SomeLoqui();");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(mod);");
+                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+            }
+        }
+
+        await TestHelper.Verify(sb.ToString());
     }
     
     private string GetModWith(Action<StructuredStringBuilder> memberBuilder)

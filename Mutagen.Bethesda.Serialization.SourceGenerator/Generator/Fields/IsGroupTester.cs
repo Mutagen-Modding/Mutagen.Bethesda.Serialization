@@ -9,6 +9,6 @@ public class IsGroupTester
         return typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.IsGenericType
             && namedTypeSymbol.TypeArguments.Length == 1
-            && typeSymbol.Interfaces.Any(x => x.Name == "IGroupGetter");
+            && typeSymbol.AllInterfaces.Any(x => x.Name == "IGroupGetter");
     }
 }

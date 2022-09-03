@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;

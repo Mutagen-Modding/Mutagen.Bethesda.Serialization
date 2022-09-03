@@ -19,29 +19,40 @@ public class SerializationForObjectsGenerator
         _serializationForObjectGenerator = serializationForObjectGenerator;
     }
     
-    public void Initialize(IncrementalGeneratorInitializationContext context, IncrementalValuesProvider<BootstrapInvocation> modBootstrapInvocations)
+    public void Initialize(IncrementalGeneratorInitializationContext context, IncrementalValuesProvider<BootstrapInvocation> bootstrapInvocations)
     {
-        var distinctMods = modBootstrapInvocations.Collect()
+        var distinctBootstraps = bootstrapInvocations.Collect()
             .Select((allSymbols, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
                 return allSymbols
-                    .Select(x => x.ModRegistration)
+                    .Select(x => x.ObjectRegistration)
                     .Where(x => x != null)!
                     .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
             });
-        var allClassesToGenerate = distinctMods
-            .SelectMany((mods, _) => mods)
-            .Combine(context.CompilationProvider)
-            .SelectMany((mod, cancel) =>
+        var mappings = context.CompilationProvider
+            .Select((x, c) => _loquiMapper.GetMappings(x, c));
+        var allClassesToGenerate = distinctBootstraps
+            .SelectMany((items, _) => items)
+            .Combine(mappings)
+            .SelectMany((item, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                var mapping = _loquiMapper.GetMappings(mod.Right, cancel);
-                return _accumulator.GetRelatedObjects(mapping, mod.Left!, cancel)
-                    .Select(x => (Type: x, Compilation: new CompilationUnit(mod.Right, mapping)));
+                return _accumulator.GetRelatedObjects(item.Right, item.Left!, cancel);
+            })
+            .Collect()
+            .SelectMany((objs, cancel) =>
+            {
+                cancel.ThrowIfCancellationRequested();
+                return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
             });
         context.RegisterSourceOutput(
-            allClassesToGenerate,
-            (c, i) => _serializationForObjectGenerator.Generate(i.Compilation, c, i.Type));
+            allClassesToGenerate
+                .Combine(context.CompilationProvider)
+                .Combine(mappings),
+            (c, i) =>
+            {
+                _serializationForObjectGenerator.Generate(new CompilationUnit(i.Left.Right, i.Right), c, i.Left.Left);
+            });
     }
 }
