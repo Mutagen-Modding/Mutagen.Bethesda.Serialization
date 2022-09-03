@@ -96,6 +96,8 @@ public class SerializationForObjectGenerator
                             context.CancellationToken.ThrowIfCancellationRequested();
                             var names = _nameRetriever.GetNames(inherit);
                             if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems)) continue;
+                            if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
+                            if (inheritTypes.Direct.IsAbstract) continue;
                             sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
                             using (sb.IncreaseDepth())
                             {
