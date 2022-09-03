@@ -51,14 +51,21 @@ public class SerializationForObjectGenerator
         
         string writeObjectGenerics = "<TWriteObject>";
         string readObjectGenerics = "<TReadObject>";
-        IEnumerable<string> wheres = Enumerable.Empty<string>();
-        if (obj is INamedTypeSymbol namedTypeSymbol
-            && namedTypeSymbol.TypeArguments.Length > 0)
+        IEnumerable<string> readerWheres = Enumerable.Empty<string>();
+        IEnumerable<string> writerWheres = Enumerable.Empty<string>();
+        if (typeSet.Getter is INamedTypeSymbol writerTypeSymbol
+            && writerTypeSymbol.TypeArguments.Length > 0)
         {
-            var generics = string.Join(", ", namedTypeSymbol.TypeArguments);
+            var generics = string.Join(", ", writerTypeSymbol.TypeArguments);
             writeObjectGenerics = $"<{string.Join(", ", "TWriteObject", generics)}>";
+            writerWheres = _whereClauseGenerator.GetWheres(writerTypeSymbol);
+        }
+        if (typeSet.Setter is INamedTypeSymbol readerTypeSymbol
+            && readerTypeSymbol.TypeArguments.Length > 0)
+        {
+            var generics = string.Join(", ", readerTypeSymbol.TypeArguments);
             readObjectGenerics = $"<{string.Join(", ", "TReadObject", generics)}>";
-            wheres = _whereClauseGenerator.GetWheres(namedTypeSymbol);
+            readerWheres = _whereClauseGenerator.GetWheres(readerTypeSymbol);
         }
 
         if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
@@ -77,7 +84,7 @@ public class SerializationForObjectGenerator
                     args.Add($"{typeSet.Getter} item");
                     args.Add($"TWriteObject writer");
                     args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
-                    args.Wheres.AddRange(wheres);
+                    args.Wheres.AddRange(writerWheres);
                 }
                 using (sb.CurlyBrace())
                 {
@@ -122,7 +129,7 @@ public class SerializationForObjectGenerator
                 args.Add($"{typeSet.Getter} item");
                 args.Add($"TWriteObject writer");
                 args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
-                args.Wheres.AddRange(wheres);
+                args.Wheres.AddRange(writerWheres);
             }
             using (sb.CurlyBrace())
             {
@@ -142,7 +149,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add($"TReadObject reader");
                 args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-                args.Wheres.AddRange(wheres);
+                args.Wheres.AddRange(readerWheres);
             }
             using (sb.CurlyBrace())
             {
