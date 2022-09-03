@@ -107,10 +107,10 @@ public class SerializationForObjectGenerator
                         if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
                             && !typeSet.Direct.IsAbstract)
                         {
-                            sb.AppendLine($"case {obj} {obj}Getter:");
+                            sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{curSerializationItems.SerializationCall(serialize: true)}({obj}Getter, writer, kernel);");
+                                sb.AppendLine($"{curSerializationItems.SerializationCall(serialize: true)}({typeSet.Getter.Name}, writer, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
