@@ -56,7 +56,7 @@ public class RelatedObjectAccumulator
             GetRelatedObjects(mapper, baseType, processedDetails, cancel);
         }
 
-        var inheriting = mapper.TryGetInheritingClasses(typeSet.Direct);
+        var inheriting = mapper.TryGetInheritingClasses(typeSet.Getter);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>true</ImplicitUsings>
 		<LangVersion>default</LangVersion>
-		
+		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<PackageId>Mutagen.Bethesda.Serialization.SourceGenerator</PackageId>
 		<Authors>Noggog</Authors>
 		<Company>Mutagen</Company>

@@ -13,6 +13,6 @@ public class SerializationTests
         var npc = mod.Npcs.AddNew();
         var stream = new MemoryStream();
         MutagenJsonConverter.Instance.Serialize(mod, stream);
-        MutagenJsonConverter.Instance.Serialize(npc, stream);
+        //MutagenJsonConverter.Instance.Serialize(npc, stream);
     }
 }

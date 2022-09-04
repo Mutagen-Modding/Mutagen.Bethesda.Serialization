@@ -38,7 +38,7 @@ public class SerializationForObjectGenerator
         
         if (!compilation.Mapping.TryGetTypeSet(obj, out var typeSet)) return;
         var baseType = compilation.Mapping.TryGetBaseClass(obj);
-        var inheriting = compilation.Mapping.TryGetInheritingClasses(typeSet.Direct);
+        var inheriting = compilation.Mapping.TryGetInheritingClasses(typeSet.Getter);
         
         var sb = new StructuredStringBuilder();
         
@@ -97,7 +97,7 @@ public class SerializationForObjectGenerator
                             var names = _nameRetriever.GetNames(inherit);
                             if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems)) continue;
                             if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
-                            if (inheritTypes.Direct.IsAbstract) continue;
+                            if (inheritTypes.Direct?.IsAbstract ?? true) continue;
                             sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
                             using (sb.IncreaseDepth())
                             {
@@ -107,7 +107,7 @@ public class SerializationForObjectGenerator
                         }
 
                         if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
-                            && !typeSet.Direct.IsAbstract)
+                            && (!typeSet.Direct?.IsAbstract ?? false))
                         {
                             sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
                             using (sb.IncreaseDepth())
