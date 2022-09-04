@@ -15,8 +15,8 @@ internal static class BaseLoqui_Serialization
             case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter SomeLoquiWithBaseGetter:
                 Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Serialize(SomeLoquiWithBaseGetter, writer, kernel);
                 break;
-            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetter Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetterGetter:
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Serialize(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetterGetter, writer, kernel);
+            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetter IBaseLoquiGetter:
+                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Serialize(IBaseLoquiGetter, writer, kernel);
                 break;
             default:
                 throw new NotImplementedException();
