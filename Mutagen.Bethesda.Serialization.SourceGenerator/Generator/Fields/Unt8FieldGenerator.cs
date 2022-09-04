@@ -2,7 +2,7 @@
 
 public class UInt8FieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "byte",
         "Byte",

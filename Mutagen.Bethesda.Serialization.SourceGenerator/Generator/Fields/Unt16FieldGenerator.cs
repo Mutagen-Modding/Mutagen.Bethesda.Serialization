@@ -2,7 +2,7 @@
 
 public class UInt16FieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "UInt16",
         "ushort"

@@ -2,7 +2,7 @@
 
 public class FormKeyFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "FormKey",
         "Mutagen.Bethesda.Plugins.FormKey",

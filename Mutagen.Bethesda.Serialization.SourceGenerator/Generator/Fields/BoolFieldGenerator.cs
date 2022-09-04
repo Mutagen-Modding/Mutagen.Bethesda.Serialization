@@ -2,7 +2,7 @@
 
 public class BoolFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "bool",
         "Boolean"

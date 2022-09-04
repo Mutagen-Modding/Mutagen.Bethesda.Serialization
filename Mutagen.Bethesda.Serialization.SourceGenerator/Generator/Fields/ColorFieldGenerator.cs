@@ -2,7 +2,7 @@
 
 public class ColorFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "Color",
         "System.Drawing.Color",

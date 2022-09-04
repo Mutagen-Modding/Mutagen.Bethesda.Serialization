@@ -2,7 +2,7 @@
 
 public class P3FloatFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "P3Float",
         "Noggog.P3Float",

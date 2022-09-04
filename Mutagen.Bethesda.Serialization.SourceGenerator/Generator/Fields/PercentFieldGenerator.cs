@@ -2,7 +2,7 @@
 
 public class PercentFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "Percent",
         "Noggog.Percent",

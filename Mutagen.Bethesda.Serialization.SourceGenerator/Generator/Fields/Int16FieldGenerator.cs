@@ -2,7 +2,7 @@
 
 public class Int16FieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "short",
         "Int16"

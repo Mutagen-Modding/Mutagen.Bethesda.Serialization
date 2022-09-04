@@ -2,7 +2,7 @@
 
 public class ModKeyFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "ModKey",
         "Mutagen.Bethesda.Plugins.ModKey",

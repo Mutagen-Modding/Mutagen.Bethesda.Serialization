@@ -2,7 +2,7 @@
 
 public class P2FloatFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "P2Float",
         "Noggog.P2Float",

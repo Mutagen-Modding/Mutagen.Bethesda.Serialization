@@ -2,7 +2,7 @@
 
 public class RecordTypeFieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "RecordType",
         "Mutagen.Bethesda.Plugins.RecordType",

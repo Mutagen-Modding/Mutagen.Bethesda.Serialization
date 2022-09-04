@@ -2,7 +2,7 @@
 
 public class P3UInt16FieldGenerator : PrimitiveFieldGenerator
 {
-    public static readonly string[] AssociatedTypes = new string[]
+    public new static readonly string[] AssociatedTypes = new string[]
     {
         "P3UInt16",
         "Noggog.P3UInt16",
