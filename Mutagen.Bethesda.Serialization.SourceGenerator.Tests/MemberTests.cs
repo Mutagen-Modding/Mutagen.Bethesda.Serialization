@@ -48,7 +48,7 @@ public class MemberTests
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"var theMod = new TestMod();");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(theMod);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(theMod);");
             }
         }
 

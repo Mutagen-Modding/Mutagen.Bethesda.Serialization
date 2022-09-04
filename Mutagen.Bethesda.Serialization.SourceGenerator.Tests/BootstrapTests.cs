@@ -14,7 +14,7 @@ public class BootstrapTests
     public Task NoGeneration()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public class BasicPassthroughs
 {
@@ -31,32 +31,14 @@ public class BasicPassthroughs
     public Task GeneratesStubForPeriod()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public class BasicPassthroughs
 {
     [Fact]
     public void BasicPassthrough()
     {
-        MutagenJsonConverter.
-    }
-}";
-       
-        return TestHelper.Verify(source);
-    }
-    
-    [Fact]
-    public Task GeneratesStubForYaml()
-    {
-        var source = @"
-using Mutagen.Bethesda.Serialization.Yaml;
-
-public class BasicPassthroughs
-{
-    [Fact]
-    public void BasicPassthrough()
-    {
-        MutagenYamlConverter.
+        MutagenTestConverter.
     }
 }";
        
@@ -67,14 +49,14 @@ public class BasicPassthroughs
     public Task GeneratesStubForUnknownFunction()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public class BasicPassthroughs
 {
     [Fact]
     public void BasicPassthrough()
     {
-        MutagenJsonConverter.Unknown
+        MutagenTestConverter.Unknown
     }
 }";
        
@@ -85,7 +67,7 @@ public class BasicPassthroughs
     public Task GeneratesStubForUnknownParameter()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public class BasicPassthroughs
 {
@@ -93,7 +75,7 @@ public class BasicPassthroughs
     public void BasicPassthrough()
     {
         string someVariable = null!;
-        MutagenJsonConverter.Instance.Convert(someVariable);
+        MutagenTestConverter.Instance.Convert(someVariable);
     }
 }";
        
@@ -104,7 +86,7 @@ public class BasicPassthroughs
     public Task GeneratesMultipleStubs()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 
 public class BasicPassthroughs
@@ -112,7 +94,7 @@ public class BasicPassthroughs
     [Fact]
     public void BasicPassthrough()
     {
-        MutagenJsonConverter.
+        MutagenTestConverter.
     }
 
     [Fact]
@@ -129,7 +111,7 @@ public class BasicPassthroughs
     public async Task SkyrimModGenerationBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
@@ -140,7 +122,7 @@ public class SerializationTests
     { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        MutagenJsonConverter.Instance.Serialize(mod, stream);
+        MutagenTestConverter.Instance.Serialize(mod, stream);
     }
 }";
         TestHelper.RunSourceGenerator(source);
@@ -162,7 +144,7 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
@@ -177,7 +159,7 @@ public class SerializationTests
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("var obj = new SomeLoqui();");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(obj);");
             }
         }
 
@@ -189,7 +171,7 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
@@ -204,8 +186,8 @@ public class SerializationTests
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("var obj = new SomeLoqui();");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(obj);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(obj);");
             }
         }
 
@@ -217,7 +199,7 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
@@ -250,8 +232,8 @@ public class SerializationTests
             {
                 sb.AppendLine("var mod = new TestMod();");
                 sb.AppendLine("var obj = new SomeLoqui();");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(mod);");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(obj);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(mod);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(obj);");
             }
         }
 
@@ -262,7 +244,7 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
@@ -298,7 +280,7 @@ public class SerializationTests
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("var mod = new SomeMod();");
-                sb.AppendLine("MutagenJsonConverter.Instance.Convert(mod);");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(mod);");
             }
         }
 
