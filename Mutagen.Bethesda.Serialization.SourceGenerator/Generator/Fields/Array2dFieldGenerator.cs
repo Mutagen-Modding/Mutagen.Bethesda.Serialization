@@ -51,20 +51,21 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
+        sb.AppendLine($"{kernelAccessor}.StartArray2dSection({writerAccessor}, \"{fieldName}\");");
+        sb.AppendLine($"for (int y = 0; y < {fieldAccessor}.Height; y++)");
         using (sb.CurlyBrace())
         {
-            var writerItem = $"{fieldName}A2Writer";
-            sb.AppendLine($"var {writerItem} = {kernelAccessor}.StartArray2dSection({writerAccessor}, \"{fieldName}\");");
-            sb.AppendLine($"foreach (var kv in {fieldAccessor})");
+            sb.AppendLine($"{kernelAccessor}.StartArray2dYSection({writerAccessor});");
+            sb.AppendLine($"for (int x = 0; x < {fieldAccessor}.Width; x++)");
             using (sb.CurlyBrace())
             {
-                var itemWriter = "itemWriter";
-                sb.AppendLine($"var {itemWriter} = {kernelAccessor}.StartArray2dItem({writerItem}, kv.Key.X, kv.Key.Y);");
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, itemWriter, null, "kv.Value", sb, cancel);
-                sb.AppendLine($"{kernelAccessor}.StopArray2dItem();");
+                sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, null, $"{fieldAccessor}[x, y]", sb, cancel);
+                sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({writerAccessor});");
             }
-            sb.AppendLine($"{kernelAccessor}.StopArray2dSectionSection();");
+            sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");
         }
+        sb.AppendLine($"{kernelAccessor}.EndArray2dSection({writerAccessor});");
     }
 
     public void GenerateForDeserialize(

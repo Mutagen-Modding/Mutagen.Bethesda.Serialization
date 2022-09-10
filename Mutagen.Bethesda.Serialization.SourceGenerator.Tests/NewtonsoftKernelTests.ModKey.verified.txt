@@ -1,0 +1,4 @@
+﻿{
+  "Name1": "Null",
+  "Name2": "SomeMod.esp"
+}

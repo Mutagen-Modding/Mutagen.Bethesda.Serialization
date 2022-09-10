@@ -1,230 +1,316 @@
 ﻿using System.Drawing;
+using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
-using YamlDotNet.RepresentationModel;
+using YamlDotNet.Core;
+using YamlDotNet.Core.Events;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
-public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlNode>
+public readonly struct YamlWritingUnit
 {
-    public YamlNode GetNewObject(Stream stream)
+    public readonly IEmitter Emitter;
+    public readonly StreamWriter StreamWriter;
+
+    public YamlWritingUnit(Stream stream)
     {
-        throw new NotImplementedException();
+        StreamWriter = new StreamWriter(stream, leaveOpen: true);
+        Emitter = new Emitter(StreamWriter);
     }
 
-    public void Finalize(Stream stream, YamlNode writer)
+    public void WriteName(string? name)
     {
-        throw new NotImplementedException();
+        if (name != null)
+        {
+            WriteScalar(name);
+        }
     }
 
-    public void WriteChar(YamlNode writer, string? fieldName, char? item)
+    public void WriteScalar(string str)
     {
-        throw new NotImplementedException();
+        Emitter.Emit(new Scalar(str));
+    }
+}
+
+public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWritingUnit>
+{
+    public YamlWritingUnit GetNewObject(Stream stream)
+    {
+        var ret = new YamlWritingUnit(stream);
+        ret.Emitter.Emit(new StreamStart());
+        ret.Emitter.Emit(new DocumentStart());
+        ret.Emitter.Emit(new MappingStart());
+        return ret;
     }
 
-    public void WriteBool(YamlNode writer, string? fieldName, bool? item)
+    public void Finalize(Stream stream, YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new MappingEnd());
+        writer.Emitter.Emit(new DocumentEnd(true));
+        writer.Emitter.Emit(new StreamEnd());
+        writer.StreamWriter.Dispose();
     }
 
-    public void WriteString(YamlNode writer, string? fieldName, string? item)
+    public void WriteChar(YamlWritingUnit writer, string? fieldName, char? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteInt8(YamlNode writer, string? fieldName, sbyte? item)
+    public void WriteBool(YamlWritingUnit writer, string? fieldName, bool? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteInt16(YamlNode writer, string? fieldName, short? item)
+    public void WriteString(YamlWritingUnit writer, string? fieldName, string? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.WriteScalar(item);
     }
 
-    public void WriteInt32(YamlNode writer, string? fieldName, int? item)
+    public void WriteInt8(YamlWritingUnit writer, string? fieldName, sbyte? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteInt64(YamlNode writer, string? fieldName, long? item)
+    public void WriteInt16(YamlWritingUnit writer, string? fieldName, short? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteUInt8(YamlNode writer, string? fieldName, byte? item)
+    public void WriteInt32(YamlWritingUnit writer, string? fieldName, int? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteUInt16(YamlNode writer, string? fieldName, ushort? item)
+    public void WriteInt64(YamlWritingUnit writer, string? fieldName, long? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteUInt32(YamlNode writer, string? fieldName, uint? item)
+    public void WriteUInt8(YamlWritingUnit writer, string? fieldName, byte? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteUInt64(YamlNode writer, string? fieldName, ulong? item)
+    public void WriteUInt16(YamlWritingUnit writer, string? fieldName, ushort? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteFloat(YamlNode writer, string? fieldName, float? item)
+    public void WriteUInt32(YamlWritingUnit writer, string? fieldName, uint? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteModKey(YamlNode writer, string? fieldName, ModKey? modKey)
+    public void WriteUInt64(YamlWritingUnit writer, string? fieldName, ulong? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteFormKey(YamlNode writer, string? fieldName, FormKey? formKey)
+    public void WriteFloat(YamlWritingUnit writer, string? fieldName, float? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteRecordType(YamlNode writer, string? fieldName, RecordType? recordType)
+    public void WriteModKey(YamlWritingUnit writer, string? fieldName, ModKey? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.FileName);
     }
 
-    public void WriteP2Int(YamlNode writer, string? fieldName, P2Int? p2)
+    public void WriteFormKey(YamlWritingUnit writer, string? fieldName, FormKey? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.ToString());
     }
 
-    public void WriteP2Int16(YamlNode writer, string? fieldName, P2Int16? p2)
+    public void WriteRecordType(YamlWritingUnit writer, string? fieldName, RecordType? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        if (item.Value.TypeInt == RecordType.Null.TypeInt)
+        {
+            writer.WriteScalar(string.Empty);
+        }
+        else
+        {
+            writer.WriteScalar(item.Value.Type);
+        }
     }
 
-    public void WriteP2Float(YamlNode writer, string? fieldName, P2Float? p3)
+    public void WriteP2Int(YamlWritingUnit writer, string? fieldName, P2Int? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3Float(YamlNode writer, string? fieldName, P3Float? p3)
+    public void WriteP2Int16(YamlWritingUnit writer, string? fieldName, P2Int16? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3UInt8(YamlNode writer, string? fieldName, P3UInt8? p3)
+    public void WriteP2Float(YamlWritingUnit writer, string? fieldName, P2Float? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3Int16(YamlNode writer, string? fieldName, P3Int16? p3)
+    public void WriteP3Float(YamlWritingUnit writer, string? fieldName, P3Float? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteP3UInt16(YamlNode writer, string? fieldName, P3UInt16? p3)
+    public void WriteP3UInt8(YamlWritingUnit writer, string? fieldName, P3UInt8? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WritePercent(YamlNode writer, string? fieldName, Percent? percent)
+    public void WriteP3Int16(YamlWritingUnit writer, string? fieldName, P3Int16? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteColor(YamlNode writer, string? fieldName, Color? color)
+    public void WriteP3UInt16(YamlWritingUnit writer, string? fieldName, P3UInt16? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteTranslatedString(YamlNode writer, string? fieldName, ITranslatedStringGetter? translatedString)
+    public void WritePercent(YamlWritingUnit writer, string? fieldName, Percent? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item?.Value.ToString(CultureInfo.InvariantCulture));
     }
 
-    public void WriteBytes(YamlNode writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes)
+    public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)
     {
-        throw new NotImplementedException();
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.R}, {item.Value.G}, {item.Value.B}");
     }
 
-    public void WriteEnum<TEnum>(YamlNode writer, string? fieldName, TEnum? item) where TEnum : struct, Enum, IConvertible
+    public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        if (item.NumLanguages <= 1 && item.String == null) return;
+        writer.WriteName(fieldName);
+        if (item.NumLanguages <= 1)
+        {
+            writer.WriteScalar(item.String ?? string.Empty);
+        }
+        else
+        {
+            writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
+            foreach (var entry in item)
+            {
+                writer.Emitter.Emit(new MappingStart(AnchorName.Empty, TagName.Empty, false, MappingStyle.Any));
+                writer.WriteScalar("Language");
+                writer.WriteScalar(entry.Key.ToStringFast());
+                writer.WriteScalar("String");
+                writer.WriteScalar(entry.Value);
+                writer.Emitter.Emit(new MappingEnd());
+            }
+            writer.Emitter.Emit(new SequenceEnd());
+        }
     }
 
-    public YamlNode StartListSection(YamlNode writer, string? fieldName)
+    public void WriteBytes(YamlWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.WriteScalar(Convert.ToHexString(item.Value));
     }
 
-    public void EndListSection()
+    public void WriteEnum<TEnum>(YamlWritingUnit writer, string? fieldName, TEnum? item)
+        where TEnum : struct, Enum, IConvertible
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        if (!Enums<TEnum>.IsFlagsEnum)
+        {
+            writer.WriteScalar(item.Value.ToStringFast());
+        }
+        else
+        {
+            writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
+            foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
+            {
+                writer.WriteScalar(flag.ToStringFast());
+            }
+            writer.Emitter.Emit(new SequenceEnd());
+        }
     }
 
-    public YamlNode StartDictionarySection(YamlNode writer, string? fieldName)
+    public void StartListSection(YamlWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
     }
 
-    public void StopDictionarySection()
+    public void EndListSection(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new SequenceEnd());
     }
 
-    public YamlNode StartDictionaryItem(YamlNode writer)
+    public void StartDictionarySection(YamlWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
     }
 
-    public void StopDictionaryItem()
+    public void EndDictionarySection(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new SequenceEnd());
     }
 
-    public YamlNode StartDictionaryKey(YamlNode writer)
+    public void StartDictionaryItem(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new MappingStart());
     }
 
-    public void StopDictionaryKey()
+    public void EndDictionaryItem(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new MappingEnd());
     }
 
-    public YamlNode StartDictionaryValue(YamlNode writer)
+    public void StartDictionaryKey(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.WriteScalar("Key");
     }
 
-    public void StopDictionaryValue()
+    public void EndDictionaryKey(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
     }
 
-    public YamlNode StartArray2dSection(YamlNode writer, string? fieldName)
+    public void StartDictionaryValue(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.WriteScalar("Value");
     }
 
-    public void StopArray2dSectionSection()
+    public void EndDictionaryValue(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
     }
 
-    public void StopDictionarySectionSection()
+    public void StartArray2dSection(YamlWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Block));
     }
 
-    public YamlNode StartArray2dItem(YamlNode writer, int x, int y)
+    public void EndArray2dSection(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Emitter.Emit(new SequenceEnd());
     }
 
-    public void StopArray2dItem()
+    public void StartArray2dXSection(YamlWritingUnit writer)
     {
-        throw new NotImplementedException();
+    }
+
+    public void EndArray2dXSection(YamlWritingUnit writer)
+    {
+    }
+
+    public void StartArray2dYSection(YamlWritingUnit writer)
+    {
+        writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Flow));
+    }
+
+    public void EndArray2dYSection(YamlWritingUnit writer)
+    {
+        writer.Emitter.Emit(new SequenceEnd());
     }
 }

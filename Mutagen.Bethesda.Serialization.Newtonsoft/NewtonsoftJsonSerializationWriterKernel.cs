@@ -1,230 +1,374 @@
 using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
-public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKernel<JTokenWriter>
+public class JsonWritingUnit : IDisposable
 {
-    public JTokenWriter GetNewObject(Stream stream)
+    private IDisposable _streamDispose;
+    public JsonTextWriter Writer { get; }
+    
+    public JsonWritingUnit(
+        Stream stream)
     {
-        throw new NotImplementedException();
+        var sw = new StreamWriter(stream, leaveOpen: true);
+        _streamDispose = sw;
+        Writer = new JsonTextWriter(sw)
+        {
+            Formatting = Formatting.Indented
+        };
     }
 
-    public void Finalize(Stream stream, JTokenWriter writer)
+    public void Dispose()
     {
-        throw new NotImplementedException();
+        _streamDispose.Dispose();
     }
 
-    public void WriteChar(JTokenWriter writer, string? fieldName, char? item)
+    public void WriteName(string? fieldName)
     {
-        throw new NotImplementedException();
+        if (fieldName == null)
+        {
+            return;
+        }
+        Writer.WritePropertyName(fieldName);
+    }
+}
+
+public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKernel<JsonWritingUnit>
+{
+    public JsonWritingUnit GetNewObject(Stream stream)
+    {
+        var ret = new JsonWritingUnit(stream);
+        ret.Writer.WriteStartObject();
+        return ret;
     }
 
-    public void WriteBool(JTokenWriter writer, string? fieldName, bool? item)
+    public void Finalize(Stream stream, JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteEndObject();
+        writer.Dispose();
     }
 
-    public void WriteString(JTokenWriter writer, string? fieldName, string? item)
+    public void WriteChar(JsonWritingUnit writer, string? fieldName, char? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt8(JTokenWriter writer, string? fieldName, sbyte? item)
+    public void WriteBool(JsonWritingUnit writer, string? fieldName, bool? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt16(JTokenWriter writer, string? fieldName, short? item)
+    public void WriteString(JsonWritingUnit writer, string? fieldName, string? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt32(JTokenWriter writer, string? fieldName, int? item)
+    public void WriteInt8(JsonWritingUnit writer, string? fieldName, sbyte? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt64(JTokenWriter writer, string? fieldName, long? item)
+    public void WriteInt16(JsonWritingUnit writer, string? fieldName, short? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt8(JTokenWriter writer, string? fieldName, byte? item)
+    public void WriteInt32(JsonWritingUnit writer, string? fieldName, int? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt16(JTokenWriter writer, string? fieldName, ushort? item)
+    public void WriteInt64(JsonWritingUnit writer, string? fieldName, long? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt32(JTokenWriter writer, string? fieldName, uint? item)
+    public void WriteUInt8(JsonWritingUnit writer, string? fieldName, byte? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt64(JTokenWriter writer, string? fieldName, ulong? item)
+    public void WriteUInt16(JsonWritingUnit writer, string? fieldName, ushort? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteFloat(JTokenWriter writer, string? fieldName, float? item)
+    public void WriteUInt32(JsonWritingUnit writer, string? fieldName, uint? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteModKey(JTokenWriter writer, string? fieldName, ModKey? modKey)
+    public void WriteUInt64(JsonWritingUnit writer, string? fieldName, ulong? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteFormKey(JTokenWriter writer, string? fieldName, FormKey? formKey)
+    public void WriteFloat(JsonWritingUnit writer, string? fieldName, float? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item);
     }
 
-    public void WriteRecordType(JTokenWriter writer, string? fieldName, RecordType? recordType)
+    public void WriteModKey(JsonWritingUnit writer, string? fieldName, ModKey? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item.Value.FileName);
     }
 
-    public void WriteP2Int(JTokenWriter writer, string? fieldName, P2Int? p2)
+    public void WriteFormKey(JsonWritingUnit writer, string? fieldName, FormKey? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteValue(item.Value.ToString());
     }
 
-    public void WriteP2Int16(JTokenWriter writer, string? fieldName, P2Int16? p2)
+    public void WriteRecordType(JsonWritingUnit writer, string? fieldName, RecordType? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        if (item.Value.TypeInt == RecordType.Null.TypeInt)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue(item.Value.Type);
+        }
     }
 
-    public void WriteP2Float(JTokenWriter writer, string? fieldName, P2Float? p3)
+    public void WriteP2Int(JsonWritingUnit writer, string? fieldName, P2Int? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3Float(JTokenWriter writer, string? fieldName, P3Float? p3Float)
+    public void WriteP2Int16(JsonWritingUnit writer, string? fieldName, P2Int16? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3UInt8(JTokenWriter writer, string? fieldName, P3UInt8? p3)
+    public void WriteP2Float(JsonWritingUnit writer, string? fieldName, P2Float? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
     }
 
-    public void WriteP3Int16(JTokenWriter writer, string? fieldName, P3Int16? p3)
+    public void WriteP3Float(JsonWritingUnit writer, string? fieldName, P3Float? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteP3UInt16(JTokenWriter writer, string? fieldName, P3UInt16? p3)
+    public void WriteP3UInt8(JsonWritingUnit writer, string? fieldName, P3UInt8? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WritePercent(JTokenWriter writer, string? fieldName, Percent? percent)
+    public void WriteP3Int16(JsonWritingUnit writer, string? fieldName, P3Int16? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteColor(JTokenWriter writer, string? fieldName, Color? color)
+    public void WriteP3UInt16(JsonWritingUnit writer, string? fieldName, P3UInt16? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
     }
 
-    public void WriteTranslatedString(JTokenWriter writer, string? fieldName, ITranslatedStringGetter? translatedString)
+    public void WritePercent(JsonWritingUnit writer, string? fieldName, Percent? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.Value}");
     }
 
-    public void WriteBytes(JTokenWriter writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes)
+    public void WriteColor(JsonWritingUnit writer, string? fieldName, Color? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+
+        writer.Writer.WriteValue($"{item.Value.R}, {item.Value.G}, {item.Value.B}");
     }
 
-    public void WriteEnum<TEnum>(JTokenWriter writer, string? fieldName, TEnum? item) where TEnum : struct, Enum, IConvertible
+    public void WriteTranslatedString(JsonWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        if (item.NumLanguages <= 1 && item.String == null) return;
+        writer.WriteName(fieldName);
+
+        if (item.NumLanguages <= 1)
+        {
+            writer.Writer.WriteValue($"{item.String}");
+        }
+        else
+        {
+            writer.Writer.WriteStartArray();
+            foreach (var entry in item)
+            {
+                writer.Writer.WriteStartObject();
+                writer.Writer.WritePropertyName("Language");
+                writer.Writer.WriteValue(entry.Key.ToStringFast());
+                writer.Writer.WritePropertyName("String");
+                writer.Writer.WriteValue(entry.Value);
+                writer.Writer.WriteEndObject();
+            }
+            writer.Writer.WriteEndArray();
+        }
     }
 
-    public JTokenWriter StartListSection(JTokenWriter writer, string? fieldName)
+    public void WriteBytes(JsonWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        var test = Convert.ToHexString(item.Value);
+        writer.Writer.WriteValue(test);
     }
 
-    public void EndListSection()
+    public void WriteEnum<TEnum>(JsonWritingUnit writer, string? fieldName, TEnum? item)
+        where TEnum : struct, Enum, IConvertible
     {
-        throw new NotImplementedException();
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        if (!Enums<TEnum>.IsFlagsEnum)
+        {
+            writer.Writer.WriteValue(item.Value.ToStringFast());
+        }
+        else
+        {
+            writer.Writer.WriteStartArray();
+            foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
+            {
+                writer.Writer.WriteValue(flag.ToStringFast());
+            }
+            writer.Writer.WriteEndArray();
+        }
     }
 
-    public JTokenWriter StartDictionarySection(JTokenWriter writer, string? fieldName)
+    public void StartListSection(JsonWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Writer.WriteStartArray();
     }
 
-    public void StopDictionarySection()
+    public void EndListSection(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteEndArray();
     }
 
-    public JTokenWriter StartDictionaryItem(JTokenWriter writer)
+    public void StartDictionarySection(JsonWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Writer.WriteStartArray();
     }
 
-    public void StopDictionaryItem()
+    public void EndDictionarySection(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteEndArray();
     }
 
-    public JTokenWriter StartDictionaryKey(JTokenWriter writer)
+    public void StartDictionaryItem(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteStartObject();
     }
 
-    public void StopDictionaryKey()
+    public void EndDictionaryItem(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteEndObject();
     }
 
-    public JTokenWriter StartDictionaryValue(JTokenWriter writer)
+    public void StartDictionaryKey(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.WriteName("Key");
     }
 
-    public void StopDictionaryValue()
+    public void EndDictionaryKey(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
     }
 
-    public JTokenWriter StartArray2dSection(JTokenWriter writer, string? fieldName)
+    public void StartDictionaryValue(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.WriteName("Value");
     }
 
-    public void StopArray2dSectionSection()
+    public void EndDictionaryValue(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
     }
 
-    public void StopDictionarySectionSection()
+    public void StartArray2dSection(JsonWritingUnit writer, string? fieldName)
     {
-        throw new NotImplementedException();
+        writer.WriteName(fieldName);
+        writer.Writer.WriteStartArray();
     }
 
-    public JTokenWriter StartArray2dItem(JTokenWriter writer, int x, int y)
+    public void EndArray2dSection(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+        writer.Writer.WriteEndArray();
     }
 
-    public void StopArray2dItem()
+    public void StartArray2dXSection(JsonWritingUnit writer)
     {
-        throw new NotImplementedException();
+    }
+
+    public void EndArray2dXSection(JsonWritingUnit writer)
+    {
+    }
+
+    public void StartArray2dYSection(JsonWritingUnit writer)
+    {
+        writer.Writer.WriteStartArray();
+        writer.Writer.Formatting = Formatting.None;
+    }
+
+    public void EndArray2dYSection(JsonWritingUnit writer)
+    {
+        writer.Writer.WriteEndArray();
+        writer.Writer.Formatting = Formatting.Indented;
     }
 }

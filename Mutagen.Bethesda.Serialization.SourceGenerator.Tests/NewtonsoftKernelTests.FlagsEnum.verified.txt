@@ -1,0 +1,14 @@
+﻿{
+  "Name1": [],
+  "Name2": [
+    "Second"
+  ],
+  "Name3": [
+    "First",
+    "Third"
+  ],
+  "Name4": [
+    "First",
+    "0x10"
+  ]
+}

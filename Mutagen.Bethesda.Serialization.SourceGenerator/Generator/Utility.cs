@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections;
+using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
@@ -16,5 +17,22 @@ public static class Utility
         }
 
         return typeSymbol;
+    }
+    
+    public static bool IsNullable(ITypeSymbol typeSymbol)
+    {
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol
+            && namedTypeSymbol.TypeArguments.Length == 1
+            && namedTypeSymbol.Name == "Nullable")
+        {
+            return true;
+        }
+
+        if (typeSymbol.ToString().EndsWith("?"))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

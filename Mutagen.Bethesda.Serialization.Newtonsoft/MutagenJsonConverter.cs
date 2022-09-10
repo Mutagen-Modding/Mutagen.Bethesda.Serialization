@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 public class MutagenJsonConverter 
     : IMutagenSerializationBootstrap<
         NewtonsoftJsonSerializationReaderKernel, JTokenReader,
-        NewtonsoftJsonSerializationWriterKernel, JTokenWriter>
+        NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>
 {
     public static readonly MutagenJsonConverter Instance = new();
     

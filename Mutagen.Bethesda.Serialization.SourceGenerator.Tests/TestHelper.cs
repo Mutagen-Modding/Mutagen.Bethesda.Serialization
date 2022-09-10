@@ -48,7 +48,7 @@ public static class TestHelper
         return Verifier.Verify(driver);
     }
     
-    public static void RunSourceGenerator(string source)
+    public static GeneratorDriverRunResult RunSourceGenerator(string source)
     {
         // Parse the provided string into a C# syntax tree
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
@@ -80,6 +80,6 @@ public static class TestHelper
         // Run the source generator!
         driver = driver.RunGenerators(compilation);
 
-        driver.GetRunResult();
+        return driver.GetRunResult();
     }
 }

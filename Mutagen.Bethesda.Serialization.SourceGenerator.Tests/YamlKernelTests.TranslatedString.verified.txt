@@ -1,0 +1,11 @@
+﻿Name3: Hello
+Name4:
+- Language: English
+  String: Hello
+- Language: French
+  String: Bonjour
+Name5:
+- Language: English
+  String: Hello
+- Language: French
+  String: Bonjour

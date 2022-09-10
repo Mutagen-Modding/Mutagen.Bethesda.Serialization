@@ -9,5 +9,6 @@ public static class ModuleInitializer
     public static void Init()
     {
         VerifySourceGenerators.Enable();
+        VerifyDiffPlex.Initialize();
     }
 }

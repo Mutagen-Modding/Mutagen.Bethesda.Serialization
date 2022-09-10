@@ -27,7 +27,7 @@ public class TestWriter
 
 public class TestKernel : ISerializationReaderKernel<TestReader>, ISerializationWriterKernel<TestWriter>
 {
-    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
+    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
@@ -167,77 +167,93 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public void WriteEnum<TEnum>(TestWriter writer, string? fieldName, TEnum? item) where TEnum : struct, Enum, IConvertible
+    public void WriteEnum<TEnum>(TestWriter writer, string? fieldName, TEnum? item) 
+        where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartListSection(TestWriter writer, string? fieldName)
+    public void StartListSection(TestWriter writer, string? fieldName)
     {
         throw new NotImplementedException();
     }
 
-    public void EndListSection()
+    public void EndListSection(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartDictionarySection(TestWriter writer, string? fieldName)
+    public void StartDictionarySection(TestWriter writer, string? fieldName)
     {
         throw new NotImplementedException();
     }
 
-    public void StopDictionarySection()
+    public void EndDictionarySection(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartDictionaryItem(TestWriter writer)
+    public void StartDictionaryItem(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public void StopDictionaryItem()
+    public void EndDictionaryItem(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartDictionaryKey(TestWriter writer)
+    public void StartDictionaryKey(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public void StopDictionaryKey()
+    public void EndDictionaryKey(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartDictionaryValue(TestWriter writer)
+    public void StartDictionaryValue(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public void StopDictionaryValue()
+    public void EndDictionaryValue(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartArray2dSection(TestWriter writer, string? fieldName)
+    public void StartArray2dSection(TestWriter writer, string? fieldName)
     {
         throw new NotImplementedException();
     }
 
-    public void StopArray2dSectionSection()
+    public void EndArray2dSection(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public TestWriter StartArray2dItem(TestWriter writer, int x, int y)
+    public void StartArray2dXSection(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public void StopArray2dItem()
+    public void EndArray2dXSection(TestWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartArray2dYSection(TestWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndArray2dYSection(TestWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
@@ -318,11 +334,6 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(TestReader reader)
-    {
-        throw new NotImplementedException();
-    }
-
-    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }

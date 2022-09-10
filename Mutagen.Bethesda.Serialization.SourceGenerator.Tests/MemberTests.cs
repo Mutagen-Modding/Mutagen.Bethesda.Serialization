@@ -327,6 +327,10 @@ public class MemberTests
             sb.AppendLine("public IReadOnlyList<string> SomeList2 { get; set; }");
             sb.AppendLine("public ExtendedList<string> SomeList3 { get; set; }");
             sb.AppendLine("public string[] SomeList4 { get; set; }");
+            sb.AppendLine("public List<string>? SomeList5 { get; set; }");
+            sb.AppendLine("public IReadOnlyList<string>? SomeList6 { get; set; }");
+            sb.AppendLine("public ExtendedList<string>? SomeList7 { get; set; }");
+            sb.AppendLine("public string[]? SomeList8 { get; set; }");
         });
        
         return TestHelper.Verify(source);

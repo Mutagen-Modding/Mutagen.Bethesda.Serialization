@@ -10,36 +10,45 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
+        kernel.StartArray2dSection(writer, "SomeArray");
+        for (int y = 0; y < item.SomeArray.Height; y++)
         {
-            var SomeArrayA2Writer = kernel.StartArray2dSection(writer, "SomeArray");
-            foreach (var kv in item.SomeArray)
+            kernel.StartArray2dYSection(writer);
+            for (int x = 0; x < item.SomeArray.Width; x++)
             {
-                var itemWriter = kernel.StartArray2dItem(SomeArrayA2Writer, kv.Key.X, kv.Key.Y);
-                kernel.WriteString(itemWriter, null, kv.Value);
-                kernel.StopArray2dItem();
+                kernel.StartArray2dXSection(writer);
+                kernel.WriteString(writer, null, item.SomeArray[x, y]);
+                kernel.EndArray2dXSection(writer);
             }
-            kernel.StopArray2dSectionSection();
+            kernel.EndArray2dYSection(writer);
         }
+        kernel.EndArray2dSection(writer);
+        kernel.StartArray2dSection(writer, "SomeArray2");
+        for (int y = 0; y < item.SomeArray2.Height; y++)
         {
-            var SomeArray2A2Writer = kernel.StartArray2dSection(writer, "SomeArray2");
-            foreach (var kv in item.SomeArray2)
+            kernel.StartArray2dYSection(writer);
+            for (int x = 0; x < item.SomeArray2.Width; x++)
             {
-                var itemWriter = kernel.StartArray2dItem(SomeArray2A2Writer, kv.Key.X, kv.Key.Y);
-                kernel.WriteString(itemWriter, null, kv.Value);
-                kernel.StopArray2dItem();
+                kernel.StartArray2dXSection(writer);
+                kernel.WriteString(writer, null, item.SomeArray2[x, y]);
+                kernel.EndArray2dXSection(writer);
             }
-            kernel.StopArray2dSectionSection();
+            kernel.EndArray2dYSection(writer);
         }
+        kernel.EndArray2dSection(writer);
+        kernel.StartArray2dSection(writer, "SomeArray3");
+        for (int y = 0; y < item.SomeArray3.Height; y++)
         {
-            var SomeArray3A2Writer = kernel.StartArray2dSection(writer, "SomeArray3");
-            foreach (var kv in item.SomeArray3)
+            kernel.StartArray2dYSection(writer);
+            for (int x = 0; x < item.SomeArray3.Width; x++)
             {
-                var itemWriter = kernel.StartArray2dItem(SomeArray3A2Writer, kv.Key.X, kv.Key.Y);
-                kernel.WriteString(itemWriter, null, kv.Value);
-                kernel.StopArray2dItem();
+                kernel.StartArray2dXSection(writer);
+                kernel.WriteString(writer, null, item.SomeArray3[x, y]);
+                kernel.EndArray2dXSection(writer);
             }
-            kernel.StopArray2dSectionSection();
+            kernel.EndArray2dYSection(writer);
         }
+        kernel.EndArray2dSection(writer);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

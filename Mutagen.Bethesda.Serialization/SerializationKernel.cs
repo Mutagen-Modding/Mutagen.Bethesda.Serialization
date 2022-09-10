@@ -43,49 +43,51 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item);
     public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item);
     public void WriteFloat(TWriterObject writer, string? fieldName, float? item);
-    public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? modKey);
-    public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? formKey);
-    public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? recordType);
-    public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? p2);
-    public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? p2);
-    public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? p3);
-    public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? p3);
-    public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? p3);
-    public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? p3);
-    public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? p3);
-    public void WritePercent(TWriterObject writer, string? fieldName, Percent? percent);
-    public void WriteColor(TWriterObject writer, string? fieldName, Color? color);
-    public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? translatedString);
-    public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes);
+    public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? item);
+    public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? item);
+    public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? item);
+    public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? item);
+    public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? item);
+    public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item);
+    public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? item);
+    public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? item);
+    public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? item);
+    public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? item);
+    public void WritePercent(TWriterObject writer, string? fieldName, Percent? item);
+    public void WriteColor(TWriterObject writer, string? fieldName, Color? item);
+    public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item);
+    public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)
         where TEnum : struct, Enum, IConvertible;
 
     #region List
     
-    public TWriterObject StartListSection(TWriterObject writer, string? fieldName);
-    public void EndListSection();
+    public void StartListSection(TWriterObject writer, string? fieldName);
+    public void EndListSection(TWriterObject writer);
     
     #endregion
 
     #region Dict
 
-    public TWriterObject StartDictionarySection(TWriterObject writer, string? fieldName);
-    public void StopDictionarySection();
-    public TWriterObject StartDictionaryItem(TWriterObject writer);
-    public void StopDictionaryItem();
-    public TWriterObject StartDictionaryKey(TWriterObject writer);
-    public void StopDictionaryKey();
-    public TWriterObject StartDictionaryValue(TWriterObject writer);
-    public void StopDictionaryValue();
+    public void StartDictionarySection(TWriterObject writer, string? fieldName);
+    public void EndDictionarySection(TWriterObject writer);
+    public void StartDictionaryItem(TWriterObject writer);
+    public void EndDictionaryItem(TWriterObject writer);
+    public void StartDictionaryKey(TWriterObject writer);
+    public void EndDictionaryKey(TWriterObject writer);
+    public void StartDictionaryValue(TWriterObject writer);
+    public void EndDictionaryValue(TWriterObject writer);
 
     #endregion
 
     #region Array2d
 
-    public TWriterObject StartArray2dSection(TWriterObject writer, string? fieldName);
-    public void StopArray2dSectionSection();
-    public TWriterObject StartArray2dItem(TWriterObject writer, int x, int y);
-    public void StopArray2dItem();
+    public void StartArray2dSection(TWriterObject writer, string? fieldName);
+    public void EndArray2dSection(TWriterObject writer);
+    public void StartArray2dXSection(TWriterObject writer);
+    public void EndArray2dXSection(TWriterObject writer);
+    public void StartArray2dYSection(TWriterObject writer);
+    public void EndArray2dYSection(TWriterObject writer);
 
     #endregion
 }

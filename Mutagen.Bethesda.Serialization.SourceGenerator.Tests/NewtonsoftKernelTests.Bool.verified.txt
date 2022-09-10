@@ -1,0 +1,4 @@
+﻿{
+  "Name1": true,
+  "Name2": false
+}

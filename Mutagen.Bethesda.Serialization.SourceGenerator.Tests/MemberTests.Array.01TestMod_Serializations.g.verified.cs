@@ -10,14 +10,12 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
+        kernel.StartListSection(writer, "SomeArray");
+        foreach (var listItem in item.SomeArray)
         {
-            var listWriter = kernel.StartListSection(writer, "SomeArray");
-            foreach (var listItem in item.SomeArray)
-            {
-                kernel.WriteString(listWriter, null, listItem);
-            }
-            kernel.EndListSection();
+            kernel.WriteString(writer, null, listItem);
         }
+        kernel.EndListSection(writer);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

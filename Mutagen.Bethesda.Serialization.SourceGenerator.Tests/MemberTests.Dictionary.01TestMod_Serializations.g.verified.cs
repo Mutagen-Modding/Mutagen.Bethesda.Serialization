@@ -10,51 +10,45 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
+        kernel.StartDictionarySection(writer, "SomeDict");
+        foreach (var kv in item.SomeDict)
         {
-            var SomeDictDictWriter = kernel.StartDictionarySection(writer, "SomeDict");
-            foreach (var kv in item.SomeDict)
-            {
-                var itemWriter = kernel.StartDictionaryItem(SomeDictDictWriter);
-                var keyWriter = kernel.StartDictionaryKey(itemWriter);
-                kernel.WriteInt32(keyWriter, null, kv.Key);
-                kernel.StopDictionaryKey();
-                var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteString(valueWriter, null, kv.Value);
-                kernel.StopDictionaryValue();
-                kernel.StopDictionaryItem();
-            }
-            kernel.StopDictionarySection();
+            kernel.StartDictionaryItem(writer);
+            kernel.StartDictionaryKey(writer);
+            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.EndDictionaryKey(writer);
+            kernel.StartDictionaryValue(writer);
+            kernel.WriteString(writer, null, kv.Value);
+            kernel.EndDictionaryValue(writer);
+            kernel.EndDictionaryItem(writer);
         }
+        kernel.EndDictionarySection(writer);
+        kernel.StartDictionarySection(writer, "SomeDict1");
+        foreach (var kv in item.SomeDict1)
         {
-            var SomeDict1DictWriter = kernel.StartDictionarySection(writer, "SomeDict1");
-            foreach (var kv in item.SomeDict1)
-            {
-                var itemWriter = kernel.StartDictionaryItem(SomeDict1DictWriter);
-                var keyWriter = kernel.StartDictionaryKey(itemWriter);
-                kernel.WriteInt32(keyWriter, null, kv.Key);
-                kernel.StopDictionaryKey();
-                var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteString(valueWriter, null, kv.Value);
-                kernel.StopDictionaryValue();
-                kernel.StopDictionaryItem();
-            }
-            kernel.StopDictionarySection();
+            kernel.StartDictionaryItem(writer);
+            kernel.StartDictionaryKey(writer);
+            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.EndDictionaryKey(writer);
+            kernel.StartDictionaryValue(writer);
+            kernel.WriteString(writer, null, kv.Value);
+            kernel.EndDictionaryValue(writer);
+            kernel.EndDictionaryItem(writer);
         }
+        kernel.EndDictionarySection(writer);
+        kernel.StartDictionarySection(writer, "SomeDict2");
+        foreach (var kv in item.SomeDict2)
         {
-            var SomeDict2DictWriter = kernel.StartDictionarySection(writer, "SomeDict2");
-            foreach (var kv in item.SomeDict2)
-            {
-                var itemWriter = kernel.StartDictionaryItem(SomeDict2DictWriter);
-                var keyWriter = kernel.StartDictionaryKey(itemWriter);
-                kernel.WriteInt32(keyWriter, null, kv.Key);
-                kernel.StopDictionaryKey();
-                var valueWriter = kernel.StartDictionaryValue(itemWriter);
-                kernel.WriteString(valueWriter, null, kv.Value);
-                kernel.StopDictionaryValue();
-                kernel.StopDictionaryItem();
-            }
-            kernel.StopDictionarySection();
+            kernel.StartDictionaryItem(writer);
+            kernel.StartDictionaryKey(writer);
+            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.EndDictionaryKey(writer);
+            kernel.StartDictionaryValue(writer);
+            kernel.WriteString(writer, null, kv.Value);
+            kernel.EndDictionaryValue(writer);
+            kernel.EndDictionaryItem(writer);
         }
+        kernel.EndDictionarySection(writer);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

@@ -1,0 +1,6 @@
+﻿MyDict:
+- Key: 1
+  Value: value
+- Key: 2
+  Value: value2
+SomeInt: 4

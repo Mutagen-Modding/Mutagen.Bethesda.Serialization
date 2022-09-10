@@ -34,9 +34,26 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
+        var gen = GetGenerator(obj, fieldType, cancel);
+        if (gen != null)
         {
             gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
+
+    public ISerializationForFieldGenerator? GetGenerator(
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
+        {
+            return gen;
         }
         else
         {
@@ -45,11 +62,11 @@ public class SerializationFieldGenerator
                 cancel.ThrowIfCancellationRequested();
                 if (fieldGenerator.Applicable(fieldType))
                 {
-                    fieldGenerator.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb, cancel);
-                    return;
+                    return fieldGenerator;
                 }
             }
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
         }
+
+        return default;
     }
 }

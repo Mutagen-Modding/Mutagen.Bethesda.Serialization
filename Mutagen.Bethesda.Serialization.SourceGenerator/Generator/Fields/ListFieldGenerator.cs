@@ -37,6 +37,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         }
         else
         {
+            typeSymbol = Utility.PeelNullable(typeSymbol);
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             var typeMembers = namedTypeSymbol.TypeArguments;
             if (typeMembers.Length != 1) return false;
@@ -58,6 +59,10 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         CancellationToken cancel)
     {
         if (_groupTester.IsGroup(obj)) return;
+
+        var nullable = Utility.IsNullable(field);
+
+        field = Utility.PeelNullable(field);
         
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
@@ -73,16 +78,21 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        using (sb.CurlyBrace())
+        if (nullable)
         {
-            const string listWriterName = $"listWriter";
-            sb.AppendLine($"var {listWriterName} = {kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\");");
+            sb.AppendLine($"if ({fieldAccessor} is {{}} checked{fieldName})");
+            fieldName = $"checked{fieldName}";
+        }
+
+        using (sb.CurlyBrace(doIt: nullable))
+        {
+            sb.AppendLine($"{kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\");");
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, listWriterName, null, "listItem", sb, cancel);
+                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, null, "listItem", sb, cancel);
             }
-            sb.AppendLine($"{kernelAccessor}.EndListSection();");
+            sb.AppendLine($"{kernelAccessor}.EndListSection({writerAccessor});");
         }
     }
 

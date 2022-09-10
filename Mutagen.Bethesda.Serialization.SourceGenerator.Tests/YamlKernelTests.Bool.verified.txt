@@ -1,0 +1,2 @@
+﻿Name1: True
+Name2: False
