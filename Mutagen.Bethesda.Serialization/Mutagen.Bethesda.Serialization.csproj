@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mutagen.Bethesda.Core" Version="0.39.4.1-dev" />
+        <PackageReference Include="Mutagen.Bethesda.Core" Version="0.39.5.1-dev" />
         <PackageReference Include="GitInfo" Version="2.2.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

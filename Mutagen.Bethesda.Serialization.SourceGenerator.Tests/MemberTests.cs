@@ -493,7 +493,7 @@ public class MemberTests
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("public int SomeInt { get; set; }");
-                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public IReadOnlyCache<T, int> Items { get; set; }");
                     sb.AppendLine("public int SomeInt2 { get; set; }");
                 }
                 
@@ -505,7 +505,7 @@ public class MemberTests
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("public int SomeInt { get; set; }");
-                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public IReadOnlyCache<T, int> Items { get; set; }");
                     sb.AppendLine("public int SomeInt2 { get; set; }");
                 }
                 
@@ -517,7 +517,7 @@ public class MemberTests
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("public int SomeInt { get; set; }");
-                    sb.AppendLine("public List<T> Items { get; set; }");
+                    sb.AppendLine("public IReadOnlyCache<T, int> Items { get; set; }");
                     sb.AppendLine("public int SomeInt2 { get; set; }");
                 }
             });

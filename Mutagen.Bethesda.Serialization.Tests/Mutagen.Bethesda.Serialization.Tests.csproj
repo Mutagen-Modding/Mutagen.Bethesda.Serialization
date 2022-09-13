@@ -18,14 +18,17 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-		<PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.39.4.1-dev" />
+		<PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.39.5.1-dev" />
 		<PackageReference Include="Noggog.Testing" Version="2.50.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
-		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit" Version="2.4.2" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-dev" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-dev" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="0.0.0.1-dev" />
 		<PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" Version="0.0.0.1-dev" />
+		<PackageReference Include="Verify.DiffPlex" Version="1.3.0" />
+		<PackageReference Include="Verify.SourceGenerators" Version="1.5.0" />
+		<PackageReference Include="Verify.Xunit" Version="17.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>

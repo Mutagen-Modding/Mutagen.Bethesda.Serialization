@@ -7,12 +7,17 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class DictFieldGenerator : ISerializationForFieldGenerator
 {
+    private readonly IsGroupTester _groupTester;
+    
     private readonly Func<IOwned<SerializationFieldGenerator>> _forFieldGenerator;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
-    public DictFieldGenerator(Func<IOwned<SerializationFieldGenerator>> forFieldGenerator)
+    public DictFieldGenerator(
+        Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsGroupTester groupTester)
     {
         _forFieldGenerator = forFieldGenerator;
+        _groupTester = groupTester;
     }
 
     private static readonly HashSet<string> _listStrings = new()
@@ -41,6 +46,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        if (_groupTester.IsGroup(obj)) return;
+        
         ITypeSymbol keyType;
         ITypeSymbol valType;
         if (field is INamedTypeSymbol namedTypeSymbol)
