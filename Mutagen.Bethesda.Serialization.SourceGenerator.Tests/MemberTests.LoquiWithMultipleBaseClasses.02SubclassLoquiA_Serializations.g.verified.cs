@@ -6,8 +6,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 internal static class SubclassLoquiA_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter item,
         TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
     }

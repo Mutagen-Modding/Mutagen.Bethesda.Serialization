@@ -8,7 +8,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<BootstrapInvocationDetector>]
 [Register<StubGenerator>]
 [Register<ModInvocationDetector>]
-[Register<MixinForModGenerator>]
+[Register<MixinGenerator>]
 [Register<SerializationForObjectsGenerator>]
 [Register<RelatedObjectAccumulator>]
 [Register<IsLoquiObjectTester>]

@@ -6,8 +6,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 internal static class Group_Serialization
 {
     public static void Serialize<TWriteObject, T>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
         TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
         ISerializationWriterKernel<TWriteObject> kernel)
         where T : class, IMajorRecordInternal
     {

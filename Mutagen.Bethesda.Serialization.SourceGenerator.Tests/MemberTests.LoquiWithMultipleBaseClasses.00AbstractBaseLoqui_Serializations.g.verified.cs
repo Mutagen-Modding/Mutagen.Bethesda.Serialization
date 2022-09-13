@@ -6,17 +6,17 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 internal static class AbstractBaseLoqui_Serialization
 {
     public static void SerializeWithCheck<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
         TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
         switch (item)
         {
             case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter SubclassLoquiAGetter:
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Serialize(SubclassLoquiAGetter, writer, kernel);
+                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Serialize(writer, SubclassLoquiAGetter, kernel);
                 break;
             case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiBGetter SubclassLoquiBGetter:
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Serialize(SubclassLoquiBGetter, writer, kernel);
+                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Serialize(writer, SubclassLoquiBGetter, kernel);
                 break;
             default:
                 throw new NotImplementedException();
@@ -24,8 +24,8 @@ internal static class AbstractBaseLoqui_Serialization
     }
 
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
         TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
     }

@@ -6,8 +6,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 internal static class TestMajorRecord_Serialization
 {
     public static void Serialize<TWriteObject>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
         TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
     }

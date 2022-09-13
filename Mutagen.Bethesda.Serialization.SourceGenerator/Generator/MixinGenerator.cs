@@ -6,12 +6,12 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
-public class MixinForModGenerator
+public class MixinGenerator
 {
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly LoquiSerializationNaming _serializationNaming;
 
-    public MixinForModGenerator(
+    public MixinGenerator(
         LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming)
     {
@@ -76,7 +76,7 @@ public class MixinForModGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(stream);");
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(item, writer, WriterKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(writer, item, WriterKernel);");
                 sb.AppendLine($"WriterKernel.Finalize(stream, writer);");
             }
             sb.AppendLine();

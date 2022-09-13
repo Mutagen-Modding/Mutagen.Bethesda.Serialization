@@ -14,7 +14,7 @@ public static class MutagenTestConverterTestModMixIns
         Stream stream)
     {
         var writer = WriterKernel.GetNewObject(stream);
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Serialize<TestWriter>(item, writer, WriterKernel);
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Serialize<TestWriter>(writer, item, WriterKernel);
         WriterKernel.Finalize(stream, writer);
     }
 

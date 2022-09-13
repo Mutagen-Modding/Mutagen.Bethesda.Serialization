@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 public class SerializationSourceGeneratorInitializer
 {
     private readonly BootstrapInvocationDetector _invocationDetector;
-    private readonly MixinForModGenerator _mixinForModGenerator;
+    private readonly MixinGenerator _mixinGenerator;
     private readonly ModInvocationDetector _modInvocationDetector;
     private readonly SerializationForObjectsGenerator _serializationForObjectsGenerator;
     private readonly StubGenerator _stubGenerator;
@@ -13,14 +13,14 @@ public class SerializationSourceGeneratorInitializer
 
     public SerializationSourceGeneratorInitializer(
         BootstrapInvocationDetector invocationDetector,
-        MixinForModGenerator mixinForModGenerator,
+        MixinGenerator mixinGenerator,
         ModInvocationDetector modInvocationDetector,
         SerializationForObjectsGenerator serializationForObjectsGenerator,
         StubGenerator stubGenerator,
         IsLoquiObjectTester isLoquiObjectTester)
     {
         _invocationDetector = invocationDetector;
-        _mixinForModGenerator = mixinForModGenerator;
+        _mixinGenerator = mixinGenerator;
         _modInvocationDetector = modInvocationDetector;
         _serializationForObjectsGenerator = serializationForObjectsGenerator;
         _stubGenerator = stubGenerator;
@@ -32,7 +32,7 @@ public class SerializationSourceGeneratorInitializer
         var bootstrapSymbols = _invocationDetector.GetBootstrapInvocations(context);
         _stubGenerator.Initialize(context, bootstrapSymbols);
         var modBootstraps = _modInvocationDetector.Detect(bootstrapSymbols);
-        _mixinForModGenerator.Initialize(context, modBootstraps);
+        _mixinGenerator.Initialize(context, modBootstraps);
         _serializationForObjectsGenerator.Initialize(context, modBootstraps);
     }
 }

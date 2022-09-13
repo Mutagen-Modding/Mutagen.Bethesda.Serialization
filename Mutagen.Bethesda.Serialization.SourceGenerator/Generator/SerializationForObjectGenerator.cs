@@ -81,8 +81,8 @@ public class SerializationForObjectGenerator
             {
                 using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenerics}"))
                 {
-                    args.Add($"{typeSet.Getter} item");
                     args.Add($"TWriteObject writer");
+                    args.Add($"{typeSet.Getter} item");
                     args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
                     args.Wheres.AddRange(writerWheres);
                 }
@@ -101,7 +101,7 @@ public class SerializationForObjectGenerator
                             sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{inheritSerializeItems.SerializationCall(serialize: true)}({names.Direct}Getter, writer, kernel);");
+                                sb.AppendLine($"{inheritSerializeItems.SerializationCall(serialize: true)}(writer, {names.Direct}Getter, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
@@ -112,7 +112,7 @@ public class SerializationForObjectGenerator
                             sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
                             using (sb.IncreaseDepth())
                             {
-                                sb.AppendLine($"{curSerializationItems.SerializationCall(serialize: true)}({typeSet.Getter.Name}, writer, kernel);");
+                                sb.AppendLine($"{curSerializationItems.SerializationCall(serialize: true)}(writer, {typeSet.Getter.Name}, kernel);");
                                 sb.AppendLine("break;");
                             }
                         }
@@ -128,8 +128,8 @@ public class SerializationForObjectGenerator
             
             using (var args = sb.Function($"public static void Serialize{writeObjectGenerics}"))
             {
-                args.Add($"{typeSet.Getter} item");
                 args.Add($"TWriteObject writer");
+                args.Add($"{typeSet.Getter} item");
                 args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
                 args.Wheres.AddRange(writerWheres);
             }
