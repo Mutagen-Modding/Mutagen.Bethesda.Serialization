@@ -137,6 +137,35 @@ public class SerializationTests
                      d.Id == "CS8785")
             .Should().BeEmpty();
     }
+    
+    [Fact]
+    public async Task SkyrimModInterfaceGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Skyrim;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptySkyrimMod()
+    { 
+        ISkyrimModGetter mod = null!;
+        var stream = new MemoryStream();
+        MutagenTestConverter.Instance.Serialize(mod, stream);
+    }
+}";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
 
     [Fact]
     public async Task TestMod()

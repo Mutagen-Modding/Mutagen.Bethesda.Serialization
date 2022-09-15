@@ -1,5 +1,5 @@
-﻿using System.IO.Abstractions;
-using Mutagen.Bethesda.Serialization.Newtonsoft;
+using System.IO.Abstractions;
+using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.Testing.AutoFixture;
@@ -7,17 +7,38 @@ using Noggog.Testing.AutoFixture;
 namespace Mutagen.Bethesda.Serialization.Tests;
 
 [UsesVerify]
-public abstract class ASerializationTests<TReaderKernel, TReaderObject, TWriterKernel, TWriterObject>
-    where TReaderKernel : ISerializationReaderKernel<TReaderObject>, new()
-    where TWriterKernel : ISerializationWriterKernel<TWriterObject>, new()
+public abstract class ASerializationTests
 {
+    public abstract void Serialize(SkyrimMod mod, Stream stream);
+    public abstract ISkyrimModGetter Deserialize(Stream stream);
+    
     [Theory]
     [DefaultAutoData]
     public async Task EmptySkyrimModExport()
     {
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        MutagenJsonConverter.Instance.Serialize(mod, stream);
+        Serialize(mod, stream);
+        stream.Position = 0;
+        StreamReader streamReader = new StreamReader(stream);
+        var str = streamReader.ReadToEnd();
+        await Verifier.Verify(str);
+    }
+    
+    [Theory]
+    [DefaultAutoData]
+    public async Task SingleGroupSkyrimModExport()
+    {
+        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var npc = mod.Npcs.AddNew();
+        npc.Name = "Goblin";
+        npc.Configuration.Level = new NpcLevel();
+        npc.Configuration.HealthOffset = 100;
+        var npc2 = mod.Npcs.AddNew();
+        npc2.Name = "Hobgoblin";
+        npc2.Configuration.HealthOffset = 200;
+        var stream = new MemoryStream();
+        Serialize(mod, stream);
         stream.Position = 0;
         StreamReader streamReader = new StreamReader(stream);
         var str = streamReader.ReadToEnd();
@@ -31,9 +52,9 @@ public abstract class ASerializationTests<TReaderKernel, TReaderObject, TWriterK
     {
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        MutagenJsonConverter.Instance.Serialize(mod, stream);
+        Serialize(mod, stream);
         stream.Position = 0;
-        var mod2 = MutagenJsonConverter.Instance.Deserialize(stream);
+        var mod2 = Deserialize(stream);
         CheckEquality(fileSystem, mod, mod2);
     }
 

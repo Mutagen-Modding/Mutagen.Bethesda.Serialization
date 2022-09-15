@@ -36,7 +36,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteFormKey({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}.FormKey);");
+        sb.AppendLine($"{kernelAccessor}.WriteFormKey({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}.FormKeyNullable);");
     }
 
     public void GenerateForDeserialize(

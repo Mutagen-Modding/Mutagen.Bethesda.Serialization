@@ -275,13 +275,15 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         where TEnum : struct, Enum, IConvertible
     {
         if (item == null) return;
-        writer.WriteName(fieldName);
         if (!Enums<TEnum>.IsFlagsEnum)
         {
+            writer.WriteName(fieldName);
             writer.Writer.WriteValue(item.Value.ToStringFast());
         }
         else
         {
+            if (EqualityComparer<TEnum>.Default.Equals(item.Value, default)) return;
+            writer.WriteName(fieldName);
             writer.Writer.WriteStartArray();
             foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
             {
@@ -289,6 +291,22 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
             }
             writer.Writer.WriteEndArray();
         }
+    }
+
+    public void WriteWithName<TObject>(JsonWritingUnit writer, string? fieldName, TObject? item, Write<JsonWritingUnit, TObject> writeCall)
+    {
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writeCall(writer, item, this);
+    }
+
+    public void WriteLoqui<TObject>(JsonWritingUnit writer, string? fieldName, TObject? item, Write<JsonWritingUnit, TObject> writeCall)
+    {
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Writer.WriteStartObject();
+        writeCall(writer, item, this);
+        writer.Writer.WriteEndObject();
     }
 
     public void StartListSection(JsonWritingUnit writer, string? fieldName)

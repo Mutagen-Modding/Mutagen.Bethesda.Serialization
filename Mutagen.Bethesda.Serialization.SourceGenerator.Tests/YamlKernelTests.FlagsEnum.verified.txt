@@ -1,5 +1,4 @@
-﻿Name1: []
-Name2:
+﻿Name2:
 - Second
 Name3:
 - First

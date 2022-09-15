@@ -10,34 +10,50 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.StartListSection(writer, "SomeList");
-        foreach (var listItem in item.SomeList)
+        if (item.SomeList is {} checkedSomeList
+            && checkedSomeList.Count > 0)
         {
-            kernel.WriteString(writer, null, listItem);
+            kernel.StartListSection(writer, "SomeList");
+            foreach (var listItem in checkedSomeList)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
+            kernel.EndListSection(writer);
         }
-        kernel.EndListSection(writer);
-        kernel.StartListSection(writer, "SomeList2");
-        foreach (var listItem in item.SomeList2)
+        if (item.SomeList2 is {} checkedSomeList2
+            && checkedSomeList2.Count > 0)
         {
-            kernel.WriteString(writer, null, listItem);
+            kernel.StartListSection(writer, "SomeList2");
+            foreach (var listItem in checkedSomeList2)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
+            kernel.EndListSection(writer);
         }
-        kernel.EndListSection(writer);
-        kernel.StartListSection(writer, "SomeList3");
-        foreach (var listItem in item.SomeList3)
+        if (item.SomeList3 is {} checkedSomeList3
+            && checkedSomeList3.Count > 0)
         {
-            kernel.WriteString(writer, null, listItem);
+            kernel.StartListSection(writer, "SomeList3");
+            foreach (var listItem in checkedSomeList3)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
+            kernel.EndListSection(writer);
         }
-        kernel.EndListSection(writer);
-        kernel.StartListSection(writer, "SomeList4");
-        foreach (var listItem in item.SomeList4)
+        if (item.SomeList4 is {} checkedSomeList4
+            && checkedSomeList4.Count > 0)
         {
-            kernel.WriteString(writer, null, listItem);
+            kernel.StartListSection(writer, "SomeList4");
+            foreach (var listItem in checkedSomeList4)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
+            kernel.EndListSection(writer);
         }
-        kernel.EndListSection(writer);
         if (item.SomeList5 is {} checkedSomeList5)
         {
-            kernel.StartListSection(writer, "checkedSomeList5");
-            foreach (var listItem in item.SomeList5)
+            kernel.StartListSection(writer, "SomeList5");
+            foreach (var listItem in checkedSomeList5)
             {
                 kernel.WriteString(writer, null, listItem);
             }
@@ -45,8 +61,8 @@ internal static class TestMod_Serialization
         }
         if (item.SomeList6 is {} checkedSomeList6)
         {
-            kernel.StartListSection(writer, "checkedSomeList6");
-            foreach (var listItem in item.SomeList6)
+            kernel.StartListSection(writer, "SomeList6");
+            foreach (var listItem in checkedSomeList6)
             {
                 kernel.WriteString(writer, null, listItem);
             }
@@ -54,8 +70,8 @@ internal static class TestMod_Serialization
         }
         if (item.SomeList7 is {} checkedSomeList7)
         {
-            kernel.StartListSection(writer, "checkedSomeList7");
-            foreach (var listItem in item.SomeList7)
+            kernel.StartListSection(writer, "SomeList7");
+            foreach (var listItem in checkedSomeList7)
             {
                 kernel.WriteString(writer, null, listItem);
             }
@@ -63,8 +79,8 @@ internal static class TestMod_Serialization
         }
         if (item.SomeList8 is {} checkedSomeList8)
         {
-            kernel.StartListSection(writer, "checkedSomeList8");
-            foreach (var listItem in item.SomeList8)
+            kernel.StartListSection(writer, "SomeList8");
+            foreach (var listItem in checkedSomeList8)
             {
                 kernel.WriteString(writer, null, listItem);
             }

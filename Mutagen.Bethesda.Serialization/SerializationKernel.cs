@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 
 namespace Mutagen.Bethesda.Serialization;
+
+public delegate void Write<TWriterObject, TObject>(TWriterObject writer, TObject obj, ISerializationWriterKernel<TWriterObject> kernel);
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
@@ -59,6 +61,8 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)
         where TEnum : struct, Enum, IConvertible;
+    public void WriteWithName<TObject>(TWriterObject writer, string? fieldName, TObject? item, Write<TWriterObject, TObject> writeCall);
+    public void WriteLoqui<TObject>(TWriterObject writer, string? fieldName, TObject? item, Write<TWriterObject, TObject> writeCall);
 
     #region List
     

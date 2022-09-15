@@ -1,12 +1,17 @@
 using Mutagen.Bethesda.Serialization.Newtonsoft;
-using Newtonsoft.Json.Linq;
+using Mutagen.Bethesda.Skyrim;
 
-namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+namespace Mutagen.Bethesda.Serialization.Tests;
 
-public class NewtonsoftSerializationTests : ASerializationTests<
-    NewtonsoftJsonSerializationReaderKernel, 
-    JTokenReader,
-    NewtonsoftJsonSerializationWriterKernel,
-    JsonWritingUnit>
+public class NewtonsoftSerializationTests : ASerializationTests
 {
+    public override void Serialize(SkyrimMod mod, Stream stream)
+    {
+        MutagenJsonConverter.Instance.Serialize(mod, stream);
+    }
+
+    public override ISkyrimModGetter Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
 }

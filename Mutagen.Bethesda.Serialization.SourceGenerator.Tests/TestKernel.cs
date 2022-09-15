@@ -173,6 +173,16 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public void WriteWithName<TObject>(TestWriter writer, string? fieldName, TObject? item, Write<TestWriter, TObject> writeCall)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteLoqui<TObject>(TestWriter writer, string? fieldName, TObject? item, Write<TestWriter, TObject> writeCall)
+    {
+        throw new NotImplementedException();
+    }
+
     public void StartListSection(TestWriter writer, string? fieldName)
     {
         throw new NotImplementedException();

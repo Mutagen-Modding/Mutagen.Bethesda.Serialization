@@ -7,5 +7,9 @@ public partial class MutagenYamlConverter
         YamlSerializationReaderKernel, YamlNode,
         YamlSerializationWriterKernel, YamlWritingUnit>
 {
-
+    public static readonly MutagenYamlConverter Instance = new();
+    
+    private MutagenYamlConverter()
+    {
+    }
 }

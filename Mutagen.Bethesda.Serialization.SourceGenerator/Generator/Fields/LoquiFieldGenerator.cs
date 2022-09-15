@@ -60,7 +60,15 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
 
-        sb.AppendLine($"{fieldSerializationItems.SerializationCall(serialize: true, withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter))}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
+        var call = fieldSerializationItems.SerializationCall(serialize: true, withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter));
+        if (fieldName == null)
+        {
+            sb.AppendLine($"{call}({writerAccessor}, {fieldAccessor}, {kernelAccessor});");
+        }
+        else
+        {
+            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, \"{fieldName}\", {fieldAccessor}, static (w, i, k) => {call}(w, i, k));");
+        }
     }
 
     public void GenerateForDeserialize(

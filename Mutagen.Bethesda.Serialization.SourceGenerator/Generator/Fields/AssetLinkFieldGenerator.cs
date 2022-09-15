@@ -38,7 +38,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}.RawPath);");
+        sb.AppendLine($"{kernelAccessor}.WriteString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}?.RawPath);");
     }
 
     public void GenerateForDeserialize(

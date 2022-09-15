@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
@@ -65,6 +66,8 @@ public class BootstrapInvocationDetector
         if (!_loquiObjectTester.IsLoqui(type)) return ret;
         
         var getterInterface = type.AllInterfaces
+            .And(type)
+            .WhereCastable<ITypeSymbol, INamedTypeSymbol>()
             .FirstOrDefault(x => x.Name.EndsWith("Getter") &&
                         SymbolEqualityComparer.Default.Equals(x.ContainingNamespace, type.ContainingNamespace));
         if (getterInterface == null) return ret;

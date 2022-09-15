@@ -10,12 +10,12 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.WriteFormKey(writer, "SomeFormKey", item.SomeFormKey.FormKey);
-        kernel.WriteFormKey(writer, "SomeFormKey2", item.SomeFormKey2.FormKey);
-        kernel.WriteFormKey(writer, "SomeFormKey3", item.SomeFormKey3.FormKey);
-        kernel.WriteFormKey(writer, "SomeFormKey4", item.SomeFormKey4.FormKey);
-        kernel.WriteFormKey(writer, "SomeFormKey5", item.SomeFormKey5.FormKey);
-        kernel.WriteFormKey(writer, "SomeFormKey6", item.SomeFormKey6.FormKey);
+        kernel.WriteFormKey(writer, "SomeFormKey", item.SomeFormKey.FormKeyNullable);
+        kernel.WriteFormKey(writer, "SomeFormKey2", item.SomeFormKey2.FormKeyNullable);
+        kernel.WriteFormKey(writer, "SomeFormKey3", item.SomeFormKey3.FormKeyNullable);
+        kernel.WriteFormKey(writer, "SomeFormKey4", item.SomeFormKey4.FormKeyNullable);
+        kernel.WriteFormKey(writer, "SomeFormKey5", item.SomeFormKey5.FormKeyNullable);
+        kernel.WriteFormKey(writer, "SomeFormKey6", item.SomeFormKey6.FormKeyNullable);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

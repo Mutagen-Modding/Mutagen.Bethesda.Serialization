@@ -10,21 +10,27 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize(item.SomeGroup, writer, kernel);
-        foreach (var rec in item.SomeGroup.Records)
-        {
-            Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize(item.SomeGroup2, writer, kernel);
-        foreach (var rec in item.SomeGroup2.Records)
-        {
-            Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize(item.SomeGroup3, writer, kernel);
-        foreach (var rec in item.SomeGroup3.Records)
-        {
-            Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize(rec, writer, kernel);
-        }
+        SerializationHelper.WriteGroup<TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+            writer: writer,
+            group: item.SomeGroup,
+            fieldName: "SomeGroup",
+            kernel: kernel,
+            groupWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TWriteObject, ITestMajorRecordGetter>(w, i, k),
+            itemWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TWriteObject>(w, i, k));
+        SerializationHelper.WriteGroup<TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+            writer: writer,
+            group: item.SomeGroup2,
+            fieldName: "SomeGroup2",
+            kernel: kernel,
+            groupWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TWriteObject, ITestMajorRecordGetter>(w, i, k),
+            itemWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TWriteObject>(w, i, k));
+        SerializationHelper.WriteGroup<TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+            writer: writer,
+            group: item.SomeGroup3,
+            fieldName: "SomeGroup3",
+            kernel: kernel,
+            groupWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TWriteObject, ITestMajorRecordGetter>(w, i, k),
+            itemWriter: static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TWriteObject>(w, i, k));
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

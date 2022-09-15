@@ -219,13 +219,15 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         where TEnum : struct, Enum, IConvertible
     {
         if (item == null) return;
-        writer.WriteName(fieldName);
         if (!Enums<TEnum>.IsFlagsEnum)
         {
+            writer.WriteName(fieldName);
             writer.WriteScalar(item.Value.ToStringFast());
         }
         else
         {
+            if (EqualityComparer<TEnum>.Default.Equals(item.Value, default)) return;
+            writer.WriteName(fieldName);
             writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
             foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
             {
@@ -233,6 +235,22 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
             }
             writer.Emitter.Emit(new SequenceEnd());
         }
+    }
+
+    public void WriteWithName<TObject>(YamlWritingUnit writer, string? fieldName, TObject? item, Write<YamlWritingUnit, TObject> writeCall)
+    {
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writeCall(writer, item, this);
+    }
+
+    public void WriteLoqui<TObject>(YamlWritingUnit writer, string? fieldName, TObject? item, Write<YamlWritingUnit, TObject> writeCall)
+    {
+        if (item == null) return;
+        writer.WriteName(fieldName);
+        writer.Emitter.Emit(new MappingStart());
+        writeCall(writer, item, this);
+        writer.Emitter.Emit(new MappingEnd());
     }
 
     public void StartListSection(YamlWritingUnit writer, string? fieldName)

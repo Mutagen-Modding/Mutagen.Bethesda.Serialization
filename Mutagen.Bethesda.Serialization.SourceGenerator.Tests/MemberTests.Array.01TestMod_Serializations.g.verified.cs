@@ -10,12 +10,16 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         ISerializationWriterKernel<TWriteObject> kernel)
     {
-        kernel.StartListSection(writer, "SomeArray");
-        foreach (var listItem in item.SomeArray)
+        if (item.SomeArray is {} checkedSomeArray
+            && checkedSomeArray.Count > 0)
         {
-            kernel.WriteString(writer, null, listItem);
+            kernel.StartListSection(writer, "SomeArray");
+            foreach (var listItem in checkedSomeArray)
+            {
+                kernel.WriteString(writer, null, listItem);
+            }
+            kernel.EndListSection(writer);
         }
-        kernel.EndListSection(writer);
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

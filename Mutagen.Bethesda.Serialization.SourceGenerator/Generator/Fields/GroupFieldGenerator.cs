@@ -46,13 +46,18 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
     {
         if (field is not INamedTypeSymbol namedTypeSymbol) return;
         var subType = namedTypeSymbol.TypeArguments[0];
-        if (!_serializationNaming.TryGetSerializationItems(field, out var fieldNames)) return;
-        if (!_serializationNaming.TryGetSerializationItems(subType, out var subNames)) return;
-        sb.AppendLine($"{fieldNames.SerializationCall(serialize: true)}({fieldAccessor}, {writerAccessor}, {kernelAccessor});");
-        sb.AppendLine($"foreach (var rec in {fieldAccessor}.Records)");
-        using (sb.CurlyBrace())
+        if (!_serializationNaming.TryGetSerializationItems(field, out var fieldSerializationNames)) return;
+        if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
+        var groupNames = _nameRetriever.GetNames(field);
+        var subNames = _nameRetriever.GetNames(subType);
+        using (var f = sb.Call($"SerializationHelper.WriteGroup<TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
         {
-            sb.AppendLine($"{subNames.SerializationCall(serialize: true)}(rec, {writerAccessor}, {kernelAccessor});");
+            f.Add($"writer: {writerAccessor}");
+            f.Add($"group: {fieldAccessor}");
+            f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
+            f.Add($"kernel: {kernelAccessor}");
+            f.Add($"groupWriter: static (w, i, k) => {fieldSerializationNames.SerializationCall(serialize: true)}<TWriteObject, {subNames.Getter}>(w, i, k)");
+            f.Add($"itemWriter: static (w, i, k) => {subSerializationNames.SerializationCall(serialize: true)}<TWriteObject>(w, i, k)");
         }
     }
 

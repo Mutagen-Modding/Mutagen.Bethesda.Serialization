@@ -1,0 +1,9 @@
+﻿ModHeader:
+  FormID: 0
+  Version: 0
+  FormVersion: 44
+  Version2: 0
+  Stats:
+    Version: 1.7
+    NumRecords: 0
+    NextFormID: 2048

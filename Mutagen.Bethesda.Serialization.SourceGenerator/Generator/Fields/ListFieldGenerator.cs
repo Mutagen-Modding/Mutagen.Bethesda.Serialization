@@ -78,13 +78,16 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        if (nullable)
+        using (var i = sb.If(ands: true))
         {
-            sb.AppendLine($"if ({fieldAccessor} is {{}} checked{fieldName})");
-            fieldName = $"checked{fieldName}";
+            i.Add($"{fieldAccessor} is {{}} checked{fieldName}");
+            if (!nullable)
+            {
+                i.Add($"checked{fieldName}.Count > 0");
+            }
         }
-
-        using (sb.CurlyBrace(doIt: nullable))
+        fieldAccessor = $"checked{fieldName}";
+        using (sb.CurlyBrace())
         {
             sb.AppendLine($"{kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\");");
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
