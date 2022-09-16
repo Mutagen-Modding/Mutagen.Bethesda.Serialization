@@ -67,7 +67,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         }
         else
         {
-            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, \"{fieldName}\", {fieldAccessor}, static (w, i, k) => {call}(w, i, k));");
+            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, \"{fieldName}\", {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
         }
     }
 

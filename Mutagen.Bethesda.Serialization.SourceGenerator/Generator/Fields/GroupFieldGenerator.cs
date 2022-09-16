@@ -50,14 +50,14 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
         var groupNames = _nameRetriever.GetNames(field);
         var subNames = _nameRetriever.GetNames(subType);
-        using (var f = sb.Call($"SerializationHelper.WriteGroup<TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+        using (var f = sb.Call($"SerializationHelper.WriteGroup<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
         {
             f.Add($"writer: {writerAccessor}");
             f.Add($"group: {fieldAccessor}");
             f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
             f.Add($"kernel: {kernelAccessor}");
-            f.Add($"groupWriter: static (w, i, k) => {fieldSerializationNames.SerializationCall(serialize: true)}<TWriteObject, {subNames.Getter}>(w, i, k)");
-            f.Add($"itemWriter: static (w, i, k) => {subSerializationNames.SerializationCall(serialize: true)}<TWriteObject>(w, i, k)");
+            f.Add($"groupWriter: static (w, i, k) => {fieldSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k)");
+            f.Add($"itemWriter: static (w, i, k) => {subSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject>(w, i, k)");
         }
     }
 

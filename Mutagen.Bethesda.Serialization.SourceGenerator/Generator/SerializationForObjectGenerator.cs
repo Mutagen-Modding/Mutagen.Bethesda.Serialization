@@ -49,26 +49,28 @@ public class SerializationForObjectGenerator
         {
         }
         
-        string writeObjectGenerics = "<TWriteObject>";
-        string readObjectGenerics = "<TReadObject>";
-        IEnumerable<string> readerWheres = Enumerable.Empty<string>();
-        IEnumerable<string> writerWheres = Enumerable.Empty<string>();
+        if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
+        
+        List<string> writeObjectGenerics = new() { "TKernel", "TWriteObject" };
+        List<string> readObjectGenerics = new() { "TReadObject" };
+        List<string> readerWheres = new();
+        List<string> writerWheres = new();
         if (typeSet.Getter is INamedTypeSymbol writerTypeSymbol
             && writerTypeSymbol.TypeArguments.Length > 0)
         {
-            var generics = string.Join(", ", writerTypeSymbol.TypeArguments);
-            writeObjectGenerics = $"<{string.Join(", ", "TWriteObject", generics)}>";
-            writerWheres = _whereClauseGenerator.GetWheres(writerTypeSymbol);
+            writeObjectGenerics.AddRange(writerTypeSymbol.TypeArguments.Select(x => x.ToString()));
+            writerWheres.AddRange(_whereClauseGenerator.GetWheres(writerTypeSymbol));
         }
         if (typeSet.Setter is INamedTypeSymbol readerTypeSymbol
             && readerTypeSymbol.TypeArguments.Length > 0)
         {
-            var generics = string.Join(", ", readerTypeSymbol.TypeArguments);
-            readObjectGenerics = $"<{string.Join(", ", "TReadObject", generics)}>";
-            readerWheres = _whereClauseGenerator.GetWheres(readerTypeSymbol);
+            readObjectGenerics.AddRange(readerTypeSymbol.TypeArguments.Select(x => x.ToString()));
+            readerWheres.AddRange(_whereClauseGenerator.GetWheres(readerTypeSymbol));
         }
-
-        if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
+        
+        writerWheres.Add("where TKernel : ISerializationWriterKernel<TWriteObject>, new()");
+        var writeObjectGenericsString = $"<{string.Join(", ", writeObjectGenerics)}>";
+        var readObjectGenericsString = $"<{string.Join(", ", readObjectGenerics)}>";
         
         using (var c = sb.Class(objSerializationItems.SerializationHousingClassName))
         {
@@ -79,11 +81,11 @@ public class SerializationForObjectGenerator
         {
             if (inheriting.Count > 0)
             {
-                using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenerics}"))
+                using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenericsString}"))
                 {
                     args.Add($"TWriteObject writer");
                     args.Add($"{typeSet.Getter} item");
-                    args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
+                    args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
                     args.Wheres.AddRange(writerWheres);
                 }
                 using (sb.CurlyBrace())
@@ -126,11 +128,11 @@ public class SerializationForObjectGenerator
                 sb.AppendLine();
             }
             
-            using (var args = sb.Function($"public static void Serialize{writeObjectGenerics}"))
+            using (var args = sb.Function($"public static void Serialize{writeObjectGenericsString}"))
             {
                 args.Add($"TWriteObject writer");
                 args.Add($"{typeSet.Getter} item");
-                args.Add($"ISerializationWriterKernel<TWriteObject> kernel");
+                args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
                 args.Wheres.AddRange(writerWheres);
             }
             using (sb.CurlyBrace())
@@ -147,7 +149,7 @@ public class SerializationForObjectGenerator
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{readObjectGenerics}"))
+            using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{readObjectGenericsString}"))
             {
                 args.Add($"TReadObject reader");
                 args.Add($"ISerializationReaderKernel<TReadObject> kernel");

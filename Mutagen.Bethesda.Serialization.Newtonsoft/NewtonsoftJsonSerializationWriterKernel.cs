@@ -52,194 +52,169 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         writer.Dispose();
     }
 
-    public void WriteChar(JsonWritingUnit writer, string? fieldName, char? item)
+    public void WriteChar(JsonWritingUnit writer, string? fieldName, char item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteBool(JsonWritingUnit writer, string? fieldName, bool? item)
+    public void WriteBool(JsonWritingUnit writer, string? fieldName, bool item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteString(JsonWritingUnit writer, string? fieldName, string? item)
+    public void WriteString(JsonWritingUnit writer, string? fieldName, string item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt8(JsonWritingUnit writer, string? fieldName, sbyte? item)
+    public void WriteInt8(JsonWritingUnit writer, string? fieldName, sbyte item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt16(JsonWritingUnit writer, string? fieldName, short? item)
+    public void WriteInt16(JsonWritingUnit writer, string? fieldName, short item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt32(JsonWritingUnit writer, string? fieldName, int? item)
+    public void WriteInt32(JsonWritingUnit writer, string? fieldName, int item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteInt64(JsonWritingUnit writer, string? fieldName, long? item)
+    public void WriteInt64(JsonWritingUnit writer, string? fieldName, long item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt8(JsonWritingUnit writer, string? fieldName, byte? item)
+    public void WriteUInt8(JsonWritingUnit writer, string? fieldName, byte item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt16(JsonWritingUnit writer, string? fieldName, ushort? item)
+    public void WriteUInt16(JsonWritingUnit writer, string? fieldName, ushort item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt32(JsonWritingUnit writer, string? fieldName, uint? item)
+    public void WriteUInt32(JsonWritingUnit writer, string? fieldName, uint item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteUInt64(JsonWritingUnit writer, string? fieldName, ulong? item)
+    public void WriteUInt64(JsonWritingUnit writer, string? fieldName, ulong item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteFloat(JsonWritingUnit writer, string? fieldName, float? item)
+    public void WriteFloat(JsonWritingUnit writer, string? fieldName, float item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteValue(item);
     }
 
-    public void WriteModKey(JsonWritingUnit writer, string? fieldName, ModKey? item)
+    public void WriteModKey(JsonWritingUnit writer, string? fieldName, ModKey item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
-        writer.Writer.WriteValue(item.Value.FileName);
+        writer.Writer.WriteValue(item.FileName);
     }
 
-    public void WriteFormKey(JsonWritingUnit writer, string? fieldName, FormKey? item)
+    public void WriteFormKey(JsonWritingUnit writer, string? fieldName, FormKey item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
-        writer.Writer.WriteValue(item.Value.ToString());
+        writer.Writer.WriteValue(item.ToString());
     }
 
-    public void WriteRecordType(JsonWritingUnit writer, string? fieldName, RecordType? item)
+    public void WriteRecordType(JsonWritingUnit writer, string? fieldName, RecordType item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        if (item.Value.TypeInt == RecordType.Null.TypeInt)
+        if (item.TypeInt == RecordType.Null.TypeInt)
         {
             writer.Writer.WriteValue(string.Empty);
         }
         else
         {
-            writer.Writer.WriteValue(item.Value.Type);
+            writer.Writer.WriteValue(item.Type);
         }
     }
 
-    public void WriteP2Int(JsonWritingUnit writer, string? fieldName, P2Int? item)
+    public void WriteP2Int(JsonWritingUnit writer, string? fieldName, P2Int item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}");
     }
 
-    public void WriteP2Int16(JsonWritingUnit writer, string? fieldName, P2Int16? item)
+    public void WriteP2Int16(JsonWritingUnit writer, string? fieldName, P2Int16 item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}");
     }
 
-    public void WriteP2Float(JsonWritingUnit writer, string? fieldName, P2Float? item)
+    public void WriteP2Float(JsonWritingUnit writer, string? fieldName, P2Float item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}");
     }
 
-    public void WriteP3Float(JsonWritingUnit writer, string? fieldName, P3Float? item)
+    public void WriteP3Float(JsonWritingUnit writer, string? fieldName, P3Float item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}, {item.Z}");
     }
 
-    public void WriteP3UInt8(JsonWritingUnit writer, string? fieldName, P3UInt8? item)
+    public void WriteP3UInt8(JsonWritingUnit writer, string? fieldName, P3UInt8 item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}, {item.Z}");
     }
 
-    public void WriteP3Int16(JsonWritingUnit writer, string? fieldName, P3Int16? item)
+    public void WriteP3Int16(JsonWritingUnit writer, string? fieldName, P3Int16 item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}, {item.Z}");
     }
 
-    public void WriteP3UInt16(JsonWritingUnit writer, string? fieldName, P3UInt16? item)
+    public void WriteP3UInt16(JsonWritingUnit writer, string? fieldName, P3UInt16 item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        writer.Writer.WriteValue($"{item.X}, {item.Y}, {item.Z}");
     }
 
-    public void WritePercent(JsonWritingUnit writer, string? fieldName, Percent? item)
+    public void WritePercent(JsonWritingUnit writer, string? fieldName, Percent item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.Value}");
+        writer.Writer.WriteValue($"{item.Value}");
     }
 
-    public void WriteColor(JsonWritingUnit writer, string? fieldName, Color? item)
+    public void WriteColor(JsonWritingUnit writer, string? fieldName, Color item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
 
-        writer.Writer.WriteValue($"{item.Value.R}, {item.Value.G}, {item.Value.B}");
+        writer.Writer.WriteValue($"{item.R}, {item.G}, {item.B}");
     }
 
-    public void WriteTranslatedString(JsonWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
+    public void WriteTranslatedString(JsonWritingUnit writer, string? fieldName, ITranslatedStringGetter item)
     {
-        if (item == null) return;
         if (item.NumLanguages <= 1 && item.String == null) return;
         writer.WriteName(fieldName);
 
@@ -263,29 +238,26 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
     }
 
-    public void WriteBytes(JsonWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)
+    public void WriteBytes(JsonWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte> item)
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
-        var test = Convert.ToHexString(item.Value);
-        writer.Writer.WriteValue(test);
+        writer.Writer.WriteValue(Convert.ToHexString(item));
     }
 
-    public void WriteEnum<TEnum>(JsonWritingUnit writer, string? fieldName, TEnum? item)
+    public void WriteEnum<TEnum>(JsonWritingUnit writer, string? fieldName, TEnum item)
         where TEnum : struct, Enum, IConvertible
     {
-        if (item == null) return;
         if (!Enums<TEnum>.IsFlagsEnum)
         {
             writer.WriteName(fieldName);
-            writer.Writer.WriteValue(item.Value.ToStringFast());
+            writer.Writer.WriteValue(item.ToStringFast());
         }
         else
         {
-            if (EqualityComparer<TEnum>.Default.Equals(item.Value, default)) return;
+            if (EqualityComparer<TEnum>.Default.Equals(item, default)) return;
             writer.WriteName(fieldName);
             writer.Writer.WriteStartArray();
-            foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
+            foreach (var flag in item.EnumerateContainedFlags(includeUndefined: true))
             {
                 writer.Writer.WriteValue(flag.ToStringFast());
             }
@@ -293,19 +265,29 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
     }
 
-    public void WriteWithName<TObject>(JsonWritingUnit writer, string? fieldName, TObject? item, Write<JsonWritingUnit, TObject> writeCall)
+    public void WriteWithName<TKernel, TObject>(
+        MutagenSerializationWriterKernel<TKernel, JsonWritingUnit> kernel, 
+        JsonWritingUnit writer,
+        string? fieldName,
+        TObject item, 
+        Write<TKernel, JsonWritingUnit, TObject> writeCall) 
+        where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
-        writeCall(writer, item, this);
+        writeCall(writer, item, kernel);
     }
 
-    public void WriteLoqui<TObject>(JsonWritingUnit writer, string? fieldName, TObject? item, Write<JsonWritingUnit, TObject> writeCall)
+    public void WriteLoqui<TKernel, TObject>(
+        MutagenSerializationWriterKernel<TKernel, JsonWritingUnit> kernel,
+        JsonWritingUnit writer
+        , string? fieldName,
+        TObject item,
+        Write<TKernel, JsonWritingUnit, TObject> writeCall) 
+        where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
     {
-        if (item == null) return;
         writer.WriteName(fieldName);
         writer.Writer.WriteStartObject();
-        writeCall(writer, item, this);
+        writeCall(writer, item, kernel);
         writer.Writer.WriteEndObject();
     }
 

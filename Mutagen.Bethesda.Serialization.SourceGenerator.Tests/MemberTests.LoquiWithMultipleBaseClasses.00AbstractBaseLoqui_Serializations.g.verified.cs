@@ -5,10 +5,11 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class AbstractBaseLoqui_Serialization
 {
-    public static void SerializeWithCheck<TWriteObject>(
+    public static void SerializeWithCheck<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
-        ISerializationWriterKernel<TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
         switch (item)
         {
@@ -23,10 +24,11 @@ internal static class AbstractBaseLoqui_Serialization
         }
     }
 
-    public static void Serialize<TWriteObject>(
+    public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
-        ISerializationWriterKernel<TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
     }
 

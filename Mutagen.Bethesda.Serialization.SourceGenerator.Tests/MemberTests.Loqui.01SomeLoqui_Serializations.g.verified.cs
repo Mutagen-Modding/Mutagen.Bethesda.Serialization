@@ -5,10 +5,11 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeLoqui_Serialization
 {
-    public static void Serialize<TWriteObject>(
+    public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
-        ISerializationWriterKernel<TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
     }
 

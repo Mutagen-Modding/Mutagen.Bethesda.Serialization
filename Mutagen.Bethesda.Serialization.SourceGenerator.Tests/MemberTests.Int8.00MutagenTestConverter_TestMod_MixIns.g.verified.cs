@@ -6,7 +6,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 public static class MutagenTestConverterTestModMixIns
 {
     private readonly static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestKernel ReaderKernel = new();
-    private readonly static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestKernel WriterKernel = new();
+    private readonly static MutagenSerializationWriterKernel<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestKernel, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestWriter> WriterKernel = new();
 
     public static void Serialize(
         this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MutagenTestConverter converterBootstrap,
@@ -14,7 +14,7 @@ public static class MutagenTestConverterTestModMixIns
         Stream stream)
     {
         var writer = WriterKernel.GetNewObject(stream);
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Serialize<TestWriter>(writer, item, WriterKernel);
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Serialize<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestKernel, TestWriter>(writer, item, WriterKernel);
         WriterKernel.Finalize(stream, writer);
     }
 

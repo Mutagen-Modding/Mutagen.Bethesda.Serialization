@@ -5,10 +5,11 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
 {
-    public static void Serialize<TWriteObject>(
+    public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
-        ISerializationWriterKernel<TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
         kernel.WriteRecordType(writer, "SomeMember0", item.SomeMember0);
         kernel.WriteRecordType(writer, "SomeMember1", item.SomeMember1);

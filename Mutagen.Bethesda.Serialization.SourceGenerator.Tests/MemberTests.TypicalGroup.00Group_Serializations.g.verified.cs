@@ -5,11 +5,12 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class Group_Serialization
 {
-    public static void Serialize<TWriteObject, T>(
+    public static void Serialize<TKernel, TWriteObject, T>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
-        ISerializationWriterKernel<TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where T : class, IMajorRecordInternal
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
         kernel.WriteInt32(writer, "SomeInt", item.SomeInt);
         kernel.WriteInt32(writer, "SomeInt2", item.SomeInt2);

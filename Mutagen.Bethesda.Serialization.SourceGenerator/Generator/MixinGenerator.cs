@@ -64,7 +64,7 @@ public class MixinGenerator
         using (sb.CurlyBrace())
         {
             sb.AppendLine($"private readonly static {readerKernel} ReaderKernel = new();");
-            sb.AppendLine($"private readonly static {writerKernel} WriterKernel = new();");
+            sb.AppendLine($"private readonly static MutagenSerializationWriterKernel<{writerKernel}, {writer}> WriterKernel = new();");
             sb.AppendLine();
             
             using (var args = sb.Function($"public static void Serialize"))
@@ -76,7 +76,7 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(stream);");
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writer.Name}>(writer, item, WriterKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel);");
                 sb.AppendLine($"WriterKernel.Finalize(stream, writer);");
             }
             sb.AppendLine();

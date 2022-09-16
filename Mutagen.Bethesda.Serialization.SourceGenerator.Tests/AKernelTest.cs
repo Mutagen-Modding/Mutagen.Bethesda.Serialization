@@ -8,9 +8,9 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 public abstract class AKernelTest<TWriterKernel, TWriter>
     where TWriterKernel : ISerializationWriterKernel<TWriter>, new()
 {
-    private async Task<string> GetResults(Action<TWriterKernel, TWriter> toDo)
+    private async Task<string> GetResults(Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter> toDo)
     {
-        var kernel = new TWriterKernel();
+        var kernel = MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance;
         var memStream = new MemoryStream();
         var obj = kernel.GetNewObject(memStream);
         toDo(kernel, obj);
@@ -23,7 +23,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     }
     
     private async Task<string> GetPrimitiveWriteTest<T>(
-        Action<TWriterKernel, TWriter, string?, T?> callback,
+        Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?> callback,
         params T[] items)
     {
         return await GetResults((k, w) =>

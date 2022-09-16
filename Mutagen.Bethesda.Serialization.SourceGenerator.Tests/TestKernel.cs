@@ -27,7 +27,7 @@ public class TestWriter
 
 public class TestKernel : ISerializationReaderKernel<TestReader>, ISerializationWriterKernel<TestWriter>
 {
-    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(Stream stream)
+    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
@@ -37,148 +37,149 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public void WriteChar(TestWriter writer, string? fieldName, char? item)
+    public void WriteChar(TestWriter writer, string? fieldName, char item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteBool(TestWriter writer, string? fieldName, bool? item)
+    public void WriteBool(TestWriter writer, string? fieldName, bool item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteString(TestWriter writer, string? fieldName, string? item)
+    public void WriteString(TestWriter writer, string? fieldName, string item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt8(TestWriter writer, string? fieldName, sbyte? item)
+    public void WriteInt8(TestWriter writer, string? fieldName, sbyte item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt16(TestWriter writer, string? fieldName, short? item)
+    public void WriteInt16(TestWriter writer, string? fieldName, short item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt32(TestWriter writer, string? fieldName, int? item)
+    public void WriteInt32(TestWriter writer, string? fieldName, int item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteInt64(TestWriter writer, string? fieldName, long? item)
+    public void WriteInt64(TestWriter writer, string? fieldName, long item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt8(TestWriter writer, string? fieldName, byte? item)
+    public void WriteUInt8(TestWriter writer, string? fieldName, byte item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt16(TestWriter writer, string? fieldName, ushort? item)
+    public void WriteUInt16(TestWriter writer, string? fieldName, ushort item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt32(TestWriter writer, string? fieldName, uint? item)
+    public void WriteUInt32(TestWriter writer, string? fieldName, uint item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteUInt64(TestWriter writer, string? fieldName, ulong? item)
+    public void WriteUInt64(TestWriter writer, string? fieldName, ulong item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteFloat(TestWriter writer, string? fieldName, float? item)
+    public void WriteFloat(TestWriter writer, string? fieldName, float item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteModKey(TestWriter writer, string? fieldName, ModKey? modKey)
+    public void WriteModKey(TestWriter writer, string? fieldName, ModKey item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteFormKey(TestWriter writer, string? fieldName, FormKey? formKey)
+    public void WriteFormKey(TestWriter writer, string? fieldName, FormKey item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteRecordType(TestWriter writer, string? fieldName, RecordType? recordType)
+    public void WriteRecordType(TestWriter writer, string? fieldName, RecordType item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP2Int(TestWriter writer, string? fieldName, P2Int? p2)
+    public void WriteP2Int(TestWriter writer, string? fieldName, P2Int item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP2Int16(TestWriter writer, string? fieldName, P2Int16? p2)
+    public void WriteP2Int16(TestWriter writer, string? fieldName, P2Int16 item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP2Float(TestWriter writer, string? fieldName, P2Float? p3)
+    public void WriteP2Float(TestWriter writer, string? fieldName, P2Float item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP3Float(TestWriter writer, string? fieldName, P3Float? p3)
+    public void WriteP3Float(TestWriter writer, string? fieldName, P3Float item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP3UInt8(TestWriter writer, string? fieldName, P3UInt8? p3)
+    public void WriteP3UInt8(TestWriter writer, string? fieldName, P3UInt8 item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP3Int16(TestWriter writer, string? fieldName, P3Int16? p3)
+    public void WriteP3Int16(TestWriter writer, string? fieldName, P3Int16 item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteP3UInt16(TestWriter writer, string? fieldName, P3UInt16? p3)
+    public void WriteP3UInt16(TestWriter writer, string? fieldName, P3UInt16 item)
     {
         throw new NotImplementedException();
     }
 
-    public void WritePercent(TestWriter writer, string? fieldName, Percent? percent)
+    public void WritePercent(TestWriter writer, string? fieldName, Percent item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteColor(TestWriter writer, string? fieldName, Color? color)
+    public void WriteColor(TestWriter writer, string? fieldName, Color item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteTranslatedString(TestWriter writer, string? fieldName, ITranslatedStringGetter? translatedString)
+    public void WriteTranslatedString(TestWriter writer, string? fieldName, ITranslatedStringGetter item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteBytes(TestWriter writer, string? fieldName, ReadOnlyMemorySlice<byte>? bytes)
+    public void WriteBytes(TestWriter writer, string? fieldName, ReadOnlyMemorySlice<byte> item)
     {
         throw new NotImplementedException();
     }
 
-    public void WriteEnum<TEnum>(TestWriter writer, string? fieldName, TEnum? item) 
-        where TEnum : struct, Enum, IConvertible
+    public void WriteEnum<TEnum>(TestWriter writer, string? fieldName, TEnum item) where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }
 
-    public void WriteWithName<TObject>(TestWriter writer, string? fieldName, TObject? item, Write<TestWriter, TObject> writeCall)
+    public void WriteWithName<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
+        TObject item, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }
 
-    public void WriteLoqui<TObject>(TestWriter writer, string? fieldName, TObject? item, Write<TestWriter, TObject> writeCall)
+    public void WriteLoqui<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
+        TObject item, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }
@@ -263,11 +264,6 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
-    {
-        throw new NotImplementedException();
-    }
-
     public bool ReadBool(TestReader reader)
     {
         throw new NotImplementedException();
@@ -344,6 +340,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
