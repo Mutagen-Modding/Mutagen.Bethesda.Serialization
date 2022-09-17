@@ -43,12 +43,12 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var nullable = field.IsNullable();
+        var nullable = field.Name.Contains("Nullable");
         using (var c = sb.Call($"{kernelAccessor}.WriteFormKey", linePerArgument: false))
         {
             c.Add(writerAccessor);
             c.Add($"{(fieldName == null ? "null" : $"\"{fieldName}\"")}");
-            c.Add($"{fieldAccessor}{Utility.NullChar(nullable)}.FormKeyNullable");
+            c.Add($"{fieldAccessor}.FormKeyNullable");
             if (defaultValueAccessor != null)
             {
                 c.Add($"{defaultValueAccessor}.FormKeyNullable");

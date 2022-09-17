@@ -14,27 +14,9 @@
           "Level": {},
           "HealthOffset": 100
         },
-        "DeathItem": "",
-        "Voice": "",
-        "Template": "",
-        "WornArmor": "",
-        "FarAwayModel": "",
-        "AttackRace": "",
-        "SpectatorOverridePackageList": "",
-        "ObserveDeadBodyOverridePackageList": "",
-        "GuardWarnOverridePackageList": "",
-        "CombatOverridePackageList": "",
         "AIData": {},
         "Name": "Goblin",
-        "HairColor": "",
-        "CombatStyle": "",
-        "GiftFilter": "",
-        "NAM5": 65280,
-        "DefaultOutfit": "",
-        "SleepingOutfit": "",
-        "DefaultPackageList": "",
-        "CrimeFaction": "",
-        "HeadTexture": ""
+        "NAM5": 65280
       },
       {
         "ObjectBounds": {},
@@ -42,12 +24,6 @@
           "Level": {},
           "HealthOffset": 200
         },
-        "DeathItem": "",
-        "Voice": "",
-        "Template": "",
-        "WornArmor": "",
-        "FarAwayModel": "",
-        "AttackRace": "",
         "Attacks": [
           {
             "AttackEvent": "Event1"
@@ -56,21 +32,9 @@
             "AttackEvent": "Event2"
           }
         ],
-        "SpectatorOverridePackageList": "",
-        "ObserveDeadBodyOverridePackageList": "",
-        "GuardWarnOverridePackageList": "",
-        "CombatOverridePackageList": "",
         "AIData": {},
         "Name": "Hobgoblin",
-        "HairColor": "",
-        "CombatStyle": "",
-        "GiftFilter": "",
-        "NAM5": 65280,
-        "DefaultOutfit": "",
-        "SleepingOutfit": "",
-        "DefaultPackageList": "",
-        "CrimeFaction": "",
-        "HeadTexture": ""
+        "NAM5": 65280
       }
     ]
   }
