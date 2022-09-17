@@ -23,6 +23,8 @@ class PropertyCollection
 record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldGenerator? Generator)
 {
     public IFieldSymbol? Default { get; set; }
+    
+    public string? DefaultString => Default == null ? null : $"{Default.ContainingSymbol.ContainingNamespace}.{Default.ContainingSymbol.Name}.{Default.Name}";
 }
 
 public class SerializationForObjectGenerator
@@ -140,7 +142,18 @@ public class SerializationForObjectGenerator
 
             foreach (var prop in properties.InOrder)
             {
-                GenerateForProperty(compilation, obj, prop, sb, context.CancellationToken);
+                context.CancellationToken.ThrowIfCancellationRequested();
+                _forFieldGenerator.GenerateForField(
+                    compilation: compilation,
+                    obj: obj, 
+                    fieldType: prop.Property.Type,
+                    writerAccessor: "writer", 
+                    fieldName: prop.Property.Name, 
+                    fieldAccessor: $"item.{prop.Property.Name}", 
+                    defaultValueAccessor: prop.DefaultString,
+                    prop.Generator,
+                    sb: sb, 
+                    cancel: context.CancellationToken);
             }
         }
         sb.AppendLine();
@@ -277,27 +290,5 @@ public class SerializationForObjectGenerator
         writerWheres.Add("where TKernel : ISerializationWriterKernel<TWriteObject>, new()");
         writeObjectGenericsString = $"<{string.Join(", ", writeObjectGenerics)}>";
         readObjectGenericsString = $"<{string.Join(", ", readObjectGenerics)}>";
-    }
-
-    private void GenerateForProperty(
-        CompilationUnit compilation,
-        ITypeSymbol obj, 
-        PropertyMetadata prop,
-        StructuredStringBuilder sb, 
-        CancellationToken cancel)
-    {
-        cancel.ThrowIfCancellationRequested();
-        var def = prop.Default == null ? null : $"{prop.Default.ContainingSymbol.ContainingNamespace}.{prop.Default.ContainingSymbol.Name}.{prop.Default.Name}";
-        _forFieldGenerator.GenerateForField(
-            compilation: compilation,
-            obj: obj, 
-            fieldType: prop.Property.Type,
-            writerAccessor: "writer", 
-            fieldName: prop.Property.Name, 
-            fieldAccessor: $"item.{prop.Property.Name}", 
-            defaultValueAccessor: def,
-            prop.Generator,
-            sb: sb, 
-            cancel: cancel);
     }
 }
