@@ -8,6 +8,18 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
+class PropertyCollection
+{
+    public Dictionary<string, PropertyMetadata> Lookup = new();
+    public List<PropertyMetadata> InOrder = new();
+    
+    public void Register(PropertyMetadata propertyMetadata)
+    {
+        InOrder.Add(propertyMetadata);
+        Lookup[propertyMetadata.Property.Name] = propertyMetadata;
+    }
+}
+
 record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldGenerator? Generator)
 {
     public IFieldSymbol? Default { get; set; }
@@ -48,9 +60,9 @@ public class SerializationForObjectGenerator
         
         var sb = new StructuredStringBuilder();
         
-        var propertyDict = GetPropertyDictionary(context, obj);
+        var properties = GetPropertyCollection(context, obj);
         
-        GenerateUsings(context, obj, sb, propertyDict);
+        GenerateUsings(context, obj, sb, properties);
 
         using (sb.Namespace(obj.ContainingNamespace.ToString()))
         {
@@ -72,7 +84,7 @@ public class SerializationForObjectGenerator
                 GenerateSerializeWithCheck(compilation, context, obj, sb, writeObjectGenericsString, typeSet, writerWheres, inheriting);
             }
             
-            GenerateSerialize(compilation, context, obj, sb, writeObjectGenericsString, typeSet, writerWheres, baseType, propertyDict);
+            GenerateSerialize(compilation, context, obj, sb, writeObjectGenericsString, typeSet, writerWheres, baseType, properties);
             
             GenerateDeserialize(sb, typeSet, readObjectGenericsString, readerWheres);
         }
@@ -107,7 +119,7 @@ public class SerializationForObjectGenerator
         LoquiTypeSet typeSet,
         List<string> writerWheres,
         ITypeSymbol? baseType,
-        Dictionary<string, PropertyMetadata> propertyDict)
+        PropertyCollection properties)
     {
         using (var args = sb.Function($"public static void Serialize{writeObjectGenericsString}"))
         {
@@ -126,10 +138,9 @@ public class SerializationForObjectGenerator
                     $"{baseSerializationItems.SerializationCall(serialize: true)}<TWriteObject>(item, writer, kernel);");
             }
 
-            foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
+            foreach (var prop in properties.InOrder)
             {
-                if (!propertyDict.TryGetValue(prop.Name, out var propEntry)) continue;
-                GenerateForProperty(compilation, obj, propEntry, sb, context.CancellationToken);
+                GenerateForProperty(compilation, obj, prop, sb, context.CancellationToken);
             }
         }
         sb.AppendLine();
@@ -198,37 +209,37 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
-    private Dictionary<string, PropertyMetadata> GetPropertyDictionary(SourceProductionContext context, ITypeSymbol obj)
+    private PropertyCollection GetPropertyCollection(SourceProductionContext context, ITypeSymbol obj)
     {
-        var propertyDict = obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>()
-            .Where(x => !_propertyFilter.Skip(x))
-            .Select(x =>
-            {
-                context.CancellationToken.ThrowIfCancellationRequested();
-                return x;
-            })
-            .ToDictionary(x => x.Name, x =>
-            {
-                var gen = _forFieldGenerator.GetGenerator(x.Type, context.CancellationToken);
-                return new PropertyMetadata(x, gen);
-            });
+        var ret = new PropertyCollection();
+        foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+            if (_propertyFilter.Skip(prop)) continue;
+            var gen = _forFieldGenerator.GetGenerator(prop.Type, context.CancellationToken);
+            var meta = new PropertyMetadata(prop, gen);
+            ret.Register(meta);
+        }
 
         foreach (var field in obj.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
         {
             if (!field.IsStatic || !field.IsReadOnly) continue;
             if (!field.Name.EndsWith("Default")) continue;
-            if (propertyDict.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+            if (ret.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
             {
                 prop.Default = field;
             }
         }
-        return propertyDict;
+        return ret;
     }
 
-    private static void GenerateUsings(SourceProductionContext context, ITypeSymbol obj, StructuredStringBuilder sb,
-        Dictionary<string, PropertyMetadata> propertyDict)
+    private static void GenerateUsings(
+        SourceProductionContext context,
+        ITypeSymbol obj,
+        StructuredStringBuilder sb,
+        PropertyCollection propertyDict)
     {
-        sb.AppendLines(propertyDict.Values
+        sb.AppendLines(propertyDict.InOrder
             .SelectMany(x =>
                 x.Generator?.RequiredNamespaces(x.Property.Type, context.CancellationToken) ?? Enumerable.Empty<string>())
             .And("Mutagen.Bethesda.Serialization")
