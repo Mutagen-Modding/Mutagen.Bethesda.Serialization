@@ -99,9 +99,15 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
-    private void GenerateSerialize(CompilationUnit compilation, SourceProductionContext context, ITypeSymbol obj,
-        StructuredStringBuilder sb, string writeObjectGenericsString, LoquiTypeSet typeSet, List<string> writerWheres,
-        ITypeSymbol? baseType, Dictionary<string, PropertyMetadata> propertyDict)
+    private void GenerateSerialize(CompilationUnit compilation,
+        SourceProductionContext context,
+        ITypeSymbol obj,
+        StructuredStringBuilder sb,
+        string writeObjectGenericsString,
+        LoquiTypeSet typeSet,
+        List<string> writerWheres,
+        ITypeSymbol? baseType,
+        Dictionary<string, PropertyMetadata> propertyDict)
     {
         using (var args = sb.Function($"public static void Serialize{writeObjectGenericsString}"))
         {
@@ -118,16 +124,6 @@ public class SerializationForObjectGenerator
             {
                 sb.AppendLine(
                     $"{baseSerializationItems.SerializationCall(serialize: true)}<TWriteObject>(item, writer, kernel);");
-            }
-
-            foreach (var field in obj.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
-            {
-                if (!field.IsStatic || !field.IsReadOnly) continue;
-                if (!field.Name.EndsWith("Default")) continue;
-                if (propertyDict.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
-                {
-                    prop.Default = field;
-                }
             }
 
             foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
@@ -216,6 +212,16 @@ public class SerializationForObjectGenerator
                 var gen = _forFieldGenerator.GetGenerator(x.Type, context.CancellationToken);
                 return new PropertyMetadata(x, gen);
             });
+
+        foreach (var field in obj.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
+        {
+            if (!field.IsStatic || !field.IsReadOnly) continue;
+            if (!field.Name.EndsWith("Default")) continue;
+            if (propertyDict.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+            {
+                prop.Default = field;
+            }
+        }
         return propertyDict;
     }
 
