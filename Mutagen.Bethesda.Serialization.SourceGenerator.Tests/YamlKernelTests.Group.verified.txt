@@ -1,0 +1,7 @@
+﻿MyGroup:
+  SomeGroupField: True
+  Records:
+  - Int: 7
+    String: Hello
+  - Int: 10
+    String: World

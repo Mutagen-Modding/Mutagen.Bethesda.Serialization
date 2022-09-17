@@ -72,6 +72,21 @@ public class MemberTests
             {
                 sb.AppendLine($"public Nullable<{nickname}> SomeMember{i++} {{ get; set; }}");
             }
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public {nickname} SomeMember{i} {{ get; set; }}");
+                sb.AppendLine($"public static readonly {nickname} SomeMember{i++}Default = default;");
+            }
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public {nickname}? SomeMember{i} {{ get; set; }}");
+                sb.AppendLine($"public static readonly {nickname}? SomeMember{i++}Default = default;");
+            }
+            foreach (var nickname in nicknames)
+            {
+                sb.AppendLine($"public Nullable<{nickname}> SomeMember{i} {{ get; set; }}");
+                sb.AppendLine($"public static readonly Nullable<{nickname}> SomeMember{i++}Default = default;");
+            }
         });
     }
     
@@ -409,27 +424,27 @@ public class MemberTests
     {
         var source = GetModWithMember(sb =>
         {
-            sb.AppendLine("public AssetLink<INpcGetter> SomeFormKey { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter> SomeFormKey2 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey3 { get; set; }");
-            sb.AppendLine("public AssetLinkGetter<INpcGetter> SomeFormKey4 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<INpcGetter> SomeFormKey5 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey6 { get; set; }");
-            sb.AppendLine("public IAssetLink<INpcGetter> SomeFormKey7 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeFormKey8 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey9 { get; set; }");
-            sb.AppendLine("public IAssetLinkGetter<INpcGetter> SomeFormKey10 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeFormKey11 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeFormKey12 { get; set; }");
-            sb.AppendLine("public AssetLink<INpcGetter>? SomeFormKey13 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>? SomeFormKey14 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey15 { get; set; }");
-            sb.AppendLine("public IAssetLink<INpcGetter>? SomeFormKey16 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeFormKey17 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey18 { get; set; }");
-            sb.AppendLine("public IAssetLinkGetter<INpcGetter>? SomeFormKey19 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeFormKey20 { get; set; }");
-            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeFormKey21 { get; set; }");
+            sb.AppendLine("public AssetLink<INpcGetter> SomeAssetLink { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter> SomeAssetLink2 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeAssetLink3 { get; set; }");
+            sb.AppendLine("public AssetLinkGetter<INpcGetter> SomeAssetLink4 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<INpcGetter> SomeAssetLink5 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<Mutagen.Bethesda.Skyrim.INpcGetter> SomeAssetLink6 { get; set; }");
+            sb.AppendLine("public IAssetLink<INpcGetter> SomeAssetLink7 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeAssetLink8 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeAssetLink9 { get; set; }");
+            sb.AppendLine("public IAssetLinkGetter<INpcGetter> SomeAssetLink10 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter> SomeAssetLink11 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter> SomeAssetLink12 { get; set; }"); 
+            sb.AppendLine("public AssetLink<INpcGetter>? SomeAssetLink13 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>? SomeAssetLink14 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeAssetLink15 { get; set; }");
+            sb.AppendLine("public IAssetLink<INpcGetter>? SomeAssetLink16 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeAssetLink17 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeAssetLink18 { get; set; }");
+            sb.AppendLine("public IAssetLinkGetter<INpcGetter>? SomeAssetLink19 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>? SomeAssetLink20 { get; set; }");
+            sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>? SomeAssetLink21 { get; set; }");
         });
        
         return TestHelper.Verify(source);

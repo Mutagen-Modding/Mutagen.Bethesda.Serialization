@@ -1,2 +1,3 @@
-﻿Name1: Null
-Name2: SomeMod.esp
+﻿Name1: ''
+Name2: Null
+Name3: SomeMod.esp

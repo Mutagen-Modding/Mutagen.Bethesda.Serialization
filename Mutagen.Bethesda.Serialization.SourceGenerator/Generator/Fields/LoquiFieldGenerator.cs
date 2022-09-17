@@ -25,6 +25,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         "IMajorRecordInternal"
     };
 
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (_groupTester.IsGroup(typeSymbol)) return false;
@@ -46,6 +48,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb,
@@ -61,14 +64,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
 
         var call = fieldSerializationItems.SerializationCall(serialize: true, withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter));
-        if (fieldName == null)
-        {
-            sb.AppendLine($"{call}({writerAccessor}, {fieldAccessor}, {kernelAccessor});");
-        }
-        else
-        {
-            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, \"{fieldName}\", {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
-        }
+        sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
     }
 
     public void GenerateForDeserialize(

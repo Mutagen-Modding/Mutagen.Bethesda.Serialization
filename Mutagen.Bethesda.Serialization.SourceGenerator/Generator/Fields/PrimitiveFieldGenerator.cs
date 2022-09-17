@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
@@ -8,7 +9,10 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     private readonly string _nickname;
     private Lazy<IEnumerable<string>> _associatedTypes;
     public IEnumerable<string> AssociatedTypes => _associatedTypes.Value;
-
+    
+    public virtual IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) 
+        => Enumerable.Empty<string>();
+    
     public PrimitiveFieldGenerator(
         string nickname,
         IReadOnlyCollection<string> associatedTypes)
@@ -32,12 +36,26 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor, 
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.Write{_nickname}({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
+        using (var c = sb.Call($"{kernelAccessor}.Write{_nickname}", linePerArgument: false))
+        {
+            c.Add(writerAccessor);
+            c.Add($"{(fieldName == null ? "null" : $"\"{fieldName}\"")}");
+            c.Add(fieldAccessor);
+            if (defaultValueAccessor != null)
+            {
+                c.Add(defaultValueAccessor);
+            }
+            else
+            {
+                c.Add($"default({field})");
+            }
+        }
     }
 
     public void GenerateForDeserialize(

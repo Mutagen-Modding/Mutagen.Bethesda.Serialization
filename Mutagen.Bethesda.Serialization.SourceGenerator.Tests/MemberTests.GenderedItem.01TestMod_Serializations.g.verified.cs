@@ -1,6 +1,7 @@
 ﻿//HintName: TestMod_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -11,12 +12,12 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        kernel.WriteString(writer, "SomeGenderedIntMale", item.SomeGenderedInt.Male);
-        kernel.WriteString(writer, "SomeGenderedIntFemale", item.SomeGenderedInt.Female);
-        kernel.WriteString(writer, "SomeGenderedInt2Male", item.SomeGenderedInt2.Male);
-        kernel.WriteString(writer, "SomeGenderedInt2Female", item.SomeGenderedInt2.Female);
-        kernel.WriteString(writer, "SomeGenderedInt3Male", item.SomeGenderedInt3.Male);
-        kernel.WriteString(writer, "SomeGenderedInt3Female", item.SomeGenderedInt3.Female);
+        kernel.WriteString(writer, "SomeGenderedIntMale", item.SomeGenderedInt.Male, default(string));
+        kernel.WriteString(writer, "SomeGenderedIntFemale", item.SomeGenderedInt.Female, default(string));
+        kernel.WriteString(writer, "SomeGenderedInt2Male", item.SomeGenderedInt2.Male, default(string));
+        kernel.WriteString(writer, "SomeGenderedInt2Female", item.SomeGenderedInt2.Female, default(string));
+        kernel.WriteString(writer, "SomeGenderedInt3Male", item.SomeGenderedInt3.Male, default(string));
+        kernel.WriteString(writer, "SomeGenderedInt3Female", item.SomeGenderedInt3.Female, default(string));
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

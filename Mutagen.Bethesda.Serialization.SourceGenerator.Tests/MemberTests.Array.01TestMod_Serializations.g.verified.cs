@@ -1,6 +1,7 @@
 ﻿//HintName: TestMod_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -17,7 +18,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeArray");
             foreach (var listItem in checkedSomeArray)
             {
-                kernel.WriteString(writer, null, listItem);
+                kernel.WriteString(writer, null, listItem, default(string));
             }
             kernel.EndListSection(writer);
         }

@@ -7,6 +7,8 @@ public interface ISerializationForFieldGenerator
 {
     IEnumerable<string> AssociatedTypes { get; }
 
+    IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel);
+
     bool Applicable(ITypeSymbol typeSymbol);
     
     void GenerateForSerialize(
@@ -15,6 +17,7 @@ public interface ISerializationForFieldGenerator
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb,

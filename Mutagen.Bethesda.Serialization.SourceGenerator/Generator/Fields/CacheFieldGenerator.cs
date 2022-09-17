@@ -17,23 +17,37 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         "Noggog.ICache",
     };
 
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
-        typeSymbol = Utility.PeelNullable(typeSymbol);
+        typeSymbol = typeSymbol.PeelNullable();
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
         if (typeMembers.Length != 2) return false;
         return _listStrings.Contains(typeSymbol.Name);
     }
 
-    public void GenerateForSerialize(CompilationUnit compilation, ITypeSymbol obj, ITypeSymbol field, string? fieldName,
-        string fieldAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb,
+    public void GenerateForSerialize(CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        string writerAccessor, 
+        string kernelAccessor,
+        StructuredStringBuilder sb,
         CancellationToken cancel)
     {
     }
 
-    public void GenerateForDeserialize(CompilationUnit compilation, ITypeSymbol obj, IPropertySymbol propertySymbol,
-        string itemAccessor, string writerAccessor, string kernelAccessor, StructuredStringBuilder sb,
+    public void GenerateForDeserialize(CompilationUnit compilation, 
+        ITypeSymbol obj, 
+        IPropertySymbol propertySymbol,
+        string itemAccessor, 
+        string writerAccessor, 
+        string kernelAccessor, 
+        StructuredStringBuilder sb,
         CancellationToken cancel)
     {
     }

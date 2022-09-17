@@ -1,6 +1,8 @@
 ﻿//HintName: TestMod_Serializations.g.cs
+using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -11,27 +13,27 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        kernel.WriteString(writer, "SomeFormKey", item.SomeFormKey?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey2", item.SomeFormKey2?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey3", item.SomeFormKey3?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey4", item.SomeFormKey4?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey5", item.SomeFormKey5?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey6", item.SomeFormKey6?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey7", item.SomeFormKey7?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey8", item.SomeFormKey8?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey9", item.SomeFormKey9?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey10", item.SomeFormKey10?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey11", item.SomeFormKey11?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey12", item.SomeFormKey12?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey13", item.SomeFormKey13?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey14", item.SomeFormKey14?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey15", item.SomeFormKey15?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey16", item.SomeFormKey16?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey17", item.SomeFormKey17?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey18", item.SomeFormKey18?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey19", item.SomeFormKey19?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey20", item.SomeFormKey20?.RawPath);
-        kernel.WriteString(writer, "SomeFormKey21", item.SomeFormKey21?.RawPath);
+        kernel.WriteString(writer, "SomeAssetLink", item.SomeAssetLink?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink2", item.SomeAssetLink2?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink3", item.SomeAssetLink3?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink4", item.SomeAssetLink4?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink5", item.SomeAssetLink5?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink6", item.SomeAssetLink6?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink7", item.SomeAssetLink7?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink8", item.SomeAssetLink8?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink9", item.SomeAssetLink9?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink10", item.SomeAssetLink10?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink11", item.SomeAssetLink11?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink12", item.SomeAssetLink12?.RawPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink13", item.SomeAssetLink13?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink14", item.SomeAssetLink14?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink15", item.SomeAssetLink15?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink16", item.SomeAssetLink16?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink17", item.SomeAssetLink17?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink18", item.SomeAssetLink18?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink19", item.SomeAssetLink19?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink20", item.SomeAssetLink20?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink21", item.SomeAssetLink21?.RawPath, default(string?));
     }
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(

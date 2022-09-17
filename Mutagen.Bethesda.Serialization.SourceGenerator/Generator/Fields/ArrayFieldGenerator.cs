@@ -14,6 +14,9 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         _listGenerator = listGenerator;
     }
     
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+        => Enumerable.Empty<string>();
+    
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
@@ -30,12 +33,23 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        _listGenerator().Value.GenerateForSerialize(compilation, obj, field, fieldName, fieldAccessor, writerAccessor, kernelAccessor, sb, cancel);
+        _listGenerator().Value.GenerateForSerialize(
+            compilation: compilation,
+            obj: obj, 
+            field: field,
+            fieldName: fieldName, 
+            fieldAccessor: fieldAccessor,
+            defaultValueAccessor: defaultValueAccessor, 
+            writerAccessor: writerAccessor,
+            kernelAccessor: kernelAccessor, 
+            sb: sb,
+            cancel: cancel);
     }
 
     public void GenerateForDeserialize(

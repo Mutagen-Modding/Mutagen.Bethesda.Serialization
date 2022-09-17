@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
 public static class Utility
 {
-    public static T PeelNullable<T>(T typeSymbol)
+    public static T PeelNullable<T>(this T typeSymbol)
         where T : class, ITypeSymbol
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
@@ -19,7 +19,7 @@ public static class Utility
         return typeSymbol;
     }
     
-    public static bool IsNullable(ITypeSymbol typeSymbol)
+    public static bool IsNullable(this ITypeSymbol typeSymbol)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeArguments.Length == 1
@@ -34,5 +34,15 @@ public static class Utility
         }
 
         return false;
+    }
+    
+    public static string NullChar(this ITypeSymbol typeSymbol)
+    {
+        return NullChar(typeSymbol.IsNullable());
+    }
+    
+    public static string NullChar(bool isNullable)
+    {
+        return isNullable ? "?" : string.Empty;
     }
 }

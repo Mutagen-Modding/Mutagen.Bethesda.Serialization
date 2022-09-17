@@ -28,6 +28,14 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         "ExtendedList",
     };
 
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    {
+        var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
+        var gen = _forFieldGenerator().Value
+            .GetGenerator(subType, cancel);
+        return gen?.RequiredNamespaces(subType, cancel) ?? Enumerable.Empty<string>();
+    }
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
@@ -37,7 +45,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         }
         else
         {
-            typeSymbol = Utility.PeelNullable(typeSymbol);
+            typeSymbol = typeSymbol.PeelNullable();
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             var typeMembers = namedTypeSymbol.TypeArguments;
             if (typeMembers.Length != 1) return false;
@@ -53,6 +61,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb,
@@ -93,7 +102,16 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, null, "listItem", sb, cancel);
+                _forFieldGenerator().Value.GenerateForField(
+                    compilation: compilation,
+                    obj: obj,
+                    fieldType: subType,
+                    writerAccessor: writerAccessor, 
+                    fieldName: null, 
+                    fieldAccessor: "listItem",
+                    defaultValueAccessor: null,
+                    sb: sb,
+                    cancel: cancel);
             }
             sb.AppendLine($"{kernelAccessor}.EndListSection({writerAccessor});");
         }

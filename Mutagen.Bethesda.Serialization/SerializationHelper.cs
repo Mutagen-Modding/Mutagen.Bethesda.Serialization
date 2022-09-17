@@ -16,10 +16,12 @@ public static class SerializationHelper
         kernel.WriteLoqui(writer, fieldName, group, (w, g, k) =>
         {
             groupWriter(w, g, k);
+            k.StartListSection(w, "Records");
             foreach (var recordGetter in g)
             {
-                itemWriter(w, recordGetter, k);
+                k.WriteLoqui(w, null, recordGetter, itemWriter);
             }
+            k.EndListSection(w);
         });
     }
 }

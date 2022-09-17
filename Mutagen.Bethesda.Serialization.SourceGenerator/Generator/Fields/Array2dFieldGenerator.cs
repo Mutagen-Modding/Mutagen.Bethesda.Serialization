@@ -22,6 +22,10 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
     }
 
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
+    
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+        => Enumerable.Empty<string>();
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -36,6 +40,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb,
@@ -60,7 +65,16 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
-                _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, null, $"{fieldAccessor}[x, y]", sb, cancel);
+                _forFieldGenerator().Value.GenerateForField(
+                    compilation: compilation, 
+                    obj: obj, 
+                    fieldType: subType,
+                    writerAccessor: writerAccessor, 
+                    fieldName: null, 
+                    fieldAccessor: $"{fieldAccessor}[x, y]", 
+                    defaultValueAccessor: null,
+                    sb: sb,
+                    cancel: cancel);
                 sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({writerAccessor});");
             }
             sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");

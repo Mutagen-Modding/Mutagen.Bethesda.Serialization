@@ -1,2 +1,3 @@
 ﻿Name1: ''
-Name2: TEST
+Name2: null
+Name3: TEST

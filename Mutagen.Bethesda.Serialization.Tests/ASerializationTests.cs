@@ -37,6 +37,14 @@ public abstract class ASerializationTests
         var npc2 = mod.Npcs.AddNew();
         npc2.Name = "Hobgoblin";
         npc2.Configuration.HealthOffset = 200;
+        npc2.Attacks.Add(new Attack()
+        {
+            AttackEvent = "Event1"
+        });
+        npc2.Attacks.Add(new Attack()
+        {
+            AttackEvent = "Event2"
+        });
         var stream = new MemoryStream();
         Serialize(mod, stream);
         stream.Position = 0;

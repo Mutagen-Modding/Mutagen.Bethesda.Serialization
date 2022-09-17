@@ -17,7 +17,9 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         _serializationNaming = serializationNaming;
         _nameRetriever = nameRetriever;
     }
-    
+
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
@@ -39,6 +41,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor, 
         string kernelAccessor,
         StructuredStringBuilder sb,

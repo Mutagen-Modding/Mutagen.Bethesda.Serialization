@@ -27,6 +27,9 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         "IDictionary",
     };
 
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) 
+        => Enumerable.Empty<string>();
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -41,12 +44,17 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
         if (_groupTester.IsGroup(obj)) return;
+        if (defaultValueAccessor != null)
+        {
+            throw new NotImplementedException();
+        }
         
         ITypeSymbol keyType;
         ITypeSymbol valType;
@@ -66,10 +74,28 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         {
             sb.AppendLine($"{kernelAccessor}.StartDictionaryItem({writerAccessor});");
             sb.AppendLine($"{kernelAccessor}.StartDictionaryKey({writerAccessor});");
-            _forFieldGenerator().Value.GenerateForField(compilation, obj, keyType, writerAccessor, null, "kv.Key", sb, cancel);
+            _forFieldGenerator().Value.GenerateForField(
+                compilation: compilation, 
+                obj: obj,
+                fieldType: keyType,
+                writerAccessor: writerAccessor,
+                fieldName: null,
+                fieldAccessor: "kv.Key", 
+                defaultValueAccessor: null,
+                sb: sb, 
+                cancel: cancel);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryKey({writerAccessor});");
             sb.AppendLine($"{kernelAccessor}.StartDictionaryValue({writerAccessor});");
-            _forFieldGenerator().Value.GenerateForField(compilation, obj, valType, writerAccessor, null, "kv.Value", sb, cancel);
+            _forFieldGenerator().Value.GenerateForField(
+                compilation: compilation, 
+                obj: obj, 
+                fieldType: valType,
+                writerAccessor: writerAccessor,
+                fieldName: null,
+                fieldAccessor: "kv.Value",
+                defaultValueAccessor: null,
+                sb: sb, 
+                cancel: cancel);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryValue({writerAccessor});");
             sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({writerAccessor});");
         }

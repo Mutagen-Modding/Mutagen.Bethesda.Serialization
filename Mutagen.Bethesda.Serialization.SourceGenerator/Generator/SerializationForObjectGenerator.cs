@@ -1,11 +1,17 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
+
+record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldGenerator? Generator)
+{
+    public IFieldSymbol? Default { get; set; }
+}
 
 public class SerializationForObjectGenerator
 {
@@ -42,8 +48,27 @@ public class SerializationForObjectGenerator
         
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine($"using Mutagen.Bethesda.Serialization;");
-        sb.AppendLine($"using {obj.ContainingNamespace};");
+        var propertyDict = obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>()
+            .Where(x => !_propertyFilter.Skip(x))
+            .Select(x =>
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                return x;
+            })
+            .ToDictionary(x => x.Name, x =>
+            {
+                var gen = _forFieldGenerator.GetGenerator(x.Type, context.CancellationToken);
+                return new PropertyMetadata(x, gen);
+            });
+        
+        sb.AppendLines(propertyDict.Values
+            .SelectMany(x => x.Generator?.RequiredNamespaces(x.Property.Type, context.CancellationToken) ?? Enumerable.Empty<string>())
+            .And("Mutagen.Bethesda.Serialization")
+            .And(obj.ContainingNamespace.ToString())
+            .Distinct()
+            .OrderBy(x => x)
+            .Select(x => $"using {x};"));
+        sb.AppendLine();
         
         using (sb.Namespace(obj.ContainingNamespace.ToString()))
         {
@@ -142,9 +167,20 @@ public class SerializationForObjectGenerator
                 {
                     sb.AppendLine($"{baseSerializationItems.SerializationCall(serialize: true)}<TWriteObject>(item, writer, kernel);");
                 }
+
+                foreach (var field in obj.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
+                {
+                    if (!field.IsStatic || !field.IsReadOnly) continue;
+                    if (!field.Name.EndsWith("Default")) continue;
+                    if (propertyDict.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+                    {
+                        prop.Default = field;
+                    }
+                }
                 foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
                 {
-                    GenerateForProperty(compilation, obj, prop, sb, context.CancellationToken);
+                    if (!propertyDict.TryGetValue(prop.Name, out var propEntry)) continue;
+                    GenerateForProperty(compilation, obj, propEntry, sb, context.CancellationToken);
                 }
             }
             sb.AppendLine();
@@ -166,10 +202,25 @@ public class SerializationForObjectGenerator
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private void GenerateForProperty(CompilationUnit compilation, ITypeSymbol obj, IPropertySymbol prop, StructuredStringBuilder sb, CancellationToken cancel)
+    private void GenerateForProperty(
+        CompilationUnit compilation,
+        ITypeSymbol obj, 
+        PropertyMetadata prop,
+        StructuredStringBuilder sb, 
+        CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        if (_propertyFilter.Skip(prop)) return;
-        _forFieldGenerator.GenerateForField(compilation, obj, prop.Type, "writer", prop.Name, $"item.{prop.Name}", sb, cancel);
+        var def = prop.Default == null ? null : $"{prop.Default.ContainingSymbol.ContainingNamespace}.{prop.Default.ContainingSymbol.Name}.{prop.Default.Name}";
+        _forFieldGenerator.GenerateForField(
+            compilation: compilation,
+            obj: obj, 
+            fieldType: prop.Property.Type,
+            writerAccessor: "writer", 
+            fieldName: prop.Property.Name, 
+            fieldAccessor: $"item.{prop.Property.Name}", 
+            defaultValueAccessor: def,
+            prop.Generator,
+            sb: sb, 
+            cancel: cancel);
     }
 }

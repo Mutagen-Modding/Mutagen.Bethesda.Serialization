@@ -29,15 +29,39 @@ public class SerializationFieldGenerator
         ITypeSymbol fieldType,
         string writerAccessor,
         string? fieldName,
-        string fieldAccessor, 
+        string fieldAccessor,
+        string? defaultValueAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, fieldType, cancel);
+        var gen = GetGenerator(fieldType, cancel);
         if (gen != null)
         {
-            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, writerAccessor, "kernel", sb, cancel);
+            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, writerAccessor, "kernel", sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
+    
+    public void GenerateForField(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        string writerAccessor,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        ISerializationForFieldGenerator? gen,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        if (gen != null)
+        {
+            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, writerAccessor, "kernel", sb, cancel);
         }
         else
         {
@@ -46,7 +70,6 @@ public class SerializationFieldGenerator
     }
 
     public ISerializationForFieldGenerator? GetGenerator(
-        ITypeSymbol obj,
         ITypeSymbol fieldType,
         CancellationToken cancel)
     {

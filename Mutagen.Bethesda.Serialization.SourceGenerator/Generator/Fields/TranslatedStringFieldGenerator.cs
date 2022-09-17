@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
@@ -23,18 +24,37 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(ITypeSymbol typeSymbol) => false;
 
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    {
+        yield return "Mutagen.Bethesda.Strings";
+    }
+
     public void GenerateForSerialize(
         CompilationUnit compilation,
         ITypeSymbol obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor, 
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteTranslatedString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor});");
+        using (var c = sb.Call($"{kernelAccessor}.WriteTranslatedString", linePerArgument: false))
+        {
+            c.Add(writerAccessor);
+            c.Add($"{(fieldName == null ? "null" : $"\"{fieldName}\"")}");
+            c.Add(fieldAccessor);
+            if (defaultValueAccessor != null)
+            {
+                c.Add(defaultValueAccessor);
+            }
+            else
+            {
+                c.Add($"default({field})");
+            }
+        }
     }
 
     public void GenerateForDeserialize(

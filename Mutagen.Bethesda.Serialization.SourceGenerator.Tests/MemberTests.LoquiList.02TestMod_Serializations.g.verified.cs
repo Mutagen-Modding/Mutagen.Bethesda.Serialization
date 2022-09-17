@@ -1,6 +1,7 @@
 ﻿//HintName: TestMod_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -17,7 +18,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList");
             foreach (var listItem in checkedSomeList)
             {
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize(writer, listItem, kernel);
+                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
             }
             kernel.EndListSection(writer);
         }
@@ -27,7 +28,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList2");
             foreach (var listItem in checkedSomeList2)
             {
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize(writer, listItem, kernel);
+                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
             }
             kernel.EndListSection(writer);
         }
@@ -37,7 +38,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList3");
             foreach (var listItem in checkedSomeList3)
             {
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize(writer, listItem, kernel);
+                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
             }
             kernel.EndListSection(writer);
         }
@@ -47,7 +48,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList4");
             foreach (var listItem in checkedSomeList4)
             {
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize(writer, listItem, kernel);
+                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
             }
             kernel.EndListSection(writer);
         }

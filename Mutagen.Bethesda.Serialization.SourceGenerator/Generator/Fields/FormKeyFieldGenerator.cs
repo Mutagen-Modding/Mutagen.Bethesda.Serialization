@@ -1,4 +1,6 @@
-﻿namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
+﻿using Microsoft.CodeAnalysis;
+
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
 public class FormKeyFieldGenerator : PrimitiveFieldGenerator
 {
@@ -8,6 +10,11 @@ public class FormKeyFieldGenerator : PrimitiveFieldGenerator
         "Mutagen.Bethesda.Plugins.FormKey",
     };
     
+    public override IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    {
+        yield return "Mutagen.Bethesda.Plugins";
+    }
+
     public FormKeyFieldGenerator()
         : base("FormKey", AssociatedTypes)
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
@@ -17,11 +18,16 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         "Mutagen.Bethesda.Plugins.Assets.IAssetLink",
         "Mutagen.Bethesda.Plugins.Assets.IAssetLinkGetter",
     };
+
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    {
+        yield return "Mutagen.Bethesda.Plugins.Assets";
+    }
     
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
-        namedTypeSymbol = Utility.PeelNullable(namedTypeSymbol);
+        namedTypeSymbol = namedTypeSymbol.PeelNullable();
         var typeMembers = namedTypeSymbol.TypeArguments;
         if (typeMembers.Length != 1) return false;
         return _expectedStrings.Contains(namedTypeSymbol.Name);
@@ -33,12 +39,26 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{kernelAccessor}.WriteString({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}?.RawPath);");
+        using (var c = sb.Call($"{kernelAccessor}.WriteString", linePerArgument: false))
+        {
+            c.Add(writerAccessor);
+            c.Add($"{(fieldName == null ? "null" : $"\"{fieldName}\"")}");
+            c.Add($"{fieldAccessor}?.RawPath");
+            if (defaultValueAccessor != null)
+            {
+                c.Add($"{defaultValueAccessor}.RawPath");
+            }
+            else
+            {
+                c.Add($"default(string{field.NullChar()})");
+            }
+        }
     }
 
     public void GenerateForDeserialize(

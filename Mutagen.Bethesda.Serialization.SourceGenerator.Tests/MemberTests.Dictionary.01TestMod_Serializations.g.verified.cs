@@ -1,6 +1,7 @@
 ﻿//HintName: TestMod_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -16,10 +17,10 @@ internal static class TestMod_Serialization
         {
             kernel.StartDictionaryItem(writer);
             kernel.StartDictionaryKey(writer);
-            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.WriteInt32(writer, null, kv.Key, default(int));
             kernel.EndDictionaryKey(writer);
             kernel.StartDictionaryValue(writer);
-            kernel.WriteString(writer, null, kv.Value);
+            kernel.WriteString(writer, null, kv.Value, default(string));
             kernel.EndDictionaryValue(writer);
             kernel.EndDictionaryItem(writer);
         }
@@ -29,10 +30,10 @@ internal static class TestMod_Serialization
         {
             kernel.StartDictionaryItem(writer);
             kernel.StartDictionaryKey(writer);
-            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.WriteInt32(writer, null, kv.Key, default(int));
             kernel.EndDictionaryKey(writer);
             kernel.StartDictionaryValue(writer);
-            kernel.WriteString(writer, null, kv.Value);
+            kernel.WriteString(writer, null, kv.Value, default(string));
             kernel.EndDictionaryValue(writer);
             kernel.EndDictionaryItem(writer);
         }
@@ -42,10 +43,10 @@ internal static class TestMod_Serialization
         {
             kernel.StartDictionaryItem(writer);
             kernel.StartDictionaryKey(writer);
-            kernel.WriteInt32(writer, null, kv.Key);
+            kernel.WriteInt32(writer, null, kv.Key, default(int));
             kernel.EndDictionaryKey(writer);
             kernel.StartDictionaryValue(writer);
-            kernel.WriteString(writer, null, kv.Value);
+            kernel.WriteString(writer, null, kv.Value, default(string));
             kernel.EndDictionaryValue(writer);
             kernel.EndDictionaryItem(writer);
         }

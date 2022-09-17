@@ -1,0 +1,13 @@
+﻿{
+  "MyList": [
+    {
+      "Int": 4,
+      "String": "Hello"
+    },
+    {
+      "Int": 6,
+      "String": "World"
+    }
+  ],
+  "SomeInt": 4
+}

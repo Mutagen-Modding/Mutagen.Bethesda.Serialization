@@ -20,6 +20,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         "IGenderedItem",
         "IGenderedItemGetter",
     };
+
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
     
     public bool Applicable(ITypeSymbol typeSymbol)
     {
@@ -37,6 +39,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
+        string? defaultValueAccessor,
         string writerAccessor, 
         string kernelAccessor,
         StructuredStringBuilder sb,
@@ -55,8 +58,26 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
-        _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Male", $"{fieldAccessor}.Male", sb, cancel);
-        _forFieldGenerator().Value.GenerateForField(compilation, obj, subType, writerAccessor, fieldName == null ? null : $"{fieldName}Female", $"{fieldAccessor}.Female", sb, cancel);
+
+        _forFieldGenerator().Value.GenerateForField(
+            compilation: compilation,
+            obj: obj, fieldType: subType,
+            writerAccessor: writerAccessor,
+            fieldName: fieldName == null ? null : $"{fieldName}Male",
+            fieldAccessor: $"{fieldAccessor}.Male",
+            defaultValueAccessor: null,
+            sb: sb,
+            cancel: cancel);
+        _forFieldGenerator().Value.GenerateForField(
+            compilation: compilation,
+            obj: obj, 
+            fieldType: subType,
+            writerAccessor: writerAccessor, 
+            fieldName: fieldName == null ? null : $"{fieldName}Female", 
+            fieldAccessor: $"{fieldAccessor}.Female",
+            defaultValueAccessor: null,
+            sb: sb,
+            cancel: cancel);
     }
 
     public void GenerateForDeserialize(

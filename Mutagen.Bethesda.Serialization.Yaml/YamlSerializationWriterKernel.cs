@@ -52,139 +52,158 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         writer.StreamWriter.Dispose();
     }
 
-    public void WriteChar(YamlWritingUnit writer, string? fieldName, char item)
+    public void WriteChar(YamlWritingUnit writer, string? fieldName, char? item)
     {
-        WriteString(writer, fieldName, item.ToString());
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteBool(YamlWritingUnit writer, string? fieldName, bool item)
+    public void WriteBool(YamlWritingUnit writer, string? fieldName, bool? item)
     {
-        WriteString(writer, fieldName, item.ToString());
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteString(YamlWritingUnit writer, string? fieldName, string item)
+    public void WriteString(YamlWritingUnit writer, string? fieldName, string? item)
     {
         writer.WriteName(fieldName);
-        writer.WriteScalar(item);
-    }
-
-    public void WriteInt8(YamlWritingUnit writer, string? fieldName, sbyte item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteInt16(YamlWritingUnit writer, string? fieldName, short item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteInt32(YamlWritingUnit writer, string? fieldName, int item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteInt64(YamlWritingUnit writer, string? fieldName, long item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteUInt8(YamlWritingUnit writer, string? fieldName, byte item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteUInt16(YamlWritingUnit writer, string? fieldName, ushort item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteUInt32(YamlWritingUnit writer, string? fieldName, uint item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteUInt64(YamlWritingUnit writer, string? fieldName, ulong item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteFloat(YamlWritingUnit writer, string? fieldName, float item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteModKey(YamlWritingUnit writer, string? fieldName, ModKey item)
-    {
-        WriteString(writer, fieldName, item.FileName);
-    }
-
-    public void WriteFormKey(YamlWritingUnit writer, string? fieldName, FormKey item)
-    {
-        WriteString(writer, fieldName, item.ToString());
-    }
-
-    public void WriteRecordType(YamlWritingUnit writer, string? fieldName, RecordType item)
-    {
-        writer.WriteName(fieldName);
-        if (item.TypeInt == RecordType.Null.TypeInt)
+        if (item == null)
         {
-            writer.WriteScalar(string.Empty);
+            writer.Emitter.Emit(new MappingStart());
+            writer.Emitter.Emit(new MappingEnd());
         }
         else
         {
-            writer.WriteScalar(item.Type);
+            writer.WriteScalar(item);
         }
     }
 
-    public void WriteP2Int(YamlWritingUnit writer, string? fieldName, P2Int item)
+    public void WriteInt8(YamlWritingUnit writer, string? fieldName, sbyte? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP2Int16(YamlWritingUnit writer, string? fieldName, P2Int16 item)
+    public void WriteInt16(YamlWritingUnit writer, string? fieldName, short? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP2Float(YamlWritingUnit writer, string? fieldName, P2Float item)
+    public void WriteInt32(YamlWritingUnit writer, string? fieldName, int? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP3Float(YamlWritingUnit writer, string? fieldName, P3Float item)
+    public void WriteInt64(YamlWritingUnit writer, string? fieldName, long? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}, {item.Z}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP3UInt8(YamlWritingUnit writer, string? fieldName, P3UInt8 item)
+    public void WriteUInt8(YamlWritingUnit writer, string? fieldName, byte? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}, {item.Z}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP3Int16(YamlWritingUnit writer, string? fieldName, P3Int16 item)
+    public void WriteUInt16(YamlWritingUnit writer, string? fieldName, ushort? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}, {item.Z}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteP3UInt16(YamlWritingUnit writer, string? fieldName, P3UInt16 item)
+    public void WriteUInt32(YamlWritingUnit writer, string? fieldName, uint? item)
     {
-        WriteString(writer, fieldName, $"{item.X}, {item.Y}, {item.Z}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WritePercent(YamlWritingUnit writer, string? fieldName, Percent item)
+    public void WriteUInt64(YamlWritingUnit writer, string? fieldName, ulong? item)
     {
-        WriteString(writer, fieldName, item.Value.ToString(CultureInfo.InvariantCulture));
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteColor(YamlWritingUnit writer, string? fieldName, Color item)
+    public void WriteFloat(YamlWritingUnit writer, string? fieldName, float? item)
     {
-        WriteString(writer, fieldName, $"{item.R}, {item.G}, {item.B}");
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
     }
 
-    public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter item)
+    public void WriteModKey(YamlWritingUnit writer, string? fieldName, ModKey? item)
     {
-        if (item.NumLanguages <= 1 && item.String == null) return;
+        WriteString(writer, fieldName, item == null ? string.Empty : item.Value.FileName);
+    }
+
+    public void WriteFormKey(YamlWritingUnit writer, string? fieldName, FormKey? item)
+    {
+        WriteString(writer, fieldName, item == null ? string.Empty : item.ToString());
+    }
+
+    public void WriteRecordType(YamlWritingUnit writer, string? fieldName, RecordType? item)
+    {
         writer.WriteName(fieldName);
+        
+        if (item == null)
+        {
+            writer.WriteScalar(string.Empty);
+        }
+        else if (item.Value.TypeInt == RecordType.Null.TypeInt)
+        {
+            writer.WriteScalar("null");
+        }
+        else
+        {
+            writer.WriteScalar(item.Value.Type);
+        }
+    }
+
+    public void WriteP2Int(YamlWritingUnit writer, string? fieldName, P2Int? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}");
+    }
+
+    public void WriteP2Int16(YamlWritingUnit writer, string? fieldName, P2Int16? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}");
+    }
+
+    public void WriteP2Float(YamlWritingUnit writer, string? fieldName, P2Float? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}");
+    }
+
+    public void WriteP3Float(YamlWritingUnit writer, string? fieldName, P3Float? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+    }
+
+    public void WriteP3UInt8(YamlWritingUnit writer, string? fieldName, P3UInt8? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+    }
+
+    public void WriteP3Int16(YamlWritingUnit writer, string? fieldName, P3Int16? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+    }
+
+    public void WriteP3UInt16(YamlWritingUnit writer, string? fieldName, P3UInt16? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+    }
+
+    public void WritePercent(YamlWritingUnit writer, string? fieldName, Percent? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : item.Value.Value.ToString(CultureInfo.InvariantCulture));
+    }
+
+    public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)
+    {
+        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.R}, {item.Value.G}, {item.Value.B}");
+    }
+
+    public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
+    {
+        writer.WriteName(fieldName);
+        if (item == null || (item.NumLanguages <= 1 && item.String == null))
+        {
+            writer.Emitter.Emit(new MappingStart());
+            writer.Emitter.Emit(new MappingEnd());
+            return;
+        }
+        
         if (item.NumLanguages <= 1)
         {
             writer.WriteScalar(item.String ?? string.Empty);
@@ -205,26 +224,28 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         }
     }
 
-    public void WriteBytes(YamlWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte> item)
+    public void WriteBytes(YamlWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)
     {
         writer.WriteName(fieldName);
-        writer.WriteScalar(Convert.ToHexString(item));
+        writer.WriteScalar(item == null ? "" : Convert.ToHexString(item.Value));
     }
 
-    public void WriteEnum<TEnum>(YamlWritingUnit writer, string? fieldName, TEnum item)
+    public void WriteEnum<TEnum>(YamlWritingUnit writer, string? fieldName, TEnum? item)
         where TEnum : struct, Enum, IConvertible
     {
-        if (!Enums<TEnum>.IsFlagsEnum)
+        writer.WriteName(fieldName);
+        if (item == null)
         {
-            writer.WriteName(fieldName);
-            writer.WriteScalar(item.ToStringFast());
+            writer.WriteScalar("");
+        }
+        else if (!Enums<TEnum>.IsFlagsEnum)
+        {
+            writer.WriteScalar(item.Value.ToStringFast());
         }
         else
         {
-            if (EqualityComparer<TEnum>.Default.Equals(item, default)) return;
-            writer.WriteName(fieldName);
             writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
-            foreach (var flag in item.EnumerateContainedFlags(includeUndefined: true))
+            foreach (var flag in item.Value.EnumerateContainedFlags(includeUndefined: true))
             {
                 writer.WriteScalar(flag.ToStringFast());
             }
