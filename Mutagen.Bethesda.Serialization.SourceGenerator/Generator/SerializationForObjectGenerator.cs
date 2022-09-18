@@ -72,7 +72,7 @@ public class SerializationForObjectGenerator
         
         if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
         
-        GetGenerics(typeSet, out var readerWheres, out var writerWheres, out var writeObjectGenericsString, out var readObjectGenericsString);
+        var gens = GetGenerics(typeSet);
 
         using (var c = sb.Class(objSerializationItems.SerializationHousingClassName))
         {
@@ -83,26 +83,27 @@ public class SerializationForObjectGenerator
         {
             if (inheriting.Count > 0)
             {
-                GenerateSerializeWithCheck(compilation, context, obj, sb, writeObjectGenericsString, typeSet, writerWheres, inheriting);
+                GenerateSerializeWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
             }
             
-            GenerateSerialize(compilation, context, obj, sb, writeObjectGenericsString, typeSet, writerWheres, baseType, properties);
+            GenerateSerialize(compilation, context, obj, sb, typeSet, baseType, properties, gens);
             
-            GenerateDeserialize(sb, typeSet, readObjectGenericsString, readerWheres);
+            GenerateDeserialize(sb, typeSet, gens);
         }
         sb.AppendLine();
         
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private static void GenerateDeserialize(StructuredStringBuilder sb, LoquiTypeSet typeSet,
-        string readObjectGenericsString, List<string> readerWheres)
+    private static void GenerateDeserialize(StructuredStringBuilder sb,
+        LoquiTypeSet typeSet,
+        SerializationGenerics generics)
     {
-        using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{readObjectGenericsString}"))
+        using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{generics.ReaderGenericsString()}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            args.Wheres.AddRange(readerWheres);
+            args.Wheres.AddRange(generics.ReaderWheres());
         }
 
         using (sb.CurlyBrace())
@@ -117,18 +118,17 @@ public class SerializationForObjectGenerator
         SourceProductionContext context,
         ITypeSymbol obj,
         StructuredStringBuilder sb,
-        string writeObjectGenericsString,
         LoquiTypeSet typeSet,
-        List<string> writerWheres,
         ITypeSymbol? baseType,
-        PropertyCollection properties)
+        PropertyCollection properties,
+        SerializationGenerics generics)
     {
-        using (var args = sb.Function($"public static void Serialize{writeObjectGenericsString}"))
+        using (var args = sb.Function($"public static void Serialize{generics.WriterGenericsString(forHas: false)}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{typeSet.Getter} item");
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
-            args.Wheres.AddRange(writerWheres);
+            args.Wheres.AddRange(generics.WriterWheres(forHas: false));
         }
 
         using (sb.CurlyBrace())
@@ -164,17 +164,16 @@ public class SerializationForObjectGenerator
         SourceProductionContext context, 
         ITypeSymbol obj,
         StructuredStringBuilder sb, 
-        string writeObjectGenericsString,
         LoquiTypeSet typeSet,
-        List<string> writerWheres,
+        SerializationGenerics generics,
         IReadOnlyList<ITypeSymbol> inheriting)
     {
-        using (var args = sb.Function($"public static void SerializeWithCheck{writeObjectGenericsString}"))
+        using (var args = sb.Function($"public static void SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{typeSet.Getter} item");
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
-            args.Wheres.AddRange(writerWheres);
+            args.Wheres.AddRange(generics.WriterWheres(forHas: false));
         }
 
         using (sb.CurlyBrace())
@@ -263,32 +262,30 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
-    private void GetGenerics(LoquiTypeSet typeSet,
-        out List<string> readerWheres,
-        out List<string> writerWheres,
-        out string writeObjectGenericsString,
-        out string readObjectGenericsString)
+    private SerializationGenerics GetGenerics(LoquiTypeSet typeSet)
     {
-        List<string> writeObjectGenerics = new() { "TKernel", "TWriteObject" };
-        List<string> readObjectGenerics = new() { "TReadObject" };
-        readerWheres = new();
-        writerWheres = new();
+        SerializationGenerics? ret = null;
+        
         if (typeSet.Getter is INamedTypeSymbol writerTypeSymbol
             && writerTypeSymbol.TypeArguments.Length > 0)
         {
-            writeObjectGenerics.AddRange(writerTypeSymbol.TypeArguments.Select(x => x.ToString()));
-            writerWheres.AddRange(_whereClauseGenerator.GetWheres(writerTypeSymbol));
+            ret ??= new();
+            ret.ExtraWriterGenerics = new();
+            ret.ExtraWriterGenerics.AddRange(writerTypeSymbol.TypeArguments.Select(x => x.ToString()));
+            ret.ExtraWriterWheres = new();
+            ret.ExtraWriterWheres.AddRange(_whereClauseGenerator.GetWheres(writerTypeSymbol));
         }
 
         if (typeSet.Setter is INamedTypeSymbol readerTypeSymbol
             && readerTypeSymbol.TypeArguments.Length > 0)
         {
-            readObjectGenerics.AddRange(readerTypeSymbol.TypeArguments.Select(x => x.ToString()));
-            readerWheres.AddRange(_whereClauseGenerator.GetWheres(readerTypeSymbol));
+            ret ??= new();
+            ret.ExtraReaderGenerics = new();
+            ret.ExtraReaderGenerics.AddRange(readerTypeSymbol.TypeArguments.Select(x => x.ToString()));
+            ret.ExtraReaderWheres = new();
+            ret.ExtraReaderWheres.AddRange(_whereClauseGenerator.GetWheres(readerTypeSymbol));
         }
 
-        writerWheres.Add("where TKernel : ISerializationWriterKernel<TWriteObject>, new()");
-        writeObjectGenericsString = $"<{string.Join(", ", writeObjectGenerics)}>";
-        readObjectGenericsString = $"<{string.Join(", ", readObjectGenerics)}>";
+        return ret ?? SerializationGenerics.Instance;
     }
 }
