@@ -15,6 +15,12 @@ internal static class TestMod_Serialization
         kernel.WriteLoqui(writer, "MyLoqui", item.MyLoqui, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.HasSerializationItems(item.MyLoqui)) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

@@ -80,6 +80,52 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             cancel: cancel);
     }
 
+    public bool HasVariableHasSerialize => true;
+
+    public void GenerateForHasSerialize(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor, 
+        StructuredStringBuilder sb, 
+        CancellationToken cancel)
+    {
+        ITypeSymbol subType;
+        if (field is IArrayTypeSymbol arr)
+        {
+            subType = arr.ElementType;
+        }
+        else if (field is INamedTypeSymbol namedTypeSymbol)
+        {
+            subType = GetSubtype(namedTypeSymbol);
+        }
+        else
+        {
+            return;
+        }
+
+        _forFieldGenerator().Value.GenerateHasForField(
+            compilation: compilation,
+            obj: obj, 
+            fieldType: subType,
+            fieldName: fieldName == null ? null : $"{fieldName}Male",
+            fieldAccessor: $"{fieldAccessor}.Male",
+            defaultValueAccessor: null,
+            sb: sb,
+            cancel: cancel);
+        _forFieldGenerator().Value.GenerateHasForField(
+            compilation: compilation,
+            obj: obj, 
+            fieldType: subType,
+            fieldName: fieldName == null ? null : $"{fieldName}Female", 
+            fieldAccessor: $"{fieldAccessor}.Female",
+            defaultValueAccessor: null,
+            sb: sb,
+            cancel: cancel);
+    }
+
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,

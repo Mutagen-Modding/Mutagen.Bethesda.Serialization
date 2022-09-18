@@ -36,6 +36,32 @@ internal static class TestMod_Serialization
         kernel.WriteString(writer, "SomeAssetLink21", item.SomeAssetLink21?.RawPath, default(string?));
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<AssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink, default(AssetLink<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink2, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>>.Default.Equals(item.SomeAssetLink3, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>))) return true;
+        if (!EqualityComparer<AssetLinkGetter<INpcGetter>>.Default.Equals(item.SomeAssetLink4, default(AssetLinkGetter<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<INpcGetter>>.Default.Equals(item.SomeAssetLink5, default(Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<Mutagen.Bethesda.Skyrim.INpcGetter>>.Default.Equals(item.SomeAssetLink6, default(Mutagen.Bethesda.Plugins.Assets.AssetLinkGetter<Mutagen.Bethesda.Skyrim.INpcGetter>))) return true;
+        if (!EqualityComparer<IAssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink7, default(IAssetLink<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink8, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>>.Default.Equals(item.SomeAssetLink9, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>))) return true;
+        if (!EqualityComparer<IAssetLinkGetter<INpcGetter>>.Default.Equals(item.SomeAssetLink10, default(IAssetLinkGetter<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink11, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>>.Default.Equals(item.SomeAssetLink12, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>))) return true;
+        if (!EqualityComparer<AssetLink<INpcGetter>?>.Default.Equals(item.SomeAssetLink13, default(AssetLink<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>?>.Default.Equals(item.SomeAssetLink14, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?>.Default.Equals(item.SomeAssetLink15, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?))) return true;
+        if (!EqualityComparer<IAssetLink<INpcGetter>?>.Default.Equals(item.SomeAssetLink16, default(IAssetLink<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>?>.Default.Equals(item.SomeAssetLink17, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?>.Default.Equals(item.SomeAssetLink18, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?))) return true;
+        if (!EqualityComparer<IAssetLinkGetter<INpcGetter>?>.Default.Equals(item.SomeAssetLink19, default(IAssetLinkGetter<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>?>.Default.Equals(item.SomeAssetLink20, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<INpcGetter>?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?>.Default.Equals(item.SomeAssetLink21, default(Mutagen.Bethesda.Plugins.Assets.IAssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>?))) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

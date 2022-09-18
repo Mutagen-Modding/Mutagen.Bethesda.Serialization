@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -35,7 +36,20 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         }
     }
 
-    private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
+    private ITypeSymbol GetSubtype(ITypeSymbol t)
+    {
+        t = t.PeelNullable();
+        if (t is INamedTypeSymbol n)
+        {
+            return n.TypeArguments[0];
+        }
+        else if (t is IArrayTypeSymbol ar)
+        {
+            return ar.ElementType;
+        }
+
+        throw new NotImplementedException();
+    }
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
@@ -63,6 +77,20 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
                 c.Add($"default({field})");
             }
         }
+    }
+
+    public bool HasVariableHasSerialize => true;
+
+    public void GenerateForHasSerialize(CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        StructuredStringBuilder sb, 
+        CancellationToken cancel)
+    {
+        sb.AppendLine($"if (!MemorySliceExt.Equal<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
     }
 
     public void GenerateForDeserialize(

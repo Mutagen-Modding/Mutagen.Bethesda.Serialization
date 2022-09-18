@@ -20,6 +20,16 @@ internal static class TestMod_Serialization
         kernel.WriteBytes(writer, "SomeBytes5", item.SomeBytes5, default(Nullable<Noggog.ReadOnlyMemorySlice<byte>>));
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!MemorySliceExt.Equal<byte>(item.SomeBytes, default(byte[]))) return true;
+        if (!MemorySliceExt.Equal<byte>(item.SomeBytes2, default(Noggog.ReadOnlyMemorySlice<byte>))) return true;
+        if (!MemorySliceExt.Equal<byte>(item.SomeBytes3, default(byte[]?))) return true;
+        if (!MemorySliceExt.Equal<byte>(item.SomeBytes4, default(Noggog.ReadOnlyMemorySlice<byte>?))) return true;
+        if (!MemorySliceExt.Equal<byte>(item.SomeBytes5, default(Nullable<Noggog.ReadOnlyMemorySlice<byte>>))) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

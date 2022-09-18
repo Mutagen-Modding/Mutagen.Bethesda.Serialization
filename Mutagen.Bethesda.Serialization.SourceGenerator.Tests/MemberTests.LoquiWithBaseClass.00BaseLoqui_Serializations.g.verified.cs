@@ -33,6 +33,24 @@ internal static class BaseLoqui_Serialization
     {
     }
 
+    public static bool HasSerializationItemsWithCheck(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetter item)
+    {
+        switch (item)
+        {
+            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter SomeLoquiWithBaseGetter:
+                return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.HasSerializationItems(SomeLoquiWithBaseGetter);
+            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetter IBaseLoquiGetter:
+                return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.HasSerializationItems(IBaseLoquiGetter);
+            default:
+                throw new NotImplementedException();
+        }
+    }
+
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoquiGetter item)
+    {
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoqui Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

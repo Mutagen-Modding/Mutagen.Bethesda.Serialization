@@ -15,6 +15,11 @@ internal static class TestMod_Serialization
         throw new NotImplementedException("Unknown type: Unknown");
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        return true;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

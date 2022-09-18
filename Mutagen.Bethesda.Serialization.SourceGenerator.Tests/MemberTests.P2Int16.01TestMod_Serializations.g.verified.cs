@@ -20,6 +20,17 @@ internal static class TestMod_Serialization
         kernel.WriteP2Int16(writer, "SomeMember5", item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember5Default);
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<Noggog.P2Int16>.Default.Equals(item.SomeMember0, default(Noggog.P2Int16))) return true;
+        if (!EqualityComparer<Noggog.P2Int16?>.Default.Equals(item.SomeMember1, default(Noggog.P2Int16?))) return true;
+        if (!EqualityComparer<Nullable<Noggog.P2Int16>>.Default.Equals(item.SomeMember2, default(Nullable<Noggog.P2Int16>))) return true;
+        if (!EqualityComparer<Noggog.P2Int16>.Default.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember3Default)) return true;
+        if (!EqualityComparer<Noggog.P2Int16?>.Default.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember4Default)) return true;
+        if (!EqualityComparer<Nullable<Noggog.P2Int16>>.Default.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember5Default)) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

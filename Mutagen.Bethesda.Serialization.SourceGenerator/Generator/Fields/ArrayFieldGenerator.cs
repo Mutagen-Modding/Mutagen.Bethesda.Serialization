@@ -27,6 +27,21 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         return false;
     }
 
+    public bool HasVariableHasSerialize => true;
+
+    public void GenerateForHasSerialize(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor, 
+        StructuredStringBuilder sb, 
+        CancellationToken cancel)
+    {
+        sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
+    }
+
     public void GenerateForSerialize(
         CompilationUnit compilation,
         ITypeSymbol obj,

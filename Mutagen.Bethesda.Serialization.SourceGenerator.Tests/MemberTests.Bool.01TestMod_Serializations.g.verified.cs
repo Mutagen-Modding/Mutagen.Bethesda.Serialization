@@ -26,6 +26,23 @@ internal static class TestMod_Serialization
         kernel.WriteBool(writer, "SomeMember11", item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default);
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<bool>.Default.Equals(item.SomeMember0, default(bool))) return true;
+        if (!EqualityComparer<Boolean>.Default.Equals(item.SomeMember1, default(Boolean))) return true;
+        if (!EqualityComparer<bool?>.Default.Equals(item.SomeMember2, default(bool?))) return true;
+        if (!EqualityComparer<Boolean?>.Default.Equals(item.SomeMember3, default(Boolean?))) return true;
+        if (!EqualityComparer<Nullable<bool>>.Default.Equals(item.SomeMember4, default(Nullable<bool>))) return true;
+        if (!EqualityComparer<Nullable<Boolean>>.Default.Equals(item.SomeMember5, default(Nullable<Boolean>))) return true;
+        if (!EqualityComparer<bool>.Default.Equals(item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember6Default)) return true;
+        if (!EqualityComparer<Boolean>.Default.Equals(item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember7Default)) return true;
+        if (!EqualityComparer<bool?>.Default.Equals(item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember8Default)) return true;
+        if (!EqualityComparer<Boolean?>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default)) return true;
+        if (!EqualityComparer<Nullable<bool>>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default)) return true;
+        if (!EqualityComparer<Nullable<Boolean>>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default)) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

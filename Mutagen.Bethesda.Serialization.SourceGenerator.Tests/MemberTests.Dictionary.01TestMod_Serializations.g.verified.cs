@@ -53,6 +53,14 @@ internal static class TestMod_Serialization
         kernel.EndDictionarySection(writer);
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (item.SomeDict.Count > 0) return true;
+        if (item.SomeDict1.Count > 0) return true;
+        if (item.SomeDict2.Count > 0) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

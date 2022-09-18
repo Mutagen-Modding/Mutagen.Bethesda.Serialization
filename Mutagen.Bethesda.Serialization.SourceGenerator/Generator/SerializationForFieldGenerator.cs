@@ -68,6 +68,50 @@ public class SerializationFieldGenerator
             sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
         }
     }
+    
+    public void GenerateHasForField(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        var gen = GetGenerator(fieldType, cancel);
+        if (gen != null)
+        {
+            gen.GenerateForHasSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
+    
+    public void GenerateHasForField(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        ISerializationForFieldGenerator? gen,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        if (gen != null)
+        {
+            gen.GenerateForHasSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
 
     public ISerializationForFieldGenerator? GetGenerator(
         ITypeSymbol fieldType,

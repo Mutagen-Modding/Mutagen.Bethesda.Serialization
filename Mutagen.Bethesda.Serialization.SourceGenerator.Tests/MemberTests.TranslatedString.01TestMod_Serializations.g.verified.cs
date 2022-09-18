@@ -27,6 +27,23 @@ internal static class TestMod_Serialization
         kernel.WriteTranslatedString(writer, "TranslatedString12", item.TranslatedString12, default(Mutagen.Bethesda.Strings.ITranslatedStringGetter?));
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<TranslatedString>.Default.Equals(item.TranslatedString, default(TranslatedString))) return true;
+        if (!EqualityComparer<ITranslatedString>.Default.Equals(item.TranslatedString2, default(ITranslatedString))) return true;
+        if (!EqualityComparer<ITranslatedStringGetter>.Default.Equals(item.TranslatedString3, default(ITranslatedStringGetter))) return true;
+        if (!EqualityComparer<TranslatedString?>.Default.Equals(item.TranslatedString4, default(TranslatedString?))) return true;
+        if (!EqualityComparer<ITranslatedString?>.Default.Equals(item.TranslatedString5, default(ITranslatedString?))) return true;
+        if (!EqualityComparer<ITranslatedStringGetter?>.Default.Equals(item.TranslatedString6, default(ITranslatedStringGetter?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.TranslatedString>.Default.Equals(item.TranslatedString7, default(Mutagen.Bethesda.Strings.TranslatedString))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.ITranslatedString>.Default.Equals(item.TranslatedString8, default(Mutagen.Bethesda.Strings.ITranslatedString))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.ITranslatedStringGetter>.Default.Equals(item.TranslatedString9, default(Mutagen.Bethesda.Strings.ITranslatedStringGetter))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.TranslatedString?>.Default.Equals(item.TranslatedString10, default(Mutagen.Bethesda.Strings.TranslatedString?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.ITranslatedString?>.Default.Equals(item.TranslatedString11, default(Mutagen.Bethesda.Strings.ITranslatedString?))) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Strings.ITranslatedStringGetter?>.Default.Equals(item.TranslatedString12, default(Mutagen.Bethesda.Strings.ITranslatedStringGetter?))) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

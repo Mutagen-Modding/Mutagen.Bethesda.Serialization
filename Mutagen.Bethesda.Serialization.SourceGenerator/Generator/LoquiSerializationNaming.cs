@@ -13,6 +13,11 @@ public record SerializationItems(
     {
         return $"{Namespace}.{SerializationHousingClassName}.{(serialize ? "Serialize" : "Deserialize")}{(withCheck ? "WithCheck" : null)}";
     }
+
+    public string HasSerializationCall(bool withCheck = false)
+    {
+        return $"{Namespace}.{SerializationHousingClassName}.HasSerializationItems{(withCheck ? "WithCheck" : null)}";
+    }
 }
 
 public class LoquiSerializationNaming

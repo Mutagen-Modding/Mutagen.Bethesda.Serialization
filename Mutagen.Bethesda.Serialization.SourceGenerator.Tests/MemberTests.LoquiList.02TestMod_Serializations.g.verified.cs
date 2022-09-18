@@ -54,6 +54,15 @@ internal static class TestMod_Serialization
         }
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (item.SomeList.Count > 0) return true;
+        if (item.SomeList2.Count > 0) return true;
+        if (item.SomeList3.Count > 0) return true;
+        if (item.SomeList4.Count > 0) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

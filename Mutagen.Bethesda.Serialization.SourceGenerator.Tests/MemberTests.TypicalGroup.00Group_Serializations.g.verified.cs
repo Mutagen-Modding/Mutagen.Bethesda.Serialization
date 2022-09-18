@@ -17,6 +17,12 @@ internal static class Group_Serialization
         kernel.WriteInt32(writer, "SomeInt2", item.SomeInt2, default(int));
     }
 
+    public static bool HasSerializationItems<T>(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item)
+        where T : class, IMajorRecordInternal
+    {
+        return true;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroup<T> Deserialize<TReadObject, T>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

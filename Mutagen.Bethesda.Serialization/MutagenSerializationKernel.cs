@@ -158,7 +158,6 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         _kernel.WriteColor(writer, fieldName, item);
     }
     
-    
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item, ITranslatedStringGetter? defaultVal)
     {
         if (EqualityComparer<ITranslatedStringGetter?>.Default.Equals(item, defaultVal)) return;

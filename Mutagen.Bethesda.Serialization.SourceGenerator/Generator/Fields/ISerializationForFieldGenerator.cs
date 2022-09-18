@@ -23,6 +23,18 @@ public interface ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel);
     
+    bool HasVariableHasSerialize { get; }
+    
+    void GenerateForHasSerialize(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel);
+    
     void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,

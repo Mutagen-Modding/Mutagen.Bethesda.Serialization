@@ -14,6 +14,11 @@ internal static class SubclassLoquiB_Serialization
     {
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiBGetter item)
+    {
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiB Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

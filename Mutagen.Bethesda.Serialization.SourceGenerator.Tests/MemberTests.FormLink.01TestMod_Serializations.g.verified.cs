@@ -21,6 +21,17 @@ internal static class TestMod_Serialization
         kernel.WriteFormKey(writer, "SomeFormKey6", item.SomeFormKey6.FormKeyNullable, default(FormKey?));
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<FormLink<INpcGetter>>.Default.Equals(item.SomeFormKey, default(FormLink<INpcGetter>))) return true;
+        if (!EqualityComparer<FormLinkNullable<INpcGetter>>.Default.Equals(item.SomeFormKey2, default(FormLinkNullable<INpcGetter>))) return true;
+        if (!EqualityComparer<IFormLink<INpcGetter>>.Default.Equals(item.SomeFormKey3, default(IFormLink<INpcGetter>))) return true;
+        if (!EqualityComparer<IFormLinkNullable<INpcGetter>>.Default.Equals(item.SomeFormKey4, default(IFormLinkNullable<INpcGetter>))) return true;
+        if (!EqualityComparer<IFormLinkGetter<INpcGetter>>.Default.Equals(item.SomeFormKey5, default(IFormLinkGetter<INpcGetter>))) return true;
+        if (!EqualityComparer<IFormLinkNullableGetter<INpcGetter>>.Default.Equals(item.SomeFormKey6, default(IFormLinkNullableGetter<INpcGetter>))) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)

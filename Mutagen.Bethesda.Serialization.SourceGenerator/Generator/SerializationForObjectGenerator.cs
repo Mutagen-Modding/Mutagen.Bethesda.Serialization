@@ -88,6 +88,13 @@ public class SerializationForObjectGenerator
             
             GenerateSerialize(compilation, context, obj, sb, typeSet, baseType, properties, gens);
             
+            if (inheriting.Count > 0)
+            {
+                GenerateHasSerializationItemsWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
+            }
+            
+            GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, gens);
+            
             GenerateDeserialize(sb, typeSet, gens);
         }
         sb.AppendLine();
@@ -154,6 +161,119 @@ public class SerializationForObjectGenerator
                     prop.Generator,
                     sb: sb, 
                     cancel: context.CancellationToken);
+            }
+        }
+        sb.AppendLine();
+    }
+
+    private void GenerateHasSerializationItems(CompilationUnit compilation,
+        SourceProductionContext context,
+        ITypeSymbol obj,
+        StructuredStringBuilder sb,
+        LoquiTypeSet typeSet,
+        ITypeSymbol? baseType,
+        PropertyCollection properties,
+        SerializationGenerics generics)
+    {
+        using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
+        {
+            args.Add($"{typeSet.Getter} item");
+            args.Wheres.AddRange(generics.WriterWheres(forHas: true));
+        }
+
+        using (sb.CurlyBrace())
+        {
+            if (baseType != null
+                && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
+            {
+                sb.AppendLine(
+                    $"{baseSerializationItems.HasSerializationCall()}{generics.WriterGenericsString(forHas: true)}(item);");
+            }
+
+            var hasInvariable = properties.InOrder.Any(x =>
+            {
+                var gen = _forFieldGenerator.GetGenerator(x.Property.Type, context.CancellationToken);
+                return !gen?.HasVariableHasSerialize ?? true;
+            });
+
+            if (hasInvariable)
+            {
+                sb.AppendLine("return true;");
+            }
+            else
+            {
+                foreach (var prop in properties.InOrder)
+                {
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    _forFieldGenerator.GenerateHasForField(
+                        compilation: compilation,
+                        obj: obj, 
+                        fieldType: prop.Property.Type,
+                        fieldName: prop.Property.Name, 
+                        fieldAccessor: $"item.{prop.Property.Name}", 
+                        defaultValueAccessor: prop.DefaultString,
+                        prop.Generator,
+                        sb: sb, 
+                        cancel: context.CancellationToken);
+                }
+            
+                sb.AppendLine("return false;");
+            }
+        }
+        sb.AppendLine();
+    }
+
+    private void GenerateHasSerializationItemsWithCheck(CompilationUnit compilation,
+        SourceProductionContext context,
+        ITypeSymbol obj,
+        StructuredStringBuilder sb,
+        LoquiTypeSet typeSet,
+        SerializationGenerics generics,
+        IReadOnlyList<ITypeSymbol> inheriting)
+    {
+        using (var args = sb.Function($"public static bool HasSerializationItemsWithCheck{generics.WriterGenericsString(forHas: true)}"))
+        {
+            args.Add($"{typeSet.Getter} item");
+            args.Wheres.AddRange(generics.WriterWheres(forHas: true));
+        }
+
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("switch (item)");
+            using (sb.CurlyBrace())
+            {
+                foreach (var inherit in inheriting)
+                {
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    var names = _nameRetriever.GetNames(inherit);
+                    if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
+                        continue;
+                    if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
+                    if (inheritTypes.Direct?.IsAbstract ?? true) continue;
+                    sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine(
+                            $"return {inheritSerializeItems.HasSerializationCall()}({names.Direct}Getter);");
+                    }
+                }
+
+                if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                    && (!typeSet.Direct?.IsAbstract ?? false))
+                {
+                    sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine(
+                            $"return {curSerializationItems.HasSerializationCall()}({typeSet.Getter.Name});");
+                    }
+                }
+
+                sb.AppendLine("default:");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine($"throw new NotImplementedException();");
+                }
             }
         }
         sb.AppendLine();

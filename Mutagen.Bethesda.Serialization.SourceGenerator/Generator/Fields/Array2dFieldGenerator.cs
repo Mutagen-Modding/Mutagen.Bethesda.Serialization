@@ -82,6 +82,20 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"{kernelAccessor}.EndArray2dSection({writerAccessor});");
     }
 
+    public bool HasVariableHasSerialize => false;
+
+    public void GenerateForHasSerialize(CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj, 

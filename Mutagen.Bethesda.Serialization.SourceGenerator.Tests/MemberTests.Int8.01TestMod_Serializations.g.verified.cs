@@ -32,6 +32,29 @@ internal static class TestMod_Serialization
         kernel.WriteInt8(writer, "SomeMember17", item.SomeMember17, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember17Default);
     }
 
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    {
+        if (!EqualityComparer<sbyte>.Default.Equals(item.SomeMember0, default(sbyte))) return true;
+        if (!EqualityComparer<SByte>.Default.Equals(item.SomeMember1, default(SByte))) return true;
+        if (!EqualityComparer<Int8>.Default.Equals(item.SomeMember2, default(Int8))) return true;
+        if (!EqualityComparer<sbyte?>.Default.Equals(item.SomeMember3, default(sbyte?))) return true;
+        if (!EqualityComparer<SByte?>.Default.Equals(item.SomeMember4, default(SByte?))) return true;
+        if (!EqualityComparer<Int8?>.Default.Equals(item.SomeMember5, default(Int8?))) return true;
+        if (!EqualityComparer<Nullable<sbyte>>.Default.Equals(item.SomeMember6, default(Nullable<sbyte>))) return true;
+        if (!EqualityComparer<Nullable<SByte>>.Default.Equals(item.SomeMember7, default(Nullable<SByte>))) return true;
+        if (!EqualityComparer<Nullable<Int8>>.Default.Equals(item.SomeMember8, default(Nullable<Int8>))) return true;
+        if (!EqualityComparer<sbyte>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default)) return true;
+        if (!EqualityComparer<SByte>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default)) return true;
+        if (!EqualityComparer<Int8>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default)) return true;
+        if (!EqualityComparer<sbyte?>.Default.Equals(item.SomeMember12, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember12Default)) return true;
+        if (!EqualityComparer<SByte?>.Default.Equals(item.SomeMember13, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember13Default)) return true;
+        if (!EqualityComparer<Int8?>.Default.Equals(item.SomeMember14, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember14Default)) return true;
+        if (!EqualityComparer<Nullable<sbyte>>.Default.Equals(item.SomeMember15, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember15Default)) return true;
+        if (!EqualityComparer<Nullable<SByte>>.Default.Equals(item.SomeMember16, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember16Default)) return true;
+        if (!EqualityComparer<Nullable<Int8>>.Default.Equals(item.SomeMember17, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember17Default)) return true;
+        return false;
+    }
+
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
