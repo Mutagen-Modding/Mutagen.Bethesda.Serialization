@@ -9,19 +9,14 @@
   "Npcs": {
     "Records": [
       {
-        "ObjectBounds": {},
         "Configuration": {
-          "Level": {},
           "HealthOffset": 100
         },
-        "AIData": {},
         "Name": "Goblin",
         "NAM5": 65280
       },
       {
-        "ObjectBounds": {},
         "Configuration": {
-          "Level": {},
           "HealthOffset": 200
         },
         "Attacks": [
@@ -32,7 +27,6 @@
             "AttackEvent": "Event2"
           }
         ],
-        "AIData": {},
         "Name": "Hobgoblin",
         "NAM5": 65280
       }

@@ -5,20 +5,14 @@
     NextFormID: 2050
 Npcs:
   Records:
-  - ObjectBounds: {}
-    Configuration:
-      Level: {}
+  - Configuration:
       HealthOffset: 100
-    AIData: {}
     Name: Goblin
     NAM5: 65280
-  - ObjectBounds: {}
-    Configuration:
-      Level: {}
+  - Configuration:
       HealthOffset: 200
     Attacks:
     - AttackEvent: Event1
     - AttackEvent: Event2
-    AIData: {}
     Name: Hobgoblin
     NAM5: 65280

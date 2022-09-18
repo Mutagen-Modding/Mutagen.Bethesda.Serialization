@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
 
@@ -63,8 +64,23 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
 
-        var call = fieldSerializationItems.SerializationCall(serialize: true, withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter));
-        sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+
+        var call = fieldSerializationItems.SerializationCall(serialize: true, withCheck: hasInheriting);
+        
+        if (fieldName != null)
+        {
+            using (var i = sb.If(ands: true))
+            {
+                i.Add($"{fieldAccessor} is {{}} {fieldName}Checked");
+                fieldAccessor = $"{fieldName}Checked";
+                i.Add($"{fieldSerializationItems.HasSerializationCall(hasInheriting)}({fieldAccessor})");
+            }
+        }
+        using (sb.CurlyBrace(doIt: fieldName != null))
+        {
+            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
+        }
     }
 
     public bool HasVariableHasSerialize => true;
