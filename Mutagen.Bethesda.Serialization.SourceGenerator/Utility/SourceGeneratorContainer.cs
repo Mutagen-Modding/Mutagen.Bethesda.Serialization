@@ -20,6 +20,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<LoquiNameRetriever>]
 [Register<WhereClauseGenerator>]
 [Register<IsGroupTester>]
+[Register<PropertyCollectionRetriever>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]

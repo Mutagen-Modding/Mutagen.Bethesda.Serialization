@@ -8,45 +8,27 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
 
-class PropertyCollection
-{
-    public Dictionary<string, PropertyMetadata> Lookup = new();
-    public List<PropertyMetadata> InOrder = new();
-    
-    public void Register(PropertyMetadata propertyMetadata)
-    {
-        InOrder.Add(propertyMetadata);
-        Lookup[propertyMetadata.Property.Name] = propertyMetadata;
-    }
-}
-
-record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldGenerator? Generator)
-{
-    public IFieldSymbol? Default { get; set; }
-    
-    public string? DefaultString => Default == null ? null : $"{Default.ContainingSymbol.ContainingNamespace}.{Default.ContainingSymbol.Name}.{Default.Name}";
-}
 
 public class SerializationForObjectGenerator
 {
-    private readonly PropertyFilter _propertyFilter;
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly SerializationFieldGenerator _forFieldGenerator;
     private readonly WhereClauseGenerator _whereClauseGenerator;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
+    private readonly PropertyCollectionRetriever _propertyCollectionRetriever;
 
     public SerializationForObjectGenerator(
-        PropertyFilter propertyFilter,
         LoquiNameRetriever nameRetriever,
         SerializationFieldGenerator forFieldGenerator,
         WhereClauseGenerator whereClauseGenerator,
-        LoquiSerializationNaming loquiSerializationNaming)
+        LoquiSerializationNaming loquiSerializationNaming,
+        PropertyCollectionRetriever propertyCollectionRetriever)
     {
-        _propertyFilter = propertyFilter;
         _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
         _whereClauseGenerator = whereClauseGenerator;
         _loquiSerializationNaming = loquiSerializationNaming;
+        _propertyCollectionRetriever = propertyCollectionRetriever;
     }
     
     public void Generate(
@@ -62,7 +44,7 @@ public class SerializationForObjectGenerator
         
         var sb = new StructuredStringBuilder();
         
-        var properties = GetPropertyCollection(context, typeSet);
+        var properties = _propertyCollectionRetriever.GetPropertyCollection(context, typeSet);
         
         GenerateUsings(context, obj, sb, properties);
 
@@ -340,33 +322,6 @@ public class SerializationForObjectGenerator
         }
 
         sb.AppendLine();
-    }
-
-    private PropertyCollection GetPropertyCollection(SourceProductionContext context, LoquiTypeSet obj)
-    {
-        var ret = new PropertyCollection();
-        foreach (var prop in obj.Getter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
-        {
-            context.CancellationToken.ThrowIfCancellationRequested();
-            if (_propertyFilter.Skip(obj, prop)) continue;
-            var gen = _forFieldGenerator.GetGenerator(prop.Type, context.CancellationToken);
-            var meta = new PropertyMetadata(prop, gen);
-            ret.Register(meta);
-        }
-
-        if (obj.Direct != null)
-        {
-            foreach (var field in obj.Direct.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
-            {
-                if (!field.IsStatic || !field.IsReadOnly) continue;
-                if (!field.Name.EndsWith("Default")) continue;
-                if (ret.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
-                {
-                    prop.Default = field;
-                }
-            }
-        }
-        return ret;
     }
 
     private static void GenerateUsings(
