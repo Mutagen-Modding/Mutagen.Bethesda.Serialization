@@ -2,20 +2,20 @@
   "ModHeader": {
     "FormVersion": 44,
     "Stats": {
-      "Version": 1.7,
       "NextFormID": 2050
     }
   },
   "Npcs": {
     "Records": [
       {
+        "FormVersion": 44,
         "Configuration": {
           "HealthOffset": 100
         },
-        "Name": "Goblin",
-        "NAM5": 65280
+        "Name": "Goblin"
       },
       {
+        "FormVersion": 44,
         "Configuration": {
           "HealthOffset": 200
         },
@@ -27,8 +27,7 @@
             "AttackEvent": "Event2"
           }
         ],
-        "Name": "Hobgoblin",
-        "NAM5": 65280
+        "Name": "Hobgoblin"
       }
     ]
   }

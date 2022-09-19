@@ -62,7 +62,7 @@ public class SerializationForObjectGenerator
         
         var sb = new StructuredStringBuilder();
         
-        var properties = GetPropertyCollection(context, obj);
+        var properties = GetPropertyCollection(context, typeSet);
         
         GenerateUsings(context, obj, sb, properties);
 
@@ -342,25 +342,28 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
-    private PropertyCollection GetPropertyCollection(SourceProductionContext context, ITypeSymbol obj)
+    private PropertyCollection GetPropertyCollection(SourceProductionContext context, LoquiTypeSet obj)
     {
         var ret = new PropertyCollection();
-        foreach (var prop in obj.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
+        foreach (var prop in obj.Getter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
         {
             context.CancellationToken.ThrowIfCancellationRequested();
-            if (_propertyFilter.Skip(prop)) continue;
+            if (_propertyFilter.Skip(obj, prop)) continue;
             var gen = _forFieldGenerator.GetGenerator(prop.Type, context.CancellationToken);
             var meta = new PropertyMetadata(prop, gen);
             ret.Register(meta);
         }
 
-        foreach (var field in obj.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
+        if (obj.Direct != null)
         {
-            if (!field.IsStatic || !field.IsReadOnly) continue;
-            if (!field.Name.EndsWith("Default")) continue;
-            if (ret.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+            foreach (var field in obj.Direct.GetMembers().WhereCastable<ISymbol, IFieldSymbol>())
             {
-                prop.Default = field;
+                if (!field.IsStatic || !field.IsReadOnly) continue;
+                if (!field.Name.EndsWith("Default")) continue;
+                if (ret.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+                {
+                    prop.Default = field;
+                }
             }
         }
         return ret;

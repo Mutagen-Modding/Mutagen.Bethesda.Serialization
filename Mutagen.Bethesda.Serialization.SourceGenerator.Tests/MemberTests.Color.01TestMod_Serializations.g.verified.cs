@@ -19,12 +19,12 @@ internal static class TestMod_Serialization
         kernel.WriteColor(writer, "SomeMember3", item.SomeMember3, default(Color?));
         kernel.WriteColor(writer, "SomeMember4", item.SomeMember4, default(Nullable<System.Drawing.Color>));
         kernel.WriteColor(writer, "SomeMember5", item.SomeMember5, default(Nullable<Color>));
-        kernel.WriteColor(writer, "SomeMember6", item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember6Default);
-        kernel.WriteColor(writer, "SomeMember7", item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember7Default);
-        kernel.WriteColor(writer, "SomeMember8", item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember8Default);
-        kernel.WriteColor(writer, "SomeMember9", item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default);
-        kernel.WriteColor(writer, "SomeMember10", item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default);
-        kernel.WriteColor(writer, "SomeMember11", item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default);
+        kernel.WriteColor(writer, "SomeMember6", item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember6Default);
+        kernel.WriteColor(writer, "SomeMember7", item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember7Default);
+        kernel.WriteColor(writer, "SomeMember8", item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember8Default);
+        kernel.WriteColor(writer, "SomeMember9", item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember9Default);
+        kernel.WriteColor(writer, "SomeMember10", item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember10Default);
+        kernel.WriteColor(writer, "SomeMember11", item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember11Default);
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
@@ -35,12 +35,12 @@ internal static class TestMod_Serialization
         if (!EqualityComparer<Color?>.Default.Equals(item.SomeMember3, default(Color?))) return true;
         if (!EqualityComparer<Nullable<System.Drawing.Color>>.Default.Equals(item.SomeMember4, default(Nullable<System.Drawing.Color>))) return true;
         if (!EqualityComparer<Nullable<Color>>.Default.Equals(item.SomeMember5, default(Nullable<Color>))) return true;
-        if (!EqualityComparer<System.Drawing.Color>.Default.Equals(item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember6Default)) return true;
-        if (!EqualityComparer<Color>.Default.Equals(item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember7Default)) return true;
-        if (!EqualityComparer<System.Drawing.Color?>.Default.Equals(item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember8Default)) return true;
-        if (!EqualityComparer<Color?>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default)) return true;
-        if (!EqualityComparer<Nullable<System.Drawing.Color>>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default)) return true;
-        if (!EqualityComparer<Nullable<Color>>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default)) return true;
+        if (!EqualityComparer<System.Drawing.Color>.Default.Equals(item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember6Default)) return true;
+        if (!EqualityComparer<Color>.Default.Equals(item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember7Default)) return true;
+        if (!EqualityComparer<System.Drawing.Color?>.Default.Equals(item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember8Default)) return true;
+        if (!EqualityComparer<Color?>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember9Default)) return true;
+        if (!EqualityComparer<Nullable<System.Drawing.Color>>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember10Default)) return true;
+        if (!EqualityComparer<Nullable<Color>>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember11Default)) return true;
         return false;
     }
 

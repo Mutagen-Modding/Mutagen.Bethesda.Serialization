@@ -15,9 +15,9 @@ internal static class TestMod_Serialization
         kernel.WriteP2Float(writer, "SomeMember0", item.SomeMember0, default(Noggog.P2Float));
         kernel.WriteP2Float(writer, "SomeMember1", item.SomeMember1, default(Noggog.P2Float?));
         kernel.WriteP2Float(writer, "SomeMember2", item.SomeMember2, default(Nullable<Noggog.P2Float>));
-        kernel.WriteP2Float(writer, "SomeMember3", item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember3Default);
-        kernel.WriteP2Float(writer, "SomeMember4", item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember4Default);
-        kernel.WriteP2Float(writer, "SomeMember5", item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember5Default);
+        kernel.WriteP2Float(writer, "SomeMember3", item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember3Default);
+        kernel.WriteP2Float(writer, "SomeMember4", item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember4Default);
+        kernel.WriteP2Float(writer, "SomeMember5", item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember5Default);
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
@@ -25,9 +25,9 @@ internal static class TestMod_Serialization
         if (!EqualityComparer<Noggog.P2Float>.Default.Equals(item.SomeMember0, default(Noggog.P2Float))) return true;
         if (!EqualityComparer<Noggog.P2Float?>.Default.Equals(item.SomeMember1, default(Noggog.P2Float?))) return true;
         if (!EqualityComparer<Nullable<Noggog.P2Float>>.Default.Equals(item.SomeMember2, default(Nullable<Noggog.P2Float>))) return true;
-        if (!EqualityComparer<Noggog.P2Float>.Default.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember3Default)) return true;
-        if (!EqualityComparer<Noggog.P2Float?>.Default.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember4Default)) return true;
-        if (!EqualityComparer<Nullable<Noggog.P2Float>>.Default.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember5Default)) return true;
+        if (!EqualityComparer<Noggog.P2Float>.Default.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember3Default)) return true;
+        if (!EqualityComparer<Noggog.P2Float?>.Default.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember4Default)) return true;
+        if (!EqualityComparer<Nullable<Noggog.P2Float>>.Default.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember5Default)) return true;
         return false;
     }
 

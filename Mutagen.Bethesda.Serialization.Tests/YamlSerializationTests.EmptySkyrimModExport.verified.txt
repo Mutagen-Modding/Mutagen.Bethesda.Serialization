@@ -1,5 +1,4 @@
 ﻿ModHeader:
   FormVersion: 44
   Stats:
-    Version: 1.7
     NextFormID: 2048

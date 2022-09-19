@@ -11,20 +11,21 @@ public class PropertyFilter
     {
         _enumFieldGenerator = enumFieldGenerator;
     }
-    
-    public bool Skip(IPropertySymbol propertySymbol)
+
+    public bool Skip(LoquiTypeSet typeSet, IPropertySymbol propertySymbol)
     {
         if (propertySymbol.IsIndexer) return true;
-        if (propertySymbol.Type.Name == "ILoquiRegistration")
+        switch (propertySymbol.Name)
         {
-            switch (propertySymbol.Name)
-            {
-                case "StaticRegistration":
-                case "Registration":
-                    return true;
-                default:
-                    return false;
-            }
+            case "StaticRegistration":
+            case "Registration":
+                return propertySymbol.Type.Name == "ILoquiRegistration";
+            case "BinaryWriteTranslator":
+                return true;
+            case "FormVersion":
+                return typeSet.Getter.Name == "IMajorRecordGetter";
+            default:
+                break;
         }
 
         if (propertySymbol.Name.EndsWith("Release")
@@ -32,6 +33,7 @@ public class PropertyFilter
         {
             return true;
         }
+
         return false;
     }
 }

@@ -1,18 +1,17 @@
 ﻿ModHeader:
   FormVersion: 44
   Stats:
-    Version: 1.7
     NextFormID: 2050
 Npcs:
   Records:
-  - Configuration:
+  - FormVersion: 44
+    Configuration:
       HealthOffset: 100
     Name: Goblin
-    NAM5: 65280
-  - Configuration:
+  - FormVersion: 44
+    Configuration:
       HealthOffset: 200
     Attacks:
     - AttackEvent: Event1
     - AttackEvent: Event2
     Name: Hobgoblin
-    NAM5: 65280

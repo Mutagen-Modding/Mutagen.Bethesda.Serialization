@@ -18,12 +18,12 @@ internal static class TestMod_Serialization
         kernel.WriteModKey(writer, "SomeMember3", item.SomeMember3, default(Mutagen.Bethesda.Plugins.ModKey?));
         kernel.WriteModKey(writer, "SomeMember4", item.SomeMember4, default(Nullable<ModKey>));
         kernel.WriteModKey(writer, "SomeMember5", item.SomeMember5, default(Nullable<Mutagen.Bethesda.Plugins.ModKey>));
-        kernel.WriteModKey(writer, "SomeMember6", item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember6Default);
-        kernel.WriteModKey(writer, "SomeMember7", item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember7Default);
-        kernel.WriteModKey(writer, "SomeMember8", item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember8Default);
-        kernel.WriteModKey(writer, "SomeMember9", item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default);
-        kernel.WriteModKey(writer, "SomeMember10", item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default);
-        kernel.WriteModKey(writer, "SomeMember11", item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default);
+        kernel.WriteModKey(writer, "SomeMember6", item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember6Default);
+        kernel.WriteModKey(writer, "SomeMember7", item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember7Default);
+        kernel.WriteModKey(writer, "SomeMember8", item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember8Default);
+        kernel.WriteModKey(writer, "SomeMember9", item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember9Default);
+        kernel.WriteModKey(writer, "SomeMember10", item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember10Default);
+        kernel.WriteModKey(writer, "SomeMember11", item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember11Default);
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
@@ -34,12 +34,12 @@ internal static class TestMod_Serialization
         if (!EqualityComparer<Mutagen.Bethesda.Plugins.ModKey?>.Default.Equals(item.SomeMember3, default(Mutagen.Bethesda.Plugins.ModKey?))) return true;
         if (!EqualityComparer<Nullable<ModKey>>.Default.Equals(item.SomeMember4, default(Nullable<ModKey>))) return true;
         if (!EqualityComparer<Nullable<Mutagen.Bethesda.Plugins.ModKey>>.Default.Equals(item.SomeMember5, default(Nullable<Mutagen.Bethesda.Plugins.ModKey>))) return true;
-        if (!EqualityComparer<ModKey>.Default.Equals(item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember6Default)) return true;
-        if (!EqualityComparer<Mutagen.Bethesda.Plugins.ModKey>.Default.Equals(item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember7Default)) return true;
-        if (!EqualityComparer<ModKey?>.Default.Equals(item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember8Default)) return true;
-        if (!EqualityComparer<Mutagen.Bethesda.Plugins.ModKey?>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember9Default)) return true;
-        if (!EqualityComparer<Nullable<ModKey>>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember10Default)) return true;
-        if (!EqualityComparer<Nullable<Mutagen.Bethesda.Plugins.ModKey>>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.SomeMember11Default)) return true;
+        if (!EqualityComparer<ModKey>.Default.Equals(item.SomeMember6, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember6Default)) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.ModKey>.Default.Equals(item.SomeMember7, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember7Default)) return true;
+        if (!EqualityComparer<ModKey?>.Default.Equals(item.SomeMember8, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember8Default)) return true;
+        if (!EqualityComparer<Mutagen.Bethesda.Plugins.ModKey?>.Default.Equals(item.SomeMember9, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember9Default)) return true;
+        if (!EqualityComparer<Nullable<ModKey>>.Default.Equals(item.SomeMember10, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember10Default)) return true;
+        if (!EqualityComparer<Nullable<Mutagen.Bethesda.Plugins.ModKey>>.Default.Equals(item.SomeMember11, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod.SomeMember11Default)) return true;
         return false;
     }
 
