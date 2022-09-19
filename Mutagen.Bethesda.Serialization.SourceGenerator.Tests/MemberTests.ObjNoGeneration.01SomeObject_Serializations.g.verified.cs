@@ -1,14 +1,14 @@
-﻿//HintName: SomeLoqui_Serializations.g.cs
+﻿//HintName: SomeObject_Serializations.g.cs
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class SomeLoqui_Serialization
+internal static class SomeObject_Serialization
 {
     public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -16,13 +16,13 @@ internal static class SomeLoqui_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         SerializationMetaData metaData)
     {
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {

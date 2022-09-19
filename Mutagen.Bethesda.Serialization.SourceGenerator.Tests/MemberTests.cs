@@ -54,10 +54,76 @@ public class MemberTests
 
         return sb.ToString();
     }
+    
+    private string GetObjWithMember(
+        Action<StructuredStringBuilder> memberBuilder,
+        Action<StructuredStringBuilder> outsideBuilder = null)
+    {
+        var sb = new StructuredStringBuilder();
+        
+        sb.AppendLine("using Noggog;");
+        sb.AppendLine("using Loqui;");
+        sb.AppendLine("using System.Collections.Generic;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
+        sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
+        sb.AppendLine();
+        
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        
+        outsideBuilder?.Invoke(sb);
+        
+        sb.AppendLine("public partial interface ISomeObject : ISomeObjectGetter");
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+        
+        sb.AppendLine("public partial interface ISomeObjectGetter : ILoquiObject");
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+        
+        using (var c = sb.Class("SomeObject_Registration"))
+        {
+            c.Partial = true;
+            c.BaseClass = "ARegistration";
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 15, 0);");
+            sb.AppendLine("public override Type ClassType => typeof(SomeObject);");
+            sb.AppendLine("public override Type GetterType => typeof(ISomeObjectGetter);");
+            sb.AppendLine("public override Type SetterType => typeof(ISomeObject);");
+            sb.AppendLine("public override string Name => nameof(SomeObject);");
+        }
+
+        using (var c = sb.Class("SomeObject"))
+        {
+            c.Partial = true;
+            c.Interfaces.Add("ISomeObject");
+        }
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+            sb.AppendLine();
+            using (var f = sb.Function("public void SomeFunction"))
+            {
+            }
+
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine($"var theObj = new SomeObject();");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(theObj);");
+            }
+        }
+
+        return sb.ToString();
+    }
 
     private string GetPrimitiveTest(params string[] nicknames)
     {
-        return GetModWithMember(sb =>
+        return GetObjWithMember(sb =>
         {
             int i = 0;
             foreach (var nickname in nicknames)
@@ -91,7 +157,7 @@ public class MemberTests
     }
     
     [Fact]
-    public Task NoGeneration()
+    public Task ModNoGeneration()
     {
         var source = GetModWithMember(sb => { });
        
@@ -99,9 +165,17 @@ public class MemberTests
     }
     
     [Fact]
+    public Task ObjNoGeneration()
+    {
+        var source = GetObjWithMember(sb => { });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task UnknownType()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public Unknown UnknownThing { get; set; }");
         });
@@ -214,7 +288,7 @@ public class MemberTests
     [Fact]
     public Task Enum()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public enum MyEnum { }");
             sb.AppendLine("public MyEnum SomeEnum { get; set; }");
@@ -236,7 +310,7 @@ public class MemberTests
     [Fact]
     public Task Loqui()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public SomeLoqui MyLoqui { get; set; }");
         });
@@ -247,7 +321,7 @@ public class MemberTests
     [Fact]
     public Task LoquiWithBaseClass()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public SomeLoquiWithBase MyLoqui { get; set; }");
         });
@@ -258,7 +332,7 @@ public class MemberTests
     [Fact]
     public Task LoquiWithMultipleBaseClasses()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public AbstractBaseLoqui MyLoqui { get; set; }");
         });
@@ -275,7 +349,7 @@ public class MemberTests
     [Fact]
     public Task Bytes()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public byte[] SomeBytes { get; set; }");
             sb.AppendLine("public ReadOnlyMemorySlice<byte> SomeBytes2 { get; set; }");
@@ -314,7 +388,7 @@ public class MemberTests
     [Fact]
     public Task TranslatedString()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public TranslatedString TranslatedString { get; set; }");
             sb.AppendLine("public ITranslatedString TranslatedString2 { get; set; }");
@@ -336,7 +410,7 @@ public class MemberTests
     [Fact]
     public Task List()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public List<string> SomeList { get; set; }");
             sb.AppendLine("public IReadOnlyList<string> SomeList2 { get; set; }");
@@ -354,7 +428,7 @@ public class MemberTests
     [Fact]
     public Task LoquiList()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public List<SomeLoqui> SomeList { get; set; }");
             sb.AppendLine("public IReadOnlyList<SomeLoqui> SomeList2 { get; set; }");
@@ -368,7 +442,7 @@ public class MemberTests
     [Fact]
     public Task Dictionary()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public Dictionary<int, string> SomeDict { get; set; }");
             sb.AppendLine("public IReadOnlyDictionary<int, string> SomeDict1 { get; set; }");
@@ -381,7 +455,7 @@ public class MemberTests
     [Fact]
     public Task GenderedItem()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public GenderedItem<string> SomeGenderedInt { get; set; }");
             sb.AppendLine("public IGenderedItem<string> SomeGenderedInt2 { get; set; }");
@@ -406,7 +480,7 @@ public class MemberTests
     [Fact]
     public Task FormLink()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public FormLink<INpcGetter> SomeFormKey { get; set; }");
             sb.AppendLine("public FormLinkNullable<INpcGetter> SomeFormKey2 { get; set; }");
@@ -422,7 +496,7 @@ public class MemberTests
     [Fact]
     public Task AssetLink()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public AssetLink<INpcGetter> SomeAssetLink { get; set; }");
             sb.AppendLine("public Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter> SomeAssetLink2 { get; set; }");
@@ -453,7 +527,7 @@ public class MemberTests
     [Fact]
     public Task Array()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public string[] SomeArray { get; set; }");
         });
@@ -464,7 +538,7 @@ public class MemberTests
     [Fact]
     public Task Array2d()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public Array2d<string> SomeArray { get; set; }");
             sb.AppendLine("public IArray2d<string> SomeArray2 { get; set; }");
@@ -477,7 +551,7 @@ public class MemberTests
     [Fact]
     public Task SkippedProperty()
     {
-        var source = GetModWithMember(sb =>
+        var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public ILoquiRegistration StaticRegistration { get; set; }");
             sb.AppendLine("public ILoquiRegistration Registration { get; set; }");
