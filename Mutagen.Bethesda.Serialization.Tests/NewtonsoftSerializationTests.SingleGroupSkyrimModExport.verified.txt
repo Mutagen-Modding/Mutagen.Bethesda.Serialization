@@ -1,6 +1,5 @@
 ﻿{
   "ModHeader": {
-    "FormVersion": 44,
     "Stats": {
       "NextFormID": 2050
     }
@@ -8,14 +7,12 @@
   "Npcs": {
     "Records": [
       {
-        "FormVersion": 44,
         "Configuration": {
           "HealthOffset": 100
         },
         "Name": "Goblin"
       },
       {
-        "FormVersion": 44,
         "Configuration": {
           "HealthOffset": 200
         },

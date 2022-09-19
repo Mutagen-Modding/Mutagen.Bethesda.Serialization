@@ -308,6 +308,17 @@ public class MemberTests
     }
     
     [Fact]
+    public Task FormVersion()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public ushort FormVersion { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task Loqui()
     {
         var source = GetObjWithMember(sb =>

@@ -19,8 +19,13 @@ public class PropertyCollection
 public record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldGenerator? Generator)
 {
     public IFieldSymbol? Default { get; set; }
-    
-    public string? DefaultString => Default == null ? null : $"{Default.ContainingSymbol.ContainingNamespace}.{Default.ContainingSymbol.Name}.{Default.Name}";
+
+    private string? _defaultString;
+    public string? DefaultString
+    {
+        get => _defaultString ?? (Default == null ? null : $"{Default.ContainingSymbol.ContainingNamespace}.{Default.ContainingSymbol.Name}.{Default.Name}");
+        set => _defaultString = value;
+    }
 }
 
 public class PropertyCollectionRetriever
@@ -64,7 +69,7 @@ public class PropertyCollectionRetriever
         }
     }
 
-    private static void FillDefaults(LoquiTypeSet obj, PropertyCollection ret)
+    private static void FillDefaults(LoquiTypeSet obj, PropertyCollection collection)
     {
         if (obj.Direct == null) return;
         
@@ -72,10 +77,20 @@ public class PropertyCollectionRetriever
         {
             if (!field.IsStatic || !field.IsReadOnly) continue;
             if (!field.Name.EndsWith("Default")) continue;
-            if (ret.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+            if (collection.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
             {
                 prop.Default = field;
             }
+        }
+
+        AddOneOffDefaults(obj, collection);
+    }
+
+    private static void AddOneOffDefaults(LoquiTypeSet obj, PropertyCollection collection)
+    {
+        if (collection.Lookup.TryGetValue("FormVersion", out var prop))
+        {
+            prop.DefaultString = $"metaData.Release.GetDefaultFormVersion() ?? 0";
         }
     }
 }

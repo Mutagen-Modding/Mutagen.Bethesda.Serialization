@@ -1,6 +1,5 @@
 ﻿{
   "ModHeader": {
-    "FormVersion": 44,
     "Stats": {
       "NextFormID": 2048
     }
