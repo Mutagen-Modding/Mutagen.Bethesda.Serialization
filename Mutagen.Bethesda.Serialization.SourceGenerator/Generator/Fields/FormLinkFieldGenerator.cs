@@ -40,6 +40,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor, 
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -69,6 +70,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

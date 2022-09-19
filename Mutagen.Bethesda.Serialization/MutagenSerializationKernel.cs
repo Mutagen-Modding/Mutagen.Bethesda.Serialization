@@ -181,20 +181,22 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         TWriterObject writer, 
         string? fieldName, 
         TObject? item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, TWriterObject, TObject> writeCall)
     {
         if (item == null) return;
-        _kernel.WriteWithName(this, writer, fieldName, item, writeCall);
+        _kernel.WriteWithName(this, writer, fieldName, item, serializationMetaData, writeCall);
     }
     
     public void WriteLoqui<TObject>(
         TWriterObject writer,
         string? fieldName,
         TObject? item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, TWriterObject, TObject> writeCall)
     {
         if (item == null) return;
-        _kernel.WriteLoqui(this, writer, fieldName, item, writeCall);
+        _kernel.WriteLoqui(this, writer, fieldName, item, serializationMetaData, writeCall);
     }
 
     public void StartListSection(TWriterObject writer, string? fieldName) => _kernel.StartListSection(writer, fieldName);

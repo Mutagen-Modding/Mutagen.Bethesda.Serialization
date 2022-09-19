@@ -12,16 +12,18 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (item.MyLoqui is {} MyLoquiChecked
-            && Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItemsWithCheck(MyLoquiChecked))
+            && Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItemsWithCheck(MyLoquiChecked, metaData))
         {
-            kernel.WriteLoqui(writer, "MyLoqui", MyLoquiChecked, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.SerializeWithCheck<TKernel, TWriteObject>(w, i, k));
+            kernel.WriteLoqui(writer, "MyLoqui", MyLoquiChecked, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.SerializeWithCheck<TKernel, TWriteObject>(w, i, k, m));
         }
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
-        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItemsWithCheck(item.MyLoqui)) return true;
+        var metaData = new SerializationMetaData(item.GameRelease);
+        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItemsWithCheck(item.MyLoqui, metaData)) return true;
         return false;
     }
 

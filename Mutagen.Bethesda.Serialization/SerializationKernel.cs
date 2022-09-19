@@ -5,7 +5,11 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization;
 
-public delegate void Write<TKernel, TWriterObject, TObject>(TWriterObject writer, TObject obj, MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel)
+public delegate void Write<TKernel, TWriterObject, TObject>(
+    TWriterObject writer,
+    TObject obj,
+    MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel,
+    SerializationMetaData metaData)
     where TKernel : ISerializationWriterKernel<TWriterObject>, new();
 
 public interface ISerializationReaderKernel<TReaderObject>
@@ -67,6 +71,7 @@ public interface ISerializationWriterKernel<TWriterObject>
         TWriterObject writer, 
         string? fieldName, 
         TObject item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, TWriterObject, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<TWriterObject>, new();
     public void WriteLoqui<TKernel, TObject>(
@@ -74,6 +79,7 @@ public interface ISerializationWriterKernel<TWriterObject>
         TWriterObject writer,
         string? fieldName,
         TObject item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, TWriterObject, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<TWriterObject>, new();
 

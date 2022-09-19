@@ -36,6 +36,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor, 
+        string metaAccessor,
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
@@ -51,6 +52,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -63,6 +65,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
             defaultValueAccessor: defaultValueAccessor, 
             writerAccessor: writerAccessor,
             kernelAccessor: kernelAccessor, 
+            metaAccessor: metaAccessor,
             sb: sb,
             cancel: cancel);
     }

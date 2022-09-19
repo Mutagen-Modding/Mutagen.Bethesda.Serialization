@@ -12,6 +12,7 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         kernel.WriteUInt64(writer, "SomeMember0", item.SomeMember0, default(ulong));
         kernel.WriteUInt64(writer, "SomeMember1", item.SomeMember1, default(UInt64));
         kernel.WriteUInt64(writer, "SomeMember2", item.SomeMember2, default(ulong?));
@@ -28,6 +29,7 @@ internal static class TestMod_Serialization
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (!EqualityComparer<ulong>.Default.Equals(item.SomeMember0, default(ulong))) return true;
         if (!EqualityComparer<UInt64>.Default.Equals(item.SomeMember1, default(UInt64))) return true;
         if (!EqualityComparer<ulong?>.Default.Equals(item.SomeMember2, default(ulong?))) return true;

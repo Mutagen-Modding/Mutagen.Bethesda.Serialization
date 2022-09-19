@@ -173,13 +173,13 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public void WriteWithName<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
-        TObject item, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
+        TObject item, SerializationMetaData serializationMetaData, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }
 
     public void WriteLoqui<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
-        TObject item, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
+        TObject item, SerializationMetaData serializationMetaData, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }

@@ -21,6 +21,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<WhereClauseGenerator>]
 [Register<IsGroupTester>]
 [Register<PropertyCollectionRetriever>]
+[Register<IsModObjectTester>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]

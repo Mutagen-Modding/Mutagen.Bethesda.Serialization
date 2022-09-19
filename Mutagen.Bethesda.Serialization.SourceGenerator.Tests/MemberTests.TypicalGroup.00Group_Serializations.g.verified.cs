@@ -9,7 +9,8 @@ internal static class Group_Serialization
     public static void Serialize<TKernel, TWriteObject, T>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
-        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
         where T : class, IMajorRecordInternal
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
@@ -17,7 +18,9 @@ internal static class Group_Serialization
         kernel.WriteInt32(writer, "SomeInt2", item.SomeInt2, default(int));
     }
 
-    public static bool HasSerializationItems<T>(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item)
+    public static bool HasSerializationItems<T>(
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
+        SerializationMetaData metaData)
         where T : class, IMajorRecordInternal
     {
         return true;

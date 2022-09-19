@@ -12,6 +12,7 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (item.SomeList is {} checkedSomeList
             && checkedSomeList.Count > 0)
         {
@@ -92,6 +93,7 @@ internal static class TestMod_Serialization
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (item.SomeList.Count > 0) return true;
         if (item.SomeList2.Count > 0) return true;
         if (item.SomeList3.Count > 0) return true;

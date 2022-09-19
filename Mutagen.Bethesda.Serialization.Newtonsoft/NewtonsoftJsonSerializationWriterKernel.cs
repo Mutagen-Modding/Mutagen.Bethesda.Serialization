@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Runtime.InteropServices.ComTypes;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
@@ -457,24 +456,26 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         JsonWritingUnit writer,
         string? fieldName,
         TObject item, 
+        SerializationMetaData serializationMetaData,
         Write<TKernel, JsonWritingUnit, TObject> writeCall) 
         where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
     {
         writer.WriteName(fieldName);
-        writeCall(writer, item, kernel);
+        writeCall(writer, item, kernel, serializationMetaData);
     }
 
     public void WriteLoqui<TKernel, TObject>(
         MutagenSerializationWriterKernel<TKernel, JsonWritingUnit> kernel,
-        JsonWritingUnit writer
-        , string? fieldName,
+        JsonWritingUnit writer, 
+        string? fieldName,
         TObject item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, JsonWritingUnit, TObject> writeCall) 
         where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
     {
         writer.WriteName(fieldName);
         writer.Writer.WriteStartObject();
-        writeCall(writer, item, kernel);
+        writeCall(writer, item, kernel, serializationMetaData);
         writer.Writer.WriteEndObject();
     }
 

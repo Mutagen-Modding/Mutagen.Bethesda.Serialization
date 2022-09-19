@@ -9,12 +9,15 @@ internal static class SomeLoqui_Serialization
     public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
-        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
     }
 
-    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item)
+    public static bool HasSerializationItems(
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
+        SerializationMetaData metaData)
     {
         return false;
     }

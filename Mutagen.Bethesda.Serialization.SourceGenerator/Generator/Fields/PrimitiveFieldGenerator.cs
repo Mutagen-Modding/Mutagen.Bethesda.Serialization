@@ -39,6 +39,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -67,6 +68,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

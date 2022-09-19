@@ -42,6 +42,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor, 
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -89,6 +90,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor, 
+        string metaAccessor,
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {

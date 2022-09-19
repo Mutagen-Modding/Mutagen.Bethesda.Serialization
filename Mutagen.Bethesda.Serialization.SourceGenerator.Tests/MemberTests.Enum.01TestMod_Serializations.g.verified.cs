@@ -12,6 +12,7 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>(writer, "SomeEnum", item.SomeEnum, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum));
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>(writer, "SomeEnum2", item.SomeEnum2, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum));
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2>(writer, "SomeEnum3", item.SomeEnum3, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2));
@@ -22,6 +23,7 @@ internal static class TestMod_Serialization
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (!EqualityComparer<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>.Default.Equals(item.SomeEnum, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum))) return true;
         if (!EqualityComparer<System.Nullable<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>>.Default.Equals(item.SomeEnum2, default(System.Nullable<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum>))) return true;
         if (!EqualityComparer<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2>.Default.Equals(item.SomeEnum3, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter.MyEnum2))) return true;

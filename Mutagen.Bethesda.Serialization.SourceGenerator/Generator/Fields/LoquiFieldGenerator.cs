@@ -52,6 +52,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -74,12 +75,12 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
             {
                 i.Add($"{fieldAccessor} is {{}} {fieldName}Checked");
                 fieldAccessor = $"{fieldName}Checked";
-                i.Add($"{fieldSerializationItems.HasSerializationCall(hasInheriting)}({fieldAccessor})");
+                i.Add($"{fieldSerializationItems.HasSerializationCall(hasInheriting)}({fieldAccessor}, {metaAccessor})");
             }
         }
         using (sb.CurlyBrace(doIt: fieldName != null))
         {
-            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, static (w, i, k) => {call}<TKernel, TWriteObject>(w, i, k));");
+            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, {metaAccessor}, static (w, i, k, m) => {call}<TKernel, TWriteObject>(w, i, k, m));");
         }
     }
 
@@ -92,12 +93,13 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
-        sb.AppendLine($"if ({fieldSerializationItems.HasSerializationCall(withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter))}({fieldAccessor})) return true;");
+        sb.AppendLine($"if ({fieldSerializationItems.HasSerializationCall(withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter))}({fieldAccessor}, {metaAccessor})) return true;");
     }
 
     public void GenerateForDeserialize(

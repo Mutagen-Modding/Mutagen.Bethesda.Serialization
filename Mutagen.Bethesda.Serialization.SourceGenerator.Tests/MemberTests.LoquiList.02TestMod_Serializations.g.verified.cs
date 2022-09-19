@@ -12,13 +12,14 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (item.SomeList is {} checkedSomeList
             && checkedSomeList.Count > 0)
         {
             kernel.StartListSection(writer, "SomeList");
             foreach (var listItem in checkedSomeList)
             {
-                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
+                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -28,7 +29,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList2");
             foreach (var listItem in checkedSomeList2)
             {
-                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
+                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -38,7 +39,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList3");
             foreach (var listItem in checkedSomeList3)
             {
-                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
+                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -48,7 +49,7 @@ internal static class TestMod_Serialization
             kernel.StartListSection(writer, "SomeList4");
             foreach (var listItem in checkedSomeList4)
             {
-                kernel.WriteLoqui(writer, null, listItem, static (w, i, k) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k));
+                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -56,6 +57,7 @@ internal static class TestMod_Serialization
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (item.SomeList.Count > 0) return true;
         if (item.SomeList2.Count > 0) return true;
         if (item.SomeList3.Count > 0) return true;

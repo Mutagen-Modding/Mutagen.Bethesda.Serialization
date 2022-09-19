@@ -13,6 +13,7 @@ internal static class TestMod_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         kernel.WriteString(writer, "SomeAssetLink", item.SomeAssetLink?.RawPath, default(string));
         kernel.WriteString(writer, "SomeAssetLink2", item.SomeAssetLink2?.RawPath, default(string));
         kernel.WriteString(writer, "SomeAssetLink3", item.SomeAssetLink3?.RawPath, default(string));
@@ -38,6 +39,7 @@ internal static class TestMod_Serialization
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
     {
+        var metaData = new SerializationMetaData(item.GameRelease);
         if (!EqualityComparer<AssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink, default(AssetLink<INpcGetter>))) return true;
         if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>>.Default.Equals(item.SomeAssetLink2, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<INpcGetter>))) return true;
         if (!EqualityComparer<Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>>.Default.Equals(item.SomeAssetLink3, default(Mutagen.Bethesda.Plugins.Assets.AssetLink<Mutagen.Bethesda.Skyrim.INpcGetter>))) return true;

@@ -359,13 +359,14 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     {
         var str =  await GetResults((k, w) =>
         {
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             k.StartListSection(w, "MyList");
-            k.WriteLoqui(w, null, new SomeClass(4, "Hello"), (subW, obj, subKernel) =>
+            k.WriteLoqui(w, null, new SomeClass(4, "Hello"), meta, (subW, obj, subKernel, meta) =>
             {
                 subKernel.WriteInt32(subW, "Int", obj.Int, default);
                 subKernel.WriteString(subW, "String", obj.String, default);
             });
-            k.WriteLoqui(w, null, new SomeClass(6, "World"), (subW, obj, subKernel) =>
+            k.WriteLoqui(w, null, new SomeClass(6, "World"), meta, (subW, obj, subKernel, meta) =>
             {
                 subKernel.WriteInt32(subW, "Int", obj.Int, default);
                 subKernel.WriteString(subW, "String", obj.String, default);
@@ -466,12 +467,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
                 new SomeClass(7, "Hello"),
                 new SomeClass(10, "World"),
             };
-            SerializationHelper.WriteGroup(w, objs, "MyGroup", k,
-                (w, g, k) =>
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+            SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
+                (w, g, k, m) =>
                 {
                     k.WriteBool(w, "SomeGroupField", true, default);
                 },
-                new Write<TWriterKernel,TWriter, SomeClass>((w, i, k) =>
+                new Write<TWriterKernel,TWriter, SomeClass>((w, i, k, m) =>
                 {
                     k.WriteInt32(w, "Int", i.Int, default);
                     k.WriteString(w, "String", i.String, default);

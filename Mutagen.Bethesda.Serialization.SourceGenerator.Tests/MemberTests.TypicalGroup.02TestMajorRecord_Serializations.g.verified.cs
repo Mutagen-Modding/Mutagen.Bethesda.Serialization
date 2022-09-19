@@ -9,12 +9,15 @@ internal static class TestMajorRecord_Serialization
     public static void Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
-        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
     }
 
-    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item)
+    public static bool HasSerializationItems(
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
+        SerializationMetaData metaData)
     {
         return false;
     }

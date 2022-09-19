@@ -258,11 +258,12 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         YamlWritingUnit writer,
         string? fieldName,
         TObject item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, YamlWritingUnit, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<YamlWritingUnit>, new()
     {
         writer.WriteName(fieldName);
-        writeCall(writer, item, kernel);
+        writeCall(writer, item, kernel, serializationMetaData);
     }
 
     public void WriteLoqui<TKernel, TObject>(
@@ -270,12 +271,13 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         YamlWritingUnit writer, 
         string? fieldName,
         TObject item,
+        SerializationMetaData serializationMetaData,
         Write<TKernel, YamlWritingUnit, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<YamlWritingUnit>, new()
     {
         writer.WriteName(fieldName);
         writer.Emitter.Emit(new MappingStart());
-        writeCall(writer, item, kernel);
+        writeCall(writer, item, kernel, serializationMetaData);
         writer.Emitter.Emit(new MappingEnd());
     }
 

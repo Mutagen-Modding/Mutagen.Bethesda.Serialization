@@ -42,7 +42,8 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         string fieldAccessor,
         string? defaultValueAccessor,
         string writerAccessor,
-        string kernelAccessor, 
+        string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -90,6 +91,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

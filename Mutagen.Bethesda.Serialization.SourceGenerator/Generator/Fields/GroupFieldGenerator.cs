@@ -44,6 +44,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         string? defaultValueAccessor,
         string writerAccessor, 
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -58,9 +59,10 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             f.Add($"writer: {writerAccessor}");
             f.Add($"group: {fieldAccessor}");
             f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
+            f.Add($"meta: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
-            f.Add($"groupWriter: static (w, i, k) => {fieldSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k)");
-            f.Add($"itemWriter: static (w, i, k) => {subSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject>(w, i, k)");
+            f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
+            f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject>(w, i, k, m)");
         }
     }
 
@@ -73,6 +75,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor, 
+        string metaAccessor,
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
