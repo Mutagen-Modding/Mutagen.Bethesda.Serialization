@@ -57,7 +57,7 @@ public class SerializationForObjectGenerator
         context.CancellationToken.ThrowIfCancellationRequested();
         
         if (!compilation.Mapping.TryGetTypeSet(obj, out var typeSet)) return;
-        var baseType = compilation.Mapping.TryGetBaseClass(obj);
+        var baseType = compilation.Mapping.TryGetBaseClass(typeSet.Direct);
         var inheriting = compilation.Mapping.TryGetInheritingClasses(typeSet.Getter);
         
         var sb = new StructuredStringBuilder();
@@ -130,7 +130,8 @@ public class SerializationForObjectGenerator
         PropertyCollection properties,
         SerializationGenerics generics)
     {
-        using (var args = sb.Function($"public static void Serialize{generics.WriterGenericsString(forHas: false)}"))
+        var genString = generics.WriterGenericsString(forHas: false);
+        using (var args = sb.Function($"public static void Serialize{genString}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{typeSet.Getter} item");
@@ -144,7 +145,7 @@ public class SerializationForObjectGenerator
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
                 sb.AppendLine(
-                    $"{baseSerializationItems.SerializationCall(serialize: true)}<TWriteObject>(item, writer, kernel);");
+                    $"{baseSerializationItems.SerializationCall(serialize: true)}{genString}(writer, item, kernel);");
             }
 
             foreach (var prop in properties.InOrder)
@@ -187,7 +188,7 @@ public class SerializationForObjectGenerator
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
                 sb.AppendLine(
-                    $"{baseSerializationItems.HasSerializationCall()}{generics.WriterGenericsString(forHas: true)}(item);");
+                    $"if ({baseSerializationItems.HasSerializationCall()}{generics.WriterGenericsString(forHas: true)}(item)) return true;");
             }
 
             var hasInvariable = properties.InOrder.Any(x =>

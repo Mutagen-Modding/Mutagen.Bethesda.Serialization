@@ -12,10 +12,12 @@ internal static class SubclassLoquiA_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.Serialize<TKernel, TWriteObject>(writer, item, kernel);
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter item)
     {
+        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItems(item)) return true;
         return false;
     }
 

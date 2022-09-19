@@ -12,10 +12,12 @@ internal static class SomeLoquiWithBase_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Serialize<TKernel, TWriteObject>(writer, item, kernel);
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter item)
     {
+        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.HasSerializationItems(item)) return true;
         return false;
     }
 
