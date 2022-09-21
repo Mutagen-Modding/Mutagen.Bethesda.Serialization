@@ -70,9 +70,9 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
     {
         if (_groupTester.IsGroup(obj)) return;
 
-        var nullable = Utility.IsNullable(field);
+        var nullable = field.IsNullable();
 
-        field = Utility.PeelNullable(field);
+        field = field.PeelNullable();
         
         ITypeSymbol subType;
         if (field is IArrayTypeSymbol arr)
@@ -131,7 +131,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
+        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}.Count > 0) return true;");
     }
 
     public void GenerateForDeserialize(

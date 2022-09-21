@@ -99,9 +99,9 @@ internal static class SomeObject_Serialization
         if (item.SomeList2.Count > 0) return true;
         if (item.SomeList3.Count > 0) return true;
         if (item.SomeList4.Count > 0) return true;
-        if (item.SomeList5.Count > 0) return true;
-        if (item.SomeList6.Count > 0) return true;
-        if (item.SomeList7.Count > 0) return true;
+        if (item.SomeList5?.Count > 0) return true;
+        if (item.SomeList6?.Count > 0) return true;
+        if (item.SomeList7?.Count > 0) return true;
         if (item.SomeList8.Count > 0) return true;
         return false;
     }
