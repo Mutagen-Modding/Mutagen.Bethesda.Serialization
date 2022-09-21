@@ -1,5 +1,5 @@
-using Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Generator.Fields;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;

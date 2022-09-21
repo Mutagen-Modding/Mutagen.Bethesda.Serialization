@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Generator;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
