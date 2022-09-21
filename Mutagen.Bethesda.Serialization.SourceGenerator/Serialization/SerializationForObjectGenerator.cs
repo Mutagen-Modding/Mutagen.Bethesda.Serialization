@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -15,6 +17,7 @@ public class SerializationForObjectGenerator
     private readonly WhereClauseGenerator _whereClauseGenerator;
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly PropertyCollectionRetriever _propertyCollectionRetriever;
+    private readonly CustomizationDriver _customizationDriver;
     private readonly IsModObjectTester _modObjectTester;
 
     public SerializationForObjectGenerator(
@@ -23,6 +26,7 @@ public class SerializationForObjectGenerator
         WhereClauseGenerator whereClauseGenerator,
         LoquiSerializationNaming loquiSerializationNaming,
         PropertyCollectionRetriever propertyCollectionRetriever, 
+        CustomizationDriver customizationDriver,
         IsModObjectTester modObjectTester)
     {
         _nameRetriever = nameRetriever;
@@ -30,12 +34,14 @@ public class SerializationForObjectGenerator
         _whereClauseGenerator = whereClauseGenerator;
         _loquiSerializationNaming = loquiSerializationNaming;
         _propertyCollectionRetriever = propertyCollectionRetriever;
+        _customizationDriver = customizationDriver;
         _modObjectTester = modObjectTester;
     }
     
     public void Generate(
         CompilationUnit compilation, 
-        SourceProductionContext context, 
+        CustomizationCatalog? customizationDriver,
+        SourceProductionContext context,
         ITypeSymbol obj)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
@@ -70,14 +76,14 @@ public class SerializationForObjectGenerator
                 GenerateSerializeWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
             }
             
-            GenerateSerialize(compilation, context, obj, sb, typeSet, baseType, properties, gens);
+            GenerateSerialize(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
             
             if (inheriting.Count > 0)
             {
                 GenerateHasSerializationItemsWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
             }
             
-            GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, gens);
+            GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
             
             GenerateDeserialize(sb, typeSet, gens);
         }
@@ -112,6 +118,7 @@ public class SerializationForObjectGenerator
         LoquiTypeSet typeSet,
         ITypeSymbol? baseType,
         PropertyCollection properties,
+        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
         var genString = generics.WriterGenericsString(forHas: false);
@@ -145,17 +152,20 @@ public class SerializationForObjectGenerator
             foreach (var prop in properties.InOrder)
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
-                _forFieldGenerator.GenerateForField(
-                    compilation: compilation,
-                    obj: obj, 
-                    fieldType: prop.Property.Type,
-                    writerAccessor: "writer", 
-                    fieldName: prop.Property.Name, 
-                    fieldAccessor: $"item.{prop.Property.Name}", 
-                    defaultValueAccessor: prop.DefaultString,
-                    prop.Generator,
-                    sb: sb, 
-                    cancel: context.CancellationToken);
+                _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                {
+                    _forFieldGenerator.GenerateForField(
+                        compilation: compilation,
+                        obj: obj,
+                        fieldType: prop.Property.Type,
+                        writerAccessor: "writer",
+                        fieldName: prop.Property.Name,
+                        fieldAccessor: $"item.{prop.Property.Name}",
+                        defaultValueAccessor: prop.DefaultString,
+                        prop.Generator,
+                        sb: sb,
+                        cancel: context.CancellationToken);
+                });
             }
         }
         sb.AppendLine();
@@ -168,6 +178,7 @@ public class SerializationForObjectGenerator
         LoquiTypeSet typeSet,
         ITypeSymbol? baseType,
         PropertyCollection properties,
+        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
         var isMod = _modObjectTester.IsModObject(obj);
@@ -209,16 +220,19 @@ public class SerializationForObjectGenerator
                 foreach (var prop in properties.InOrder)
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
-                    _forFieldGenerator.GenerateHasForField(
-                        compilation: compilation,
-                        obj: obj, 
-                        fieldType: prop.Property.Type,
-                        fieldName: prop.Property.Name, 
-                        fieldAccessor: $"item.{prop.Property.Name}", 
-                        defaultValueAccessor: prop.DefaultString,
-                        prop.Generator,
-                        sb: sb, 
-                        cancel: context.CancellationToken);
+                    _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                    {
+                        _forFieldGenerator.GenerateHasForField(
+                            compilation: compilation,
+                            obj: obj, 
+                            fieldType: prop.Property.Type,
+                            fieldName: prop.Property.Name, 
+                            fieldAccessor: $"item.{prop.Property.Name}", 
+                            defaultValueAccessor: prop.DefaultString,
+                            prop.Generator,
+                            sb: sb, 
+                            cancel: context.CancellationToken);
+                    });
                 }
             
                 sb.AppendLine("return false;");

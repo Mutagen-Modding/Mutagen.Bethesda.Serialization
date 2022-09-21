@@ -1,52 +1,59 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
+public record CustomizeMethodDeclaration(
+    MethodDeclarationSyntax MethodSyntax,
+    INamedTypeSymbol Target,
+    INamedTypeSymbol ContainingClass)
+{
+    public virtual bool Equals(CustomizeMethodDeclaration? other)
+    {
+        if (other == null) return false;
+        return Target.Equals(other.Target, SymbolEqualityComparer.Default)
+            && MethodSyntax.Equals(other.MethodSyntax);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (SymbolEqualityComparer.Default.GetHashCode(Target) * 397)
+                   ^ MethodSyntax.GetHashCode() * 397;
+        }
+    }
+}
+
 public class CustomizationDetector
 {
-    public IncrementalValuesProvider<BootstrapInvocation> GetBootstrapInvocations(IncrementalGeneratorInitializationContext context)
+    public IncrementalValuesProvider<CustomizeMethodDeclaration> GetCustomizationMethods(IncrementalGeneratorInitializationContext context)
     {
         return context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (node, _) => node is ClassDeclarationSyntax,
-                transform: GetBootstrapInvocation)
-            .Where(x => x != null)!;
+                predicate: static (node, _) => node is MethodDeclarationSyntax,
+                transform: GetMethodDeclaration)
+            .NotNull();
     }
-    
-    public BootstrapInvocation? GetBootstrapInvocation(GeneratorSyntaxContext context, CancellationToken cancel)
+
+    public CustomizeMethodDeclaration? GetMethodDeclaration(GeneratorSyntaxContext context, CancellationToken cancel)
     {
-        var classSyntax = (ClassDeclarationSyntax)context.Node;
-        
-        // var expressionSymbol = context.SemanticModel.GetSymbolInfo(memberAccessSyntax.Expression).Symbol;
-        // if (expressionSymbol is IFieldSymbol fieldSymbol)
-        // {
-        //     expressionSymbol = fieldSymbol.Type;
-        // }
-        // if (expressionSymbol is not INamedTypeSymbol namedTypeSymbol) return default;
-        // if (!namedTypeSymbol.AllInterfaces.Any(x => x.Name == "IMutagenSerializationBootstrap")) return default;
-        //
-        // var ret = new BootstrapInvocation(namedTypeSymbol, default);
-        // if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
-        // if (invocationExpressionSyntax.ArgumentList.Arguments.Count is not (2 or 1)) return ret;
-        //
-        // var symb = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax.ArgumentList.Arguments[0].Expression).Symbol;
-        // if (symb == null) return ret;
-        //
-        // var type = symb.TryGetTypeSymbol();
-        // if (type == null) return ret;
-        //
-        // if (!_loquiObjectTester.IsLoqui(type)) return ret;
-        //
-        // var getterInterface = type.AllInterfaces
-        //     .And(type)
-        //     .WhereCastable<ITypeSymbol, INamedTypeSymbol>()
-        //     .FirstOrDefault(x => x.Name.EndsWith("Getter") &&
-        //                          SymbolEqualityComparer.Default.Equals(x.ContainingNamespace, type.ContainingNamespace));
-        // if (getterInterface == null) return ret;
-        //
-        // return ret with { ObjectRegistration = getterInterface };
-        return default;
+        var methodDeclarationSyntax = (MethodDeclarationSyntax)context.Node;
+        if (methodDeclarationSyntax.Identifier.ToString() != "CustomizeFor") return default;
+        if (methodDeclarationSyntax.ParameterList.Parameters.Count != 1) return default;
+        if (methodDeclarationSyntax.ParameterList.Parameters[0].Type is not GenericNameSyntax genericNameSyntax)
+            return default;
+        if (genericNameSyntax.TypeArgumentList.Arguments.Count != 1) return default;
+        if (genericNameSyntax.Identifier.ToString() != "ICustomizationBuilder") return default;
+        var p = genericNameSyntax.TypeArgumentList.Arguments[0];
+        var targetSymbol = context.SemanticModel.GetSymbolInfo(p).Symbol;
+        if (targetSymbol is not INamedTypeSymbol namedTargetSymbol) return default;
+        var containingClassDeclarationSyntax = methodDeclarationSyntax.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        if (containingClassDeclarationSyntax == null) return default;
+        var containingClass = context.SemanticModel.GetDeclaredSymbol(containingClassDeclarationSyntax);
+        if (containingClass is not INamedTypeSymbol namedClass) return default;
+        return new CustomizeMethodDeclaration(methodDeclarationSyntax, namedTargetSymbol, ContainingClass: namedClass);
     }
 }

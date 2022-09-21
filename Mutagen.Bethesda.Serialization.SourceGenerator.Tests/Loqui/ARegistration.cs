@@ -3,7 +3,7 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-abstract class ARegistration : ILoquiRegistration
+public abstract class ARegistration : ILoquiRegistration
 {
     public static ProtocolKey StaticProtocolKey { get; } = new("Test");
     

@@ -18,7 +18,7 @@ public record BootstrapInvocation(INamedTypeSymbol Bootstrap, INamedTypeSymbol? 
         unchecked
         {
             return (SymbolEqualityComparer.Default.GetHashCode(Bootstrap) * 397)
-                   ^ (ObjectRegistration != null ? SymbolEqualityComparer.IncludeNullability.GetHashCode(ObjectRegistration) : 0);
+                   ^ (ObjectRegistration != null ? SymbolEqualityComparer.IncludeNullability.GetHashCode(ObjectRegistration) : 0) * 397;
         }
     }
 }
@@ -39,7 +39,7 @@ public class BootstrapInvocationDetector
             .CreateSyntaxProvider(
                 predicate: static (node, _) => node is MemberAccessExpressionSyntax,
                 transform: GetBootstrapInvocation)
-            .Where(x => x != null)!;
+            .NotNull();
     }
     
     public BootstrapInvocation? GetBootstrapInvocation(GeneratorSyntaxContext context, CancellationToken cancel)

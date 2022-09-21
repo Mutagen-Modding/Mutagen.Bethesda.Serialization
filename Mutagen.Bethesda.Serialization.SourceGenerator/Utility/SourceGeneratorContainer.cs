@@ -1,3 +1,4 @@
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using StrongInject;
@@ -22,6 +23,10 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 [Register<IsGroupTester>]
 [Register<PropertyCollectionRetriever>]
 [Register<IsModObjectTester>]
+[Register<CustomizationDetector>]
+[Register<CustomizationInterpreter>]
+[Register<CustomizationProvider>]
+[Register<CustomizationDriver>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]

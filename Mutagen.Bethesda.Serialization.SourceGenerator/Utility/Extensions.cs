@@ -10,4 +10,9 @@ public static class Extensions
         if (symbol is IParameterSymbol param) return param.Type;
         return default;
     }
+
+    public static IncrementalValuesProvider<T> NotNull<T>(this IncrementalValuesProvider<T?> vals)
+    {
+        return vals.Where(x => x != null)!;
+    }
 }

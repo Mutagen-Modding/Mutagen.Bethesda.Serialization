@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
@@ -19,7 +21,10 @@ public class SerializationForObjectsGenerator
         _serializationForObjectGenerator = serializationForObjectGenerator;
     }
     
-    public void Initialize(IncrementalGeneratorInitializationContext context, IncrementalValuesProvider<BootstrapInvocation> bootstrapInvocations)
+    public void Initialize(
+        IncrementalGeneratorInitializationContext context, 
+        IncrementalValuesProvider<BootstrapInvocation> bootstrapInvocations,
+        IncrementalValueProvider<ImmutableDictionary<ITypeSymbol, CustomizationCatalog>> customizationDriver)
     {
         var distinctBootstraps = bootstrapInvocations.Collect()
             .Select((allSymbols, cancel) =>
@@ -27,7 +32,7 @@ public class SerializationForObjectsGenerator
                 cancel.ThrowIfCancellationRequested();
                 return allSymbols
                     .Select(x => x.ObjectRegistration)
-                    .Where(x => x != null)!
+                    .NotNull()
                     .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
             });
         var mappings = context.CompilationProvider
@@ -49,10 +54,22 @@ public class SerializationForObjectsGenerator
         context.RegisterSourceOutput(
             allClassesToGenerate
                 .Combine(context.CompilationProvider)
-                .Combine(mappings),
-            (c, i) =>
+                .Combine(mappings)
+                .Combine(customizationDriver),
+            (compilation, i) =>
             {
-                _serializationForObjectGenerator.Generate(new CompilationUnit(i.Left.Right, i.Right), c, i.Left.Left);
+                var compUnit = new CompilationUnit(i.Left.Left.Right, i.Left.Right);
+                var target = i.Left.Left.Left;
+                CustomizationCatalog? customization = null;
+                if (i.Right.TryGetValue(target, out var customDriver))
+                {
+                    customization = customDriver;
+                }
+                _serializationForObjectGenerator.Generate(
+                    compUnit, 
+                    customization,
+                    compilation,
+                    target);
             });
     }
 }
