@@ -66,7 +66,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
-                _forFieldGenerator().Value.GenerateForField(
+                _forFieldGenerator().Value.GenerateSerializeForField(
                     compilation: compilation, 
                     obj: obj, 
                     fieldType: subType,
@@ -100,14 +100,44 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
-        IPropertySymbol propertySymbol,
-        string itemAccessor,
-        string writerAccessor, 
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        ITypeSymbol subType;
+        if (field is INamedTypeSymbol namedTypeSymbol)
+        {
+            subType = namedTypeSymbol.TypeArguments[0];
+        }
+        else
+        {
+            return;
+        }
+        
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine($"{kernelAccessor}.StartArray2dSection({readerAccessor});");
+            sb.AppendLine($"while ({kernelAccessor}.TryHasNextArray2dItem({readerAccessor}, out int x, out int y))");
+            using (sb.CurlyBrace())
+            {
+                _forFieldGenerator().Value.GenerateDeserializeForField(
+                    compilation: compilation,
+                    obj: obj,
+                    fieldType: subType,
+                    readerAccessor: readerAccessor, 
+                    fieldName: null, 
+                    fieldAccessor: "var item",
+                    sb: sb,
+                    cancel: cancel);
+                sb.AppendLine($"{fieldAccessor}.Set(x, y, item);");
+            }
+            sb.AppendLine($"{kernelAccessor}.EndArray2dSection({readerAccessor});");
+        }
     }
 }

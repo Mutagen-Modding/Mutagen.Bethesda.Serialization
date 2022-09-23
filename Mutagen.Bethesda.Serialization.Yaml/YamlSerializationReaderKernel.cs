@@ -13,6 +13,16 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
         throw new NotImplementedException();
     }
 
+    public bool TryGetNextField(out string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public char ReadChar(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public bool ReadBool(YamlNode reader)
     {
         throw new NotImplementedException();
@@ -89,6 +99,21 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartListSection(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndListSection(YamlNode reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextItem(YamlNode reader)
     {
         throw new NotImplementedException();
     }

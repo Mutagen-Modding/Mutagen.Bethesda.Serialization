@@ -85,18 +85,27 @@ public class SerializationForObjectGenerator
             
             GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
             
-            GenerateDeserialize(sb, typeSet, gens);
+            GenerateDeserialize(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
         }
         sb.AppendLine();
         
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private static void GenerateDeserialize(StructuredStringBuilder sb,
+    private void GenerateDeserialize(
+        CompilationUnit compilation,
+        SourceProductionContext context,
+        ITypeSymbol obj,
+        StructuredStringBuilder sb,
         LoquiTypeSet typeSet,
+        ITypeSymbol? baseType,
+        PropertyCollection properties,
+        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
-        using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{generics.ReaderGenericsString()}"))
+        var genString = generics.ReaderGenericsString();
+        var isMod = _modObjectTester.IsModObject(obj);
+        using (var args = sb.Function($"public static {typeSet.Setter} Deserialize{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
@@ -105,13 +114,58 @@ public class SerializationForObjectGenerator
 
         using (sb.CurlyBrace())
         {
-            sb.AppendLine("throw new NotImplementedException();");
-        }
+            if (isMod)
+            {
+                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
+            }
+            
+            if (baseType != null
+                && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
+            {
+                sb.AppendLine(
+                    $"{baseSerializationItems.SerializationCall(serialize: true)}{genString}(writer, item, kernel, metaData);");
+            }
 
+            sb.AppendLine($"while (kernel.TryGetNextField(out var name))");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("switch (name)");
+                using (sb.CurlyBrace())
+                {
+                    foreach (var prop in properties.InOrder)
+                    {
+                        context.CancellationToken.ThrowIfCancellationRequested();
+                        _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                        {
+                            sb.AppendLine($"case: \"{prop.Property.Name}\":");
+                            using (sb.IncreaseDepth())
+                            {
+                                _forFieldGenerator.GenerateDeserializeForField(
+                                    compilation: compilation,
+                                    obj: obj,
+                                    fieldType: prop.Property.Type,
+                                    readerAccessor: "writer",
+                                    fieldName: prop.Property.Name,
+                                    fieldAccessor: $"item.{prop.Property.Name}",
+                                    prop.Generator,
+                                    sb: sb,
+                                    cancel: context.CancellationToken);
+                            }
+                        });
+                    }
+                    sb.AppendLine("default:");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine("break;");
+                    }
+                }
+            }
+        }
         sb.AppendLine();
     }
 
-    private void GenerateSerialize(CompilationUnit compilation,
+    private void GenerateSerialize(
+        CompilationUnit compilation,
         SourceProductionContext context,
         ITypeSymbol obj,
         StructuredStringBuilder sb,
@@ -154,7 +208,7 @@ public class SerializationForObjectGenerator
                 context.CancellationToken.ThrowIfCancellationRequested();
                 _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
                 {
-                    _forFieldGenerator.GenerateForField(
+                    _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
                         obj: obj,
                         fieldType: prop.Property.Type,
@@ -222,7 +276,7 @@ public class SerializationForObjectGenerator
                     context.CancellationToken.ThrowIfCancellationRequested();
                     _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
                     {
-                        _forFieldGenerator.GenerateHasForField(
+                        _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,
                             obj: obj, 
                             fieldType: prop.Property.Type,

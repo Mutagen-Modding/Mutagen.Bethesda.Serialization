@@ -5,16 +5,24 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization;
 
-public delegate void Write<TKernel, TWriterObject, TObject>(
-    TWriterObject writer,
-    TObject obj,
-    MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel,
+public delegate TObject Read<TKernel, TReaderObject, TObject>(
+    TReaderObject reader,
+    TKernel kernel,
     SerializationMetaData metaData)
-    where TKernel : ISerializationWriterKernel<TWriterObject>, new();
+    where TKernel : ISerializationReaderKernel<TReaderObject>, new();
+
+public delegate void ReadInto<TKernel, TReaderObject, TObject>(
+    TReaderObject reader,
+    TObject obj,
+    TKernel kernel,
+    SerializationMetaData metaData)
+    where TKernel : ISerializationReaderKernel<TReaderObject>, new();
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
+    public bool TryGetNextField(out string name);
+    public char ReadChar(TReaderObject reader);
     public bool ReadBool(TReaderObject reader);
     public TEnum ReadEnum<TEnum>(TReaderObject reader)
         where TEnum : struct, Enum, IConvertible;
@@ -32,7 +40,22 @@ public interface ISerializationReaderKernel<TReaderObject>
     public RecordType ReadRecordType(TReaderObject reader);
     public TranslatedString ReadTranslatedString(TReaderObject reader);
     public ReadOnlyMemorySlice<byte> ReadBytes(TReaderObject reader);
+
+    #region List
+    
+    public void StartListSection(TReaderObject reader);
+    public void EndListSection(TReaderObject reader);
+    public bool TryHasNextItem(TReaderObject reader);
+
+    #endregion
 }
+
+public delegate void Write<TKernel, TWriterObject, TObject>(
+    TWriterObject writer,
+    TObject obj,
+    MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel,
+    SerializationMetaData metaData)
+    where TKernel : ISerializationWriterKernel<TWriterObject>, new();
 
 public interface ISerializationWriterKernel<TWriterObject>
 {

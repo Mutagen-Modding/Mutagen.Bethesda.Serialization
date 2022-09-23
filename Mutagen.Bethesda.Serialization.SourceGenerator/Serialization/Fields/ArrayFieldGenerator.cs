@@ -72,14 +72,26 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
-        IPropertySymbol propertySymbol,
-        string itemAccessor, 
-        string writerAccessor,
-        string kernelAccessor, 
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
+        string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        _listGenerator().Value.GenerateForDeserialize(
+            compilation: compilation,
+            obj: obj, 
+            field: field,
+            fieldName: fieldName, 
+            fieldAccessor: fieldAccessor,
+            readerAccessor: readerAccessor,
+            kernelAccessor: kernelAccessor, 
+            metaAccessor: metaAccessor,
+            sb: sb,
+            cancel: cancel);
     }
 }

@@ -26,7 +26,14 @@ internal static class TestMajorRecord_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                default:
+                    break;
+            }
+        }
     }
 
 }

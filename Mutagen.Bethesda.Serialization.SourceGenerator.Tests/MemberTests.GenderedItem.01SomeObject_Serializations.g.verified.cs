@@ -38,7 +38,23 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeGenderedInt":
+                    item.SomeGenderedInt.Male = kernel.ReadString(writer);
+                    item.SomeGenderedInt.Female = kernel.ReadString(writer);
+                case: "SomeGenderedInt2":
+                    item.SomeGenderedInt2.Male = kernel.ReadString(writer);
+                    item.SomeGenderedInt2.Female = kernel.ReadString(writer);
+                case: "SomeGenderedInt3":
+                    item.SomeGenderedInt3.Male = kernel.ReadString(writer);
+                    item.SomeGenderedInt3.Female = kernel.ReadString(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

@@ -23,7 +23,7 @@ public class SerializationFieldGenerator
         }
     }
     
-    public void GenerateForField(
+    public void GenerateSerializeForField(
         CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,
@@ -46,7 +46,7 @@ public class SerializationFieldGenerator
         }
     }
     
-    public void GenerateForField(
+    public void GenerateSerializeForField(
         CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,
@@ -69,7 +69,51 @@ public class SerializationFieldGenerator
         }
     }
     
-    public void GenerateHasForField(
+    public void GenerateDeserializeForField(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        string readerAccessor,
+        string? fieldName,
+        string fieldAccessor,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        var gen = GetGenerator(fieldType, cancel);
+        if (gen != null)
+        {
+            gen.GenerateForDeserialize(compilation, obj, fieldType, fieldName, fieldAccessor, readerAccessor, "kernel", "metaData", sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
+    
+    public void GenerateDeserializeForField(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol fieldType,
+        string readerAccessor,
+        string? fieldName,
+        string fieldAccessor,
+        ISerializationForFieldGenerator? gen,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        if (gen != null)
+        {
+            gen.GenerateForDeserialize(compilation, obj, fieldType, fieldName, fieldAccessor, readerAccessor, "kernel", "metaData", sb, cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+        }
+    }
+    
+    public void GenerateHasSerializeForField(
         CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,
@@ -91,7 +135,7 @@ public class SerializationFieldGenerator
         }
     }
     
-    public void GenerateHasForField(
+    public void GenerateHasSerializeForField(
         CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol fieldType,

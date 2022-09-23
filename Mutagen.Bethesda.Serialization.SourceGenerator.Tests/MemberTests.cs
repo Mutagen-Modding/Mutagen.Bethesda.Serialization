@@ -312,11 +312,9 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public List<string> SomeList { get; set; }");
             sb.AppendLine("public IReadOnlyList<string> SomeList2 { get; set; }");
             sb.AppendLine("public ExtendedList<string> SomeList3 { get; set; }");
-            sb.AppendLine("public string[] SomeList4 { get; set; }");
-            sb.AppendLine("public List<string>? SomeList5 { get; set; }");
-            sb.AppendLine("public IReadOnlyList<string>? SomeList6 { get; set; }");
-            sb.AppendLine("public ExtendedList<string>? SomeList7 { get; set; }");
-            sb.AppendLine("public string[]? SomeList8 { get; set; }");
+            sb.AppendLine("public List<string>? SomeList4 { get; set; }");
+            sb.AppendLine("public IReadOnlyList<string>? SomeList5 { get; set; }");
+            sb.AppendLine("public ExtendedList<string>? SomeList6 { get; set; }");
         });
        
         return TestHelper.Verify(source);
@@ -427,6 +425,7 @@ public class MemberTests : ATestsBase
         var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public string[] SomeArray { get; set; }");
+            sb.AppendLine("public string[]? SomeArray2 { get; set; }");
         });
        
         return TestHelper.Verify(source);

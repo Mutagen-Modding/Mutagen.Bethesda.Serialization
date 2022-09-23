@@ -60,7 +60,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        _forFieldGenerator().Value.GenerateForField(
+        _forFieldGenerator().Value.GenerateSerializeForField(
             compilation: compilation,
             obj: obj, fieldType: subType,
             writerAccessor: writerAccessor,
@@ -69,7 +69,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             defaultValueAccessor: null,
             sb: sb,
             cancel: cancel);
-        _forFieldGenerator().Value.GenerateForField(
+        _forFieldGenerator().Value.GenerateSerializeForField(
             compilation: compilation,
             obj: obj, 
             fieldType: subType,
@@ -108,7 +108,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        _forFieldGenerator().Value.GenerateHasForField(
+        _forFieldGenerator().Value.GenerateHasSerializeForField(
             compilation: compilation,
             obj: obj, 
             fieldType: subType,
@@ -117,7 +117,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             defaultValueAccessor: null,
             sb: sb,
             cancel: cancel);
-        _forFieldGenerator().Value.GenerateHasForField(
+        _forFieldGenerator().Value.GenerateHasSerializeForField(
             compilation: compilation,
             obj: obj, 
             fieldType: subType,
@@ -131,13 +131,45 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol,
-        string itemAccessor, 
-        string writerAccessor,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        ITypeSymbol subType;
+        if (field is IArrayTypeSymbol arr)
+        {
+            subType = arr.ElementType;
+        }
+        else if (field is INamedTypeSymbol namedTypeSymbol)
+        {
+            subType = GetSubtype(namedTypeSymbol);
+        }
+        else
+        {
+            return;
+        }
+
+        _forFieldGenerator().Value.GenerateDeserializeForField(
+            compilation: compilation,
+            obj: obj, fieldType: subType,
+            readerAccessor: readerAccessor,
+            fieldName: fieldName == null ? null : $"{fieldName}Male",
+            fieldAccessor: $"{fieldAccessor}.Male",
+            sb: sb,
+            cancel: cancel);
+        _forFieldGenerator().Value.GenerateDeserializeForField(
+            compilation: compilation,
+            obj: obj, 
+            fieldType: subType,
+            readerAccessor: readerAccessor, 
+            fieldName: fieldName == null ? null : $"{fieldName}Female", 
+            fieldAccessor: $"{fieldAccessor}.Female",
+            sb: sb,
+            cancel: cancel);
     }
 }

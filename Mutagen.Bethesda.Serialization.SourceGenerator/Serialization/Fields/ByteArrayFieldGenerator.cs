@@ -96,14 +96,19 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
-        IPropertySymbol propertySymbol, 
-        string itemAccessor,
-        string writerAccessor,
-        string kernelAccessor, 
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
+        string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadBytes", linePerArgument: false))
+        {
+            c.Add(readerAccessor);
+        }
     }
 }

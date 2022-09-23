@@ -51,7 +51,38 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "TranslatedString":
+                    item.TranslatedString = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString2":
+                    item.TranslatedString2 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString3":
+                    item.TranslatedString3 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString4":
+                    item.TranslatedString4 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString5":
+                    item.TranslatedString5 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString6":
+                    item.TranslatedString6 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString7":
+                    item.TranslatedString7 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString8":
+                    item.TranslatedString8 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString9":
+                    item.TranslatedString9 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString10":
+                    item.TranslatedString10 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString11":
+                    item.TranslatedString11 = kernel.ReadTranslatedString(writer);
+                case: "TranslatedString12":
+                    item.TranslatedString12 = kernel.ReadTranslatedString(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

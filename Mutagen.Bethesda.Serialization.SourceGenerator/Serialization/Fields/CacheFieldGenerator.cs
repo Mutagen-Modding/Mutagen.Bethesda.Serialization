@@ -58,12 +58,15 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         throw new NotImplementedException();
     }
 
-    public void GenerateForDeserialize(CompilationUnit compilation, 
-        ITypeSymbol obj, 
-        IPropertySymbol propertySymbol,
-        string itemAccessor, 
-        string writerAccessor, 
-        string kernelAccessor, 
+    public void GenerateForDeserialize(
+        CompilationUnit compilation,
+        ITypeSymbol obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
+        string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

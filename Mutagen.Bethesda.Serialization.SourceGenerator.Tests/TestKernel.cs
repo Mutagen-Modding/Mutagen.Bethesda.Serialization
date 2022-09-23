@@ -32,6 +32,16 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public bool TryGetNextField(out string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public char ReadChar(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Finalize(Stream stream, TestWriter writer)
     {
         throw new NotImplementedException();
@@ -340,6 +350,21 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartListSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndListSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextItem(TestReader reader)
     {
         throw new NotImplementedException();
     }

@@ -13,6 +13,16 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new NotImplementedException();
     }
 
+    public bool TryGetNextField(out string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public char ReadChar(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public bool ReadBool(JTokenReader reader)
     {
         throw new NotImplementedException();
@@ -89,6 +99,21 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartListSection(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndListSection(JTokenReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextItem(JTokenReader reader)
     {
         throw new NotImplementedException();
     }

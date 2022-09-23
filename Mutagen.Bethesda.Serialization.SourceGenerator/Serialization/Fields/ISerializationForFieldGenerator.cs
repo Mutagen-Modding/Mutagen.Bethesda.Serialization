@@ -40,10 +40,12 @@ public interface ISerializationForFieldGenerator
     void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol, 
-        string itemAccessor,
-        string writerAccessor,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel);
 }

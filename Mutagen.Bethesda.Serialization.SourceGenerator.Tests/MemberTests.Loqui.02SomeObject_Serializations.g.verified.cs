@@ -32,7 +32,16 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "MyLoqui":
+                    item.MyLoqui = kernel.ReadLoqui(writer, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
+                default:
+                    break;
+            }
+        }
     }
 
 }

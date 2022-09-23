@@ -65,7 +65,44 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeArray":
+                    {
+                        kernel.StartArray2dSection(writer);
+                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        {
+                            var item = kernel.ReadString(writer);
+                            item.SomeArray.Set(x, y, item);
+                        }
+                        kernel.EndArray2dSection(writer);
+                    }
+                case: "SomeArray2":
+                    {
+                        kernel.StartArray2dSection(writer);
+                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        {
+                            var item = kernel.ReadString(writer);
+                            item.SomeArray2.Set(x, y, item);
+                        }
+                        kernel.EndArray2dSection(writer);
+                    }
+                case: "SomeArray3":
+                    {
+                        kernel.StartArray2dSection(writer);
+                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        {
+                            var item = kernel.ReadString(writer);
+                            item.SomeArray3.Set(x, y, item);
+                        }
+                        kernel.EndArray2dSection(writer);
+                    }
+                default:
+                    break;
+            }
+        }
     }
 
 }

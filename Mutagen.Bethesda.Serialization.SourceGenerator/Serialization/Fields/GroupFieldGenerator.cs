@@ -85,13 +85,29 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol,
-        string itemAccessor,
-        string writerAccessor,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        if (field is not INamedTypeSymbol namedTypeSymbol) return;
+        var subType = namedTypeSymbol.TypeArguments[0];
+        if (!_serializationNaming.TryGetSerializationItems(field, out var fieldSerializationNames)) return;
+        if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
+        var groupNames = _nameRetriever.GetNames(field);
+        var subNames = _nameRetriever.GetNames(subType);
+        using (var f = sb.Call($"SerializationHelper.ReadIntoGroup<TKernel, TReadObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+        {
+            f.Add($"reader: {readerAccessor}");
+            f.Add($"group: {fieldAccessor}");
+            f.Add($"meta: {metaAccessor}");
+            f.Add($"kernel: {kernelAccessor}");
+            f.Add($"groupReader: static (w, i, k, m) => {fieldSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
+            f.Add($"itemReader: static (w, k, m) => {subSerializationNames.SerializationCall(serialize: true)}<TKernel, TWriteObject>(w, k, m)");
+        }
     }
 }

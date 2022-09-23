@@ -23,6 +23,15 @@ internal static class SomeObject_Serialization
             }
             kernel.EndListSection(writer);
         }
+        if (item.SomeArray2 is {} checkedSomeArray2)
+        {
+            kernel.StartListSection(writer, "SomeArray2");
+            foreach (var listItem in checkedSomeArray2)
+            {
+                kernel.WriteString(writer, null, listItem, default(string));
+            }
+            kernel.EndListSection(writer);
+        }
     }
 
     public static bool HasSerializationItems(
@@ -30,6 +39,7 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
     {
         if (item.SomeArray.Count > 0) return true;
+        if (item.SomeArray2.Count > 0) return true;
         return false;
     }
 
@@ -37,7 +47,30 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeArray":
+                    kernel.StartListSection(writer, "SomeArray");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeArray.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeArray2":
+                    kernel.StartListSection(writer, "SomeArray2");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeArray2.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

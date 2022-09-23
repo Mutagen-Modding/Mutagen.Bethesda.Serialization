@@ -81,13 +81,18 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol, 
-        string itemAccessor,
-        string writerAccessor,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadString", linePerArgument: false))
+        {
+            c.Add(readerAccessor);
+        }
     }
 }

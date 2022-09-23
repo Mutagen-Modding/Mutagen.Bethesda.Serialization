@@ -25,7 +25,15 @@ internal static class TestMod_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        var metaData = new SerializationMetaData(item.GameRelease);
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                default:
+                    break;
+            }
+        }
     }
 
 }

@@ -28,7 +28,15 @@ internal static class SubclassLoquiA_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.Serialize<TReadObject>(writer, item, kernel, metaData);
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                default:
+                    break;
+            }
+        }
     }
 
 }

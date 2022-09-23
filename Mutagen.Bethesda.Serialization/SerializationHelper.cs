@@ -1,4 +1,6 @@
-﻿namespace Mutagen.Bethesda.Serialization;
+﻿using Mutagen.Bethesda.Plugins.Records;
+
+namespace Mutagen.Bethesda.Serialization;
 
 public static class SerializationHelper
 {
@@ -24,5 +26,30 @@ public static class SerializationHelper
             }
             k.EndListSection(w);
         });
+    }
+    
+    public static void ReadIntoGroup<TKernel, TReadObject, TGroup, TObject>(
+        TReadObject reader,
+        TGroup group,
+        SerializationMetaData meta,
+        TKernel kernel,
+        ReadInto<TKernel, TReadObject, TGroup> groupReader,
+        Read<TKernel, TReadObject, TObject> itemReader)
+        where TGroup : class, IGroup<TObject>
+        where TObject : class, IMajorRecordGetter
+        where TKernel : ISerializationReaderKernel<TReadObject>, new()
+    {
+        group.Clear();
+        groupReader(reader, group, kernel, meta);
+        // kernel.WriteLoqui(reader, fieldName, group, meta, (w, g, k, m) =>
+        // {
+        //     groupWriter(w, g, k, m);
+        //     k.StartListSection(w, "Records");
+        //     foreach (var recordGetter in g)
+        //     {
+        //         k.WriteLoqui(w, null, recordGetter, m, itemWriter);
+        //     }
+        //     k.EndListSection(w);
+        // });
     }
 }

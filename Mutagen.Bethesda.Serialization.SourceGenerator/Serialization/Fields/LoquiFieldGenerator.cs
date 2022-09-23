@@ -105,13 +105,28 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol,
-        string itemAccessor,
-        string writerAccessor,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
         string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        if (field is ITypeParameterSymbol namedTypeSymbol
+            && namedTypeSymbol.ConstraintTypes.Length == 1)
+        {
+            return;
+        }
+
+        if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
+        if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
+
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+
+        var call = fieldSerializationItems.SerializationCall(serialize: false, withCheck: hasInheriting);
+        
+        sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TKernel, TReadObject>(r, k, m));");
     }
 }

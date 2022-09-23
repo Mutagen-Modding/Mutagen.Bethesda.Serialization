@@ -27,7 +27,16 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "UnknownThing":
+                    throw new NotImplementedException("Unknown type: Unknown");
+                default:
+                    break;
+            }
+        }
     }
 
 }

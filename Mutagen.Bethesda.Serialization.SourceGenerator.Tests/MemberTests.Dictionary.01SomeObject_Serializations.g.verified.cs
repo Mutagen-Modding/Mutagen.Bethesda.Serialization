@@ -68,7 +68,41 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeDict":
+                    kernel.StartDictionarySection(writer);
+                    while (kernel.TryHasNextDictionaryItem(writer))
+                    {
+                        var key = kernel.ReadInt32(writer);
+                        var val = kernel.ReadString(writer);
+                        item.SomeDict[key] = val;
+                    }
+                    kernel.EndDictionarySection(writer);
+                case: "SomeDict1":
+                    kernel.StartDictionarySection(writer);
+                    while (kernel.TryHasNextDictionaryItem(writer))
+                    {
+                        var key = kernel.ReadInt32(writer);
+                        var val = kernel.ReadString(writer);
+                        item.SomeDict1[key] = val;
+                    }
+                    kernel.EndDictionarySection(writer);
+                case: "SomeDict2":
+                    kernel.StartDictionarySection(writer);
+                    while (kernel.TryHasNextDictionaryItem(writer))
+                    {
+                        var key = kernel.ReadInt32(writer);
+                        var val = kernel.ReadString(writer);
+                        item.SomeDict2[key] = val;
+                    }
+                    kernel.EndDictionarySection(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

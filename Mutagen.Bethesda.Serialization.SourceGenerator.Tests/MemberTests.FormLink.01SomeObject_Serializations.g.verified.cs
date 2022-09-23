@@ -39,7 +39,26 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeFormKey":
+                    item.SomeFormKey.SetTo(kernel.ReadFormKey(writer));
+                case: "SomeFormKey2":
+                    item.SomeFormKey2.SetTo(kernel.ReadFormKey(writer));
+                case: "SomeFormKey3":
+                    item.SomeFormKey3.SetTo(kernel.ReadFormKey(writer));
+                case: "SomeFormKey4":
+                    item.SomeFormKey4.SetTo(kernel.ReadFormKey(writer));
+                case: "SomeFormKey5":
+                    item.SomeFormKey5.SetTo(kernel.ReadFormKey(writer));
+                case: "SomeFormKey6":
+                    item.SomeFormKey6.SetTo(kernel.ReadFormKey(writer));
+                default:
+                    break;
+            }
+        }
     }
 
 }

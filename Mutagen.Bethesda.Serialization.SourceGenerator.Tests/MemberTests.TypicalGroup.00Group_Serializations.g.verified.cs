@@ -31,7 +31,19 @@ internal static class Group_Serialization
         ISerializationReaderKernel<TReadObject> kernel)
         where T : class, IMajorRecordInternal
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeInt":
+                    item.SomeInt = kernel.ReadInt32(writer);
+                case: "Items":
+                case: "SomeInt2":
+                    item.SomeInt2 = kernel.ReadInt32(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

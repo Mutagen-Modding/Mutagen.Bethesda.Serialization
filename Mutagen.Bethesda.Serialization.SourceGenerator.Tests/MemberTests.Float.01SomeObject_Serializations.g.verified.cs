@@ -50,7 +50,38 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeMember0":
+                    item.SomeMember0 = kernel.ReadFloat(writer);
+                case: "SomeMember1":
+                    item.SomeMember1 = kernel.ReadFloat(writer);
+                case: "SomeMember2":
+                    item.SomeMember2 = kernel.ReadFloat(writer);
+                case: "SomeMember3":
+                    item.SomeMember3 = kernel.ReadFloat(writer);
+                case: "SomeMember4":
+                    item.SomeMember4 = kernel.ReadFloat(writer);
+                case: "SomeMember5":
+                    item.SomeMember5 = kernel.ReadFloat(writer);
+                case: "SomeMember6":
+                    item.SomeMember6 = kernel.ReadFloat(writer);
+                case: "SomeMember7":
+                    item.SomeMember7 = kernel.ReadFloat(writer);
+                case: "SomeMember8":
+                    item.SomeMember8 = kernel.ReadFloat(writer);
+                case: "SomeMember9":
+                    item.SomeMember9 = kernel.ReadFloat(writer);
+                case: "SomeMember10":
+                    item.SomeMember10 = kernel.ReadFloat(writer);
+                case: "SomeMember11":
+                    item.SomeMember11 = kernel.ReadFloat(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }

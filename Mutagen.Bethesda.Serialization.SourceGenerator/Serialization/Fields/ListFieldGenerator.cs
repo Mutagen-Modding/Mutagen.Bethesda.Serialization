@@ -103,7 +103,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
-                _forFieldGenerator().Value.GenerateForField(
+                _forFieldGenerator().Value.GenerateSerializeForField(
                     compilation: compilation,
                     obj: obj,
                     fieldType: subType,
@@ -137,13 +137,50 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
     public void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
-        IPropertySymbol propertySymbol, 
-        string itemAccessor,
-        string writerAccessor,
-        string kernelAccessor, 
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
+        string kernelAccessor,
+        string metaAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        if (_groupTester.IsGroup(obj)) return;
+
+        var nullable = field.IsNullable();
+
+        field = field.PeelNullable();
+        
+        ITypeSymbol subType;
+        if (field is IArrayTypeSymbol arr)
+        {
+            subType = arr.ElementType;
+        }
+        else if (field is INamedTypeSymbol namedTypeSymbol)
+        {
+            subType = GetSubtype(namedTypeSymbol);
+        }
+        else
+        {
+            return;
+        }
+
+        sb.AppendLine($"{kernelAccessor}.StartListSection({readerAccessor}, \"{fieldName}\");");
+        sb.AppendLine($"while ({kernelAccessor}.TryHasNextItem({readerAccessor}))");
+        using (sb.CurlyBrace())
+        {
+            _forFieldGenerator().Value.GenerateDeserializeForField(
+                compilation: compilation,
+                obj: obj,
+                fieldType: subType,
+                readerAccessor: readerAccessor, 
+                fieldName: null, 
+                fieldAccessor: "var item",
+                sb: sb,
+                cancel: cancel);
+            sb.AppendLine($"{fieldAccessor}.Add(item);");
+        }
+        sb.AppendLine($"{kernelAccessor}.EndListSection({readerAccessor});");
     }
 }

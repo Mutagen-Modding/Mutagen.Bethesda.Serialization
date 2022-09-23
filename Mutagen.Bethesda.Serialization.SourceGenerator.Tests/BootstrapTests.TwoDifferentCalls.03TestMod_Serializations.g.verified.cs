@@ -31,7 +31,17 @@ internal static class TestMod_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        var metaData = new SerializationMetaData(item.GameRelease);
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeObject":
+                    item.SomeObject = kernel.ReadLoqui(writer, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
+                default:
+                    break;
+            }
+        }
     }
 
 }

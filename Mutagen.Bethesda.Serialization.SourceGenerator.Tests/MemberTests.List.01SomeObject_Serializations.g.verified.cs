@@ -43,8 +43,7 @@ internal static class SomeObject_Serialization
             }
             kernel.EndListSection(writer);
         }
-        if (item.SomeList4 is {} checkedSomeList4
-            && checkedSomeList4.Count > 0)
+        if (item.SomeList4 is {} checkedSomeList4)
         {
             kernel.StartListSection(writer, "SomeList4");
             foreach (var listItem in checkedSomeList4)
@@ -71,24 +70,6 @@ internal static class SomeObject_Serialization
             }
             kernel.EndListSection(writer);
         }
-        if (item.SomeList7 is {} checkedSomeList7)
-        {
-            kernel.StartListSection(writer, "SomeList7");
-            foreach (var listItem in checkedSomeList7)
-            {
-                kernel.WriteString(writer, null, listItem, default(string));
-            }
-            kernel.EndListSection(writer);
-        }
-        if (item.SomeList8 is {} checkedSomeList8)
-        {
-            kernel.StartListSection(writer, "SomeList8");
-            foreach (var listItem in checkedSomeList8)
-            {
-                kernel.WriteString(writer, null, listItem, default(string));
-            }
-            kernel.EndListSection(writer);
-        }
     }
 
     public static bool HasSerializationItems(
@@ -98,11 +79,9 @@ internal static class SomeObject_Serialization
         if (item.SomeList.Count > 0) return true;
         if (item.SomeList2.Count > 0) return true;
         if (item.SomeList3.Count > 0) return true;
-        if (item.SomeList4.Count > 0) return true;
+        if (item.SomeList4?.Count > 0) return true;
         if (item.SomeList5?.Count > 0) return true;
         if (item.SomeList6?.Count > 0) return true;
-        if (item.SomeList7?.Count > 0) return true;
-        if (item.SomeList8.Count > 0) return true;
         return false;
     }
 
@@ -110,7 +89,62 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        throw new NotImplementedException();
+        while (kernel.TryGetNextField(out var name))
+        {
+            switch (name)
+            {
+                case: "SomeList":
+                    kernel.StartListSection(writer, "SomeList");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeList2":
+                    kernel.StartListSection(writer, "SomeList2");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList2.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeList3":
+                    kernel.StartListSection(writer, "SomeList3");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList3.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeList4":
+                    kernel.StartListSection(writer, "SomeList4");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList4.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeList5":
+                    kernel.StartListSection(writer, "SomeList5");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList5.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                case: "SomeList6":
+                    kernel.StartListSection(writer, "SomeList6");
+                    while (kernel.TryHasNextItem(writer))
+                    {
+                        var item = kernel.ReadString(writer);
+                        item.SomeList6.Add(item);
+                    }
+                    kernel.EndListSection(writer);
+                default:
+                    break;
+            }
+        }
     }
 
 }
