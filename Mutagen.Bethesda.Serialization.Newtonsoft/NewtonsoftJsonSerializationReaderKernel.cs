@@ -13,7 +13,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new NotImplementedException();
     }
 
-    public bool TryGetNextField(out string name)
+    public bool TryGetNextField(JTokenReader reader, out string name)
     {
         throw new NotImplementedException();
     }

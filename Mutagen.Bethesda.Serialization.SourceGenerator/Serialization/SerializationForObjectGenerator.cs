@@ -126,7 +126,7 @@ public class SerializationForObjectGenerator
                     $"{baseSerializationItems.SerializationCall(serialize: true)}{genString}(writer, item, kernel, metaData);");
             }
 
-            sb.AppendLine($"while (kernel.TryGetNextField(out var name))");
+            sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("switch (name)");

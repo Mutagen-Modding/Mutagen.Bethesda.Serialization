@@ -21,7 +21,7 @@ public delegate void ReadInto<TKernel, TReaderObject, TObject>(
 public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
-    public bool TryGetNextField(out string name);
+    public bool TryGetNextField(TReaderObject reader, out string name);
     public char ReadChar(TReaderObject reader);
     public bool ReadBool(TReaderObject reader);
     public TEnum ReadEnum<TEnum>(TReaderObject reader)

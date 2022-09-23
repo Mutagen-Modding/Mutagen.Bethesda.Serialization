@@ -53,7 +53,7 @@ internal static class TestMod_Serialization
         ISerializationReaderKernel<TReadObject> kernel)
     {
         var metaData = new SerializationMetaData(item.GameRelease);
-        while (kernel.TryGetNextField(out var name))
+        while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {

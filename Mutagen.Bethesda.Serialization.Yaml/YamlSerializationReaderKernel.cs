@@ -13,7 +13,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlNode
         throw new NotImplementedException();
     }
 
-    public bool TryGetNextField(out string name)
+    public bool TryGetNextField(YamlNode reader, out string name)
     {
         throw new NotImplementedException();
     }

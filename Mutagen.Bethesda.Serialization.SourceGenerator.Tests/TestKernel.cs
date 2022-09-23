@@ -32,7 +32,7 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public bool TryGetNextField(out string name)
+    public bool TryGetNextField(TestReader reader, out string name)
     {
         throw new NotImplementedException();
     }

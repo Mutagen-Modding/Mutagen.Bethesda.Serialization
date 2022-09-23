@@ -29,7 +29,7 @@ internal static class SomeLoquiWithBase_Serialization
         ISerializationReaderKernel<TReadObject> kernel)
     {
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Serialize<TReadObject>(writer, item, kernel, metaData);
-        while (kernel.TryGetNextField(out var name))
+        while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {

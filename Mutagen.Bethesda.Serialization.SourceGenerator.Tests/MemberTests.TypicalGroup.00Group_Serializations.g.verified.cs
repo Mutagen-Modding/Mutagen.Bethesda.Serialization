@@ -31,7 +31,7 @@ internal static class Group_Serialization
         ISerializationReaderKernel<TReadObject> kernel)
         where T : class, IMajorRecordInternal
     {
-        while (kernel.TryGetNextField(out var name))
+        while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {

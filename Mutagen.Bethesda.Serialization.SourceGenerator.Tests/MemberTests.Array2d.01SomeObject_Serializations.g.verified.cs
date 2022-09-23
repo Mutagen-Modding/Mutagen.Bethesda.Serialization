@@ -65,7 +65,7 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel)
     {
-        while (kernel.TryGetNextField(out var name))
+        while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {
