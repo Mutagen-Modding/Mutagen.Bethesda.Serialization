@@ -1,5 +1,5 @@
-﻿Name1: null
-Name2: 0
-Name3: 0
-Name4: 0.5
-Name5: 1
+﻿Percent1: null
+Percent2: 0
+Percent3: 0
+Percent4: 0.5
+Percent5: 1

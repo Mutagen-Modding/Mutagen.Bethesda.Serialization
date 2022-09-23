@@ -1,5 +1,5 @@
 ﻿{
-  "Name1": "",
-  "Name2": true,
-  "Name3": false
+  "Bool1": "",
+  "Bool2": true,
+  "Bool3": false
 }

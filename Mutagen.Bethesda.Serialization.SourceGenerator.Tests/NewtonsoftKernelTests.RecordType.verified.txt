@@ -1,5 +1,5 @@
 ﻿{
-  "Name1": "",
-  "Name2": "null",
-  "Name3": "TEST"
+  "RecordType1": "",
+  "RecordType2": "null",
+  "RecordType3": "TEST"
 }

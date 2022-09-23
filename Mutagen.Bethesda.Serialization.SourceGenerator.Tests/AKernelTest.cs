@@ -38,6 +38,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     }
     
     private async Task<string> GetPrimitiveWriteTest<T>(
+        string nickName,
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?, T?> callback,
         T nonDefaultToTest,
         params T[] items)
@@ -45,11 +46,11 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
         return await GetResults((k, w) =>
         {
             int i = 0;
-            callback(k, w, $"Name{i++}", default, default);
-            callback(k, w, $"Name{i++}", default, nonDefaultToTest);
+            callback(k, w, $"{nickName}{i++}", default, default);
+            callback(k, w, $"{nickName}{i++}", default, nonDefaultToTest);
             foreach (var item in items)
             {
-                callback(k, w, $"Name{i++}", item, default);
+                callback(k, w, $"{nickName}{i++}", item, default);
             }
         });
     }
@@ -65,6 +66,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Char()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<char?>(
+            "Char",
             (k, w, name, item, def) => k.WriteChar(w, name, item, def),
             'c',
             'c',
@@ -75,6 +77,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Bool()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<bool?>(
+            "Bool",
             (k, w, name, item, def) => k.WriteBool(w, name, item, def),
             true,
             true,
@@ -85,6 +88,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task String()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<string>(
+            "String",
             (k, w, name, item, def) => k.WriteString(w, name, item, def),
             "Hello",
             string.Empty,
@@ -95,6 +99,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Int8()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<sbyte?>(
+            "Int8",
             (k, w, name, item, def) => k.WriteInt8(w, name, item, def),
             1,
             -4,
@@ -108,6 +113,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Int16()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<short?>(
+            "Int16",
             (k, w, name, item, def) => k.WriteInt16(w, name, item, def),
             1,
             -4,
@@ -121,6 +127,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Int32()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<int?>(
+            "Int32",
             (k, w, name, item, def) => k.WriteInt32(w, name, item, def),
             1,
             -4,
@@ -134,6 +141,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Int64()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<long?>(
+            "Int64",
             (k, w, name, item, def) => k.WriteInt64(w, name, item, def),
             1,
             -4,
@@ -147,6 +155,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task UInt8()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<byte?>(
+            "UInt8",
             (k, w, name, item, def) => k.WriteUInt8(w, name, item, def),
             1,
             5,
@@ -158,6 +167,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task UInt16()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<ushort?>(
+            "UInt16",
             (k, w, name, item, def) => k.WriteUInt16(w, name, item, def),
             1,
             5,
@@ -169,6 +179,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task UInt32()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<uint?>(
+            "UInt32",
             (k, w, name, item, def) => k.WriteUInt32(w, name, item, def),
             1,
             5,
@@ -180,6 +191,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task UInt64()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<ulong?>(
+            "UInt64",
             (k, w, name, item, def) => k.WriteUInt64(w, name, item, def),
             1,
             5,
@@ -191,6 +203,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Float()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<float?>(
+            "Float",
             (k, w, name, item, def) => k.WriteFloat(w, name, item, def),
             1,
             0,
@@ -204,6 +217,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task ModKey()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<ModKey?>(
+            "ModKey",
             (k, w, name, item, def) => k.WriteModKey(w, name, item, def),
             Plugins.ModKey.FromNameAndExtension("SomeMod.esp"),
             Plugins.ModKey.Null,
@@ -214,6 +228,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task FormKey()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<FormKey?>(
+            "FormKey",
             (k, w, name, item, def) => k.WriteFormKey(w, name, item, def),
             Plugins.FormKey.Factory("123456:SomeMod.esp"),
             Plugins.FormKey.Null,
@@ -224,6 +239,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task RecordType()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<RecordType?>(
+            "RecordType",
             (k, w, name, item, def) => k.WriteRecordType(w, name, item, def),
             new RecordType("TEST"),
             Plugins.RecordType.Null,
@@ -234,6 +250,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P2Int()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P2Int?>(
+            "P2Int",
             (k, w, name, item, def) => k.WriteP2Int(w, name, item, def),
             new P2Int(1, -3),
             new P2Int(),
@@ -246,6 +263,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P2Int16()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P2Int16?>(
+            "P2Int16",
             (k, w, name, item, def) => k.WriteP2Int16(w, name, item, def),
             new P2Int16(1, -3),
             new P2Int16(),
@@ -258,6 +276,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P2Float()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P2Float?>(
+            "P2Float",
             (k, w, name, item, def) => k.WriteP2Float(w, name, item, def),
             new P2Float(1, -3),
             new P2Float(),
@@ -270,6 +289,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P3Float()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P3Float?>(
+            "P3Float",
             (k, w, name, item, def) => k.WriteP3Float(w, name, item, def),
             new P3Float(1, 3, 0),
             new P3Float(),
@@ -282,6 +302,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P3UInt8()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P3UInt8?>(
+            "P3UInt8",
             (k, w, name, item, def) => k.WriteP3UInt8(w, name, item, def),
             new P3UInt8(1, 3, 0),
             new P3UInt8(),
@@ -294,6 +315,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P3Int16()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P3Int16?>(
+            "P3Int16",
             (k, w, name, item, def) => k.WriteP3Int16(w, name, item, def),
             new P3Int16(1, 3, 0),
             new P3Int16(),
@@ -306,6 +328,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task P3UInt16()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<P3UInt16?>(
+            "P3UInt16",
             (k, w, name, item, def) => k.WriteP3UInt16(w, name, item, def),
             new P3UInt16(1, 3, 0),
             new P3UInt16(),
@@ -318,6 +341,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Percent()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<Percent?>(
+            "Percent",
             (k, w, name, item, def) => k.WritePercent(w, name, item, def),
             new Percent(0d),
             new Percent(),
@@ -330,6 +354,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Color()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<Color?>(
+            "Color",
             (k, w, name, item, def) => k.WriteColor(w, name, item, def),
             System.Drawing.Color.FromArgb(1, 2, 3, 4),
             new Color(),
@@ -433,6 +458,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task TranslatedString()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<ITranslatedStringGetter?>(
+            "TranslatedString",
             (k, w, name, item, def) => k.WriteTranslatedString(w, name, item, def),
             new TranslatedString(Language.English, "Hello"),
             new TranslatedString(Language.English),
@@ -450,6 +476,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Bytes()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<ReadOnlyMemorySlice<byte>?>(
+            "Bytes",
             (k, w, name, item, def) => k.WriteBytes(w, name, item, def),
             new ReadOnlyMemorySlice<byte>(new byte[] { 1 }),
             new ReadOnlyMemorySlice<byte>(),
@@ -493,6 +520,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task Enum()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<SomeEnum?>(
+            "Enum",
             (k, w, name, item, def) => k.WriteEnum<SomeEnum>(w, name, item, def),
             SomeEnum.Second,
             default(SomeEnum),
@@ -511,6 +539,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter>
     public async Task FlagsEnum()
     {
         await Verifier.Verify(await GetPrimitiveWriteTest<SomeFlagsEnum?>(
+            "FlagsEnum",
             (k, w, name, item, def) => k.WriteEnum<SomeFlagsEnum>(w, name, item, def),
             SomeFlagsEnum.Second,
             default(SomeFlagsEnum),

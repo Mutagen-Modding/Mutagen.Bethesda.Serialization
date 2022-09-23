@@ -1,6 +1,6 @@
-﻿Name1: ''
-Name2: 0
-Name3: -5
-Name4: 5
-Name5: -3.4028235E+38
-Name6: 3.4028235E+38
+﻿Float1: ''
+Float2: 0
+Float3: -5
+Float4: 5
+Float5: -3.4028235E+38
+Float6: 3.4028235E+38

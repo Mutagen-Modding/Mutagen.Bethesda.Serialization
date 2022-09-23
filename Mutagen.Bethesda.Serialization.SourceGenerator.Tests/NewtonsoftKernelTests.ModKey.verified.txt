@@ -1,5 +1,5 @@
 ﻿{
-  "Name1": "",
-  "Name2": "Null",
-  "Name3": "SomeMod.esp"
+  "ModKey1": "",
+  "ModKey2": "Null",
+  "ModKey3": "SomeMod.esp"
 }

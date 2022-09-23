@@ -1,7 +1,7 @@
 ﻿{
-  "Name1": "",
-  "Name2": 0.0,
-  "Name3": 0.0,
-  "Name4": 0.5,
-  "Name5": 1.0
+  "Percent1": "",
+  "Percent2": 0.0,
+  "Percent3": 0.0,
+  "Percent4": 0.5,
+  "Percent5": 1.0
 }

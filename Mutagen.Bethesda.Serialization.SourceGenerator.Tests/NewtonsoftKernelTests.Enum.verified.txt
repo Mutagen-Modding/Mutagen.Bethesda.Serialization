@@ -1,5 +1,5 @@
 ﻿{
-  "Name1": "",
-  "Name2": "First",
-  "Name3": "Second"
+  "Enum1": "",
+  "Enum2": "First",
+  "Enum3": "Second"
 }

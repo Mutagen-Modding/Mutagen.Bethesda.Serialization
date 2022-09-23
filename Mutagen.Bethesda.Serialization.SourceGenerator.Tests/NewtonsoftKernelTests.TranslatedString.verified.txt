@@ -1,9 +1,9 @@
 ﻿{
-  "Name1": {},
-  "Name2": {},
-  "Name3": {},
-  "Name4": "Hello",
-  "Name5": [
+  "TranslatedString1": {},
+  "TranslatedString2": {},
+  "TranslatedString3": {},
+  "TranslatedString4": "Hello",
+  "TranslatedString5": [
     {
       "Language": "English",
       "String": "Hello"
@@ -13,7 +13,7 @@
       "String": "Bonjour"
     }
   ],
-  "Name6": [
+  "TranslatedString6": [
     {
       "Language": "English",
       "String": "Hello"

@@ -1,4 +1,4 @@
-﻿Name1: ''
-Name2: 5
-Name3: 0
-Name4: 65535
+﻿UInt161: ''
+UInt162: 5
+UInt163: 0
+UInt164: 65535

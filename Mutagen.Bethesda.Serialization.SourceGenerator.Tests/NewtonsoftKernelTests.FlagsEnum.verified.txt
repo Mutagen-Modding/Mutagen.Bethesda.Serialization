@@ -1,14 +1,14 @@
 ﻿{
-  "Name1": "",
-  "Name2": [],
-  "Name3": [
+  "FlagsEnum1": "",
+  "FlagsEnum2": [],
+  "FlagsEnum3": [
     "Second"
   ],
-  "Name4": [
+  "FlagsEnum4": [
     "First",
     "Third"
   ],
-  "Name5": [
+  "FlagsEnum5": [
     "First",
     "0x10"
   ]

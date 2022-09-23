@@ -1,5 +1,5 @@
 ﻿{
-  "Name1": "",
-  "Name2": "Null",
-  "Name3": "123456:SomeMod.esp"
+  "FormKey1": "",
+  "FormKey2": "Null",
+  "FormKey3": "123456:SomeMod.esp"
 }
