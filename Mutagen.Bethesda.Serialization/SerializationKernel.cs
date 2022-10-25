@@ -9,7 +9,7 @@ public delegate TObject Read<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
     TKernel kernel,
     SerializationMetaData metaData)
-    where TKernel : ISerializationReaderKernel<TReaderObject>, new();
+    where TKernel : ISerializationReaderKernel<TReaderObject>;
 
 public delegate void ReadInto<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
@@ -22,6 +22,7 @@ public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
     public bool TryGetNextField(TReaderObject reader, out string name);
+    public void Skip(TReaderObject reader);
     public char ReadChar(TReaderObject reader);
     public bool ReadBool(TReaderObject reader);
     public TEnum ReadEnum<TEnum>(TReaderObject reader)
@@ -35,17 +36,57 @@ public interface ISerializationReaderKernel<TReaderObject>
     public ushort ReadUInt16(TReaderObject reader);
     public uint ReadUInt32(TReaderObject reader);
     public ulong ReadUInt64(TReaderObject reader);
+    public float ReadFloat(TReaderObject reader);
+    public ModKey ReadModKey(TReaderObject reader);
     public FormKey ReadFormKey(TReaderObject reader);
     public Color ReadColor(TReaderObject reader);
     public RecordType ReadRecordType(TReaderObject reader);
+    public P2Int ReadP2Int(TReaderObject reader);
+    public P2Int16 ReadP2Int16(TReaderObject reader);
+    public P2Float ReadP2Float(TReaderObject reader);
+    public P3Float ReadP3Float(TReaderObject reader);
+    public P3UInt8 ReadP3UInt8(TReaderObject reader);
+    public P3Int16 ReadP3Int16(TReaderObject reader);
+    public P3UInt16 ReadP3UInt16(TReaderObject reader);
+    public Percent ReadPercent(TReaderObject reader);
     public TranslatedString ReadTranslatedString(TReaderObject reader);
     public ReadOnlyMemorySlice<byte> ReadBytes(TReaderObject reader);
+    public TObject ReadLoqui<TObject>(
+        TReaderObject reader,
+        SerializationMetaData serializationMetaData,
+        Read<ISerializationReaderKernel<TReaderObject>, TReaderObject, TObject> readCall);
 
     #region List
     
     public void StartListSection(TReaderObject reader);
     public void EndListSection(TReaderObject reader);
     public bool TryHasNextItem(TReaderObject reader);
+
+    #endregion
+
+    #region Dict
+
+    public void StartDictionarySection(TReaderObject reader);
+    public void EndDictionarySection(TReaderObject reader);
+    public bool TryHasNextDictionaryItem(TReaderObject reader);
+    public void StartDictionaryKey(TReaderObject reader);
+    public void EndDictionaryKey(TReaderObject reader);
+    public void StartDictionaryValue(TReaderObject reader);
+    public void EndDictionaryValue(TReaderObject reader);
+    public void EndDictionaryItem(TReaderObject reader);
+
+    #endregion
+
+    #region Array2d
+
+    public void StartArray2dSection(TReaderObject reader);
+    public void EndArray2dSection(TReaderObject reader);
+    public bool TryHasNextArray2dXItem(TReaderObject reader);
+    public void StartArray2dXSection(TReaderObject reader);
+    public void EndArray2dXSection(TReaderObject reader);
+    public bool TryHasNextArray2dYSection(TReaderObject reader);
+    public void StartArray2dYSection(TReaderObject reader);
+    public void EndArray2dYSection(TReaderObject reader);
 
     #endregion
 }

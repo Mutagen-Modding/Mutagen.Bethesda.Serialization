@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class MutagenJsonConverter 
     : IMutagenSerializationBootstrap<
-        NewtonsoftJsonSerializationReaderKernel, JTokenReader,
+        NewtonsoftJsonSerializationReaderKernel, JsonTextReader,
         NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>
 {
     public static readonly MutagenJsonConverter Instance = new();

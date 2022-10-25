@@ -57,25 +57,25 @@ internal static class TestMod_Serialization
         {
             switch (name)
             {
-                case: "SomeGroup":
+                case "SomeGroup":
                     SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
-                        reader: writer,
+                        reader: reader,
                         group: item.SomeGroup,
                         meta: metaData,
                         kernel: kernel,
                         groupReader: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
                         itemReader: static (w, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, k, m));
-                case: "SomeGroup2":
+                case "SomeGroup2":
                     SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
-                        reader: writer,
+                        reader: reader,
                         group: item.SomeGroup2,
                         meta: metaData,
                         kernel: kernel,
                         groupReader: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
                         itemReader: static (w, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, k, m));
-                case: "SomeGroup3":
+                case "SomeGroup3":
                     SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
-                        reader: writer,
+                        reader: reader,
                         group: item.SomeGroup3,
                         meta: metaData,
                         kernel: kernel,

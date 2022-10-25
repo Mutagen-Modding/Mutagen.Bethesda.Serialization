@@ -1,14 +1,22 @@
 ﻿TranslatedString1: {}
-TranslatedString2: {}
-TranslatedString3: {}
-TranslatedString4: Hello
+TranslatedString2:
+  TargetLanguage: English
+TranslatedString3:
+  TargetLanguage: English
+TranslatedString4:
+  TargetLanguage: English
+  Value: Hello
 TranslatedString5:
-- Language: English
-  String: Hello
-- Language: French
-  String: Bonjour
+  TargetLanguage: English
+  Values:
+  - Language: English
+    String: Hello
+  - Language: French
+    String: Bonjour
 TranslatedString6:
-- Language: English
-  String: Hello
-- Language: French
-  String: Bonjour
+  TargetLanguage: Spanish
+  Values:
+  - Language: English
+    String: Hello
+  - Language: French
+    String: Bonjour

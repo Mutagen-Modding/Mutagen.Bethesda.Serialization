@@ -32,8 +32,8 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeInt":
-                    item.SomeInt = kernel.ReadInt32(writer);
+                case "SomeInt":
+                    item.SomeInt = kernel.ReadInt32(reader);
                 default:
                     break;
             }

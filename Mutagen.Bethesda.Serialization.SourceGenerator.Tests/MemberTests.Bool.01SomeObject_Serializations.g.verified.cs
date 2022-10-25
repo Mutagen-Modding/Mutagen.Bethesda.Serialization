@@ -54,30 +54,30 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadBool(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadBool(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadBool(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadBool(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadBool(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadBool(writer);
-                case: "SomeMember6":
-                    item.SomeMember6 = kernel.ReadBool(writer);
-                case: "SomeMember7":
-                    item.SomeMember7 = kernel.ReadBool(writer);
-                case: "SomeMember8":
-                    item.SomeMember8 = kernel.ReadBool(writer);
-                case: "SomeMember9":
-                    item.SomeMember9 = kernel.ReadBool(writer);
-                case: "SomeMember10":
-                    item.SomeMember10 = kernel.ReadBool(writer);
-                case: "SomeMember11":
-                    item.SomeMember11 = kernel.ReadBool(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadBool(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadBool(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadBool(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadBool(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadBool(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadBool(reader);
+                case "SomeMember6":
+                    item.SomeMember6 = kernel.ReadBool(reader);
+                case "SomeMember7":
+                    item.SomeMember7 = kernel.ReadBool(reader);
+                case "SomeMember8":
+                    item.SomeMember8 = kernel.ReadBool(reader);
+                case "SomeMember9":
+                    item.SomeMember9 = kernel.ReadBool(reader);
+                case "SomeMember10":
+                    item.SomeMember10 = kernel.ReadBool(reader);
+                case "SomeMember11":
+                    item.SomeMember11 = kernel.ReadBool(reader);
                 default:
                     break;
             }

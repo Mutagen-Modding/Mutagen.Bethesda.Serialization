@@ -137,14 +137,14 @@ public class SerializationForObjectGenerator
                         context.CancellationToken.ThrowIfCancellationRequested();
                         _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
                         {
-                            sb.AppendLine($"case: \"{prop.Property.Name}\":");
+                            sb.AppendLine($"case \"{prop.Property.Name}\":");
                             using (sb.IncreaseDepth())
                             {
                                 _forFieldGenerator.GenerateDeserializeForField(
                                     compilation: compilation,
                                     obj: obj,
                                     fieldType: prop.Property.Type,
-                                    readerAccessor: "writer",
+                                    readerAccessor: "reader",
                                     fieldName: prop.Property.Name,
                                     fieldAccessor: $"item.{prop.Property.Name}",
                                     prop.Generator,

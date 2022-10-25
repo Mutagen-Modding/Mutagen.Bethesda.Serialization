@@ -54,30 +54,30 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadRecordType(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadRecordType(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadRecordType(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadRecordType(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadRecordType(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadRecordType(writer);
-                case: "SomeMember6":
-                    item.SomeMember6 = kernel.ReadRecordType(writer);
-                case: "SomeMember7":
-                    item.SomeMember7 = kernel.ReadRecordType(writer);
-                case: "SomeMember8":
-                    item.SomeMember8 = kernel.ReadRecordType(writer);
-                case: "SomeMember9":
-                    item.SomeMember9 = kernel.ReadRecordType(writer);
-                case: "SomeMember10":
-                    item.SomeMember10 = kernel.ReadRecordType(writer);
-                case: "SomeMember11":
-                    item.SomeMember11 = kernel.ReadRecordType(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadRecordType(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadRecordType(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadRecordType(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadRecordType(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadRecordType(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadRecordType(reader);
+                case "SomeMember6":
+                    item.SomeMember6 = kernel.ReadRecordType(reader);
+                case "SomeMember7":
+                    item.SomeMember7 = kernel.ReadRecordType(reader);
+                case "SomeMember8":
+                    item.SomeMember8 = kernel.ReadRecordType(reader);
+                case "SomeMember9":
+                    item.SomeMember9 = kernel.ReadRecordType(reader);
+                case "SomeMember10":
+                    item.SomeMember10 = kernel.ReadRecordType(reader);
+                case "SomeMember11":
+                    item.SomeMember11 = kernel.ReadRecordType(reader);
                 default:
                     break;
             }

@@ -72,33 +72,33 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeDict":
-                    kernel.StartDictionarySection(writer);
-                    while (kernel.TryHasNextDictionaryItem(writer))
+                case "SomeDict":
+                    kernel.StartDictionarySection(reader);
+                    while (kernel.TryHasNextDictionaryItem(reader))
                     {
-                        var key = kernel.ReadInt32(writer);
-                        var val = kernel.ReadString(writer);
+                        var key = kernel.ReadInt32(reader);
+                        var val = kernel.ReadString(reader);
                         item.SomeDict[key] = val;
                     }
-                    kernel.EndDictionarySection(writer);
-                case: "SomeDict1":
-                    kernel.StartDictionarySection(writer);
-                    while (kernel.TryHasNextDictionaryItem(writer))
+                    kernel.EndDictionarySection(reader);
+                case "SomeDict1":
+                    kernel.StartDictionarySection(reader);
+                    while (kernel.TryHasNextDictionaryItem(reader))
                     {
-                        var key = kernel.ReadInt32(writer);
-                        var val = kernel.ReadString(writer);
+                        var key = kernel.ReadInt32(reader);
+                        var val = kernel.ReadString(reader);
                         item.SomeDict1[key] = val;
                     }
-                    kernel.EndDictionarySection(writer);
-                case: "SomeDict2":
-                    kernel.StartDictionarySection(writer);
-                    while (kernel.TryHasNextDictionaryItem(writer))
+                    kernel.EndDictionarySection(reader);
+                case "SomeDict2":
+                    kernel.StartDictionarySection(reader);
+                    while (kernel.TryHasNextDictionaryItem(reader))
                     {
-                        var key = kernel.ReadInt32(writer);
-                        var val = kernel.ReadString(writer);
+                        var key = kernel.ReadInt32(reader);
+                        var val = kernel.ReadString(reader);
                         item.SomeDict2[key] = val;
                     }
-                    kernel.EndDictionarySection(writer);
+                    kernel.EndDictionarySection(reader);
                 default:
                     break;
             }

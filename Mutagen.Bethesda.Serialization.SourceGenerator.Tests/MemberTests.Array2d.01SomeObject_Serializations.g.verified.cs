@@ -69,35 +69,35 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeArray":
+                case "SomeArray":
                     {
-                        kernel.StartArray2dSection(writer);
-                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        kernel.StartArray2dSection(reader);
+                        while (kernel.TryHasNextArray2dItem(reader, out int x, out int y))
                         {
-                            var item = kernel.ReadString(writer);
+                            var item = kernel.ReadString(reader);
                             item.SomeArray.Set(x, y, item);
                         }
-                        kernel.EndArray2dSection(writer);
+                        kernel.EndArray2dSection(reader);
                     }
-                case: "SomeArray2":
+                case "SomeArray2":
                     {
-                        kernel.StartArray2dSection(writer);
-                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        kernel.StartArray2dSection(reader);
+                        while (kernel.TryHasNextArray2dItem(reader, out int x, out int y))
                         {
-                            var item = kernel.ReadString(writer);
+                            var item = kernel.ReadString(reader);
                             item.SomeArray2.Set(x, y, item);
                         }
-                        kernel.EndArray2dSection(writer);
+                        kernel.EndArray2dSection(reader);
                     }
-                case: "SomeArray3":
+                case "SomeArray3":
                     {
-                        kernel.StartArray2dSection(writer);
-                        while (kernel.TryHasNextArray2dItem(writer, out int x, out int y))
+                        kernel.StartArray2dSection(reader);
+                        while (kernel.TryHasNextArray2dItem(reader, out int x, out int y))
                         {
-                            var item = kernel.ReadString(writer);
+                            var item = kernel.ReadString(reader);
                             item.SomeArray3.Set(x, y, item);
                         }
-                        kernel.EndArray2dSection(writer);
+                        kernel.EndArray2dSection(reader);
                     }
                 default:
                     break;

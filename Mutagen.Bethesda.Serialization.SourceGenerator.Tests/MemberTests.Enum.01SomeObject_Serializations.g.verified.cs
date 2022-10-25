@@ -42,18 +42,18 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeEnum":
-                    item.SomeEnum = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(writer);
-                case: "SomeEnum2":
-                    item.SomeEnum2 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(writer);
-                case: "SomeEnum3":
-                    item.SomeEnum3 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(writer);
-                case: "SomeEnum4":
-                    item.SomeEnum4 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(writer);
-                case: "SomeEnum5":
-                    item.SomeEnum5 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(writer);
-                case: "SomeEnum6":
-                    item.SomeEnum6 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(writer);
+                case "SomeEnum":
+                    item.SomeEnum = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                case "SomeEnum2":
+                    item.SomeEnum2 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                case "SomeEnum3":
+                    item.SomeEnum3 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                case "SomeEnum4":
+                    item.SomeEnum4 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                case "SomeEnum5":
+                    item.SomeEnum5 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
+                case "SomeEnum6":
+                    item.SomeEnum6 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
                 default:
                     break;
             }

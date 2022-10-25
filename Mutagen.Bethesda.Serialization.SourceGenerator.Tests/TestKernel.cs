@@ -27,12 +27,19 @@ public class TestWriter
 
 public class TestKernel : ISerializationReaderKernel<TestReader>, ISerializationWriterKernel<TestWriter>
 {
+    private ISerializationReaderKernel<TestReader> _serializationReaderKernelImplementation;
+
     TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
 
     public bool TryGetNextField(TestReader reader, out string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Skip(TestReader reader)
     {
         throw new NotImplementedException();
     }
@@ -329,6 +336,16 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public float ReadFloat(TestReader reader)
+    {
+        return _serializationReaderKernelImplementation.ReadFloat(reader);
+    }
+
+    public ModKey ReadModKey(TestReader reader)
+    {
+        return _serializationReaderKernelImplementation.ReadModKey(reader);
+    }
+
     public FormKey ReadFormKey(TestReader reader)
     {
         throw new NotImplementedException();
@@ -344,12 +361,57 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public P2Int ReadP2Int(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P2Int16 ReadP2Int16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P2Float ReadP2Float(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3Float ReadP3Float(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3UInt8 ReadP3UInt8(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3Int16 ReadP3Int16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3UInt16 ReadP3UInt16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Percent ReadPercent(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public TranslatedString ReadTranslatedString(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
     public ReadOnlyMemorySlice<byte> ReadBytes(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TObject ReadLoqui<TObject>(TestReader reader, SerializationMetaData serializationMetaData, Read<ISerializationReaderKernel<TestReader>, TestReader, TObject> readCall)
     {
         throw new NotImplementedException();
     }
@@ -365,6 +427,86 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public bool TryHasNextItem(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartDictionarySection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndDictionarySection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextDictionaryItem(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartDictionaryKey(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndDictionaryKey(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartDictionaryValue(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndDictionaryValue(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndDictionaryItem(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartArray2dSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndArray2dSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextArray2dXItem(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartArray2dXSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndArray2dXSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryHasNextArray2dYSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartArray2dYSection(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EndArray2dYSection(TestReader reader)
     {
         throw new NotImplementedException();
     }

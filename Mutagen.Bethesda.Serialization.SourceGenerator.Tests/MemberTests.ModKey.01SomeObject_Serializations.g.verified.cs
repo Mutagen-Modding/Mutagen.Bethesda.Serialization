@@ -54,30 +54,30 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadModKey(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadModKey(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadModKey(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadModKey(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadModKey(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadModKey(writer);
-                case: "SomeMember6":
-                    item.SomeMember6 = kernel.ReadModKey(writer);
-                case: "SomeMember7":
-                    item.SomeMember7 = kernel.ReadModKey(writer);
-                case: "SomeMember8":
-                    item.SomeMember8 = kernel.ReadModKey(writer);
-                case: "SomeMember9":
-                    item.SomeMember9 = kernel.ReadModKey(writer);
-                case: "SomeMember10":
-                    item.SomeMember10 = kernel.ReadModKey(writer);
-                case: "SomeMember11":
-                    item.SomeMember11 = kernel.ReadModKey(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadModKey(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadModKey(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadModKey(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadModKey(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadModKey(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadModKey(reader);
+                case "SomeMember6":
+                    item.SomeMember6 = kernel.ReadModKey(reader);
+                case "SomeMember7":
+                    item.SomeMember7 = kernel.ReadModKey(reader);
+                case "SomeMember8":
+                    item.SomeMember8 = kernel.ReadModKey(reader);
+                case "SomeMember9":
+                    item.SomeMember9 = kernel.ReadModKey(reader);
+                case "SomeMember10":
+                    item.SomeMember10 = kernel.ReadModKey(reader);
+                case "SomeMember11":
+                    item.SomeMember11 = kernel.ReadModKey(reader);
                 default:
                     break;
             }

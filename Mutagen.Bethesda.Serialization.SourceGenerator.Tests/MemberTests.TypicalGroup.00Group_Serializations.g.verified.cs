@@ -35,11 +35,11 @@ internal static class Group_Serialization
         {
             switch (name)
             {
-                case: "SomeInt":
-                    item.SomeInt = kernel.ReadInt32(writer);
-                case: "Items":
-                case: "SomeInt2":
-                    item.SomeInt2 = kernel.ReadInt32(writer);
+                case "SomeInt":
+                    item.SomeInt = kernel.ReadInt32(reader);
+                case "Items":
+                case "SomeInt2":
+                    item.SomeInt2 = kernel.ReadInt32(reader);
                 default:
                     break;
             }

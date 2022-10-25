@@ -32,8 +32,8 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "FormVersion":
-                    item.FormVersion = kernel.ReadUInt16(writer);
+                case "FormVersion":
+                    item.FormVersion = kernel.ReadUInt16(reader);
                 default:
                     break;
             }

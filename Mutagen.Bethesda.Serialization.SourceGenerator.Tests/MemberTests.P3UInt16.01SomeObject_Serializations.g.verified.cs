@@ -42,18 +42,18 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadP3UInt16(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadP3UInt16(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadP3UInt16(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadP3UInt16(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadP3UInt16(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadP3UInt16(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadP3UInt16(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadP3UInt16(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadP3UInt16(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadP3UInt16(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadP3UInt16(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadP3UInt16(reader);
                 default:
                     break;
             }

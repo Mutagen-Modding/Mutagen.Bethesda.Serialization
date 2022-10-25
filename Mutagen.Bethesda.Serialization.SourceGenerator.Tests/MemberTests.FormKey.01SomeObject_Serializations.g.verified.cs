@@ -55,30 +55,30 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadFormKey(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadFormKey(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadFormKey(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadFormKey(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadFormKey(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadFormKey(writer);
-                case: "SomeMember6":
-                    item.SomeMember6 = kernel.ReadFormKey(writer);
-                case: "SomeMember7":
-                    item.SomeMember7 = kernel.ReadFormKey(writer);
-                case: "SomeMember8":
-                    item.SomeMember8 = kernel.ReadFormKey(writer);
-                case: "SomeMember9":
-                    item.SomeMember9 = kernel.ReadFormKey(writer);
-                case: "SomeMember10":
-                    item.SomeMember10 = kernel.ReadFormKey(writer);
-                case: "SomeMember11":
-                    item.SomeMember11 = kernel.ReadFormKey(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadFormKey(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadFormKey(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadFormKey(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadFormKey(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadFormKey(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadFormKey(reader);
+                case "SomeMember6":
+                    item.SomeMember6 = kernel.ReadFormKey(reader);
+                case "SomeMember7":
+                    item.SomeMember7 = kernel.ReadFormKey(reader);
+                case "SomeMember8":
+                    item.SomeMember8 = kernel.ReadFormKey(reader);
+                case "SomeMember9":
+                    item.SomeMember9 = kernel.ReadFormKey(reader);
+                case "SomeMember10":
+                    item.SomeMember10 = kernel.ReadFormKey(reader);
+                case "SomeMember11":
+                    item.SomeMember11 = kernel.ReadFormKey(reader);
                 default:
                     break;
             }

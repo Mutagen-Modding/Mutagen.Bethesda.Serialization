@@ -1,4 +1,3 @@
 ﻿Color1: null
 Color2: 0, 0, 0
-Color3: 2, 3, 4
-Color4: 1, 2, 3
+Color3: 1, 2, 3

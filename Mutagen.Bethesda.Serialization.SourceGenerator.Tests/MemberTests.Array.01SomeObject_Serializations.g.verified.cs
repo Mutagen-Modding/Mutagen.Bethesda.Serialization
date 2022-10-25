@@ -51,22 +51,22 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeArray":
-                    kernel.StartListSection(writer, "SomeArray");
-                    while (kernel.TryHasNextItem(writer))
+                case "SomeArray":
+                    kernel.StartListSection(reader, "SomeArray");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeArray.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeArray2":
-                    kernel.StartListSection(writer, "SomeArray2");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeArray2":
+                    kernel.StartListSection(reader, "SomeArray2");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeArray2.Add(item);
                     }
-                    kernel.EndListSection(writer);
+                    kernel.EndListSection(reader);
                 default:
                     break;
             }

@@ -73,48 +73,48 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeAssetLink":
-                    item.SomeAssetLink = kernel.ReadString(writer);
-                case: "SomeAssetLink2":
-                    item.SomeAssetLink2 = kernel.ReadString(writer);
-                case: "SomeAssetLink3":
-                    item.SomeAssetLink3 = kernel.ReadString(writer);
-                case: "SomeAssetLink4":
-                    item.SomeAssetLink4 = kernel.ReadString(writer);
-                case: "SomeAssetLink5":
-                    item.SomeAssetLink5 = kernel.ReadString(writer);
-                case: "SomeAssetLink6":
-                    item.SomeAssetLink6 = kernel.ReadString(writer);
-                case: "SomeAssetLink7":
-                    item.SomeAssetLink7 = kernel.ReadString(writer);
-                case: "SomeAssetLink8":
-                    item.SomeAssetLink8 = kernel.ReadString(writer);
-                case: "SomeAssetLink9":
-                    item.SomeAssetLink9 = kernel.ReadString(writer);
-                case: "SomeAssetLink10":
-                    item.SomeAssetLink10 = kernel.ReadString(writer);
-                case: "SomeAssetLink11":
-                    item.SomeAssetLink11 = kernel.ReadString(writer);
-                case: "SomeAssetLink12":
-                    item.SomeAssetLink12 = kernel.ReadString(writer);
-                case: "SomeAssetLink13":
-                    item.SomeAssetLink13 = kernel.ReadString(writer);
-                case: "SomeAssetLink14":
-                    item.SomeAssetLink14 = kernel.ReadString(writer);
-                case: "SomeAssetLink15":
-                    item.SomeAssetLink15 = kernel.ReadString(writer);
-                case: "SomeAssetLink16":
-                    item.SomeAssetLink16 = kernel.ReadString(writer);
-                case: "SomeAssetLink17":
-                    item.SomeAssetLink17 = kernel.ReadString(writer);
-                case: "SomeAssetLink18":
-                    item.SomeAssetLink18 = kernel.ReadString(writer);
-                case: "SomeAssetLink19":
-                    item.SomeAssetLink19 = kernel.ReadString(writer);
-                case: "SomeAssetLink20":
-                    item.SomeAssetLink20 = kernel.ReadString(writer);
-                case: "SomeAssetLink21":
-                    item.SomeAssetLink21 = kernel.ReadString(writer);
+                case "SomeAssetLink":
+                    item.SomeAssetLink = kernel.ReadString(reader);
+                case "SomeAssetLink2":
+                    item.SomeAssetLink2 = kernel.ReadString(reader);
+                case "SomeAssetLink3":
+                    item.SomeAssetLink3 = kernel.ReadString(reader);
+                case "SomeAssetLink4":
+                    item.SomeAssetLink4 = kernel.ReadString(reader);
+                case "SomeAssetLink5":
+                    item.SomeAssetLink5 = kernel.ReadString(reader);
+                case "SomeAssetLink6":
+                    item.SomeAssetLink6 = kernel.ReadString(reader);
+                case "SomeAssetLink7":
+                    item.SomeAssetLink7 = kernel.ReadString(reader);
+                case "SomeAssetLink8":
+                    item.SomeAssetLink8 = kernel.ReadString(reader);
+                case "SomeAssetLink9":
+                    item.SomeAssetLink9 = kernel.ReadString(reader);
+                case "SomeAssetLink10":
+                    item.SomeAssetLink10 = kernel.ReadString(reader);
+                case "SomeAssetLink11":
+                    item.SomeAssetLink11 = kernel.ReadString(reader);
+                case "SomeAssetLink12":
+                    item.SomeAssetLink12 = kernel.ReadString(reader);
+                case "SomeAssetLink13":
+                    item.SomeAssetLink13 = kernel.ReadString(reader);
+                case "SomeAssetLink14":
+                    item.SomeAssetLink14 = kernel.ReadString(reader);
+                case "SomeAssetLink15":
+                    item.SomeAssetLink15 = kernel.ReadString(reader);
+                case "SomeAssetLink16":
+                    item.SomeAssetLink16 = kernel.ReadString(reader);
+                case "SomeAssetLink17":
+                    item.SomeAssetLink17 = kernel.ReadString(reader);
+                case "SomeAssetLink18":
+                    item.SomeAssetLink18 = kernel.ReadString(reader);
+                case "SomeAssetLink19":
+                    item.SomeAssetLink19 = kernel.ReadString(reader);
+                case "SomeAssetLink20":
+                    item.SomeAssetLink20 = kernel.ReadString(reader);
+                case "SomeAssetLink21":
+                    item.SomeAssetLink21 = kernel.ReadString(reader);
                 default:
                     break;
             }

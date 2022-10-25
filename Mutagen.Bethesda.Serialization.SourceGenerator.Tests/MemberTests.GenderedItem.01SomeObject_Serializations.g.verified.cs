@@ -42,15 +42,15 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeGenderedInt":
-                    item.SomeGenderedInt.Male = kernel.ReadString(writer);
-                    item.SomeGenderedInt.Female = kernel.ReadString(writer);
-                case: "SomeGenderedInt2":
-                    item.SomeGenderedInt2.Male = kernel.ReadString(writer);
-                    item.SomeGenderedInt2.Female = kernel.ReadString(writer);
-                case: "SomeGenderedInt3":
-                    item.SomeGenderedInt3.Male = kernel.ReadString(writer);
-                    item.SomeGenderedInt3.Female = kernel.ReadString(writer);
+                case "SomeGenderedInt":
+                    item.SomeGenderedInt.Male = kernel.ReadString(reader);
+                    item.SomeGenderedInt.Female = kernel.ReadString(reader);
+                case "SomeGenderedInt2":
+                    item.SomeGenderedInt2.Male = kernel.ReadString(reader);
+                    item.SomeGenderedInt2.Female = kernel.ReadString(reader);
+                case "SomeGenderedInt3":
+                    item.SomeGenderedInt3.Male = kernel.ReadString(reader);
+                    item.SomeGenderedInt3.Female = kernel.ReadString(reader);
                 default:
                     break;
             }

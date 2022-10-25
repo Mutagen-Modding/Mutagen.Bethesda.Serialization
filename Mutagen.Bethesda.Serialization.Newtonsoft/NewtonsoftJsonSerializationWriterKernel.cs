@@ -3,6 +3,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
 using Noggog;
+using Noggog.Extensions;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
@@ -388,26 +389,36 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.R}, {item.Value.G}, {item.Value.B}");
+            writer.Writer.WriteValue(item.Value.CommaString(alpha: ColorExt.IncludeAlpha.Never));
         }
     }
 
     public void WriteTranslatedString(JsonWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
         writer.WriteName(fieldName);
-        if (item == null || (item.NumLanguages <= 1 && item.String == null))
+
+        if (item == null)
         {
             writer.Writer.WriteStartObject();
             writer.Writer.WriteEndObject();
             return;
         }
+        
+        writer.Writer.WriteStartObject();
+        writer.Writer.WritePropertyName("TargetLanguage");
+        writer.Writer.WriteValue(item.TargetLanguage.ToStringFast());
 
         if (item.NumLanguages <= 1)
         {
-            writer.Writer.WriteValue($"{item.String}");
+            if (item.String is { } str)
+            {
+                writer.Writer.WritePropertyName("Value");
+                writer.Writer.WriteValue($"{str}");
+            }
         }
         else
         {
+            writer.Writer.WritePropertyName("Values");
             writer.Writer.WriteStartArray();
             foreach (var entry in item)
             {
@@ -420,6 +431,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
             }
             writer.Writer.WriteEndArray();
         }
+        writer.Writer.WriteEndObject();
     }
 
     public void WriteBytes(JsonWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)

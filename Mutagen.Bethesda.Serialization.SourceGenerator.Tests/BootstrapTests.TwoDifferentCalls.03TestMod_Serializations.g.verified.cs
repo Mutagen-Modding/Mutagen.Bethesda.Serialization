@@ -36,8 +36,8 @@ internal static class TestMod_Serialization
         {
             switch (name)
             {
-                case: "SomeObject":
-                    item.SomeObject = kernel.ReadLoqui(writer, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
+                case "SomeObject":
+                    item.SomeObject = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
                 default:
                     break;
             }

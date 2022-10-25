@@ -3,6 +3,7 @@ using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
+using Noggog.Extensions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 
@@ -191,25 +192,35 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)
     {
-        WriteString(writer, fieldName, item == null ? "null" : $"{item.Value.R}, {item.Value.G}, {item.Value.B}");
+        WriteString(writer, fieldName, item == null ? "null" : item.Value.CommaString());
     }
 
     public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
         writer.WriteName(fieldName);
-        if (item == null || (item.NumLanguages <= 1 && item.String == null))
+        if (item == null)
         {
             writer.Emitter.Emit(new MappingStart());
             writer.Emitter.Emit(new MappingEnd());
             return;
         }
         
+        writer.Emitter.Emit(new MappingStart());
+        writer.WriteScalar("TargetLanguage");
+        writer.WriteScalar(item.TargetLanguage.ToStringFast());
+        
+        
         if (item.NumLanguages <= 1)
         {
-            writer.WriteScalar(item.String ?? string.Empty);
+            if (item.String is { } str)
+            {
+                writer.WriteScalar("Value");
+                writer.WriteScalar(str);
+            }
         }
         else
         {
+            writer.WriteScalar("Values");
             writer.Emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, false, SequenceStyle.Any));
             foreach (var entry in item)
             {
@@ -222,6 +233,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
             }
             writer.Emitter.Emit(new SequenceEnd());
         }
+        writer.Emitter.Emit(new MappingEnd());
     }
 
     public void WriteBytes(YamlWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)

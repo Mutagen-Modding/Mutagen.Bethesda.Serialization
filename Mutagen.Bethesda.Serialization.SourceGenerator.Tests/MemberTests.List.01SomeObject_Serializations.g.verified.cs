@@ -93,54 +93,54 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeList":
-                    kernel.StartListSection(writer, "SomeList");
-                    while (kernel.TryHasNextItem(writer))
+                case "SomeList":
+                    kernel.StartListSection(reader, "SomeList");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeList2":
-                    kernel.StartListSection(writer, "SomeList2");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeList2":
+                    kernel.StartListSection(reader, "SomeList2");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList2.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeList3":
-                    kernel.StartListSection(writer, "SomeList3");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeList3":
+                    kernel.StartListSection(reader, "SomeList3");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList3.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeList4":
-                    kernel.StartListSection(writer, "SomeList4");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeList4":
+                    kernel.StartListSection(reader, "SomeList4");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList4.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeList5":
-                    kernel.StartListSection(writer, "SomeList5");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeList5":
+                    kernel.StartListSection(reader, "SomeList5");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList5.Add(item);
                     }
-                    kernel.EndListSection(writer);
-                case: "SomeList6":
-                    kernel.StartListSection(writer, "SomeList6");
-                    while (kernel.TryHasNextItem(writer))
+                    kernel.EndListSection(reader);
+                case "SomeList6":
+                    kernel.StartListSection(reader, "SomeList6");
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(writer);
+                        var item = kernel.ReadString(reader);
                         item.SomeList6.Add(item);
                     }
-                    kernel.EndListSection(writer);
+                    kernel.EndListSection(reader);
                 default:
                     break;
             }

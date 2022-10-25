@@ -31,7 +31,7 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "UnknownThing":
+                case "UnknownThing":
                     throw new NotImplementedException("Unknown type: Unknown");
                 default:
                     break;

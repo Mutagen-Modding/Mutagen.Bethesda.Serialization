@@ -54,30 +54,30 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "SomeMember0":
-                    item.SomeMember0 = kernel.ReadString(writer);
-                case: "SomeMember1":
-                    item.SomeMember1 = kernel.ReadString(writer);
-                case: "SomeMember2":
-                    item.SomeMember2 = kernel.ReadString(writer);
-                case: "SomeMember3":
-                    item.SomeMember3 = kernel.ReadString(writer);
-                case: "SomeMember4":
-                    item.SomeMember4 = kernel.ReadString(writer);
-                case: "SomeMember5":
-                    item.SomeMember5 = kernel.ReadString(writer);
-                case: "SomeMember6":
-                    item.SomeMember6 = kernel.ReadString(writer);
-                case: "SomeMember7":
-                    item.SomeMember7 = kernel.ReadString(writer);
-                case: "SomeMember8":
-                    item.SomeMember8 = kernel.ReadString(writer);
-                case: "SomeMember9":
-                    item.SomeMember9 = kernel.ReadString(writer);
-                case: "SomeMember10":
-                    item.SomeMember10 = kernel.ReadString(writer);
-                case: "SomeMember11":
-                    item.SomeMember11 = kernel.ReadString(writer);
+                case "SomeMember0":
+                    item.SomeMember0 = kernel.ReadString(reader);
+                case "SomeMember1":
+                    item.SomeMember1 = kernel.ReadString(reader);
+                case "SomeMember2":
+                    item.SomeMember2 = kernel.ReadString(reader);
+                case "SomeMember3":
+                    item.SomeMember3 = kernel.ReadString(reader);
+                case "SomeMember4":
+                    item.SomeMember4 = kernel.ReadString(reader);
+                case "SomeMember5":
+                    item.SomeMember5 = kernel.ReadString(reader);
+                case "SomeMember6":
+                    item.SomeMember6 = kernel.ReadString(reader);
+                case "SomeMember7":
+                    item.SomeMember7 = kernel.ReadString(reader);
+                case "SomeMember8":
+                    item.SomeMember8 = kernel.ReadString(reader);
+                case "SomeMember9":
+                    item.SomeMember9 = kernel.ReadString(reader);
+                case "SomeMember10":
+                    item.SomeMember10 = kernel.ReadString(reader);
+                case "SomeMember11":
+                    item.SomeMember11 = kernel.ReadString(reader);
                 default:
                     break;
             }

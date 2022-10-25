@@ -36,8 +36,8 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case: "MyLoqui":
-                    item.MyLoqui = kernel.ReadLoqui(writer, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
+                case "MyLoqui":
+                    item.MyLoqui = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Deserialize<TKernel, TReadObject>(r, k, m));
                 default:
                     break;
             }
