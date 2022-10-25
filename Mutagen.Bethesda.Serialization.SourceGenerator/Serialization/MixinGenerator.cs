@@ -10,13 +10,16 @@ public class MixinGenerator
 {
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly LoquiSerializationNaming _serializationNaming;
+    private readonly ObjectTypeTester _modObjectTypeTester;
 
     public MixinGenerator(
         LoquiNameRetriever nameRetriever,
-        LoquiSerializationNaming serializationNaming)
+        LoquiSerializationNaming serializationNaming,
+        ObjectTypeTester modObjectTypeTester)
     {
         _nameRetriever = nameRetriever;
         _serializationNaming = serializationNaming;
+        _modObjectTypeTester = modObjectTypeTester;
     }
     
     public void Initialize(
@@ -39,6 +42,7 @@ public class MixinGenerator
         var reader = interf.TypeArguments[1];
         var writerKernel = interf.TypeArguments[2];
         var writer = interf.TypeArguments[3];
+        var isMod = _modObjectTypeTester.IsModObject(bootstrap.ObjectRegistration);
 
         var names = _nameRetriever.GetNames(bootstrap.ObjectRegistration);
         
@@ -76,7 +80,7 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(stream);");
-                sb.AppendLine($"{modSerializationItems.SerializationCall(serialize: true)}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel);");
+                sb.AppendLine($"{modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel);");
                 sb.AppendLine($"WriterKernel.Finalize(stream, writer);");
             }
             sb.AppendLine();
@@ -85,10 +89,47 @@ public class MixinGenerator
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"Stream stream");
+                if (!isMod)
+                {
+                    args.Add("SerializationMetaData metaData");
+                }
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"return {modSerializationItems.SerializationCall(serialize: false)}<{reader.Name}>(ReaderKernel.GetNewObject(stream), ReaderKernel);");
+                using (var c = sb.Call($"return {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
+                {
+                    c.Add("ReaderKernel.GetNewObject(stream)");
+                    c.Add("ReaderKernel");
+                    if (!isMod)
+                    {
+                        c.AddPassArg("metaData");
+                    }
+                }
+            }
+            sb.AppendLine();
+            
+            using (var args = sb.Function($"public static {bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter} DeserializeInto"))
+            {
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                args.Add($"Stream stream");
+                args.Add($"{names.Setter} obj");
+                if (!isMod)
+                {
+                    args.Add("SerializationMetaData metaData");
+                }
+            }
+            using (sb.CurlyBrace())
+            {
+                using (var c = sb.Call($"{modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
+                {
+                    c.Add("ReaderKernel.GetNewObject(stream)");
+                    c.Add("ReaderKernel");
+                    c.AddPassArg("obj");
+                    if (!isMod)
+                    {
+                        c.AddPassArg("metaData");
+                    }
+                }
             }
             sb.AppendLine();
         }

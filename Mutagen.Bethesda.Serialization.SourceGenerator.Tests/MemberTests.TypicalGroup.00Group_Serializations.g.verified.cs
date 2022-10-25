@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class Group_Serialization
@@ -26,9 +28,26 @@ internal static class Group_Serialization
         return true;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroup<T> Deserialize<TReadObject, T>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group<T> Deserialize<TReadObject, T>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+        where T : class, IMajorRecordInternal
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group<T>();
+        DeserializeInto<TReadObject, T>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject, T>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroup<T> obj,
+        SerializationMetaData metaData)
         where T : class, IMajorRecordInternal
     {
         while (kernel.TryGetNextField(reader, out var name))
@@ -36,14 +55,18 @@ internal static class Group_Serialization
             switch (name)
             {
                 case "SomeInt":
-                    item.SomeInt = kernel.ReadInt32(reader);
+                    obj.SomeInt = kernel.ReadInt32(reader);
+                    break;
                 case "Items":
+                    break;
                 case "SomeInt2":
-                    item.SomeInt2 = kernel.ReadInt32(reader);
+                    obj.SomeInt2 = kernel.ReadInt32(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

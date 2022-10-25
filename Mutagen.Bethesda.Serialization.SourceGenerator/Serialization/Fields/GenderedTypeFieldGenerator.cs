@@ -137,6 +137,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

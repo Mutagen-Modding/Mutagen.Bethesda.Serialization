@@ -20,9 +20,26 @@ public static class MutagenTestConverterSomeObjectMixIns
 
     public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize(
         this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MutagenTestConverter converterBootstrap,
-        Stream stream)
+        Stream stream,
+        SerializationMetaData metaData)
     {
-        return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject_Serialization.Deserialize<TestReader>(ReaderKernel.GetNewObject(stream), ReaderKernel);
+        return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject_Serialization.Deserialize<TestReader>(
+            ReaderKernel.GetNewObject(stream),
+            ReaderKernel,
+            metaData: metaData);
+    }
+
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject DeserializeInto(
+        this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MutagenTestConverter converterBootstrap,
+        Stream stream,
+        ISomeObject obj,
+        SerializationMetaData metaData)
+    {
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject_Serialization.DeserializeInto<TestReader>(
+            ReaderKernel.GetNewObject(stream),
+            ReaderKernel,
+            obj: obj,
+            metaData: metaData);
     }
 
 }

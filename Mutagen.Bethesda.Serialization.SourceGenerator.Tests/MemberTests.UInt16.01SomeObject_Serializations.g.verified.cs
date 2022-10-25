@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
@@ -46,42 +48,71 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
+        DeserializeInto<TReadObject>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {
                 case "SomeMember0":
-                    item.SomeMember0 = kernel.ReadUInt16(reader);
+                    obj.SomeMember0 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember1":
-                    item.SomeMember1 = kernel.ReadUInt16(reader);
+                    obj.SomeMember1 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember2":
-                    item.SomeMember2 = kernel.ReadUInt16(reader);
+                    obj.SomeMember2 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember3":
-                    item.SomeMember3 = kernel.ReadUInt16(reader);
+                    obj.SomeMember3 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember4":
-                    item.SomeMember4 = kernel.ReadUInt16(reader);
+                    obj.SomeMember4 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember5":
-                    item.SomeMember5 = kernel.ReadUInt16(reader);
+                    obj.SomeMember5 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember6":
-                    item.SomeMember6 = kernel.ReadUInt16(reader);
+                    obj.SomeMember6 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember7":
-                    item.SomeMember7 = kernel.ReadUInt16(reader);
+                    obj.SomeMember7 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember8":
-                    item.SomeMember8 = kernel.ReadUInt16(reader);
+                    obj.SomeMember8 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember9":
-                    item.SomeMember9 = kernel.ReadUInt16(reader);
+                    obj.SomeMember9 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember10":
-                    item.SomeMember10 = kernel.ReadUInt16(reader);
+                    obj.SomeMember10 = kernel.ReadUInt16(reader);
+                    break;
                 case "SomeMember11":
-                    item.SomeMember11 = kernel.ReadUInt16(reader);
+                    obj.SomeMember11 = kernel.ReadUInt16(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

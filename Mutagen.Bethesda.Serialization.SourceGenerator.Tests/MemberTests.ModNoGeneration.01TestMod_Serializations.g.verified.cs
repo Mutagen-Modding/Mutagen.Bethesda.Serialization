@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -21,9 +23,10 @@ internal static class TestMod_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
+    public static void DeserializeInto<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj)
     {
         var metaData = new SerializationMetaData(item.GameRelease);
         while (kernel.TryGetNextField(reader, out var name))
@@ -34,6 +37,7 @@ internal static class TestMod_Serialization
                     break;
             }
         }
+
     }
 
 }

@@ -335,6 +335,18 @@ public class MemberTests : ATestsBase
     }
     
     [Fact]
+    public Task FormLinkList()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public ExtendedList<IFormLinkGetter<INpcGetter>> SomeFormKeys { get; set; }");
+            sb.AppendLine("public IReadOnlyList<IFormLinkGetter<INpcGetter>> SomeFormKeys2 { get; set; }");
+        });
+       
+        return TestHelper.Verify(source);
+    }
+    
+    [Fact]
     public Task Dictionary()
     {
         var source = GetObjWithMember(sb =>

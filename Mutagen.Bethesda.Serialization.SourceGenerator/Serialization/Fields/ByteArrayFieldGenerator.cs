@@ -91,7 +91,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        sb.AppendLine($"if (!MemorySliceExt.Equal<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
+        sb.AppendLine($"if (!MemorySliceExt.SequenceEqual<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -103,6 +103,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

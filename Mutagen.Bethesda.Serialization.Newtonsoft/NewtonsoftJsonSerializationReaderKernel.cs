@@ -44,6 +44,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new DataMisalignedException($"Did not have EndObject or PropertyName token as expected. Line: {reader.LineNumber} Pos: {reader.LinePosition}");
     }
 
+    public FormKey ExtractFormKey(JsonTextReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Skip(JsonTextReader reader)
     {
         reader.Read();
@@ -456,7 +461,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return ret;
     }
 
-    public ReadOnlyMemorySlice<byte> ReadBytes(JsonTextReader reader)
+    public MemorySlice<byte> ReadBytes(JsonTextReader reader)
     {
         SkipPropertyName(reader);
         var str = (string)reader.Value!;

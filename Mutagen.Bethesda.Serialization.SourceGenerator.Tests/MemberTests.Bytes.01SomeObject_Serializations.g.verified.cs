@@ -3,6 +3,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Noggog;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
@@ -25,36 +27,58 @@ internal static class SomeObject_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         SerializationMetaData metaData)
     {
-        if (!MemorySliceExt.Equal<byte>(item.SomeBytes, default(byte[]))) return true;
-        if (!MemorySliceExt.Equal<byte>(item.SomeBytes2, default(Noggog.ReadOnlyMemorySlice<byte>))) return true;
-        if (!MemorySliceExt.Equal<byte>(item.SomeBytes3, default(byte[]?))) return true;
-        if (!MemorySliceExt.Equal<byte>(item.SomeBytes4, default(Noggog.ReadOnlyMemorySlice<byte>?))) return true;
-        if (!MemorySliceExt.Equal<byte>(item.SomeBytes5, default(Nullable<Noggog.ReadOnlyMemorySlice<byte>>))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes, default(byte[]))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes2, default(Noggog.ReadOnlyMemorySlice<byte>))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes3, default(byte[]?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes4, default(Noggog.ReadOnlyMemorySlice<byte>?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes5, default(Nullable<Noggog.ReadOnlyMemorySlice<byte>>))) return true;
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
+        DeserializeInto<TReadObject>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {
                 case "SomeBytes":
-                    item.SomeBytes = kernel.ReadBytes(reader);
+                    obj.SomeBytes = kernel.ReadBytes(reader);
+                    break;
                 case "SomeBytes2":
-                    item.SomeBytes2 = kernel.ReadBytes(reader);
+                    obj.SomeBytes2 = kernel.ReadBytes(reader);
+                    break;
                 case "SomeBytes3":
-                    item.SomeBytes3 = kernel.ReadBytes(reader);
+                    obj.SomeBytes3 = kernel.ReadBytes(reader);
+                    break;
                 case "SomeBytes4":
-                    item.SomeBytes4 = kernel.ReadBytes(reader);
+                    obj.SomeBytes4 = kernel.ReadBytes(reader);
+                    break;
                 case "SomeBytes5":
-                    item.SomeBytes5 = kernel.ReadBytes(reader);
+                    obj.SomeBytes5 = kernel.ReadBytes(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

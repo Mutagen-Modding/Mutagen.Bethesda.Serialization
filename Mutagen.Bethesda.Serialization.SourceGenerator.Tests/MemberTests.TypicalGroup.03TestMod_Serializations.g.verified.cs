@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -48,9 +50,10 @@ internal static class TestMod_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod Deserialize<TReadObject>(
+    public static void DeserializeInto<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj)
     {
         var metaData = new SerializationMetaData(item.GameRelease);
         while (kernel.TryGetNextField(reader, out var name))
@@ -58,33 +61,37 @@ internal static class TestMod_Serialization
             switch (name)
             {
                 case "SomeGroup":
-                    SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+                    SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                         reader: reader,
-                        group: item.SomeGroup,
+                        group: obj.SomeGroup,
                         meta: metaData,
                         kernel: kernel,
-                        groupReader: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
-                        itemReader: static (w, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, k, m));
+                        groupReader: static (r, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeInto<TReadObject, TestMajorRecord>(r, k, i, m),
+                        itemReader: static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>(r, k, m));
+                    break;
                 case "SomeGroup2":
-                    SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+                    SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                         reader: reader,
-                        group: item.SomeGroup2,
+                        group: obj.SomeGroup2,
                         meta: metaData,
                         kernel: kernel,
-                        groupReader: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
-                        itemReader: static (w, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, k, m));
+                        groupReader: static (r, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeInto<TReadObject, TestMajorRecord>(r, k, i, m),
+                        itemReader: static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>(r, k, m));
+                    break;
                 case "SomeGroup3":
-                    SerializationHelper.ReadIntoGroup<TKernel, TReadObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+                    SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                         reader: reader,
-                        group: item.SomeGroup3,
+                        group: obj.SomeGroup3,
                         meta: metaData,
                         kernel: kernel,
-                        groupReader: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
-                        itemReader: static (w, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, k, m));
+                        groupReader: static (r, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeInto<TReadObject, TestMajorRecord>(r, k, i, m),
+                        itemReader: static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>(r, k, m));
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

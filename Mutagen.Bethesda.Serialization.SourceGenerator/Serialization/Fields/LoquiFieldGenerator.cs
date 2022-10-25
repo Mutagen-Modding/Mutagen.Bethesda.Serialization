@@ -67,7 +67,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
 
-        var call = fieldSerializationItems.SerializationCall(serialize: true, withCheck: hasInheriting);
+        var call = fieldSerializationItems.SerializationCall(withCheck: hasInheriting);
         
         if (fieldName != null)
         {
@@ -111,6 +111,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -125,8 +126,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
 
-        var call = fieldSerializationItems.SerializationCall(serialize: false, withCheck: hasInheriting);
+        var call = fieldSerializationItems.DeserializationCall(withCheck: hasInheriting);
         
-        sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TKernel, TReadObject>(r, k, m));");
+        sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
     }
 }

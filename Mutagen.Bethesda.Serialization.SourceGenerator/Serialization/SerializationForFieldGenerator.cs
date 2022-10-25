@@ -83,7 +83,17 @@ public class SerializationFieldGenerator
         var gen = GetGenerator(fieldType, cancel);
         if (gen != null)
         {
-            gen.GenerateForDeserialize(compilation, obj, fieldType, fieldName, fieldAccessor, readerAccessor, "kernel", "metaData", sb, cancel);
+            gen.GenerateForDeserialize(compilation,
+                obj,
+                fieldType,
+                fieldName,
+                fieldAccessor,
+                readerAccessor,
+                "kernel",
+                "metaData",
+                insideCollection: true,
+                sb,
+                cancel);
         }
         else
         {
@@ -105,7 +115,17 @@ public class SerializationFieldGenerator
         cancel.ThrowIfCancellationRequested();
         if (gen != null)
         {
-            gen.GenerateForDeserialize(compilation, obj, fieldType, fieldName, fieldAccessor, readerAccessor, "kernel", "metaData", sb, cancel);
+            gen.GenerateForDeserialize(compilation,
+                obj,
+                fieldType,
+                fieldName,
+                fieldAccessor,
+                readerAccessor,
+                "kernel",
+                "metaData",
+                insideCollection: false,
+                sb,
+                cancel);
         }
         else
         {

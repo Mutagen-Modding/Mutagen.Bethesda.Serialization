@@ -1,4 +1,6 @@
-﻿using Mutagen.Bethesda.Plugins.Records;
+﻿using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Exceptions;
+using Mutagen.Bethesda.Plugins.Records;
 
 namespace Mutagen.Bethesda.Serialization;
 
@@ -37,7 +39,7 @@ public static class SerializationHelper
         Read<TKernel, TReadObject, TObject> itemReader)
         where TGroup : class, IGroup<TObject>
         where TObject : class, IMajorRecordGetter
-        where TKernel : ISerializationReaderKernel<TReadObject>, new()
+        where TKernel : ISerializationReaderKernel<TReadObject>
     {
         group.Clear();
         groupReader(reader, group, kernel, meta);

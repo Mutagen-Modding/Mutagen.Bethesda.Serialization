@@ -22,7 +22,20 @@ public static class MutagenTestConverterTestModMixIns
         this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MutagenTestConverter converterBootstrap,
         Stream stream)
     {
-        return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Deserialize<TestReader>(ReaderKernel.GetNewObject(stream), ReaderKernel);
+        return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.Deserialize<TestReader>(
+            ReaderKernel.GetNewObject(stream),
+            ReaderKernel);
+    }
+
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod DeserializeInto(
+        this Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MutagenTestConverter converterBootstrap,
+        Stream stream,
+        ITestMod obj)
+    {
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod_Serialization.DeserializeInto<TestReader>(
+            ReaderKernel.GetNewObject(stream),
+            ReaderKernel,
+            obj: obj);
     }
 
 }

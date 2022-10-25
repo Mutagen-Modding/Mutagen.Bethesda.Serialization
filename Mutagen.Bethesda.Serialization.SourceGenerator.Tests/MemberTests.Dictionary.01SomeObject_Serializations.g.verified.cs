@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
@@ -64,9 +66,25 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
+        DeserializeInto<TReadObject>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
@@ -78,31 +96,35 @@ internal static class SomeObject_Serialization
                     {
                         var key = kernel.ReadInt32(reader);
                         var val = kernel.ReadString(reader);
-                        item.SomeDict[key] = val;
+                        obj.SomeDict[key] = val;
                     }
                     kernel.EndDictionarySection(reader);
+                    break;
                 case "SomeDict1":
                     kernel.StartDictionarySection(reader);
                     while (kernel.TryHasNextDictionaryItem(reader))
                     {
                         var key = kernel.ReadInt32(reader);
                         var val = kernel.ReadString(reader);
-                        item.SomeDict1[key] = val;
+                        obj.SomeDict1[key] = val;
                     }
                     kernel.EndDictionarySection(reader);
+                    break;
                 case "SomeDict2":
                     kernel.StartDictionarySection(reader);
                     while (kernel.TryHasNextDictionaryItem(reader))
                     {
                         var key = kernel.ReadInt32(reader);
                         var val = kernel.ReadString(reader);
-                        item.SomeDict2[key] = val;
+                        obj.SomeDict2[key] = val;
                     }
                     kernel.EndDictionarySection(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

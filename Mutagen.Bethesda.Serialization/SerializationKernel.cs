@@ -16,12 +16,13 @@ public delegate void ReadInto<TKernel, TReaderObject, TObject>(
     TObject obj,
     TKernel kernel,
     SerializationMetaData metaData)
-    where TKernel : ISerializationReaderKernel<TReaderObject>, new();
+    where TKernel : ISerializationReaderKernel<TReaderObject>;
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
     public bool TryGetNextField(TReaderObject reader, out string name);
+    public FormKey ExtractFormKey(TReaderObject reader);
     public void Skip(TReaderObject reader);
     public char ReadChar(TReaderObject reader);
     public bool ReadBool(TReaderObject reader);
@@ -50,7 +51,7 @@ public interface ISerializationReaderKernel<TReaderObject>
     public P3UInt16 ReadP3UInt16(TReaderObject reader);
     public Percent ReadPercent(TReaderObject reader);
     public TranslatedString ReadTranslatedString(TReaderObject reader);
-    public ReadOnlyMemorySlice<byte> ReadBytes(TReaderObject reader);
+    public MemorySlice<byte> ReadBytes(TReaderObject reader);
     public TObject ReadLoqui<TObject>(
         TReaderObject reader,
         SerializationMetaData serializationMetaData,

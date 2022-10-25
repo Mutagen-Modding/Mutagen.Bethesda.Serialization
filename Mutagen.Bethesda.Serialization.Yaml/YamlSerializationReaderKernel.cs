@@ -35,6 +35,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return true;
     }
 
+    public FormKey ExtractFormKey(Parser reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Skip(Parser reader)
     {
         if (reader.Current is MappingStart)
@@ -417,7 +422,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return ret;
     }
 
-    public ReadOnlyMemorySlice<byte> ReadBytes(Parser reader)
+    public MemorySlice<byte> ReadBytes(Parser reader)
     {
         var scalar = reader.Consume<Scalar>();
         return Convert.FromHexString(scalar.Value);

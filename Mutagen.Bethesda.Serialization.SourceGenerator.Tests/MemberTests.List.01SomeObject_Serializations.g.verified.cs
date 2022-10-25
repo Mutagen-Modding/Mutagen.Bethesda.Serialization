@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
@@ -85,66 +87,89 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
+        DeserializeInto<TReadObject>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {
                 case "SomeList":
-                    kernel.StartListSection(reader, "SomeList");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList.Add(item);
+                        obj.SomeList.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 case "SomeList2":
-                    kernel.StartListSection(reader, "SomeList2");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList2.Add(item);
+                        obj.SomeList2.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 case "SomeList3":
-                    kernel.StartListSection(reader, "SomeList3");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList3.Add(item);
+                        obj.SomeList3.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 case "SomeList4":
-                    kernel.StartListSection(reader, "SomeList4");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList4.Add(item);
+                        obj.SomeList4.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 case "SomeList5":
-                    kernel.StartListSection(reader, "SomeList5");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList5.Add(item);
+                        obj.SomeList5.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 case "SomeList6":
-                    kernel.StartListSection(reader, "SomeList6");
+                    kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
                         var item = kernel.ReadString(reader);
-                        item.SomeList6.Add(item);
+                        obj.SomeList6.Add(item);
                     }
                     kernel.EndListSection(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

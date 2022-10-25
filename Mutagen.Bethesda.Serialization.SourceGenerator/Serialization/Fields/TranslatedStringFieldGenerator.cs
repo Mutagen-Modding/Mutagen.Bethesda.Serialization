@@ -83,6 +83,7 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

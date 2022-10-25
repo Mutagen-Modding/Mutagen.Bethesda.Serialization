@@ -86,9 +86,23 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}));");
+        if (insideCollection)
+        {
+            if (field is not INamedTypeSymbol named
+                || !named.IsGenericType
+                || named.TypeArguments.Length != 1)
+            {
+                throw new NotImplementedException();
+            }
+            sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadFormKey({readerAccessor}).AsLink<{named.TypeArguments[0]}>();");
+        }
+        else
+        {
+            sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}));");
+        }
     }
 }

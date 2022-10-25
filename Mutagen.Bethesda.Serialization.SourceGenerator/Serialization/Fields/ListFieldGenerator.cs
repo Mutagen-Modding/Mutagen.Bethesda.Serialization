@@ -143,6 +143,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -166,7 +167,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        sb.AppendLine($"{kernelAccessor}.StartListSection({readerAccessor}, \"{fieldName}\");");
+        sb.AppendLine($"{kernelAccessor}.StartListSection({readerAccessor});");
         sb.AppendLine($"while ({kernelAccessor}.TryHasNextItem({readerAccessor}))");
         using (sb.CurlyBrace())
         {

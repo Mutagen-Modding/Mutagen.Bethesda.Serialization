@@ -2,6 +2,8 @@
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
+#nullable enable
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
@@ -34,30 +36,53 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject Deserialize<TReadObject>(
+    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
         TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel)
+        ISerializationReaderKernel<TReadObject> kernel,
+        SerializationMetaData metaData)
+    {
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
+        DeserializeInto<TReadObject>(
+            reader: reader,
+            kernel: kernel,
+            obj: obj,
+            metaData: metaData);
+        return obj;
+    }
+
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
             switch (name)
             {
                 case "SomeEnum":
-                    item.SomeEnum = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                    obj.SomeEnum = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                    break;
                 case "SomeEnum2":
-                    item.SomeEnum2 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                    obj.SomeEnum2 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum>(reader);
+                    break;
                 case "SomeEnum3":
-                    item.SomeEnum3 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                    obj.SomeEnum3 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                    break;
                 case "SomeEnum4":
-                    item.SomeEnum4 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                    obj.SomeEnum4 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum2>(reader);
+                    break;
                 case "SomeEnum5":
-                    item.SomeEnum5 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
+                    obj.SomeEnum5 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
+                    break;
                 case "SomeEnum6":
-                    item.SomeEnum6 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
+                    obj.SomeEnum6 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter.MyEnum3>(reader);
+                    break;
                 default:
                     break;
             }
         }
+
     }
 
 }

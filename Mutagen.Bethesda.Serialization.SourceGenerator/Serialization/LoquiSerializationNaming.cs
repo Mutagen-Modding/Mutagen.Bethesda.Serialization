@@ -9,9 +9,19 @@ public record SerializationItems(
     public string SerializationHousingClassName => $"{TermName}_Serialization";
     public string SerializationHousingFileName => $"{TermName}_Serializations.g.cs";
 
-    public string SerializationCall(bool serialize, bool withCheck = false)
+    public string SerializationCall(bool withCheck = false)
     {
-        return $"{Namespace}.{SerializationHousingClassName}.{(serialize ? "Serialize" : "Deserialize")}{(withCheck ? "WithCheck" : null)}";
+        return $"{Namespace}.{SerializationHousingClassName}.Serialize{(withCheck ? "WithCheck" : null)}";
+    }
+
+    public string DeserializationCall(bool withCheck = false)
+    {
+        return $"{Namespace}.{SerializationHousingClassName}.Deserialize{(withCheck ? "WithCheck" : null)}";
+    }
+
+    public string DeserializationIntoCall()
+    {
+        return $"{Namespace}.{SerializationHousingClassName}.DeserializeInto";
     }
 
     public string HasSerializationCall(bool withCheck = false)

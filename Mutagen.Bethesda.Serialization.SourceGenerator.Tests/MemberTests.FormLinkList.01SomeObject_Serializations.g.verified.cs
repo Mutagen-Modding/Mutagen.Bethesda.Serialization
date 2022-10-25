@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
@@ -15,14 +16,34 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        kernel.WriteUInt16(writer, "FormVersion", item.FormVersion, metaData.Release.GetDefaultFormVersion() ?? 0);
+        if (item.SomeFormKeys is {} checkedSomeFormKeys
+            && checkedSomeFormKeys.Count > 0)
+        {
+            kernel.StartListSection(writer, "SomeFormKeys");
+            foreach (var listItem in checkedSomeFormKeys)
+            {
+                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey));
+            }
+            kernel.EndListSection(writer);
+        }
+        if (item.SomeFormKeys2 is {} checkedSomeFormKeys2
+            && checkedSomeFormKeys2.Count > 0)
+        {
+            kernel.StartListSection(writer, "SomeFormKeys2");
+            foreach (var listItem in checkedSomeFormKeys2)
+            {
+                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey));
+            }
+            kernel.EndListSection(writer);
+        }
     }
 
     public static bool HasSerializationItems(
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         SerializationMetaData metaData)
     {
-        if (!EqualityComparer<ushort>.Default.Equals(item.FormVersion, metaData.Release.GetDefaultFormVersion() ?? 0)) return true;
+        if (item.SomeFormKeys.Count > 0) return true;
+        if (item.SomeFormKeys2.Count > 0) return true;
         return false;
     }
 
@@ -50,8 +71,23 @@ internal static class SomeObject_Serialization
         {
             switch (name)
             {
-                case "FormVersion":
-                    obj.FormVersion = kernel.ReadUInt16(reader);
+                case "SomeFormKeys":
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
+                    {
+                        var item = kernel.ReadFormKey(reader).AsLink<INpcGetter>();
+                        obj.SomeFormKeys.Add(item);
+                    }
+                    kernel.EndListSection(reader);
+                    break;
+                case "SomeFormKeys2":
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
+                    {
+                        var item = kernel.ReadFormKey(reader).AsLink<INpcGetter>();
+                        obj.SomeFormKeys2.Add(item);
+                    }
+                    kernel.EndListSection(reader);
                     break;
                 default:
                     break;

@@ -79,6 +79,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         string readerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -91,6 +92,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
             readerAccessor: readerAccessor,
             kernelAccessor: kernelAccessor, 
             metaAccessor: metaAccessor,
+            insideCollection: true,
             sb: sb,
             cancel: cancel);
     }

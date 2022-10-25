@@ -39,6 +39,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public FormKey ExtractFormKey(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Skip(TestReader reader)
     {
         throw new NotImplementedException();
@@ -406,7 +411,7 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public ReadOnlyMemorySlice<byte> ReadBytes(TestReader reader)
+    public MemorySlice<byte> ReadBytes(TestReader reader)
     {
         throw new NotImplementedException();
     }

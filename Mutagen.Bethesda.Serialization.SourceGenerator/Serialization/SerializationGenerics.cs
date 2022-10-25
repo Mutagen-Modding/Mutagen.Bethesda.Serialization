@@ -13,7 +13,7 @@ public class SerializationGenerics
 
     public string ReaderGenericsString()
     {
-        var join = "TReadObject".AsEnumerable();
+        IEnumerable<string> join = new string[] { "TReadObject"};
         if (ExtraReaderGenerics != null)
         {
             join = join.And(ExtraReaderGenerics);
