@@ -24,14 +24,6 @@
 
     <ItemGroup>
         <PackageReference Include="Mutagen.Bethesda.Core" Version="0.40.0-pr001" />
-        <PackageReference Include="GitInfo" Version="2.2.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="NuGetizer" Version="0.9.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
