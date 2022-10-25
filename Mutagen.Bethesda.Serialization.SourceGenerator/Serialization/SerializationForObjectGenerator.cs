@@ -88,6 +88,11 @@ public class SerializationForObjectGenerator
             
             GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
             
+            if (inheriting.Count > 0)
+            {
+                GenerateDeserializeWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
+            }
+            
             GenerateDeserialize(obj, sb, typeSet, gens);
             
             GenerateDeserializeInto(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
@@ -473,6 +478,72 @@ public class SerializationForObjectGenerator
                         sb.AppendLine(
                             $"{curSerializationItems.SerializationCall()}(writer, {typeSet.Getter.Name}, kernel, metaData);");
                         sb.AppendLine("break;");
+                    }
+                }
+
+                sb.AppendLine("default:");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine($"throw new NotImplementedException();");
+                }
+            }
+        }
+
+        sb.AppendLine();
+    }
+
+    private void GenerateDeserializeWithCheck(
+        CompilationUnit compilation,
+        SourceProductionContext context, 
+        ITypeSymbol obj,
+        StructuredStringBuilder sb, 
+        LoquiTypeSet typeSet,
+        SerializationGenerics generics,
+        IReadOnlyList<ITypeSymbol> inheriting)
+    {
+        var isMod = _modObjectTypeTester.IsModObject(obj);
+        using (var args = sb.Function($"public static {typeSet.Direct} DeserializeWithCheck{generics.ReaderGenericsString()}"))
+        {
+            args.Add($"TReadObject reader");
+            args.Add($"ISerializationReaderKernel<TReadObject> kernel");
+            if (!isMod)
+            {
+                args.Add("SerializationMetaData metaData");
+            }
+            args.Wheres.AddRange(generics.ReaderWheres());
+        }
+
+        using (sb.CurlyBrace())
+        {
+            if (isMod)
+            {
+                GenerateMetaConstruction(sb);
+            }
+            sb.AppendLine("switch (kernel.GetNextType(reader).Name)");
+            using (sb.CurlyBrace())
+            {
+                foreach (var inherit in inheriting)
+                {
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    var names = _nameRetriever.GetNames(inherit);
+                    if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
+                        continue;
+                    if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
+                    if (inheritTypes.Direct?.IsAbstract ?? true) continue;
+                    sb.AppendLine($"case \"{names.Direct}\":");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine($"return {inheritSerializeItems.DeserializationCall()}(reader, kernel, metaData);");
+                    }
+                }
+
+                if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                    && (!typeSet.Direct?.IsAbstract ?? false))
+                {
+                    sb.AppendLine($"case {typeSet.Direct?.Name} {typeSet.Getter.Name}:");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine($"return {curSerializationItems.DeserializationCall()}(reader, kernel, metaData);");
                     }
                 }
 

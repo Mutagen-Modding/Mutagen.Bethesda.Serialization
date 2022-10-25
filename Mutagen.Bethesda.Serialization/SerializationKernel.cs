@@ -22,6 +22,7 @@ public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
     public bool TryGetNextField(TReaderObject reader, out string name);
+    public Type GetNextType(TReaderObject reader);
     public FormKey ExtractFormKey(TReaderObject reader);
     public void Skip(TReaderObject reader);
     public char ReadChar(TReaderObject reader);

@@ -39,6 +39,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public Type GetNextType(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public FormKey ExtractFormKey(TestReader reader)
     {
         throw new NotImplementedException();

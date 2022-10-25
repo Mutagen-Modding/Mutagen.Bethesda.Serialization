@@ -35,6 +35,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return true;
     }
 
+    public Type GetNextType(Parser reader)
+    {
+        throw new NotImplementedException();
+    }
+
     public FormKey ExtractFormKey(Parser reader)
     {
         throw new NotImplementedException();
