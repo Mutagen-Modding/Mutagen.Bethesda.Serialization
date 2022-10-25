@@ -1,7 +1,11 @@
 <Project>
+ 
+  <PropertyGroup> 
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally> 
+  </PropertyGroup> 
   
   <ItemGroup> 
-    <PackageReference Include="GitInfo" Version="2.2.0" > 
+    <PackageReference Include="GitInfo" > 
       <PrivateAssets>all</PrivateAssets> 
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets> 
     </PackageReference>

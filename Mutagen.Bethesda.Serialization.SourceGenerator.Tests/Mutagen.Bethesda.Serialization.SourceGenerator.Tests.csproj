@@ -14,19 +14,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" >
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-        <PackageReference Include="Mutagen.Bethesda.Skyrim" Version="0.40.0-pr001" />
-        <PackageReference Include="Noggog.Testing" Version="2.51.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
-        <PackageReference Include="Verify.DiffPlex" Version="2.0.0" />
-        <PackageReference Include="Verify.SourceGenerators" Version="2.0.0" />
-        <PackageReference Include="Verify.Xunit" Version="18.0.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
-        <PackageReference Include="StrongInject" Version="1.4.4" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
+        <PackageReference Include="Noggog.Testing" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+        <PackageReference Include="Verify.DiffPlex" />
+        <PackageReference Include="Verify.SourceGenerators" />
+        <PackageReference Include="Verify.Xunit" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="StrongInject" />
     </ItemGroup>
 
 </Project>

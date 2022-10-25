@@ -1,0 +1,26 @@
+<Project>
+  <ItemGroup> 
+    <PackageVersion Include="GitInfo" Version="2.2.0" /> 
+	<PackageVersion Include="Loqui" Version="2.51.0" />
+	<PackageVersion Include="Loqui.Generation" Version="2.51.0" />
+	<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" />
+	<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.40.0-pr001" />
+    <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.40.0-pr001" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-dev" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-dev" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="0.0.0.1-dev" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="0.0.0.1-dev" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
+	<PackageVersion Include="Noggog.CSharpExt" Version="2.51.0" />
+    <PackageVersion Include="Noggog.Testing" Version="2.51.0" />
+    <PackageVersion Include="NuGetizer" Version="0.9.0" /> 
+    <PackageVersion Include="StrongInject" Version="1.4.4" />
+    <PackageVersion Include="Verify.DiffPlex" Version="2.0.0" />
+    <PackageVersion Include="Verify.SourceGenerators" Version="2.0.0" />
+    <PackageVersion Include="Verify.Xunit" Version="18.0.0" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="YamlDotNet" Version="12.0.2" />
+  </ItemGroup>
+</Project>
