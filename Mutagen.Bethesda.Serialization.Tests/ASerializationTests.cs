@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
@@ -11,12 +12,17 @@ public abstract class ASerializationTests
 {
     public abstract void Serialize(SkyrimMod mod, Stream stream);
     public abstract ISkyrimModGetter Deserialize(Stream stream);
+    public ModKey OriginalModKey => ModKey.FromFileName("InputMod.esp");
+    public ModKey OutputModKey => ModKey.FromFileName("TestMod.esp");
+    public FilePath OriginalModBinaryPath => $"C:/Binary/{OriginalModKey.FileName}";
+    public FilePath OutputModBinaryPath => $"C:/Binary/{OutputModKey.FileName}";
+    public FilePath OutputModSerializedPath => $"C:/Serialized/{OriginalModKey.FileName}";
     
     [Theory]
     [DefaultAutoData]
     public async Task EmptySkyrimModExport()
     {
-        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
         Serialize(mod, stream);
         stream.Position = 0;
@@ -29,7 +35,7 @@ public abstract class ASerializationTests
     [DefaultAutoData]
     public async Task SingleGroupSkyrimModExport()
     {
-        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
         var npc = mod.Npcs.AddNew();
         npc.Name = "Goblin";
         npc.Configuration.Level = new NpcLevel();
@@ -58,11 +64,18 @@ public abstract class ASerializationTests
     public void EmptySkyrimModPassthrough(
         IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
-        var stream = new MemoryStream();
-        Serialize(mod, stream);
-        stream.Position = 0;
-        var mod2 = Deserialize(stream);
+        PassThrough(
+            fileSystem,
+            new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE));
+    }
+
+    private void PassThrough(
+        IFileSystem fileSystem,
+        SkyrimMod mod)
+    {
+        fileSystem.Directory.CreateDirectory(OutputModSerializedPath.Directory);
+        Serialize(mod, fileSystem.File.OpenWrite(OutputModSerializedPath));
+        var mod2 = Deserialize(fileSystem.File.OpenRead(OutputModSerializedPath));
         CheckEquality(fileSystem, mod, mod2);
     }
 
@@ -71,27 +84,29 @@ public abstract class ASerializationTests
         ISkyrimModGetter mod1,
         ISkyrimModGetter mod2)
     {
-        var mod1Path = $"C:/{mod1.ModKey.FileName}";
-        var mod2Path = $"C:/{mod2.ModKey.FileName}";
-        using (var fs = fileSystem.FileStream.Create(mod1Path, FileMode.Create))
+        fileSystem.Directory.CreateDirectory(OriginalModBinaryPath.Directory);
+        fileSystem.Directory.CreateDirectory(OutputModBinaryPath.Directory);
+        using (var fs = fileSystem.FileStream.Create(OriginalModBinaryPath, FileMode.Create))
         {
             mod1.WriteToBinaryParallel(fs);
         }
-        using (var fs = fileSystem.FileStream.Create(mod2Path, FileMode.Create))
+        using (var fs = fileSystem.FileStream.Create(OutputModBinaryPath, FileMode.Create))
         {
             mod2.WriteToBinaryParallel(fs);
         }
         AssertFilesEqual(
-            fileSystem.FileStream.Create(mod1Path, FileMode.Open),
-            mod2Path);
+            fileSystem.FileStream.Create(OriginalModBinaryPath, FileMode.Open),
+            OutputModBinaryPath,
+            fileSystem.FileStream.Create(OutputModBinaryPath, FileMode.Open));
     }
 
     public static void AssertFilesEqual(
         Stream stream,
-        string path2,
+        FilePath stream2Path,
+        Stream stream2,
         ushort amountToReport = 5)
     {
-        using var reader2 = new BinaryReadStream(path2);
+        using var reader2 = new BinaryReadStream(stream2);
         Stream compareStream = new ComparisonStream(
             stream,
             reader2);
@@ -101,15 +116,15 @@ public abstract class ASerializationTests
             .ToArray();
         if (errs.Length > 0)
         {
-            throw new DidNotMatchException(path2, errs, stream);
+            throw new DidNotMatchException(stream2Path, errs, stream);
         }
         if (stream.Position != stream.Length)
         {
-            throw new MoreDataException(path2, stream.Position);
+            throw new MoreDataException(stream2Path, stream.Position);
         }
         if (reader2.Position != reader2.Length)
         {
-            throw new UnexpectedlyMoreData(path2, reader2.Position);
+            throw new UnexpectedlyMoreData(stream2Path, reader2.Position);
         }
     }
 

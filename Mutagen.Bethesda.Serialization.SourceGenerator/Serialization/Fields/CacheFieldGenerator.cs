@@ -18,7 +18,9 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
     };
 
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
-
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+    
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         typeSymbol = typeSymbol.PeelNullable();
@@ -68,6 +70,7 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

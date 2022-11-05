@@ -18,7 +18,9 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         "ReadOnlyMemorySlice",
         "Noggog.ReadOnlyMemorySlice",
     };
-
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+    
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
@@ -104,6 +106,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

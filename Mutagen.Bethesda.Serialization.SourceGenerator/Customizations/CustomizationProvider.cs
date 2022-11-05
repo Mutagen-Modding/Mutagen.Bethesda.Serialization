@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
@@ -16,15 +17,15 @@ public class CustomizationProvider
         _interpreter = interpreter;
     }
 
-    public IncrementalValueProvider<ImmutableDictionary<ITypeSymbol, CustomizationCatalog>> Get(
-        IncrementalGeneratorInitializationContext context)
+    public IncrementalValueProvider<ImmutableDictionary<LoquiTypeSet, CustomizationCatalog>> Get(
+        IncrementalGeneratorInitializationContext context,
+        IncrementalValueProvider<LoquiMapping> mappings)
     {
-        return _interpreter.Interpret(_customizationDetector.GetCustomizationMethods(context))
+        return _interpreter.Interpret(_customizationDetector.GetCustomizationMethods(context), mappings)
             .Collect()
             .Select((i, c) =>
             {
-                return i.ToImmutableDictionary<CustomizationCatalog, ITypeSymbol, CustomizationCatalog>(
-                    x => x.Target, x => x, SymbolEqualityComparer.Default);
+                return i.ToImmutableDictionary(x => x.Target, x => x);
             });
     }
 }

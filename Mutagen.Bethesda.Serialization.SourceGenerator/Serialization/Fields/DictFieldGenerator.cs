@@ -30,6 +30,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) 
         => Enumerable.Empty<string>();
 
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -129,6 +131,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -156,7 +159,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldType: keyType,
                 readerAccessor: readerAccessor, 
                 fieldName: null, 
-                fieldAccessor: "var key",
+                fieldAccessor: "var key = ",
                 sb: sb,
                 cancel: cancel);
             _forFieldGenerator().Value.GenerateDeserializeForField(
@@ -165,7 +168,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldType: valType,
                 readerAccessor: readerAccessor, 
                 fieldName: null, 
-                fieldAccessor: "var val",
+                fieldAccessor: "var val = ",
                 sb: sb,
                 cancel: cancel);
             sb.AppendLine($"{fieldAccessor}[key] = val;");

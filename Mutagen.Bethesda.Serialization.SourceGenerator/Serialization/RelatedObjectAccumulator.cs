@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
@@ -8,6 +9,7 @@ public class RelatedObjectAccumulator
 {
     private readonly IsGroupTester _isGroupTester;
     private readonly GenderedTypeFieldGenerator _genderedTypeFieldGenerator;
+    private readonly ArrayFieldGenerator _arrayFieldGenerator;
     private readonly ListFieldGenerator _listFieldGenerator;
     private readonly IsLoquiObjectTester _loquiObjectTester;
 
@@ -15,45 +17,43 @@ public class RelatedObjectAccumulator
         IsGroupTester isGroupTester,
         GenderedTypeFieldGenerator genderedTypeFieldGenerator,
         ListFieldGenerator listFieldGenerator,
-        IsLoquiObjectTester loquiObjectTester)
+        IsLoquiObjectTester loquiObjectTester,
+        ArrayFieldGenerator arrayFieldGenerator)
     {
         _isGroupTester = isGroupTester;
         _genderedTypeFieldGenerator = genderedTypeFieldGenerator;
         _listFieldGenerator = listFieldGenerator;
         _loquiObjectTester = loquiObjectTester;
+        _arrayFieldGenerator = arrayFieldGenerator;
     }
     
-    public ImmutableHashSet<ITypeSymbol> GetRelatedObjects(
+    public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
         LoquiMapping mapper,
         ITypeSymbol details, 
         CancellationToken cancel)
     {
-        var objs = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
-        GetRelatedObjects(mapper, details, objs, cancel);
-        if (mapper.TryGetTypeSet(details, out var typeSet))
-        {
-            objs.Add(typeSet.Getter);
-        }
-
-        return objs.ToImmutableHashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
+        if (!mapper.TryGetTypeSet(details, out var typeSet)) return ImmutableHashSet<LoquiTypeSet>.Empty;
+        
+        var objs = new HashSet<LoquiTypeSet>();
+        GetRelatedObjects(mapper, typeSet, objs, cancel);
+        return objs.ToImmutableHashSet<LoquiTypeSet>();
     }
 
     private void GetRelatedObjects(
         LoquiMapping mapper,
-        ITypeSymbol details, 
-        HashSet<ITypeSymbol> processedDetails,
+        LoquiTypeSet typeSet, 
+        HashSet<LoquiTypeSet> processedDetails,
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        details = PeelList(details);
-        if (!mapper.TryGetTypeSet(details.OriginalDefinition, out var typeSet)) return;
-        details = typeSet.Getter;
+        var details = typeSet.Getter;
         if (!_loquiObjectTester.IsLoqui(details)) return;
-        if (!processedDetails.Add(details.OriginalDefinition)) return;
+        if (!processedDetails.Add(typeSet)) return;
         var baseType = mapper.TryGetBaseClass(typeSet.Direct);
-        if (baseType != null)
+        if (baseType != null
+            && mapper.TryGetTypeSet(baseType, out var baseSet))
         {
-            GetRelatedObjects(mapper, baseType, processedDetails, cancel);
+            GetRelatedObjects(mapper, baseSet, processedDetails, cancel);
         }
 
         var inheriting = mapper.TryGetInheritingClasses(typeSet.Getter);
@@ -70,7 +70,8 @@ public class RelatedObjectAccumulator
 
             foreach (var type in TransformSymbol(prop.Type))
             {
-                GetRelatedObjects(mapper, type, processedDetails, cancel);
+                if (!mapper.TryGetTypeSet(type, out var transformedTypeSet)) continue;
+                GetRelatedObjects(mapper, transformedTypeSet, processedDetails, cancel);
             }
         }
     }
@@ -83,6 +84,11 @@ public class RelatedObjectAccumulator
             return namedTypeSymbol.TypeArguments[0];
         }
 
+        if (_arrayFieldGenerator.Applicable(typeSymbol))
+        {
+            return _arrayFieldGenerator.GetSubtype(typeSymbol);
+        }
+
         return typeSymbol;
     }
 
@@ -90,7 +96,7 @@ public class RelatedObjectAccumulator
     {
         if (_isGroupTester.IsGroup(typeSymbol))
         {
-            yield return typeSymbol;
+            yield return PeelList(typeSymbol);
         }
 
         if (typeSymbol.Name == "IReadOnlyDictionary"
@@ -133,6 +139,8 @@ public class RelatedObjectAccumulator
         {
             return typeSymbol.WithNullableAnnotation(NullableAnnotation.None);
         }
+
+        typeSymbol = PeelList(typeSymbol);
 
         return typeSymbol;
     }

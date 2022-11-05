@@ -59,11 +59,11 @@ public class PropertyCollectionRetriever
         LoquiTypeSet obj,
         PropertyCollection collection)
     {
-        foreach (var prop in obj.Getter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
+        foreach (var prop in obj.Setter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
         {
             context.CancellationToken.ThrowIfCancellationRequested();
-            if (_propertyFilter.Skip(obj, prop)) continue;
             var gen = _forFieldGenerator.GetGenerator(prop.Type, context.CancellationToken);
+            if (_propertyFilter.Skip(obj, prop, gen)) continue;
             var meta = new PropertyMetadata(prop, gen);
             collection.Register(meta);
         }

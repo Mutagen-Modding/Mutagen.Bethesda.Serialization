@@ -12,6 +12,6 @@ public class YamlSerializationTests : ASerializationTests
 
     public override ISkyrimModGetter Deserialize(Stream stream)
     {
-        throw new NotImplementedException();
+        return MutagenYamlConverter.Instance.Deserialize(stream, OutputModKey, SkyrimRelease.SkyrimSE);
     }
 }

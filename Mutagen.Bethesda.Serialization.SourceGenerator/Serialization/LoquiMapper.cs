@@ -6,17 +6,30 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 public record LoquiTypeSet(
     ITypeSymbol? Direct,
     ITypeSymbol Getter,
-    ITypeSymbol Setter);
+    ITypeSymbol Setter)
+{
+    public virtual bool Equals(LoquiTypeSet? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return SymbolEqualityComparer.Default.Equals(Setter, other.Setter);
+    }
+
+    public override int GetHashCode()
+    {
+        return SymbolEqualityComparer.Default.GetHashCode(Setter);
+    }
+}
 
 public class LoquiMapping
 {
-    private readonly IReadOnlyDictionary<ITypeSymbol, List<ITypeSymbol>> _inheritingClassMapping;
+    private readonly IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> _inheritingClassMapping;
     private readonly IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> _typeSetMapping;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public LoquiMapping(
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSetMapping,
-        IReadOnlyDictionary<ITypeSymbol, List<ITypeSymbol>> inheritingClassMapping, 
+        IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> inheritingClassMapping, 
         IsLoquiObjectTester isLoquiObjectTester)
     {
         _inheritingClassMapping = inheritingClassMapping;
@@ -35,15 +48,15 @@ public class LoquiMapping
         return default;
     }
 
-    public IReadOnlyList<ITypeSymbol> TryGetInheritingClasses(ITypeSymbol typeSymbol)
+    public IReadOnlyCollection<LoquiTypeSet> TryGetInheritingClasses(ITypeSymbol typeSymbol)
     {
         if (_inheritingClassMapping.TryGetValue(typeSymbol, out var inheriting)) return inheriting;
-        return Array.Empty<ITypeSymbol>();
+        return Array.Empty<LoquiTypeSet>();
     }
 
     public bool HasInheritingClasses(ITypeSymbol typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
 
-    public bool TryGetTypeSet(ITypeSymbol typeSymbol, out LoquiTypeSet typeSet) => _typeSetMapping.TryGetValue(typeSymbol, out typeSet);
+    public bool TryGetTypeSet(ITypeSymbol typeSymbol, out LoquiTypeSet typeSet) => _typeSetMapping.TryGetValue(typeSymbol.OriginalDefinition, out typeSet);
 }
 
 public class LoquiMapper
@@ -100,35 +113,82 @@ public class LoquiMapper
         return typeSets;
     }
 
-    private IReadOnlyDictionary<ITypeSymbol, List<ITypeSymbol>> GetInheritanceSets(
+    private IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> GetInheritanceSets(
         INamedTypeSymbol[] mutagenSymbols,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
         CancellationToken cancel)
     {
-        var inheritingClassMapping = new Dictionary<ITypeSymbol, List<ITypeSymbol>>(SymbolEqualityComparer.Default);
+        var inheritingClassMapping = new Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>>(SymbolEqualityComparer.Default);
         
         foreach (var symb in mutagenSymbols)
         {
             cancel.ThrowIfCancellationRequested();
 
-            ProcessInheritance(symb, typeSets, inheritingClassMapping);
+            if (symb.TypeKind != TypeKind.Interface) continue;
+            if (symb.Name.EndsWith("Internal")) continue;
+            
+            if (!typeSets.TryGetValue(symb, out var set)) continue;
+            
+            ProcessInheritance(set, typeSets, inheritingClassMapping);
         }
 
         return inheritingClassMapping;
     }
 
     private void ProcessInheritance(
-        ITypeSymbol type,
+        LoquiTypeSet type,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
-        Dictionary<ITypeSymbol, List<ITypeSymbol>> mapping)
+        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
     {
-        var baseType = type.BaseType;
+        ProcessBaseTypeInheritance(type, typeSets, mapping);
+        if (!typeSets.TryGetValue(type.Getter, out var typeSet)) return;
+        HashSet<ITypeSymbol> passed = new(SymbolEqualityComparer.Default);
+        passed.Add(typeSet.Getter);
+        passed.Add(typeSet.Setter);
+        foreach (var interf in type.Setter.AllInterfaces)
+        {
+            if (!typeSets.TryGetValue(interf, out var otherTypeSet)) continue;
+            ProcessInterfaceTypeInheritance(type, otherTypeSet.Setter, passed, typeSets, mapping);
+        }
+    }
+
+    private void ProcessBaseTypeInheritance(
+        LoquiTypeSet type,
+        IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
+        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
+    {
+        var baseType = type.Direct?.BaseType;
         while (baseType != null
                && _isLoquiObjectTester.IsLoqui(baseType)
                && typeSets.TryGetValue(baseType, out var baseTypeSet))
         {
-            mapping.GetOrAdd(baseTypeSet.Getter).Add(type);
+            mapping
+                .GetOrAdd(baseTypeSet.Getter)
+                .Add(type);
             baseType = baseType.BaseType;
+        }
+    }
+
+    private void ProcessInterfaceTypeInheritance(
+        LoquiTypeSet type,
+        ITypeSymbol interf,
+        HashSet<ITypeSymbol> passed,
+        IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
+        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
+    {
+        if (_isLoquiObjectTester.IsLoqui(interf)
+            && typeSets.TryGetValue(interf, out var interfTypeSet)
+            && passed.Add(interfTypeSet.Getter)
+            && passed.Add(interfTypeSet.Setter))
+        {
+            mapping
+                .GetOrAdd(interfTypeSet.Getter)
+                .Add(type);
+            foreach (var otherInterface in interf.AllInterfaces)
+            {
+                if (!typeSets.TryGetValue(otherInterface, out var otherTypeSet)) continue;
+                ProcessInterfaceTypeInheritance(otherTypeSet, otherInterface, passed, typeSets, mapping);
+            }
         }
     }
     

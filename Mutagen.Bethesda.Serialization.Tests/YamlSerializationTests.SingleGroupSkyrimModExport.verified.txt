@@ -5,10 +5,14 @@ Npcs:
   Records:
   - Configuration:
       HealthOffset: 100
-    Name: Goblin
+    Name:
+      TargetLanguage: English
+      Value: Goblin
   - Configuration:
       HealthOffset: 200
     Attacks:
     - AttackEvent: Event1
     - AttackEvent: Event2
-    Name: Hobgoblin
+    Name:
+      TargetLanguage: English
+      Value: Hobgoblin

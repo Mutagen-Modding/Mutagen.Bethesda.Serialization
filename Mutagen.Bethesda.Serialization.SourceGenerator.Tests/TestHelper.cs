@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -14,7 +15,23 @@ namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
 public static class TestHelper
 {
-    public static Task Verify(string source)
+    private static bool AutoVerify = true;
+
+    private static VerifySettings GetVerifySettings()
+    {
+        var verifySettings = new VerifySettings();
+#if DEBUG
+        if (AutoVerify)
+        {
+            verifySettings.AutoVerify();
+        }
+#else
+        verifySettings.DisableDiff();
+#endif
+        return verifySettings;
+    }
+    
+    public static Task VerifySerialization(string source, [CallerFilePath] string sourceFile = "")
     {
         // Parse the provided string into a C# syntax tree
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
@@ -36,18 +53,23 @@ public static class TestHelper
             references: references);
 
         // Create an instance of our EnumGenerator incremental source generator
-        var generator = new SerializationSourceGenerator();
+        var generator = new SerializationSourceGenerator(generateMixIns: false);
 
         // The GeneratorDriver is used to run our generator against a compilation
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
     
         // Run the source generator!
         driver = driver.RunGenerators(compilation);
-    
+        
         // Use verify to snapshot test the source generator output!
-        return Verifier.Verify(driver);
+        return Verifier.Verify(driver, GetVerifySettings(), sourceFile);
     }
-    
+
+    public static Task VerifyString(string str, [CallerFilePath] string sourceFile = "")
+    {
+        return Verifier.Verify(str, GetVerifySettings(), sourceFile);
+    }
+
     public static GeneratorDriverRunResult RunSourceGenerator(string source)
     {
         // Parse the provided string into a C# syntax tree
@@ -79,7 +101,7 @@ public static class TestHelper
 
         // Run the source generator!
         driver = driver.RunGenerators(compilation);
-
+        
         return driver.GetRunResult();
     }
 }

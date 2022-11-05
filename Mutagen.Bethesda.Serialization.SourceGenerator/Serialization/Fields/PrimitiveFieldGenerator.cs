@@ -29,6 +29,10 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     }
     
     public bool Applicable(ITypeSymbol typeSymbol) => false;
+    public bool ShouldGenerate(IPropertySymbol propertySymbol)
+    {
+        return !propertySymbol.IsReadOnly;
+    }
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
@@ -85,10 +89,11 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.Read{_nickname}", linePerArgument: false))
+        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.Read{_nickname}", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

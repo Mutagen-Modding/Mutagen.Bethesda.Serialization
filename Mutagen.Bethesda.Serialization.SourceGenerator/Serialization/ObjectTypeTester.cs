@@ -14,6 +14,17 @@ public class ObjectTypeTester
     public bool IsMajorRecordObject(ITypeSymbol typeSymbol)
     {
         return typeSymbol.AllInterfaces
-            .Any(x => x.ToString().Contains("IMajorRecordGetter"));
+            .Any(x => x.Name.ToString() == "IMajorRecordGetter");
+    }
+    
+    public bool IsGroup(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol.AllInterfaces
+            .Any(x => x.ToString().Contains("Group"));
+    }
+
+    public bool IsConcrete(ITypeSymbol? typeSymbol)
+    {
+        return typeSymbol is INamedTypeSymbol { IsAbstract: false } named;
     }
 }

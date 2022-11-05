@@ -27,6 +27,8 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         "IList",
         "ExtendedList",
     };
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
     {
@@ -54,6 +56,20 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
     }
 
     private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
+
+    private string GetCountAccessor(ITypeSymbol t)
+    {
+        switch (t.Name)
+        {
+            case "List":
+            case "IReadOnlyList":
+            case "IList":
+            case "ExtendedList":
+                return ".Count";
+            default:
+                return ".Length";
+        }
+    }
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
@@ -93,7 +109,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             i.Add($"{fieldAccessor} is {{}} checked{fieldName}");
             if (!nullable)
             {
-                i.Add($"checked{fieldName}.Count > 0");
+                i.Add($"checked{fieldName}{GetCountAccessor(field)} > 0");
             }
         }
         fieldAccessor = $"checked{fieldName}";
@@ -131,7 +147,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}.Count > 0) return true;");
+        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}{GetCountAccessor(field)} > 0) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -144,12 +160,11 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
         if (_groupTester.IsGroup(obj)) return;
-
-        var nullable = field.IsNullable();
 
         field = field.PeelNullable();
         
@@ -177,7 +192,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
                 fieldType: subType,
                 readerAccessor: readerAccessor, 
                 fieldName: null, 
-                fieldAccessor: "var item",
+                fieldAccessor: "var item = ",
                 sb: sb,
                 cancel: cancel);
             sb.AppendLine($"{fieldAccessor}.Add(item);");

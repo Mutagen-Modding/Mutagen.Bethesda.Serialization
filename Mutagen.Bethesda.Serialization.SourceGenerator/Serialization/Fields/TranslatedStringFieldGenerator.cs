@@ -28,6 +28,8 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
     {
         yield return "Mutagen.Bethesda.Strings";
     }
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
@@ -71,7 +73,7 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"if (!EqualityComparer<{field}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
+        sb.AppendLine($"if (!EqualityComparer<ITranslatedStringGetter?>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default(ITranslatedStringGetter?)"})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -84,10 +86,11 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadTranslatedString", linePerArgument: false))
+        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadTranslatedString", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

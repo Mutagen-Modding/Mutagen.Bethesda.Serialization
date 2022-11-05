@@ -21,7 +21,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Loqui" GeneratePathProperty="true" />
-		<PackageReference Include="Loqui.Generation" GeneratePathProperty="true" />
 		<PackageReference Include="Noggog.CSharpExt" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />

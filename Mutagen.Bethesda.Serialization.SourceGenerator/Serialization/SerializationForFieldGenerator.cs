@@ -92,6 +92,7 @@ public class SerializationFieldGenerator
                 "kernel",
                 "metaData",
                 insideCollection: true,
+                canSet: false,
                 sb,
                 cancel);
         }
@@ -108,6 +109,7 @@ public class SerializationFieldGenerator
         string readerAccessor,
         string? fieldName,
         string fieldAccessor,
+        bool canSet,
         ISerializationForFieldGenerator? gen,
         StructuredStringBuilder sb,
         CancellationToken cancel)
@@ -124,6 +126,7 @@ public class SerializationFieldGenerator
                 "kernel",
                 "metaData",
                 insideCollection: false,
+                canSet: canSet,
                 sb,
                 cancel);
         }

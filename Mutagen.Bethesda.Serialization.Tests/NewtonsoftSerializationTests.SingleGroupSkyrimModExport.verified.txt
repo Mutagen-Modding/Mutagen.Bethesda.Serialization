@@ -10,7 +10,10 @@
         "Configuration": {
           "HealthOffset": 100
         },
-        "Name": "Goblin"
+        "Name": {
+          "TargetLanguage": "English",
+          "Value": "Goblin"
+        }
       },
       {
         "Configuration": {
@@ -24,7 +27,10 @@
             "AttackEvent": "Event2"
           }
         ],
-        "Name": "Hobgoblin"
+        "Name": {
+          "TargetLanguage": "English",
+          "Value": "Hobgoblin"
+        }
       }
     ]
   }

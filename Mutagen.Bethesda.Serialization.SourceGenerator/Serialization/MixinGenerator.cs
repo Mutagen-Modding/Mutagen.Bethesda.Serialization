@@ -11,15 +11,18 @@ public class MixinGenerator
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly LoquiSerializationNaming _serializationNaming;
     private readonly ObjectTypeTester _modObjectTypeTester;
+    private readonly ReleaseRetriever _releaseRetriever;
 
     public MixinGenerator(
         LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming,
-        ObjectTypeTester modObjectTypeTester)
+        ObjectTypeTester modObjectTypeTester,
+        ReleaseRetriever releaseRetriever)
     {
         _nameRetriever = nameRetriever;
         _serializationNaming = serializationNaming;
         _modObjectTypeTester = modObjectTypeTester;
+        _releaseRetriever = releaseRetriever;
     }
     
     public void Initialize(
@@ -48,6 +51,7 @@ public class MixinGenerator
         
         var sb = new StructuredStringBuilder();
 
+        sb.AppendLine($"using Mutagen.Bethesda.Plugins;");
         sb.AppendLine($"using {bootstrap.ObjectRegistration.ContainingNamespace};");
         sb.AppendLine($"using {reader.ContainingNamespace};");
         if (!SymbolEqualityComparer.Default.Equals(writer.ContainingNamespace, reader.ContainingNamespace))
@@ -89,7 +93,12 @@ public class MixinGenerator
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"Stream stream");
-                if (!isMod)
+                if (isMod)
+                {
+                    args.Add($"ModKey modKey");
+                    args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                }
+                else
                 {
                     args.Add("SerializationMetaData metaData");
                 }
@@ -100,7 +109,12 @@ public class MixinGenerator
                 {
                     c.Add("ReaderKernel.GetNewObject(stream)");
                     c.Add("ReaderKernel");
-                    if (!isMod)
+                    if (isMod)
+                    {
+                        c.AddPassArg("modKey");
+                        c.AddPassArg("release");
+                    }
+                    else
                     {
                         c.AddPassArg("metaData");
                     }
@@ -108,7 +122,7 @@ public class MixinGenerator
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter} DeserializeInto"))
+            using (var args = sb.Function($"public static void DeserializeInto"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"Stream stream");

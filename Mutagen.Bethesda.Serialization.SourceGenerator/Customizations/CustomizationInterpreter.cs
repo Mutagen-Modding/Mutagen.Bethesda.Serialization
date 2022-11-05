@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
@@ -7,20 +8,31 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 public class CustomizationInterpreter
 {
     public IncrementalValuesProvider<CustomizationCatalog> Interpret(
-        IncrementalValuesProvider<CustomizeMethodDeclaration> mappings)
+        IncrementalValuesProvider<CustomizeMethodDeclaration> customizationDeclarations,
+        IncrementalValueProvider<LoquiMapping> mappings)
     {
-        return mappings
-            .Select(InterpretDriver)
+        return customizationDeclarations
+            .Combine(mappings)
+            .Select((x, c) => InterpretDriver(x.Left, x.Right, c))
             .NotNull();
     }
 
     private CustomizationCatalog? InterpretDriver(
         CustomizeMethodDeclaration decl,
+        LoquiMapping mapping,
         CancellationToken cancel)
     {
-        var driver = new CustomizationCatalog(decl.ContainingClass, decl.Target);
+        cancel.ThrowIfCancellationRequested();
+        if (!mapping.TryGetTypeSet(decl.Target, out var typeSet))
+        {
+            // ToDo
+            // Add error
+            return default;
+        }
+        var driver = new CustomizationCatalog(decl.ContainingClass, typeSet);
         foreach (var invoke in decl.MethodSyntax.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
+            cancel.ThrowIfCancellationRequested();
             if (!AddCustomization(driver, invoke))
             {
                 // ToDo

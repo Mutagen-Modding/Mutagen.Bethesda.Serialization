@@ -23,6 +23,8 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         yield return "Mutagen.Bethesda.Plugins";
     }
 
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -74,7 +76,16 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"if (!EqualityComparer<{field}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
+        var named = (INamedTypeSymbol)field;
+        var nullable = field.Name.Contains("Nullable");
+        var sub = named.TypeArguments[0];
+        if (!compilation.Mapping.TryGetTypeSet(sub, out var typeSet))
+        {
+            throw new NotImplementedException();
+        }
+
+        var linkStr = $"IFormLink{(nullable ? "Nullable" : null)}Getter<{typeSet.Getter}>";
+        sb.AppendLine($"if (!EqualityComparer<{linkStr}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({linkStr})"})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -87,9 +98,11 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        var nullable = field.Name.Contains("Nullable");
         if (insideCollection)
         {
             if (field is not INamedTypeSymbol named
@@ -98,7 +111,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             {
                 throw new NotImplementedException();
             }
-            sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadFormKey({readerAccessor}).AsLink<{named.TypeArguments[0]}>();");
+            sb.AppendLine($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadFormKey({readerAccessor}).As{(nullable ? "Nullable" : null)}Link<{named.TypeArguments[0]}>();");
         }
         else
         {

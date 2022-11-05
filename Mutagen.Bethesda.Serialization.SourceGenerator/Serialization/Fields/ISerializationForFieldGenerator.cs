@@ -10,6 +10,8 @@ public interface ISerializationForFieldGenerator
     IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel);
 
     bool Applicable(ITypeSymbol typeSymbol);
+
+    bool ShouldGenerate(IPropertySymbol propertySymbol);
     
     void GenerateForSerialize(
         CompilationUnit compilation,
@@ -47,6 +49,7 @@ public interface ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel);
 }

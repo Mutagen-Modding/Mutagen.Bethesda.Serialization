@@ -12,7 +12,7 @@ public class PropertyFilter
         _enumFieldGenerator = enumFieldGenerator;
     }
 
-    public bool Skip(LoquiTypeSet typeSet, IPropertySymbol propertySymbol)
+    public bool Skip(LoquiTypeSet typeSet, IPropertySymbol propertySymbol, ISerializationForFieldGenerator? generator)
     {
         if (propertySymbol.IsIndexer) return true;
         switch (propertySymbol.Name)
@@ -33,6 +33,8 @@ public class PropertyFilter
         {
             return true;
         }
+        
+        if (generator != null && !generator.ShouldGenerate(propertySymbol)) return true;
 
         return false;
     }

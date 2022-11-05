@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -45,28 +46,33 @@ public class SerializationForObjectGenerator
         CompilationUnit compilation, 
         CustomizationCatalog? customizationDriver,
         SourceProductionContext context,
-        ITypeSymbol obj)
+        LoquiTypeSet typeSet)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
         
-        if (!compilation.Mapping.TryGetTypeSet(obj, out var typeSet)) return;
         var baseType = compilation.Mapping.TryGetBaseClass(typeSet.Direct);
         var inheriting = compilation.Mapping.TryGetInheritingClasses(typeSet.Getter);
         
         var sb = new StructuredStringBuilder();
         
-        var properties = _propertyCollectionRetriever.GetPropertyCollection(context, typeSet);
+        var properties = _propertyCollectionRetriever.GetPropertyCollection(
+            context,
+            typeSet);
         
-        GenerateUsings(context, obj, sb, properties);
+        GenerateUsings(context, typeSet.Setter, sb, properties);
 
-        using (sb.Namespace(obj.ContainingNamespace.ToString()))
+        using (sb.Namespace(typeSet.Setter.ContainingNamespace.ToString()))
         {
         }
         
-        if (!_loquiSerializationNaming.TryGetSerializationItems(obj, out var objSerializationItems)) return;
+        if (!_loquiSerializationNaming.TryGetSerializationItems(typeSet.Setter, out var objSerializationItems)) return;
         
         var gens = GetGenerics(typeSet);
 
+        var isConcrete = _modObjectTypeTester.IsConcrete(typeSet.Direct);
+
+        var isGroup = _modObjectTypeTester.IsGroup(typeSet.Setter);
+        
         using (var c = sb.Class(objSerializationItems.SerializationHousingClassName))
         {
             c.AccessModifier = AccessModifier.Internal;
@@ -76,48 +82,56 @@ public class SerializationForObjectGenerator
         {
             if (inheriting.Count > 0)
             {
-                GenerateSerializeWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
+                GenerateSerializeWithCheck(compilation, context, typeSet, sb, gens, inheriting);
             }
             
-            GenerateSerialize(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
+            GenerateSerialize(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
             
             if (inheriting.Count > 0)
             {
-                GenerateHasSerializationItemsWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
+                GenerateHasSerializationItemsWithCheck(compilation, context, typeSet, sb, gens, inheriting);
             }
             
-            GenerateHasSerializationItems(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
+            GenerateHasSerializationItems(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
             
             if (inheriting.Count > 0)
             {
-                GenerateDeserializeWithCheck(compilation, context, obj, sb, typeSet, gens, inheriting);
+                GenerateDeserializeWithCheck(compilation, context, typeSet, sb, gens, inheriting);
+            }
+
+            if (isConcrete && !isGroup)
+            {
+                GenerateDeserialize(typeSet, sb, gens);
             }
             
-            GenerateDeserialize(obj, sb, typeSet, gens);
-            
-            GenerateDeserializeInto(compilation, context, obj, sb, typeSet, baseType, properties, customizationDriver, gens);
+            GenerateDeserializeInto(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
         }
         sb.AppendLine();
         
         context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
-    private void GenerateDeserialize(ITypeSymbol obj,
-        StructuredStringBuilder sb,
+    private void GenerateDeserialize(
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb,
         SerializationGenerics generics)
     {
-        var isMod = _modObjectTypeTester.IsModObject(obj);
-        if (typeSet.Direct == null || isMod) return;
+        if (typeSet.Direct == null) return;
         
-        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
+        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(typeSet.Getter);
         
         var genString = generics.ReaderGenericsString();
         using (var args = sb.Function($"public static {typeSet.Direct} Deserialize{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            if (!isMod)
+            if (isMod)
+            {
+                args.Add($"ModKey modKey");
+                args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release release");
+            }
+            else
             {
                 args.Add("SerializationMetaData metaData");
             }
@@ -127,7 +141,11 @@ public class SerializationForObjectGenerator
         {
             if (isMajorRecord)
             {
-                sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(obj)}Release());");
+                sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release());");
+            }
+            else if (isMod)
+            {
+                sb.AppendLine($"var obj = new {typeSet.Direct}(modKey, release);");
             }
             else
             {
@@ -138,7 +156,10 @@ public class SerializationForObjectGenerator
                 c.AddPassArg("reader");
                 c.AddPassArg("kernel");
                 c.AddPassArg("obj");
-                c.AddPassArg("metaData");
+                if (!isMod)
+                {
+                    c.AddPassArg("metaData");
+                }
             }
             sb.AppendLine("return obj;");
         }
@@ -148,16 +169,15 @@ public class SerializationForObjectGenerator
     private void GenerateDeserializeInto(
         CompilationUnit compilation,
         SourceProductionContext context,
-        ITypeSymbol obj,
-        StructuredStringBuilder sb,
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
         CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
         var genString = generics.ReaderGenericsString();
-        var isMod = _modObjectTypeTester.IsModObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static void DeserializeInto{genString}"))
         {
             args.Add($"TReadObject reader");
@@ -174,7 +194,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
+                GenerateMetaConstruction(sb, "obj");
             }
             
             if (baseType != null
@@ -200,11 +220,12 @@ public class SerializationForObjectGenerator
                             {
                                 _forFieldGenerator.GenerateDeserializeForField(
                                     compilation: compilation,
-                                    obj: obj,
+                                    obj: typeSet.Getter,
                                     fieldType: prop.Property.Type,
                                     readerAccessor: "reader",
                                     fieldName: prop.Property.Name,
                                     fieldAccessor: $"obj.{prop.Property.Name}",
+                                    canSet: prop.Property.IsSettable(),
                                     prop.Generator,
                                     sb: sb,
                                     cancel: context.CancellationToken);
@@ -227,16 +248,15 @@ public class SerializationForObjectGenerator
     private void GenerateSerialize(
         CompilationUnit compilation,
         SourceProductionContext context,
-        ITypeSymbol obj,
-        StructuredStringBuilder sb,
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
         CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
         var genString = generics.WriterGenericsString(forHas: false);
-        var isMod = _modObjectTypeTester.IsModObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Setter);
         using (var args = sb.Function($"public static void Serialize{genString}"))
         {
             args.Add($"TWriteObject writer");
@@ -270,7 +290,7 @@ public class SerializationForObjectGenerator
                 {
                     _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
-                        obj: obj,
+                        obj: typeSet.Getter,
                         fieldType: prop.Property.Type,
                         writerAccessor: "writer",
                         fieldName: prop.Property.Name,
@@ -287,15 +307,14 @@ public class SerializationForObjectGenerator
 
     private void GenerateHasSerializationItems(CompilationUnit compilation,
         SourceProductionContext context,
-        ITypeSymbol obj,
-        StructuredStringBuilder sb,
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
         CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
-        var isMod = _modObjectTypeTester.IsModObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
         {
             args.Add($"{typeSet.Getter} item");
@@ -310,7 +329,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb);
+                GenerateMetaConstruction(sb, "item");
             }
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
@@ -338,7 +357,7 @@ public class SerializationForObjectGenerator
                     {
                         _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,
-                            obj: obj, 
+                            obj: typeSet.Getter, 
                             fieldType: prop.Property.Type,
                             fieldName: prop.Property.Name, 
                             fieldAccessor: $"item.{prop.Property.Name}", 
@@ -357,13 +376,12 @@ public class SerializationForObjectGenerator
 
     private void GenerateHasSerializationItemsWithCheck(CompilationUnit compilation,
         SourceProductionContext context,
-        ITypeSymbol obj,
-        StructuredStringBuilder sb,
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb,
         SerializationGenerics generics,
-        IReadOnlyList<ITypeSymbol> inheriting)
+        IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
-        var isMod = _modObjectTypeTester.IsModObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Setter);
         using (var args = sb.Function($"public static bool HasSerializationItemsWithCheck{generics.WriterGenericsString(forHas: true)}"))
         {
             args.Add($"{typeSet.Getter} item");
@@ -378,13 +396,15 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb);
+                GenerateMetaConstruction(sb, "item");
             }
             
             sb.AppendLine("switch (item)");
             using (sb.CurlyBrace())
             {
-                foreach (var inherit in inheriting)
+                foreach (var inherit in inheriting
+                             .Select(x => x.Getter)
+                             .OrderBy(x => x.Name))
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
                     var names = _nameRetriever.GetNames(inherit);
@@ -400,7 +420,7 @@ public class SerializationForObjectGenerator
                     }
                 }
 
-                if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter, out var curSerializationItems)
                     && (!typeSet.Direct?.IsAbstract ?? false))
                 {
                     sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
@@ -424,13 +444,12 @@ public class SerializationForObjectGenerator
     private void GenerateSerializeWithCheck(
         CompilationUnit compilation,
         SourceProductionContext context, 
-        ITypeSymbol obj,
-        StructuredStringBuilder sb, 
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb, 
         SerializationGenerics generics,
-        IReadOnlyList<ITypeSymbol> inheriting)
+        IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
-        var isMod = _modObjectTypeTester.IsModObject(obj);
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static void SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
         {
             args.Add($"TWriteObject writer");
@@ -447,12 +466,14 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb);
+                GenerateMetaConstruction(sb, "item");
             }
             sb.AppendLine("switch (item)");
             using (sb.CurlyBrace())
             {
-                foreach (var inherit in inheriting)
+                foreach (var inherit in inheriting
+                             .Select(x => x.Getter)
+                             .OrderBy(x => x.Name))
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
                     var names = _nameRetriever.GetNames(inherit);
@@ -469,7 +490,7 @@ public class SerializationForObjectGenerator
                     }
                 }
 
-                if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter, out var curSerializationItems)
                     && (!typeSet.Direct?.IsAbstract ?? false))
                 {
                     sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
@@ -495,14 +516,13 @@ public class SerializationForObjectGenerator
     private void GenerateDeserializeWithCheck(
         CompilationUnit compilation,
         SourceProductionContext context, 
-        ITypeSymbol obj,
-        StructuredStringBuilder sb, 
         LoquiTypeSet typeSet,
+        StructuredStringBuilder sb, 
         SerializationGenerics generics,
-        IReadOnlyList<ITypeSymbol> inheriting)
+        IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
-        var isMod = _modObjectTypeTester.IsModObject(obj);
-        using (var args = sb.Function($"public static {typeSet.Direct} DeserializeWithCheck{generics.ReaderGenericsString()}"))
+        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
+        using (var args = sb.Function($"public static {typeSet.Direct ?? typeSet.Setter} DeserializeWithCheck{generics.ReaderGenericsString()}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
@@ -515,14 +535,12 @@ public class SerializationForObjectGenerator
 
         using (sb.CurlyBrace())
         {
-            if (isMod)
-            {
-                GenerateMetaConstruction(sb);
-            }
             sb.AppendLine("switch (kernel.GetNextType(reader).Name)");
             using (sb.CurlyBrace())
             {
-                foreach (var inherit in inheriting)
+                foreach (var inherit in inheriting
+                             .Select(x => x.Getter)
+                             .OrderBy(x => x.Name))
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
                     var names = _nameRetriever.GetNames(inherit);
@@ -537,10 +555,10 @@ public class SerializationForObjectGenerator
                     }
                 }
 
-                if (_loquiSerializationNaming.TryGetSerializationItems(obj, out var curSerializationItems)
+                if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter, out var curSerializationItems)
                     && (!typeSet.Direct?.IsAbstract ?? false))
                 {
-                    sb.AppendLine($"case {typeSet.Direct?.Name} {typeSet.Getter.Name}:");
+                    sb.AppendLine($"case \"{typeSet.Direct?.Name}\":");
                     using (sb.IncreaseDepth())
                     {
                         sb.AppendLine($"return {curSerializationItems.DeserializationCall()}(reader, kernel, metaData);");
@@ -564,9 +582,10 @@ public class SerializationForObjectGenerator
         StructuredStringBuilder sb,
         PropertyCollection propertyDict)
     {
-        sb.AppendLines(propertyDict.InOrder
+         sb.AppendLines(propertyDict.InOrder
             .SelectMany(x =>
                 x.Generator?.RequiredNamespaces(x.Property.Type, context.CancellationToken) ?? Enumerable.Empty<string>())
+            .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
             .And(obj.ContainingNamespace.ToString())
             .Distinct()
@@ -604,8 +623,8 @@ public class SerializationForObjectGenerator
         return ret ?? SerializationGenerics.Instance;
     }
 
-    private void GenerateMetaConstruction(StructuredStringBuilder sb)
+    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor)
     {
-        sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
+        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease);");
     }
 }

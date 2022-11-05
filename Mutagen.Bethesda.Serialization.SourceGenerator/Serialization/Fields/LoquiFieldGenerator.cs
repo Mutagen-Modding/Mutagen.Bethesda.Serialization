@@ -27,7 +27,9 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     };
 
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
-
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+    
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (_groupTester.IsGroup(typeSymbol)) return false;
@@ -112,6 +114,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -127,7 +130,15 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
 
         var call = fieldSerializationItems.DeserializationCall(withCheck: hasInheriting);
-        
-        sb.AppendLine($"{fieldAccessor} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+
+        if (canSet || insideCollection)
+        {
+            sb.AppendLine($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+        }
+        else
+        {
+            sb.AppendLine($"var tmp{fieldName} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+            sb.AppendLine($"{fieldAccessor}.DeepCopyIn(tmp{fieldName});");
+        }
     }
 }

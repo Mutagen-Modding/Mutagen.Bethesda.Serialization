@@ -8,6 +8,13 @@
 		<IsPackable>true</IsPackable>
         <WarningsAsErrors>nullable</WarningsAsErrors>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Authors>Noggog</Authors>
+        <Company>Mutagen</Company>
+        <Product>Mutagen</Product>
+        <Description>Newtonsoft Yaml source generator for serialization of Mutagen mods</Description>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Copyright>2022</Copyright>
     </PropertyGroup>
 
     <ItemGroup>

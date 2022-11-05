@@ -55,6 +55,6 @@ public class CustomizationTests : ATestsBase
             }
         });
        
-        return TestHelper.Verify(source);
+        return TestHelper.VerifySerialization(source);
     }
 }

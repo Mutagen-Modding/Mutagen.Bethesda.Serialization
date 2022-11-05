@@ -23,6 +23,8 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     {
         yield return "Mutagen.Bethesda.Plugins.Assets";
     }
+
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
     public bool Applicable(ITypeSymbol typeSymbol)
     {
@@ -75,7 +77,10 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        sb.AppendLine($"if (!EqualityComparer<{field}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
+        var named = (INamedTypeSymbol)field;
+        var sub = named.TypeArguments[0];
+        var linkStr = $"IAssetLinkGetter<{sub}>";
+        sb.AppendLine($"if (!EqualityComparer<{linkStr}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({linkStr})"})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -88,12 +93,21 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadString", linePerArgument: false))
+        var named = (INamedTypeSymbol)field;
+        if (insideCollection)
         {
-            c.Add(readerAccessor);
+            sb.AppendLine($"{fieldAccessor}new AssetLink<{named.TypeArguments[0]}>({kernelAccessor}.ReadString({readerAccessor}));");
+        }
+        else
+        {
+            using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadString", linePerArgument: false))
+            {
+                c.Add(readerAccessor);
+            }
         }
     }
 }

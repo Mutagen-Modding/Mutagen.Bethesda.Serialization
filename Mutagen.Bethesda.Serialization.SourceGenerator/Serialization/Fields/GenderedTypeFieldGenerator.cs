@@ -21,7 +21,15 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         "IGenderedItemGetter",
     };
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    {
+        var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
+        var gen = _forFieldGenerator().Value
+            .GetGenerator(subType, cancel);
+        return gen?.RequiredNamespaces(subType, cancel) ?? Enumerable.Empty<string>();
+    }
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
     public bool Applicable(ITypeSymbol typeSymbol)
     {
@@ -138,6 +146,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -160,7 +169,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             obj: obj, fieldType: subType,
             readerAccessor: readerAccessor,
             fieldName: fieldName == null ? null : $"{fieldName}Male",
-            fieldAccessor: $"{fieldAccessor}.Male",
+            fieldAccessor: $"{fieldAccessor}.Male = ",
             sb: sb,
             cancel: cancel);
         _forFieldGenerator().Value.GenerateDeserializeForField(
@@ -169,7 +178,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             fieldType: subType,
             readerAccessor: readerAccessor, 
             fieldName: fieldName == null ? null : $"{fieldName}Female", 
-            fieldAccessor: $"{fieldAccessor}.Female",
+            fieldAccessor: $"{fieldAccessor}.Female = ",
             sb: sb,
             cancel: cancel);
     }

@@ -21,6 +21,8 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
                 && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
     }
 
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+
     public void GenerateForSerialize(
         CompilationUnit compilation,
         ITypeSymbol obj, 
@@ -76,11 +78,12 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
         field = field.PeelNullable();
-        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadEnum<{field}>", linePerArgument: false))
+        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadEnum<{field}>", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

@@ -20,6 +20,8 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
 
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
@@ -59,7 +61,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             f.Add($"writer: {writerAccessor}");
             f.Add($"group: {fieldAccessor}");
             f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
-            f.Add($"meta: {metaAccessor}");
+            f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
             f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
@@ -92,6 +94,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         string kernelAccessor,
         string metaAccessor,
         bool insideCollection,
+        bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -101,14 +104,21 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
         var groupNames = _nameRetriever.GetNames(field);
         var subNames = _nameRetriever.GetNames(subType);
-        using (var f = sb.Call($"SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
+        
+        if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
+
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+
+        var isListGroup = groupNames.Getter.Contains("List");
+
+        using (var f = sb.Call($"SerializationHelper.ReadInto{(isListGroup ? "List" : null)}Group<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
         {
             f.Add($"reader: {readerAccessor}");
             f.Add($"group: {fieldAccessor}");
-            f.Add($"meta: {metaAccessor}");
+            f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"groupReader: static (r, i, k, m) => {fieldSerializationNames.DeserializationIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m)");
-            f.Add($"itemReader: static (r, k, m) => {subSerializationNames.DeserializationCall()}<TReadObject>(r, k, m)");
+            f.Add($"itemReader: static (r, k, m) => {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>(r, k, m)");
         }
     }
 }
