@@ -1,10 +1,16 @@
-﻿using System.Drawing;
+using System.Collections;
+using System.Drawing;
 using System.Text;
 using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
+using Mutagen.Bethesda.Testing.AutoData;
 using Noggog;
+using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
+using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 
@@ -12,7 +18,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     where TWriterKernel : ISerializationWriterKernel<TWriter>, new()
     where TReaderKernel : ISerializationReaderKernel<TReader>, new()
 {
-    private async Task<string> GetResults(Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter> toDo)
+    private async Task<string> GetResults(
+        Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter> toDo)
     {
         var kernel = MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance;
         var memStream = new MemoryStream();
@@ -25,7 +32,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var ret = await reader.ReadToEndAsync();
         return ret;
     }
-    
+
     private T GetReadResults<T>(
         string str,
         string nickname,
@@ -53,10 +60,58 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         {
             throw new Exception();
         }
+
         if (readerObj is IDisposable disp) disp.Dispose();
         return obj;
     }
+
+    interface IReadResults
+    {
+        string Name { get; }
+        void Check(TReaderKernel kernel, TReader reader);
+    }
+
+    record ReadResults<T>(string Name, Func<TReaderKernel, TReader, T> Reader, T Expected) : IReadResults
+    {
+        public void Check(TReaderKernel kernel, TReader reader)
+        {
+            var val = Reader(kernel, reader);
+            if (Expected is IReadOnlyList<object> e)
+            {
+                var list = (IReadOnlyList<object>)val;
+                list.Should().Equal(e);
+            }
+            else if (Expected is ReadOnlyMemorySlice<byte> bytes)
+            {
+                var slice = val as ReadOnlyMemorySlice<byte>?;
+                ((IEnumerable<byte>)Expected).Should().Equal(slice);
+            }
+            else
+            {
+                val.Should().Be(Expected);
+            }
+        }
+    }
     
+    private void CheckReadResults(
+        string str,
+        params IReadResults[] results)
+    {
+        var kernel = new TReaderKernel();
+        var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        var dict = results.ToDictionary(x => x.Name, x => x);
+        while (kernel.TryGetNextField(readerObj, out var name))
+        {
+            if (!dict.TryGetValue(name, out var result))
+            {
+                throw new Exception();
+            }
+            result.Check(kernel, readerObj);
+        }
+
+        if (readerObj is IDisposable disp) disp.Dispose();
+    }
+
     private async Task<string> GetPrimitiveWriteTest<T>(
         string nickName,
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?, T?> callback,
@@ -74,7 +129,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         });
     }
-    
+
     private async Task DoPrimitiveTest<T>(
         string nickName,
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?, T?> writeCallback,
@@ -90,36 +145,36 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             nonDefaultToTest,
             items);
     }
-    
+
     private async Task DoPrimitiveTest<T>(
         string nickName,
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?, T?> writeCallback,
         Func<TReaderKernel, TReader, T> readCallback,
-        Func<T?, T?, bool> equality, 
+        Func<T?, T?, bool> equality,
         T nonDefaultToTest,
         params T[] items)
     {
         var str = await GetPrimitiveWriteTest(nickName, writeCallback, nonDefaultToTest, items);
         await TestHelper.VerifyString(str);
-        int i = 0;
-        foreach (var item in items)
-        {
-            var name = $"{nickName}{(2 + i++)}";
-            var readItem = GetReadResults(str, name, readCallback);
-            if (!equality(item, readItem))
+        CheckReadResults(
+            str,
+            new ReadResults<T>[]
             {
-                throw new Exception();
-            }
-        }
+                new ReadResults<T>($"{nickName}1", readCallback, default(T)),
+            }.Concat(items.Select((x, i) =>
+            {
+                var name = $"{nickName}{(2 + i)}";
+                return new ReadResults<T>(name, readCallback, x);
+            })).ToArray());
     }
-    
+
     [Fact]
     public async Task Nothing()
     {
         var str = await GetResults((k, w) => { });
         await TestHelper.VerifyString(str);
     }
-    
+
     [Fact]
     public async Task Char()
     {
@@ -131,7 +186,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             'c',
             (char)165);
     }
-    
+
     [Fact]
     public async Task Bool()
     {
@@ -143,7 +198,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             true,
             false);
     }
-    
+
     [Fact]
     public async Task String()
     {
@@ -155,7 +210,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             string.Empty,
             "Hello");
     }
-    
+
     [Fact]
     public async Task Int8()
     {
@@ -170,7 +225,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             sbyte.MinValue,
             sbyte.MaxValue);
     }
-    
+
     [Fact]
     public async Task Int16()
     {
@@ -185,7 +240,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             short.MinValue,
             short.MaxValue);
     }
-    
+
     [Fact]
     public async Task Int32()
     {
@@ -200,7 +255,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             int.MinValue,
             int.MaxValue);
     }
-    
+
     [Fact]
     public async Task Int64()
     {
@@ -215,7 +270,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             long.MinValue,
             long.MaxValue);
     }
-    
+
     [Fact]
     public async Task UInt8()
     {
@@ -228,7 +283,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             byte.MinValue,
             byte.MaxValue);
     }
-    
+
     [Fact]
     public async Task UInt16()
     {
@@ -241,7 +296,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             ushort.MinValue,
             ushort.MaxValue);
     }
-    
+
     [Fact]
     public async Task UInt32()
     {
@@ -254,7 +309,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             uint.MinValue,
             uint.MaxValue);
     }
-    
+
     [Fact]
     public async Task UInt64()
     {
@@ -267,7 +322,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             ulong.MinValue,
             ulong.MaxValue);
     }
-    
+
     [Fact]
     public async Task Float()
     {
@@ -282,7 +337,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             float.MinValue,
             float.MaxValue);
     }
-    
+
     [Fact]
     public async Task ModKey()
     {
@@ -294,7 +349,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             Plugins.ModKey.Null,
             Plugins.ModKey.FromNameAndExtension("SomeMod.esp"));
     }
-    
+
     [Fact]
     public async Task FormKey()
     {
@@ -306,7 +361,19 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             Plugins.FormKey.Null,
             Plugins.FormKey.Factory("123456:SomeMod.esp"));
     }
-    
+
+    [Fact]
+    public async Task ExtractFormKey()
+    {
+        var fk = Plugins.FormKey.Factory("000800:InputMod.esp");
+        var str = await GetResults((k, w) => { k.WriteFormKey(w, "FormKey", fk, default); });
+
+        var kernel = new TReaderKernel();
+        var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        kernel.ExtractFormKey(readerObj)
+            .Should().Be(fk);
+    }
+
     [Fact]
     public async Task RecordType()
     {
@@ -318,7 +385,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             Plugins.RecordType.Null,
             new RecordType("TEST"));
     }
-    
+
     [Fact]
     public async Task P2Int()
     {
@@ -332,7 +399,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P2Int(int.MaxValue, int.MaxValue),
             new P2Int(int.MinValue, int.MinValue));
     }
-    
+
     [Fact]
     public async Task P2Int16()
     {
@@ -346,7 +413,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P2Int16(short.MaxValue, short.MaxValue),
             new P2Int16(short.MinValue, short.MinValue));
     }
-    
+
     [Fact]
     public async Task P2Float()
     {
@@ -360,7 +427,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P2Float(float.MaxValue, float.MaxValue),
             new P2Float(float.MinValue, float.MinValue));
     }
-    
+
     [Fact]
     public async Task P3Float()
     {
@@ -374,7 +441,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P3Float(float.MaxValue, float.MaxValue, float.MaxValue),
             new P3Float(float.MinValue, float.MinValue, float.MinValue));
     }
-    
+
     [Fact]
     public async Task P3UInt8()
     {
@@ -388,7 +455,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P3UInt8(byte.MaxValue, byte.MaxValue, byte.MaxValue),
             new P3UInt8(byte.MinValue, byte.MinValue, byte.MinValue));
     }
-    
+
     [Fact]
     public async Task P3Int16()
     {
@@ -402,7 +469,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P3Int16(short.MaxValue, short.MaxValue, short.MaxValue),
             new P3Int16(short.MinValue, short.MinValue, short.MinValue));
     }
-    
+
     [Fact]
     public async Task P3UInt16()
     {
@@ -416,7 +483,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P3UInt16(ushort.MaxValue, ushort.MaxValue, ushort.MaxValue),
             new P3UInt16(ushort.MinValue, ushort.MinValue, ushort.MinValue));
     }
-    
+
     [Fact]
     public async Task Percent()
     {
@@ -430,7 +497,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new Percent(0.5d),
             new Percent(1d));
     }
-    
+
     [Fact]
     public async Task Color()
     {
@@ -442,49 +509,72 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             System.Drawing.Color.FromArgb(255, 0, 0, 0),
             System.Drawing.Color.FromArgb(1, 2, 3));
     }
-    
+
+    [Fact]
+    public async Task ObjectType()
+    {
+        var str = await GetResults((k, w) =>
+        {
+            k.WriteLoqui<int>(w, "Loqui", 4, null, (w, o, k, m) =>
+            {
+                k.WriteType(w, typeof(NpcLevel));
+            });
+        });
+
+        await TestHelper.VerifyString(str);
+
+        var readItem = GetReadResults(str, "Loqui", (kernel, reader) =>
+        {
+            return kernel.GetNextType(reader, "Mutagen.Bethesda.Skyrim");
+        });
+
+        readItem.Should().Be(typeof(NpcLevel));
+    }
+
     [Fact]
     public async Task List()
     {
         var str = await GetResults((k, w) =>
         {
             k.StartListSection(w, "MyList");
-            k.WriteInt8(w, null, 1, default);
-            k.WriteInt8(w, null, 2, default);
-            k.WriteInt8(w, null, 3, default);
+            k.WriteString(w, null, "Hello", default);
+            k.WriteString(w, null, "There", default);
+            k.WriteString(w, null, "World", default);
             k.EndListSection(w);
             k.WriteInt8(w, "SomeInt", 4, default);
         });
-        
+
         await TestHelper.VerifyString(str);
-        
-        var readItem = GetReadResults(str, "MyList", (kernel, reader) =>
-        {
-            var ret = new List<int>();
-            kernel.StartListSection(reader);
-            while (kernel.TryHasNextItem(reader))
-            {
-                var item = kernel.ReadInt8(reader);
-                ret.Add(item);
-            }
-            kernel.EndListSection(reader);
-            return ret;
-        });
-        readItem.Should().Equal(1, 2, 3);
-        
-        var readInt = GetReadResults(str, "SomeInt", (k, r) => k.ReadUInt8(r));
-        readInt.Should().Be(4);
+
+        CheckReadResults(str,
+            new ReadResults<List<string>>(
+                "MyList",
+                (kernel, reader) =>
+                {
+                    var ret = new List<string>();
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
+                    {
+                        var item = kernel.ReadString(reader);
+                        ret.Add(item);
+                    }
+
+                    kernel.EndListSection(reader);
+                    return ret;
+                },
+                new List<string>() { "Hello", "There", "World" }),
+            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
     }
 
-    record SomeClass(int Int, string String);
-    
+    record SomeClass(int? Int, string String);
+
     [Fact]
     public async Task LoquiList()
     {
         var item1 = new SomeClass(4, "Hello");
         var item2 = new SomeClass(6, "World");
-        
-        var str =  await GetResults((k, w) =>
+
+        var str = await GetResults((k, w) =>
         {
             var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             k.StartListSection(w, "MyList");
@@ -502,43 +592,46 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             k.WriteInt8(w, "SomeInt", 4, default);
         });
         await TestHelper.VerifyString(str);
-        
-        var readItem = GetReadResults(str, "MyList", (kernel, reader) =>
-        {
-            var metaData = new SerializationMetaData(GameRelease.SkyrimSE);
-            var ret = new List<SomeClass>();
-            kernel.StartListSection(reader);
-            while (kernel.TryHasNextItem(reader))
-            {
-                var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) =>
+
+        CheckReadResults(str,
+            new ReadResults<List<SomeClass>>(
+                "MyList",
+                (kernel, reader) =>
                 {
-                    int i = default;
-                    string s = string.Empty;
-                    while (k.TryGetNextField(r, out var name))
+                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE);
+                    var ret = new List<SomeClass>();
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
                     {
-                        switch (name)
+                        var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) =>
                         {
-                            case "Int":
-                                i = k.ReadInt32(r);
-                                break;
-                            case "String":
-                                s = k.ReadString(r);
-                                break;
-                            default:
-                                throw new DataMisalignedException();
-                        }
+                            int? i = default;
+                            string s = string.Empty;
+                            while (k.TryGetNextField(r, out var name))
+                            {
+                                switch (name)
+                                {
+                                    case "Int":
+                                        i = k.ReadInt32(r);
+                                        break;
+                                    case "String":
+                                        s = k.ReadString(r);
+                                        break;
+                                    default:
+                                        throw new DataMisalignedException();
+                                }
+                            }
+
+                            return new SomeClass(i, s);
+                        });
+                        ret.Add(item);
                     }
-                    return new SomeClass(i, s);
-                });
-                ret.Add(item);
-            }
-            kernel.EndListSection(reader);
-            return ret;
-        });
-        readItem.Should().Equal(item1, item2);
-        
-        var readInt = GetReadResults(str, "SomeInt", (k, r) => k.ReadUInt8(r));
-        readInt.Should().Be(4);
+
+                    kernel.EndListSection(reader);
+                    return ret;
+                },
+                new List<SomeClass> { item1, item2 }),
+            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
     }
 
     [Fact]
@@ -546,7 +639,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     {
         var item1 = new SomeClass(1, "value");
         var item2 = new SomeClass(2, "value2");
-        
+
         var str = await GetResults((k, w) =>
         {
             k.StartDictionarySection(w, "MyDict");
@@ -570,35 +663,37 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             k.WriteInt8(w, "SomeInt", 4, default);
         });
         await TestHelper.VerifyString(str);
-        
-        var readItem = GetReadResults(str, "MyDict", (kernel, reader) =>
-        {
-            var ret = new List<SomeClass>();
-            kernel.StartDictionarySection(reader);
-            while (kernel.TryHasNextDictionaryItem(reader))
-            {
-                kernel.StartDictionaryKey(reader);
-                int k = kernel.ReadInt32(reader);   
-                kernel.EndDictionaryKey(reader);
-                kernel.StartDictionaryValue(reader);
-                string val = kernel.ReadString(reader);
-                kernel.EndDictionaryValue(reader);
-                kernel.EndDictionaryItem(reader);
-                ret.Add(new SomeClass(k, val));
-            }
-            kernel.EndDictionarySection(reader);
-            return ret;
-        });
-        readItem.Should().Equal(item1, item2);
-        
-        var readInt = GetReadResults(str, "SomeInt", (k, r) => k.ReadUInt8(r));
-        readInt.Should().Be(4);
+
+        CheckReadResults(str,
+            new ReadResults<List<SomeClass>>(
+                "MyDict", 
+                (kernel, reader) =>
+                {
+                    var ret = new List<SomeClass>();
+                    kernel.StartDictionarySection(reader);
+                    while (kernel.TryHasNextDictionaryItem(reader))
+                    {
+                        kernel.StartDictionaryKey(reader);
+                        int? k = kernel.ReadInt32(reader);
+                        kernel.EndDictionaryKey(reader);
+                        kernel.StartDictionaryValue(reader);
+                        string val = kernel.ReadString(reader);
+                        kernel.EndDictionaryValue(reader);
+                        kernel.EndDictionaryItem(reader);
+                        ret.Add(new SomeClass(k, val));
+                    }
+
+                    kernel.EndDictionarySection(reader);
+                    return ret;
+                },
+                new List<SomeClass>() { item1, item2 }),
+            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
     }
-    
+
     [Fact]
     public async Task Array2d()
     {
-        var str =  await GetResults((k, w) =>
+        var str = await GetResults((k, w) =>
         {
             k.StartArray2dSection(w, "MyArr");
             k.StartArray2dYSection(w);
@@ -617,10 +712,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             k.EndArray2dSection(w);
         });
         await TestHelper.VerifyString(str);
-        
+
         var readItem = GetReadResults(str, "MyArr", (kernel, reader) =>
         {
-            var ret = new List<(int X, int Y, int Val)>();
+            var ret = new List<(int X, int Y, int? Val)>();
             kernel.StartArray2dSection(reader);
             int y = 0;
             while (kernel.TryHasNextArray2dYSection(reader))
@@ -634,9 +729,11 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                     kernel.EndArray2dXSection(reader);
                     x++;
                 }
+
                 kernel.EndArray2dYSection(reader);
                 y++;
             }
+
             kernel.EndArray2dSection(reader);
             return ret;
         });
@@ -645,7 +742,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             (1, 0, 2),
             (0, 1, 4));
     }
-    
+
     [Fact]
     public async Task TranslatedString()
     {
@@ -664,7 +761,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 new KeyValuePair<Language, string>(Language.English, "Hello"),
                 new KeyValuePair<Language, string>(Language.French, "Bonjour")));
     }
-    
+
     [Fact]
     public async Task Bytes()
     {
@@ -678,11 +775,11 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new ReadOnlyMemorySlice<byte>(Array.Empty<byte>()),
             new ReadOnlyMemorySlice<byte>(new byte[] { 1, 2, 3, 4, 5, 254, 255 }));
     }
-    
+
     [Fact]
     public async Task Group()
     {
-        var str =  await GetResults((k, w) =>
+        var str = await GetResults((k, w) =>
         {
             var objs = new List<SomeClass>()
             {
@@ -691,11 +788,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             };
             var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
-                (w, g, k, m) =>
-                {
-                    k.WriteBool(w, "SomeGroupField", true, default);
-                },
-                new Write<TWriterKernel,TWriter, SomeClass>((w, i, k, m) =>
+                (w, g, k, m) => { k.WriteBool(w, "SomeGroupField", true, default); },
+                new Write<TWriterKernel, TWriter, SomeClass>((w, i, k, m) =>
                 {
                     k.WriteInt32(w, "Int", i.Int, default);
                     k.WriteString(w, "String", i.String, default);
@@ -710,7 +804,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         Second,
         Third
     }
-    
+
     [Fact]
     public async Task Enum()
     {
@@ -730,7 +824,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         Second = 0x02,
         Third = 0x04
     }
-    
+
     [Fact]
     public async Task FlagsEnum()
     {

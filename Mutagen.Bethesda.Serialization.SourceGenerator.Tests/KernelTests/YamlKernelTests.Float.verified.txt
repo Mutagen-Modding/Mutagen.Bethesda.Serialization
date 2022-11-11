@@ -1,4 +1,4 @@
-﻿Float1: ''
+﻿Float1: {}
 Float2: 0
 Float3: -5
 Float4: 5

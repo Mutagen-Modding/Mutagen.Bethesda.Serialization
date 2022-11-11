@@ -7,6 +7,7 @@
   "Npcs": {
     "Records": [
       {
+        "FormKey": "000800:InputMod.esp",
         "Configuration": {
           "HealthOffset": 100
         },
@@ -16,6 +17,7 @@
         }
       },
       {
+        "FormKey": "000801:InputMod.esp",
         "Configuration": {
           "HealthOffset": 200
         },

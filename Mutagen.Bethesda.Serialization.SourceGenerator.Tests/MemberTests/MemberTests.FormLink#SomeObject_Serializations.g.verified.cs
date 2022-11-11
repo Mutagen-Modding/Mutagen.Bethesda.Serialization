@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -59,31 +60,46 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeFormKey":
-                    obj.SomeFormKey.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                case "SomeFormKey2":
-                    obj.SomeFormKey2.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                case "SomeFormKey3":
-                    obj.SomeFormKey3.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                case "SomeFormKey4":
-                    obj.SomeFormKey4.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                case "SomeFormKey5":
-                    obj.SomeFormKey5.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                case "SomeFormKey6":
-                    obj.SomeFormKey6.SetTo(kernel.ReadFormKey(reader));
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeFormKey":
+                obj.SomeFormKey.SetTo(kernel.ReadFormKey(reader));
+                break;
+            case "SomeFormKey2":
+                obj.SomeFormKey2.SetTo(kernel.ReadFormKey(reader));
+                break;
+            case "SomeFormKey3":
+                obj.SomeFormKey3.SetTo(kernel.ReadFormKey(reader));
+                break;
+            case "SomeFormKey4":
+                obj.SomeFormKey4.SetTo(kernel.ReadFormKey(reader));
+                break;
+            case "SomeFormKey5":
+                obj.SomeFormKey5.SetTo(kernel.ReadFormKey(reader));
+                break;
+            case "SomeFormKey6":
+                obj.SomeFormKey6.SetTo(kernel.ReadFormKey(reader));
+                break;
+            default:
+                break;
+        }
     }
 
 }

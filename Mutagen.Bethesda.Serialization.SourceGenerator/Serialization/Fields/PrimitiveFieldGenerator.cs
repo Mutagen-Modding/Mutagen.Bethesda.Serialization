@@ -29,7 +29,8 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     }
     
     public bool Applicable(ITypeSymbol typeSymbol) => false;
-    public bool ShouldGenerate(IPropertySymbol propertySymbol)
+    
+    public virtual bool ShouldGenerate(IPropertySymbol propertySymbol)
     {
         return !propertySymbol.IsReadOnly;
     }
@@ -79,7 +80,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if (!EqualityComparer<{field}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public virtual void GenerateForDeserialize(
         CompilationUnit compilation,
         ITypeSymbol obj,
         ITypeSymbol field,
@@ -93,7 +94,32 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.Read{_nickname}", linePerArgument: false))
+        var setAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
+        if (field.IsNullable())
+        {
+            AddReadCall(sb, kernelAccessor, readerAccessor, setAccessor);
+        }
+        else
+        {
+            using (var strip = sb.Call($"{setAccessor}SerializationHelper.StripNull", linePerArgument: false))
+            {
+                strip.Add((subSb) =>
+                {
+                    AddReadCall(subSb, kernelAccessor, readerAccessor, string.Empty);
+                });
+                if (fieldName == null) throw new NullReferenceException();
+                strip.Add($"name: \"{fieldName}\"");
+            }
+        }
+    }
+
+    private void AddReadCall(
+        StructuredStringBuilder sb,
+        string kernelAccessor,
+        string readerAccessor,
+        string setAccessor)
+    {
+        using (var c = sb.Call($"{setAccessor}{kernelAccessor}.Read{_nickname}", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

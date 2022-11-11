@@ -1,4 +1,4 @@
-﻿Percent1: null
+﻿Percent1: {}
 Percent2: 0
 Percent3: 0
 Percent4: 0.5

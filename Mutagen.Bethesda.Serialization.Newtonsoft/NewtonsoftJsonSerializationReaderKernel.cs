@@ -38,25 +38,37 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
             || reader.ValueType != typeof(string))
         {
             name = reader.Value?.ToString()!;
+            reader.Read();
             return name != null;
         }
         
         throw new DataMisalignedException($"Did not have EndObject or PropertyName token as expected. Line: {reader.LineNumber} Pos: {reader.LinePosition}");
     }
 
-    public Type GetNextType(JsonTextReader reader)
+    public Type GetNextType(JsonTextReader reader, string namespaceString)
     {
-        throw new NotImplementedException();
+        if (reader.TokenType != JsonToken.StartObject || !reader.Read())
+        {
+            throw new DataMisalignedException("Did not start with a JSON start object character as expected");
+        }
+
+        SkipPropertyName(reader);
+        var val = (string)reader.Value!;
+        var typeStr = $"{namespaceString}.{val}, {namespaceString}";
+        return Type.GetType(typeStr)!;
     }
 
     public FormKey ExtractFormKey(JsonTextReader reader)
     {
-        throw new NotImplementedException();
+        if (reader.TokenType != JsonToken.StartObject || !reader.Read())
+        {
+            throw new DataMisalignedException("Did not start with a JSON start object character as expected");
+        }
+        return ReadFormKey(reader) ?? throw new NullReferenceException("Required FormKey for MajorRecord was null");
     }
 
     public void Skip(JsonTextReader reader)
     {
-        reader.Read();
         if (reader.TokenType == JsonToken.StartObject)
         {
             SkipObject(reader);
@@ -124,113 +136,125 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         }
     }
 
-    public char ReadChar(JsonTextReader reader)
+    public char? ReadChar(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         return str[0];
     }
 
-    public bool ReadBool(JsonTextReader reader)
+    public bool? ReadBool(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return (bool)reader.Value!;
     }
 
-    public TEnum ReadEnum<TEnum>(JsonTextReader reader) where TEnum : struct, Enum, IConvertible
+    public TEnum? ReadEnum<TEnum>(JsonTextReader reader) where TEnum : struct, Enum, IConvertible
     {
         if (Enums<TEnum>.IsFlagsEnum)
         {
             TEnum ret = default;
-            if (!reader.Read())
-            {
-                throw new DataMisalignedException();
-            }
 
             SkipPropertyName(reader);
-            while (reader.Read())
+            if (reader.TokenType == JsonToken.StartArray)
             {
-                if (reader.TokenType == JsonToken.EndArray)
+                while (reader.Read())
                 {
-                    break;
-                }
-                var str = (string)reader.Value!;
-                var strSpan = str.AsSpan();
-                if (Enum.TryParse<TEnum>(strSpan, out var otherEnum))
-                {
-                    ret = Enums<TEnum>.Or(ret, otherEnum);
-                    continue;
+                    if (reader.TokenType == JsonToken.EndArray)
+                    {
+                        break;
+                    }
+                    var str = (string)reader.Value!;
+                    var strSpan = str.AsSpan();
+                    if (Enum.TryParse<TEnum>(strSpan, out var otherEnum))
+                    {
+                        ret = Enums<TEnum>.Or(ret, otherEnum);
+                        continue;
+                    }
+
+                    if (Enums<TEnum>.TryParseFromNumber(strSpan, out otherEnum))
+                    {
+                        ret = Enums<TEnum>.Or(ret, otherEnum);
+                        continue;
+                    }
+                    throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {str}");
                 }
 
-                if (Enums<TEnum>.TryParseFromNumber(strSpan, out otherEnum))
-                {
-                    ret = Enums<TEnum>.Or(ret, otherEnum);
-                    continue;
-                }
-                throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {str}");
+                return ret;
             }
-
-            return ret;
+            if (reader.Value is null or "") return null;
+            throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {reader.Value}");
         }
         else
         {
             SkipPropertyName(reader);
+            if (reader.Value is null or "") return null;
             var str = (string)reader.Value!;
             return Enum.Parse<TEnum>(str);
         }
     }
 
-    public string ReadString(JsonTextReader reader)
+    public string? ReadString(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        return (string)reader.Value!;
+        return (string?)reader.Value!;
     }
 
-    public sbyte ReadInt8(JsonTextReader reader)
+    public sbyte? ReadInt8(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((sbyte)(long)reader.Value!);
     }
 
-    public short ReadInt16(JsonTextReader reader)
+    public short? ReadInt16(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((short)(long)reader.Value!);
     }
 
-    public int ReadInt32(JsonTextReader reader)
+    public int? ReadInt32(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((int)(long)reader.Value!);
     }
 
-    public long ReadInt64(JsonTextReader reader)
+    public long? ReadInt64(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return (long)reader.Value!;
     }
 
-    public byte ReadUInt8(JsonTextReader reader)
+    public byte? ReadUInt8(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((byte)(long)reader.Value!);
     }
 
-    public ushort ReadUInt16(JsonTextReader reader)
+    public ushort? ReadUInt16(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((ushort)(long)reader.Value!);
     }
 
-    public uint ReadUInt32(JsonTextReader reader)
+    public uint? ReadUInt32(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return checked((uint)(long)reader.Value!);
     }
 
-    public ulong ReadUInt64(JsonTextReader reader)
+    public ulong? ReadUInt64(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         if (reader.ValueType == typeof(long))
         {
             return checked((ulong)(long)reader.Value!);
@@ -245,35 +269,40 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new NotImplementedException();
     }
 
-    public float ReadFloat(JsonTextReader reader)
+    public float? ReadFloat(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return (float)(double)reader.Value!;
     }
 
-    public ModKey ReadModKey(JsonTextReader reader)
+    public ModKey? ReadModKey(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return ModKey.FromNameAndExtension((string)reader.Value!);
     }
 
-    public FormKey ReadFormKey(JsonTextReader reader)
+    public FormKey? ReadFormKey(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         return FormKey.Factory((string)reader.Value!);
     }
 
-    public Color ReadColor(JsonTextReader reader)
+    public Color? ReadColor(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         return ColorExt.ConvertFromCommaString(str.AsSpan());
     }
 
-    public RecordType ReadRecordType(JsonTextReader reader)
+    public RecordType? ReadRecordType(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (str == "null")
         {
             return RecordType.Null;
@@ -281,10 +310,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return new RecordType(str);
     }
 
-    public P2Int ReadP2Int(JsonTextReader reader)
+    public P2Int? ReadP2Int(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P2Int.TryParse(str, out var pt))
         {
             return pt;
@@ -293,10 +323,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P2Int)}: {str}");
     }
 
-    public P2Int16 ReadP2Int16(JsonTextReader reader)
+    public P2Int16? ReadP2Int16(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P2Int16.TryParse(str, out var pt))
         {
             return pt;
@@ -305,10 +336,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {str}");
     }
 
-    public P2Float ReadP2Float(JsonTextReader reader)
+    public P2Float? ReadP2Float(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P2Float.TryParse(str, out var pt))
         {
             return pt;
@@ -317,10 +349,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P2Float)}: {str}");
     }
 
-    public P3Float ReadP3Float(JsonTextReader reader)
+    public P3Float? ReadP3Float(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P3Float.TryParse(str, out var pt))
         {
             return pt;
@@ -329,10 +362,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P3Float)}: {str}");
     }
 
-    public P3UInt8 ReadP3UInt8(JsonTextReader reader)
+    public P3UInt8? ReadP3UInt8(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P3UInt8.TryParse(str, out var pt))
         {
             return pt;
@@ -341,10 +375,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P3UInt8)}: {str}");
     }
 
-    public P3Int16 ReadP3Int16(JsonTextReader reader)
+    public P3Int16? ReadP3Int16(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P3Int16.TryParse(str, out var pt))
         {
             return pt;
@@ -353,10 +388,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P3Int16)}: {str}");
     }
 
-    public P3UInt16 ReadP3UInt16(JsonTextReader reader)
+    public P3UInt16? ReadP3UInt16(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
         if (P3UInt16.TryParse(str, out var pt))
         {
             return pt;
@@ -365,17 +401,19 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P3UInt16)}: {str}");
     }
 
-    public Percent ReadPercent(JsonTextReader reader)
+    public Percent? ReadPercent(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.Value is null or "") return null;
         var d = (double)reader.Value!;
         return new Percent(d);
     }
 
-    public TranslatedString ReadTranslatedString(JsonTextReader reader)
+    public TranslatedString? ReadTranslatedString(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-
+        if (reader.Value is null or "") return null;
+        
         Language? targetLanguage = null;
         string? mainString = null;
         List<KeyValuePair<Language, string?>>? pairs = null;
@@ -466,10 +504,12 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return ret;
     }
 
-    public MemorySlice<byte> ReadBytes(JsonTextReader reader)
+    public MemorySlice<byte>? ReadBytes(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        var str = (string)reader.Value!;
+        var str = (string?)reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
+        if (str == "[]") return Array.Empty<byte>();
         return Convert.FromHexString(str);
     }
 
@@ -528,12 +568,13 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
 
     public bool TryHasNextDictionaryItem(JsonTextReader reader)
     {
-        var done = reader.TokenType == JsonToken.EndArray;
-        if (!reader.Read())
+        if (reader.TokenType == JsonToken.EndArray)
         {
-            throw new DataMisalignedException();
+            return false;
         }
-        return !done;
+
+        reader.Read();
+        return true;
     }
 
     public void StartDictionaryKey(JsonTextReader reader)

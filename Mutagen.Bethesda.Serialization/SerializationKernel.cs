@@ -18,42 +18,50 @@ public delegate void ReadInto<TKernel, TReaderObject, TObject>(
     SerializationMetaData metaData)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
+public delegate void ReadNamedInto<TKernel, TReaderObject, TObject>(
+    TReaderObject reader,
+    TObject obj,
+    TKernel kernel,
+    SerializationMetaData metaData,
+    string name)
+    where TKernel : ISerializationReaderKernel<TReaderObject>;
+
 public interface ISerializationReaderKernel<TReaderObject>
 {
     public TReaderObject GetNewObject(Stream stream);
     public bool TryGetNextField(TReaderObject reader, out string name);
-    public Type GetNextType(TReaderObject reader);
+    public Type GetNextType(TReaderObject reader, string namespaceString);
     public FormKey ExtractFormKey(TReaderObject reader);
     public void Skip(TReaderObject reader);
-    public char ReadChar(TReaderObject reader);
-    public bool ReadBool(TReaderObject reader);
-    public TEnum ReadEnum<TEnum>(TReaderObject reader)
+    public char? ReadChar(TReaderObject reader);
+    public bool? ReadBool(TReaderObject reader);
+    public TEnum? ReadEnum<TEnum>(TReaderObject reader)
         where TEnum : struct, Enum, IConvertible;
-    public string ReadString(TReaderObject reader);
-    public sbyte ReadInt8(TReaderObject reader);
-    public short ReadInt16(TReaderObject reader);
-    public int ReadInt32(TReaderObject reader);
-    public long ReadInt64(TReaderObject reader);
-    public byte ReadUInt8(TReaderObject reader);
-    public ushort ReadUInt16(TReaderObject reader);
-    public uint ReadUInt32(TReaderObject reader);
-    public ulong ReadUInt64(TReaderObject reader);
-    public float ReadFloat(TReaderObject reader);
-    public ModKey ReadModKey(TReaderObject reader);
-    public FormKey ReadFormKey(TReaderObject reader);
-    public Color ReadColor(TReaderObject reader);
-    public RecordType ReadRecordType(TReaderObject reader);
-    public P2Int ReadP2Int(TReaderObject reader);
-    public P2Int16 ReadP2Int16(TReaderObject reader);
-    public P2Float ReadP2Float(TReaderObject reader);
-    public P3Float ReadP3Float(TReaderObject reader);
-    public P3UInt8 ReadP3UInt8(TReaderObject reader);
-    public P3Int16 ReadP3Int16(TReaderObject reader);
-    public P3UInt16 ReadP3UInt16(TReaderObject reader);
-    public Percent ReadPercent(TReaderObject reader);
-    public TranslatedString ReadTranslatedString(TReaderObject reader);
-    public MemorySlice<byte> ReadBytes(TReaderObject reader);
-    public TObject ReadLoqui<TObject>(
+    public string? ReadString(TReaderObject reader);
+    public sbyte? ReadInt8(TReaderObject reader);
+    public short? ReadInt16(TReaderObject reader);
+    public int? ReadInt32(TReaderObject reader);
+    public long? ReadInt64(TReaderObject reader);
+    public byte? ReadUInt8(TReaderObject reader);
+    public ushort? ReadUInt16(TReaderObject reader);
+    public uint? ReadUInt32(TReaderObject reader);
+    public ulong? ReadUInt64(TReaderObject reader);
+    public float? ReadFloat(TReaderObject reader);
+    public ModKey? ReadModKey(TReaderObject reader);
+    public FormKey? ReadFormKey(TReaderObject reader);
+    public Color? ReadColor(TReaderObject reader);
+    public RecordType? ReadRecordType(TReaderObject reader);
+    public P2Int? ReadP2Int(TReaderObject reader);
+    public P2Int16? ReadP2Int16(TReaderObject reader);
+    public P2Float? ReadP2Float(TReaderObject reader);
+    public P3Float? ReadP3Float(TReaderObject reader);
+    public P3UInt8? ReadP3UInt8(TReaderObject reader);
+    public P3Int16? ReadP3Int16(TReaderObject reader);
+    public P3UInt16? ReadP3UInt16(TReaderObject reader);
+    public Percent? ReadPercent(TReaderObject reader);
+    public TranslatedString? ReadTranslatedString(TReaderObject reader);
+    public MemorySlice<byte>? ReadBytes(TReaderObject reader);
+    public TObject? ReadLoqui<TObject>(
         TReaderObject reader,
         SerializationMetaData serializationMetaData,
         Read<ISerializationReaderKernel<TReaderObject>, TReaderObject, TObject> readCall);
@@ -104,6 +112,7 @@ public interface ISerializationWriterKernel<TWriterObject>
 {
     public TWriterObject GetNewObject(Stream stream);
     public void Finalize(Stream stream, TWriterObject writer);
+    public void WriteType(TWriterObject writer, Type type);
     public void WriteChar(TWriterObject writer, string? fieldName, char? item);
     public void WriteBool(TWriterObject writer, string? fieldName, bool? item);
     public void WriteString(TWriterObject writer, string? fieldName, string? item);

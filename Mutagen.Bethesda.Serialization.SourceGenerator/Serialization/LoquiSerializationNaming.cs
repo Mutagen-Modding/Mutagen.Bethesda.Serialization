@@ -24,6 +24,11 @@ public record SerializationItems(
         return $"{Namespace}.{SerializationHousingClassName}.DeserializeInto";
     }
 
+    public string DeserializationSingleFieldIntoCall()
+    {
+        return $"{Namespace}.{SerializationHousingClassName}.DeserializeSingleFieldInto";
+    }
+
     public string HasSerializationCall(bool withCheck = false)
     {
         return $"{Namespace}.{SerializationHousingClassName}.HasSerializationItems{(withCheck ? "WithCheck" : null)}";

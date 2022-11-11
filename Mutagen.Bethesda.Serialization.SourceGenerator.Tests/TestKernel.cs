@@ -27,39 +27,17 @@ public class TestWriter
 
 public class TestKernel : ISerializationReaderKernel<TestReader>, ISerializationWriterKernel<TestWriter>
 {
-    private ISerializationReaderKernel<TestReader> _serializationReaderKernelImplementation;
-
     TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
     {
         throw new NotImplementedException();
     }
 
-    public bool TryGetNextField(TestReader reader, out string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Type GetNextType(TestReader reader)
-    {
-        throw new NotImplementedException();
-    }
-
-    public FormKey ExtractFormKey(TestReader reader)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Skip(TestReader reader)
-    {
-        throw new NotImplementedException();
-    }
-
-    public char ReadChar(TestReader reader)
-    {
-        throw new NotImplementedException();
-    }
-
     public void Finalize(Stream stream, TestWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteType(TestWriter writer, Type type)
     {
         throw new NotImplementedException();
     }
@@ -291,137 +269,162 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public bool ReadBool(TestReader reader)
+    public bool TryGetNextField(TestReader reader, out string name)
     {
         throw new NotImplementedException();
     }
 
-    public TEnum ReadEnum<TEnum>(TestReader reader) where TEnum : struct, Enum, IConvertible
+    public Type GetNextType(TestReader reader, string namespaceString)
     {
         throw new NotImplementedException();
     }
 
-    public string ReadString(TestReader reader)
+    public FormKey ExtractFormKey(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public sbyte ReadInt8(TestReader reader)
+    public void Skip(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public short ReadInt16(TestReader reader)
+    public char? ReadChar(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public int ReadInt32(TestReader reader)
+    public bool? ReadBool(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public long ReadInt64(TestReader reader)
+    public TEnum? ReadEnum<TEnum>(TestReader reader) where TEnum : struct, Enum, IConvertible
     {
         throw new NotImplementedException();
     }
 
-    public byte ReadUInt8(TestReader reader)
+    public string? ReadString(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public ushort ReadUInt16(TestReader reader)
+    public sbyte? ReadInt8(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public uint ReadUInt32(TestReader reader)
+    public short? ReadInt16(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public ulong ReadUInt64(TestReader reader)
+    public int? ReadInt32(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public float ReadFloat(TestReader reader)
-    {
-        return _serializationReaderKernelImplementation.ReadFloat(reader);
-    }
-
-    public ModKey ReadModKey(TestReader reader)
-    {
-        return _serializationReaderKernelImplementation.ReadModKey(reader);
-    }
-
-    public FormKey ReadFormKey(TestReader reader)
+    public long? ReadInt64(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public Color ReadColor(TestReader reader)
+    public byte? ReadUInt8(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public RecordType ReadRecordType(TestReader reader)
+    public ushort? ReadUInt16(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P2Int ReadP2Int(TestReader reader)
+    public uint? ReadUInt32(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P2Int16 ReadP2Int16(TestReader reader)
+    public ulong? ReadUInt64(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P2Float ReadP2Float(TestReader reader)
+    public float? ReadFloat(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P3Float ReadP3Float(TestReader reader)
+    public ModKey? ReadModKey(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P3UInt8 ReadP3UInt8(TestReader reader)
+    public FormKey? ReadFormKey(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P3Int16 ReadP3Int16(TestReader reader)
+    public Color? ReadColor(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public P3UInt16 ReadP3UInt16(TestReader reader)
+    public RecordType? ReadRecordType(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public Percent ReadPercent(TestReader reader)
+    public P2Int? ReadP2Int(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public TranslatedString ReadTranslatedString(TestReader reader)
+    public P2Int16? ReadP2Int16(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public MemorySlice<byte> ReadBytes(TestReader reader)
+    public P2Float? ReadP2Float(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public TObject ReadLoqui<TObject>(TestReader reader, SerializationMetaData serializationMetaData, Read<ISerializationReaderKernel<TestReader>, TestReader, TObject> readCall)
+    public P3Float? ReadP3Float(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3UInt8? ReadP3UInt8(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3Int16? ReadP3Int16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P3UInt16? ReadP3UInt16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Percent? ReadPercent(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TranslatedString? ReadTranslatedString(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MemorySlice<byte>? ReadBytes(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TObject? ReadLoqui<TObject>(TestReader reader, SerializationMetaData serializationMetaData, Read<ISerializationReaderKernel<TestReader>, TestReader, TObject> readCall)
     {
         throw new NotImplementedException();
     }

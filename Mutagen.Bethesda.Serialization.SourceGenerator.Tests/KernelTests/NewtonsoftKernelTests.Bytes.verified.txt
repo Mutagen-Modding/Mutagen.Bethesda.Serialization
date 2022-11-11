@@ -1,6 +1,6 @@
 ﻿{
   "Bytes1": "",
-  "Bytes2": "",
-  "Bytes3": "",
+  "Bytes2": "[]",
+  "Bytes3": "[]",
   "Bytes4": "0102030405FEFF"
 }

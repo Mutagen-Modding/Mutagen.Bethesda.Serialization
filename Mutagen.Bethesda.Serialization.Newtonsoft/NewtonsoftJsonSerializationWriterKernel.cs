@@ -3,7 +3,6 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
 using Noggog;
-using Noggog.Extensions;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
@@ -51,6 +50,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     {
         writer.Writer.WriteEndObject();
         writer.Dispose();
+    }
+
+    public void WriteType(JsonWritingUnit writer, Type type)
+    {
+        WriteString(writer, "MutagenObjectType", type.Name);
     }
 
     public void WriteChar(JsonWritingUnit writer, string? fieldName, char? item)
@@ -437,7 +441,14 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
     public void WriteBytes(JsonWritingUnit writer, string? fieldName, ReadOnlyMemorySlice<byte>? item)
     {
         writer.WriteName(fieldName);
-        writer.Writer.WriteValue(item == null ? "" : Convert.ToHexString(item.Value));
+        if (item == null)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue(item.Value.Length == 0 ? "[]" : Convert.ToHexString(item.Value));
+        }
     }
 
     public void WriteEnum<TEnum>(JsonWritingUnit writer, string? fieldName, TEnum? item)

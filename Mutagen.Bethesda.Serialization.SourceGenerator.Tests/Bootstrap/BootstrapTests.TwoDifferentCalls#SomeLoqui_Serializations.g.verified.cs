@@ -1,4 +1,5 @@
 ﻿//HintName: SomeLoqui_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -47,13 +48,28 @@ internal static class SomeLoqui_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            default:
+                break;
+        }
     }
 
 }

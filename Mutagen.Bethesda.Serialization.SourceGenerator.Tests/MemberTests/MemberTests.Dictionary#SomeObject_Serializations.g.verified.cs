@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -89,43 +90,58 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeDict":
-                    kernel.StartDictionarySection(reader);
-                    while (kernel.TryHasNextDictionaryItem(reader))
-                    {
-                        var key = kernel.ReadInt32(reader);
-                        var val = kernel.ReadString(reader);
-                        obj.SomeDict[key] = val;
-                    }
-                    kernel.EndDictionarySection(reader);
-                    break;
-                case "SomeDict1":
-                    kernel.StartDictionarySection(reader);
-                    while (kernel.TryHasNextDictionaryItem(reader))
-                    {
-                        var key = kernel.ReadInt32(reader);
-                        var val = kernel.ReadString(reader);
-                        obj.SomeDict1[key] = val;
-                    }
-                    kernel.EndDictionarySection(reader);
-                    break;
-                case "SomeDict2":
-                    kernel.StartDictionarySection(reader);
-                    while (kernel.TryHasNextDictionaryItem(reader))
-                    {
-                        var key = kernel.ReadInt32(reader);
-                        var val = kernel.ReadString(reader);
-                        obj.SomeDict2[key] = val;
-                    }
-                    kernel.EndDictionarySection(reader);
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeDict":
+                kernel.StartDictionarySection(reader);
+                while (kernel.TryHasNextDictionaryItem(reader))
+                {
+                    var key = kernel.ReadInt32(reader);
+                    var val = kernel.ReadString(reader);
+                    obj.SomeDict[key] = val;
+                }
+                kernel.EndDictionarySection(reader);
+                break;
+            case "SomeDict1":
+                kernel.StartDictionarySection(reader);
+                while (kernel.TryHasNextDictionaryItem(reader))
+                {
+                    var key = kernel.ReadInt32(reader);
+                    var val = kernel.ReadString(reader);
+                    obj.SomeDict1[key] = val;
+                }
+                kernel.EndDictionarySection(reader);
+                break;
+            case "SomeDict2":
+                kernel.StartDictionarySection(reader);
+                while (kernel.TryHasNextDictionaryItem(reader))
+                {
+                    var key = kernel.ReadInt32(reader);
+                    var val = kernel.ReadString(reader);
+                    obj.SomeDict2[key] = val;
+                }
+                kernel.EndDictionarySection(reader);
+                break;
+            default:
+                break;
+        }
     }
 
 }

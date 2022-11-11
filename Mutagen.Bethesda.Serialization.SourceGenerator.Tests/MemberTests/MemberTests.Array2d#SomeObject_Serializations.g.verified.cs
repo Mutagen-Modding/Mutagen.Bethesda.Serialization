@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -86,79 +87,94 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeArray":
-                    {
-                        kernel.StartArray2dSection(reader);
-                        int y = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
-                        {
-                            kernel.StartArray2dYSection(reader);
-                            int x = 0;
-                            while (kernel.TryHasNextArray2dYSection(reader))
-                            {
-                                kernel.StartArray2dXSection(reader);
-                                var item = kernel.ReadString(reader);
-                                obj.SomeArray[x, y] = item;
-                                kernel.EndArray2dXSection(reader);
-                                x++;
-                            }
-                            kernel.EndArray2dYSection(reader);
-                            y++;
-                        }
-                        kernel.EndArray2dSection(reader);
-                    }
-                    break;
-                case "SomeArray2":
-                    {
-                        kernel.StartArray2dSection(reader);
-                        int y = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
-                        {
-                            kernel.StartArray2dYSection(reader);
-                            int x = 0;
-                            while (kernel.TryHasNextArray2dYSection(reader))
-                            {
-                                kernel.StartArray2dXSection(reader);
-                                var item = kernel.ReadString(reader);
-                                obj.SomeArray2[x, y] = item;
-                                kernel.EndArray2dXSection(reader);
-                                x++;
-                            }
-                            kernel.EndArray2dYSection(reader);
-                            y++;
-                        }
-                        kernel.EndArray2dSection(reader);
-                    }
-                    break;
-                case "SomeArray3":
-                    {
-                        kernel.StartArray2dSection(reader);
-                        int y = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
-                        {
-                            kernel.StartArray2dYSection(reader);
-                            int x = 0;
-                            while (kernel.TryHasNextArray2dYSection(reader))
-                            {
-                                kernel.StartArray2dXSection(reader);
-                                var item = kernel.ReadString(reader);
-                                obj.SomeArray3[x, y] = item;
-                                kernel.EndArray2dXSection(reader);
-                                x++;
-                            }
-                            kernel.EndArray2dYSection(reader);
-                            y++;
-                        }
-                        kernel.EndArray2dSection(reader);
-                    }
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeArray":
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dYSection(reader))
+                        {
+                            kernel.StartArray2dXSection(reader);
+                            var item = kernel.ReadString(reader);
+                            obj.SomeArray[x, y] = item;
+                            kernel.EndArray2dXSection(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            case "SomeArray2":
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dYSection(reader))
+                        {
+                            kernel.StartArray2dXSection(reader);
+                            var item = kernel.ReadString(reader);
+                            obj.SomeArray2[x, y] = item;
+                            kernel.EndArray2dXSection(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            case "SomeArray3":
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dYSection(reader))
+                        {
+                            kernel.StartArray2dXSection(reader);
+                            var item = kernel.ReadString(reader);
+                            obj.SomeArray3[x, y] = item;
+                            kernel.EndArray2dXSection(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }

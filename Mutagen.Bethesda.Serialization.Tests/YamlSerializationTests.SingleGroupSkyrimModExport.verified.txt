@@ -3,12 +3,14 @@
     NextFormID: 2050
 Npcs:
   Records:
-  - Configuration:
+  - FormKey: 000800:InputMod.esp
+    Configuration:
       HealthOffset: 100
     Name:
       TargetLanguage: English
       Value: Goblin
-  - Configuration:
+  - FormKey: 000801:InputMod.esp
+    Configuration:
       HealthOffset: 200
     Attacks:
     - AttackEvent: Event1

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
@@ -196,51 +197,73 @@ public class SerializationForObjectGenerator
             {
                 GenerateMetaConstruction(sb, "obj");
             }
-            
-            if (baseType != null
-                && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
-            {
-                sb.AppendLine(
-                    $"{baseSerializationItems.DeserializationIntoCall()}{genString}(reader, kernel, obj, metaData);");
-            }
 
             sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
             using (sb.CurlyBrace())
             {
-                sb.AppendLine("switch (name)");
-                using (sb.CurlyBrace())
+                using (var c = sb.Call("DeserializeSingleFieldInto"))
                 {
-                    foreach (var prop in properties.InOrder)
-                    {
-                        context.CancellationToken.ThrowIfCancellationRequested();
-                        _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
-                        {
-                            sb.AppendLine($"case \"{prop.Property.Name}\":");
-                            using (sb.IncreaseDepth())
-                            {
-                                _forFieldGenerator.GenerateDeserializeForField(
-                                    compilation: compilation,
-                                    obj: typeSet.Getter,
-                                    fieldType: prop.Property.Type,
-                                    readerAccessor: "reader",
-                                    fieldName: prop.Property.Name,
-                                    fieldAccessor: $"obj.{prop.Property.Name}",
-                                    canSet: prop.Property.IsSettable(),
-                                    prop.Generator,
-                                    sb: sb,
-                                    cancel: context.CancellationToken);
-                                sb.AppendLine("break;");
-                            }
-                        });
-                    }
-                    sb.AppendLine("default:");
-                    using (sb.IncreaseDepth())
-                    {
-                        sb.AppendLine("break;");
-                    }
+                    c.AddPassArg("reader");
+                    c.AddPassArg("kernel");
+                    c.AddPassArg("obj");
+                    c.AddPassArg("metaData");
+                    c.AddPassArg("name");
                 }
             }
             sb.AppendLine();
+        }
+        sb.AppendLine();
+        
+        using (var args = sb.Function($"public static void DeserializeSingleFieldInto{genString}"))
+        {
+            args.Add($"TReadObject reader");
+            args.Add($"ISerializationReaderKernel<TReadObject> kernel");
+            args.Add($"{typeSet.Setter} obj");
+            args.Add("SerializationMetaData metaData");
+            args.Add("string name");
+            args.Wheres.AddRange(generics.ReaderWheres());
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("switch (name)");
+            using (sb.CurlyBrace())
+            {
+                foreach (var prop in properties.InOrder)
+                {
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                    {
+                        sb.AppendLine($"case \"{prop.Property.Name}\":");
+                        using (sb.IncreaseDepth())
+                        {
+                            _forFieldGenerator.GenerateDeserializeForField(
+                                compilation: compilation,
+                                obj: typeSet.Getter,
+                                fieldType: prop.Property.Type,
+                                readerAccessor: "reader",
+                                fieldName: prop.Property.Name,
+                                fieldAccessor: $"obj.{prop.Property.Name}",
+                                canSet: prop.Property.IsSettable(),
+                                prop.Generator,
+                                sb: sb,
+                                cancel: context.CancellationToken);
+                            sb.AppendLine("break;");
+                        }
+                    });
+                }
+                sb.AppendLine("default:");
+                using (sb.IncreaseDepth())
+                {
+            
+                    if (baseType != null
+                        && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
+                    {
+                        sb.AppendLine(
+                            $"{baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
+                    }
+                    sb.AppendLine("break;");
+                }
+            }
         }
         sb.AppendLine();
     }
@@ -274,6 +297,11 @@ public class SerializationForObjectGenerator
             if (isMod)
             {
                 sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
+            }
+
+            if (compilation.Mapping.IsInheritor(typeSet))
+            {
+                sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
             }
             
             if (baseType != null
@@ -535,7 +563,7 @@ public class SerializationForObjectGenerator
 
         using (sb.CurlyBrace())
         {
-            sb.AppendLine("switch (kernel.GetNextType(reader).Name)");
+            sb.AppendLine($"switch (kernel.GetNextType(reader, \"{typeSet.Getter.ContainingNamespace}\").Name)");
             using (sb.CurlyBrace())
             {
                 foreach (var inherit in inheriting
@@ -587,6 +615,7 @@ public class SerializationForObjectGenerator
                 x.Generator?.RequiredNamespaces(x.Property.Type, context.CancellationToken) ?? Enumerable.Empty<string>())
             .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
+            .And("Loqui")
             .And(obj.ContainingNamespace.ToString())
             .Distinct()
             .OrderBy(x => x)

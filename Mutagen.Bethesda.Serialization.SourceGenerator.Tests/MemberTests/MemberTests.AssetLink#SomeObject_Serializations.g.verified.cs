@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Serialization;
@@ -90,76 +91,91 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeAssetLink":
-                    obj.SomeAssetLink = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink2":
-                    obj.SomeAssetLink2 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink3":
-                    obj.SomeAssetLink3 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink4":
-                    obj.SomeAssetLink4 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink5":
-                    obj.SomeAssetLink5 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink6":
-                    obj.SomeAssetLink6 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink7":
-                    obj.SomeAssetLink7 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink8":
-                    obj.SomeAssetLink8 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink9":
-                    obj.SomeAssetLink9 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink10":
-                    obj.SomeAssetLink10 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink11":
-                    obj.SomeAssetLink11 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink12":
-                    obj.SomeAssetLink12 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink13":
-                    obj.SomeAssetLink13 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink14":
-                    obj.SomeAssetLink14 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink15":
-                    obj.SomeAssetLink15 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink16":
-                    obj.SomeAssetLink16 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink17":
-                    obj.SomeAssetLink17 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink18":
-                    obj.SomeAssetLink18 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink19":
-                    obj.SomeAssetLink19 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink20":
-                    obj.SomeAssetLink20 = kernel.ReadString(reader);
-                    break;
-                case "SomeAssetLink21":
-                    obj.SomeAssetLink21 = kernel.ReadString(reader);
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeAssetLink":
+                obj.SomeAssetLink = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink2":
+                obj.SomeAssetLink2 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink3":
+                obj.SomeAssetLink3 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink4":
+                obj.SomeAssetLink4 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink5":
+                obj.SomeAssetLink5 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink6":
+                obj.SomeAssetLink6 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink7":
+                obj.SomeAssetLink7 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink8":
+                obj.SomeAssetLink8 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink9":
+                obj.SomeAssetLink9 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink10":
+                obj.SomeAssetLink10 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink11":
+                obj.SomeAssetLink11 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink12":
+                obj.SomeAssetLink12 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink13":
+                obj.SomeAssetLink13 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink14":
+                obj.SomeAssetLink14 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink15":
+                obj.SomeAssetLink15 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink16":
+                obj.SomeAssetLink16 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink17":
+                obj.SomeAssetLink17 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink18":
+                obj.SomeAssetLink18 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink19":
+                obj.SomeAssetLink19 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink20":
+                obj.SomeAssetLink20 = kernel.ReadString(reader);
+                break;
+            case "SomeAssetLink21":
+                obj.SomeAssetLink21 = kernel.ReadString(reader);
+                break;
+            default:
+                break;
+        }
     }
 
 }

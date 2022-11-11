@@ -37,24 +37,31 @@ public static class SerializationHelper
         TGroup group,
         SerializationMetaData metaData,
         TKernel kernel,
-        ReadInto<TKernel, TReadObject, TGroup> groupReader,
+        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
         Read<TKernel, TReadObject, TObject> itemReader)
         where TGroup : class, IGroup<TObject>
         where TObject : class, IMajorRecord
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         group.Clear();
-        groupReader(reader, group, kernel, metaData);
-        // kernel.WriteLoqui(reader, fieldName, group, meta, (w, g, k, m) =>
-        // {
-        //     groupWriter(w, g, k, m);
-        //     k.StartListSection(w, "Records");
-        //     foreach (var recordGetter in g)
-        //     {
-        //         k.WriteLoqui(w, null, recordGetter, m, itemWriter);
-        //     }
-        //     k.EndListSection(w);
-        // });
+        while (kernel.TryGetNextField(reader, out var name))
+        {
+            switch (name)
+            {
+                case "Records":
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
+                    {
+                        var item = itemReader(reader, kernel, metaData);
+                        group.Add(item);
+                    }
+                    kernel.EndListSection(reader);
+                    break;
+                default:
+                    groupReader(reader, group, kernel, metaData, name);
+                    break;
+            }
+        }
     }
     
     public static void ReadIntoListGroup<TKernel, TReadObject, TGroup, TObject>(
@@ -62,24 +69,31 @@ public static class SerializationHelper
         TGroup group,
         SerializationMetaData metaData,
         TKernel kernel,
-        ReadInto<TKernel, TReadObject, TGroup> groupReader,
+        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
         Read<TKernel, TReadObject, TObject> itemReader)
         where TGroup : class, IListGroup<TObject>
         where TObject : class, ILoquiObject
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         group.Clear();
-        groupReader(reader, group, kernel, metaData);
-        // kernel.WriteLoqui(reader, fieldName, group, meta, (w, g, k, m) =>
-        // {
-        //     groupWriter(w, g, k, m);
-        //     k.StartListSection(w, "Records");
-        //     foreach (var recordGetter in g)
-        //     {
-        //         k.WriteLoqui(w, null, recordGetter, m, itemWriter);
-        //     }
-        //     k.EndListSection(w);
-        // });
+        while (kernel.TryGetNextField(reader, out var name))
+        {
+            switch (name)
+            {
+                case "Records":
+                    kernel.StartListSection(reader);
+                    while (kernel.TryHasNextItem(reader))
+                    {
+                        var item = itemReader(reader, kernel, metaData);
+                        group.Add(item);
+                    }
+                    kernel.EndListSection(reader);
+                    break;
+                default:
+                    groupReader(reader, group, kernel, metaData, name);
+                    break;
+            }
+        }
     }
 
     public static void ReadIntoArray<TKernel, TReadObject, TObject>(
@@ -162,5 +176,15 @@ public static class SerializationHelper
         kernel.EndListSection(reader);
 
         return ret.ToArray();
+    }
+
+    public static T StripNull<T>(T? item, string name)
+    {
+        if (item == null)
+        {
+            throw new NullReferenceException($"{name} was null");
+        }
+
+        return item;
     }
 }

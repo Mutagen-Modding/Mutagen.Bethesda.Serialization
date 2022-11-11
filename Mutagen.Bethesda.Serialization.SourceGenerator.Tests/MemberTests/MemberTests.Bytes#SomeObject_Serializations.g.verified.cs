@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -83,56 +84,71 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeBytes":
-                    obj.SomeBytes = kernel.ReadBytes(reader);
-                    break;
-                case "SomeBytes2":
-                    {
-                        SerializationHelper.ReadIntoSlice(
-                            reader: reader,
-                            arr: obj.SomeBytes2,
-                            kernel: kernel,
-                            metaData: metaData,
-                            itemReader: (r, k, m) =>
-                            {
-                                return kernel.ReadUInt8(r);
-                            });
-                    }
-                    break;
-                case "SomeBytes3":
-                    obj.SomeBytes3 = kernel.ReadBytes(reader);
-                    break;
-                case "SomeBytes4":
-                    {
-                        obj.SomeBytes4 = SerializationHelper.ReadSlice(
-                            reader: reader,
-                            kernel: kernel,
-                            metaData: metaData,
-                            itemReader: (r, k, m) =>
-                            {
-                                return kernel.ReadUInt8(r);
-                            });
-                    }
-                    break;
-                case "SomeBytes5":
-                    {
-                        obj.SomeBytes5 = SerializationHelper.ReadSlice(
-                            reader: reader,
-                            kernel: kernel,
-                            metaData: metaData,
-                            itemReader: (r, k, m) =>
-                            {
-                                return kernel.ReadUInt8(r);
-                            });
-                    }
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeBytes":
+                obj.SomeBytes = kernel.ReadBytes(reader);
+                break;
+            case "SomeBytes2":
+                {
+                    SerializationHelper.ReadIntoSlice(
+                        reader: reader,
+                        arr: obj.SomeBytes2,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: (r, k, m) =>
+                        {
+                            return kernel.ReadUInt8(r);
+                        });
+                }
+                break;
+            case "SomeBytes3":
+                obj.SomeBytes3 = kernel.ReadBytes(reader);
+                break;
+            case "SomeBytes4":
+                {
+                    obj.SomeBytes4 = SerializationHelper.ReadSlice(
+                        reader: reader,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: (r, k, m) =>
+                        {
+                            return kernel.ReadUInt8(r);
+                        });
+                }
+                break;
+            case "SomeBytes5":
+                {
+                    obj.SomeBytes5 = SerializationHelper.ReadSlice(
+                        reader: reader,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: (r, k, m) =>
+                        {
+                            return kernel.ReadUInt8(r);
+                        });
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }

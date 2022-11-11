@@ -1,4 +1,5 @@
 ﻿//HintName: SubclassLoquiB_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -16,6 +17,7 @@ internal static class SubclassLoquiB_Serialization
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
+        kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.Serialize<TKernel, TWriteObject>(writer, item, kernel, metaData);
     }
 
@@ -47,16 +49,31 @@ internal static class SubclassLoquiB_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiB obj,
         SerializationMetaData metaData)
     {
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.DeserializeInto<TReadObject>(reader, kernel, obj, metaData);
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiB obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            default:
+                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.DeserializeSingleFieldInto<TReadObject>(reader, kernel, obj, metaData, name);
+                break;
+        }
     }
 
 }

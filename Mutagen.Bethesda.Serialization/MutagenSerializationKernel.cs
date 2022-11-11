@@ -14,6 +14,11 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
     public TWriterObject GetNewObject(Stream stream) => _kernel.GetNewObject(stream);
     public void Finalize(Stream stream, TWriterObject writer) => _kernel.Finalize(stream, writer);
 
+    public void WriteType(TWriterObject writer, Type type)
+    {
+        _kernel.WriteType(writer, type);
+    }
+
     public void WriteChar(TWriterObject writer, string? fieldName, char? item, char? defaultVal)
     {
         if (EqualityComparer<char?>.Default.Equals(item, defaultVal)) return;

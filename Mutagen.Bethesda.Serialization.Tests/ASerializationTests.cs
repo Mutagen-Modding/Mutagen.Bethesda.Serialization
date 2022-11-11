@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Serialization.Yaml;
+using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.Testing.AutoFixture;
@@ -19,7 +19,7 @@ public abstract class ASerializationTests
     public FilePath OutputModSerializedPath => $"C:/Serialized/{OriginalModKey.FileName}";
     
     [Theory]
-    [DefaultAutoData]
+    [TestAutoData]
     public async Task EmptySkyrimModExport()
     {
         var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
@@ -32,7 +32,7 @@ public abstract class ASerializationTests
     }
     
     [Theory]
-    [DefaultAutoData]
+    [TestAutoData]
     public async Task SingleGroupSkyrimModExport()
     {
         var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
@@ -60,13 +60,31 @@ public abstract class ASerializationTests
     }
     
     [Theory]
-    [DefaultAutoData]
+    [TestAutoData]
     public void EmptySkyrimModPassthrough(
         IFileSystem fileSystem)
     {
         PassThrough(
             fileSystem,
             new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE));
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public void SingleGroupPassthrough(
+        IFileSystem fileSystem,
+        Npc npc1,
+        Npc npc2)
+    {
+        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
+        var firstNpc = mod.Npcs.AddNew();
+        firstNpc.DeepCopyIn(npc1);
+        var secondNpc = mod.Npcs.AddNew();
+        secondNpc.DeepCopyIn(npc2);
+        
+        PassThrough(
+            fileSystem,
+            mod);
     }
 
     private void PassThrough(

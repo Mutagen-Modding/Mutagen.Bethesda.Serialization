@@ -35,14 +35,21 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return true;
     }
 
-    public Type GetNextType(Parser reader)
+    public Type GetNextType(Parser reader, string namespaceString)
     {
-        throw new NotImplementedException();
+        reader.Consume<MappingStart>();
+        reader.Consume<Scalar>();
+        
+        var scalar = reader.Consume<Scalar>();
+        var val = scalar.Value;
+        var typeStr = $"{namespaceString}.{val}, {namespaceString}";
+        return Type.GetType(typeStr)!;
     }
 
     public FormKey ExtractFormKey(Parser reader)
     {
-        throw new NotImplementedException();
+        reader.Consume<Scalar>();
+        return ReadFormKey(reader) ?? throw new NullReferenceException("Required FormKey for MajorRecord was null");
     }
 
     public void Skip(Parser reader)
@@ -109,134 +116,159 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         }
     }
 
-    public char ReadChar(Parser reader)
+    public char? ReadChar(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return scalar.Value[0];
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return str[0];
     }
 
-    public bool ReadBool(Parser reader)
+    public bool? ReadBool(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return bool.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return bool.Parse(str);
     }
 
-    public TEnum ReadEnum<TEnum>(Parser reader)
+    public TEnum? ReadEnum<TEnum>(Parser reader)
         where TEnum : struct, Enum, IConvertible
     {
         if (Enums<TEnum>.IsFlagsEnum)
         {
-            reader.Consume<SequenceStart>();
-            TEnum ret = default;
-            while (reader.TryConsume<Scalar>(out var e))
+            if (reader.TryConsume<SequenceStart>(out _))
             {
-                var strSpan = e.Value.AsSpan();
-                if (Enum.TryParse<TEnum>(strSpan, out var otherEnum))
+                TEnum ret = default;
+                while (reader.TryConsume<Scalar>(out var e))
                 {
-                    ret = Enums<TEnum>.Or(ret, otherEnum);
-                    continue;
-                }
+                    var strSpan = e.Value.AsSpan();
+                    if (Enum.TryParse<TEnum>(strSpan, out var otherEnum))
+                    {
+                        ret = Enums<TEnum>.Or(ret, otherEnum);
+                        continue;
+                    }
             
-                if (Enums<TEnum>.TryParseFromNumber(strSpan, out otherEnum))
-                {
-                    ret = Enums<TEnum>.Or(ret, otherEnum);
-                    continue;
+                    if (Enums<TEnum>.TryParseFromNumber(strSpan, out otherEnum))
+                    {
+                        ret = Enums<TEnum>.Or(ret, otherEnum);
+                        continue;
+                    }
+                    throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {e.Value}");
                 }
-                throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {e.Value}");
-            }
 
-            reader.Consume<SequenceEnd>();
-            return ret;
+                reader.Consume<SequenceEnd>();
+                return ret;
+            }
+            var str = ReadString(reader);
+            if (str.IsNullOrWhitespace()) return null;
+            throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {str}");
         }
         else
         {
-            var scalar = reader.Consume<Scalar>();
-            return Enum.Parse<TEnum>(scalar.Value);
+            var str = ReadString(reader);
+            if (str.IsNullOrWhitespace()) return null;
+            return Enum.Parse<TEnum>(str);
         }
     }
 
-    public string ReadString(Parser reader)
+    public string? ReadString(Parser reader)
     {
+        if (reader.TryConsume<MappingStart>(out _))
+        {
+            reader.Consume<MappingEnd>();
+            return null;
+        }
         var scalar = reader.Consume<Scalar>();
         return scalar.Value;
     }
 
-    public sbyte ReadInt8(Parser reader)
+    public sbyte? ReadInt8(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return sbyte.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return sbyte.Parse(str);
     }
 
-    public short ReadInt16(Parser reader)
+    public short? ReadInt16(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return short.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return short.Parse(str);
     }
 
-    public int ReadInt32(Parser reader)
+    public int? ReadInt32(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return int.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return int.Parse(str);
     }
 
-    public long ReadInt64(Parser reader)
+    public long? ReadInt64(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return long.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return long.Parse(str);
     }
 
-    public byte ReadUInt8(Parser reader)
+    public byte? ReadUInt8(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return byte.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return byte.Parse(str);
     }
 
-    public ushort ReadUInt16(Parser reader)
+    public ushort? ReadUInt16(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return ushort.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return ushort.Parse(str);
     }
 
-    public uint ReadUInt32(Parser reader)
+    public uint? ReadUInt32(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return uint.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return uint.Parse(str);
     }
 
-    public ulong ReadUInt64(Parser reader)
+    public ulong? ReadUInt64(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return ulong.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return ulong.Parse(str);
     }
 
-    public float ReadFloat(Parser reader)
+    public float? ReadFloat(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return float.Parse(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return float.Parse(str);
     }
 
-    public ModKey ReadModKey(Parser reader)
+    public ModKey? ReadModKey(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return ModKey.FromNameAndExtension(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return ModKey.FromNameAndExtension(str);
     }
 
-    public FormKey ReadFormKey(Parser reader)
+    public FormKey? ReadFormKey(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return FormKey.Factory(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return FormKey.Factory(str);
     }
 
-    public Color ReadColor(Parser reader)
+    public Color? ReadColor(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return ColorExt.ConvertFromCommaString(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return ColorExt.ConvertFromCommaString(str);
     }
 
-    public RecordType ReadRecordType(Parser reader)
+    public RecordType? ReadRecordType(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        var str = scalar.Value;
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
         if (str == "null")
         {
             return RecordType.Null;
@@ -244,95 +276,103 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return new RecordType(str);
     }
 
-    public P2Int ReadP2Int(Parser reader)
+    public P2Int? ReadP2Int(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P2Int.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P2Int.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P2Int)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P2Int)}: {str}");
     }
 
-    public P2Int16 ReadP2Int16(Parser reader)
+    public P2Int16? ReadP2Int16(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P2Int16.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P2Int16.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {str}");
     }
 
-    public P2Float ReadP2Float(Parser reader)
+    public P2Float? ReadP2Float(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P2Float.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P2Float.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P2Float)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P2Float)}: {str}");
     }
 
-    public P3Float ReadP3Float(Parser reader)
+    public P3Float? ReadP3Float(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P3Float.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P3Float.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P3Float)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P3Float)}: {str}");
     }
 
-    public P3UInt8 ReadP3UInt8(Parser reader)
+    public P3UInt8? ReadP3UInt8(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P3UInt8.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P3UInt8.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P3UInt8)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P3UInt8)}: {str}");
     }
 
-    public P3Int16 ReadP3Int16(Parser reader)
+    public P3Int16? ReadP3Int16(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P3Int16.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P3Int16.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P3Int16)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P3Int16)}: {str}");
     }
 
-    public P3UInt16 ReadP3UInt16(Parser reader)
+    public P3UInt16? ReadP3UInt16(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (P3UInt16.TryParse(scalar.Value, out var pt))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P3UInt16.TryParse(str, out var pt))
         {
             return pt;
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(P3UInt16)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(P3UInt16)}: {str}");
     }
 
-    public Percent ReadPercent(Parser reader)
+    public Percent? ReadPercent(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        if (double.TryParse(scalar.Value, out var d))
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (double.TryParse(str, out var d))
         {
             return new Percent(d);
         }
 
-        throw new ArgumentException($"Could not parse string into {nameof(Percent)}: {scalar.Value}");
+        throw new ArgumentException($"Could not parse string into {nameof(Percent)}: {str}");
     }
 
-    public TranslatedString ReadTranslatedString(Parser reader)
+    public TranslatedString? ReadTranslatedString(Parser reader)
     {
         Language? targetLanguage = null;
         string? mainString = null;
@@ -411,6 +451,8 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
             reader.MoveNext();
         }
 
+        if (pairs == null && mainString == null && targetLanguage == null) return null;
+
         var ret = new TranslatedString(targetLanguage ?? TranslatedString.DefaultLanguage);
         if (pairs != null)
         {
@@ -427,10 +469,12 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return ret;
     }
 
-    public MemorySlice<byte> ReadBytes(Parser reader)
+    public MemorySlice<byte>? ReadBytes(Parser reader)
     {
-        var scalar = reader.Consume<Scalar>();
-        return Convert.FromHexString(scalar.Value);
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (str == "[]") return Array.Empty<byte>();
+        return Convert.FromHexString(str);
     }
 
     public TObject ReadLoqui<TObject>(

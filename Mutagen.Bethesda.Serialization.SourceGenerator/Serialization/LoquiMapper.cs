@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
@@ -24,15 +25,18 @@ public record LoquiTypeSet(
 public class LoquiMapping
 {
     private readonly IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> _inheritingClassMapping;
+    private readonly IReadOnlyCollection<LoquiTypeSet> _isAnInheritor;
     private readonly IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> _typeSetMapping;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public LoquiMapping(
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSetMapping,
         IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> inheritingClassMapping, 
+        ImmutableHashSet<LoquiTypeSet> isAnInheritor,
         IsLoquiObjectTester isLoquiObjectTester)
     {
         _inheritingClassMapping = inheritingClassMapping;
+        _isAnInheritor = isAnInheritor;
         _isLoquiObjectTester = isLoquiObjectTester;
         _typeSetMapping = typeSetMapping;
     }
@@ -57,6 +61,11 @@ public class LoquiMapping
     public bool HasInheritingClasses(ITypeSymbol typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
 
     public bool TryGetTypeSet(ITypeSymbol typeSymbol, out LoquiTypeSet typeSet) => _typeSetMapping.TryGetValue(typeSymbol.OriginalDefinition, out typeSet);
+
+    public bool IsInheritor(LoquiTypeSet type)
+    {
+        return _isAnInheritor.Contains(type);
+    }
 }
 
 public class LoquiMapper
@@ -83,9 +92,18 @@ public class LoquiMapper
 
         var inheritingClassMapping = GetInheritanceSets(mutagenSymbols, typeSets, cancel);
 
+        var inheritors = inheritingClassMapping
+            .Where(kv => kv.Value.Count > 1)
+            .Select(kv => (Key: typeSets[kv.Key], Value: kv.Value))
+            .Where(kv => kv.Key.Direct != null)
+            .Where(kv => !kv.Key.Direct!.Name.EndsWith("MajorRecord"))
+            .SelectMany(x => x.Value)
+            .ToImmutableHashSet();
+
         return new LoquiMapping(
             typeSets,
             inheritingClassMapping,
+            inheritors,
             _isLoquiObjectTester);
     }
 

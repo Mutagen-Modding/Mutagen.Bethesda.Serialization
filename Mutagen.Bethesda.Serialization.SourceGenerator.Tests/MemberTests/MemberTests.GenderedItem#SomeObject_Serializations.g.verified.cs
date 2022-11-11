@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -59,25 +60,40 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "SomeGenderedInt":
-                    obj.SomeGenderedInt.Male = kernel.ReadString(reader);
-                    obj.SomeGenderedInt.Female = kernel.ReadString(reader);
-                    break;
-                case "SomeGenderedInt2":
-                    obj.SomeGenderedInt2.Male = kernel.ReadString(reader);
-                    obj.SomeGenderedInt2.Female = kernel.ReadString(reader);
-                    break;
-                case "SomeGenderedInt3":
-                    obj.SomeGenderedInt3.Male = kernel.ReadString(reader);
-                    obj.SomeGenderedInt3.Female = kernel.ReadString(reader);
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "SomeGenderedInt":
+                obj.SomeGenderedInt.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedIntMale");
+                obj.SomeGenderedInt.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedIntFemale");
+                break;
+            case "SomeGenderedInt2":
+                obj.SomeGenderedInt2.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt2Male");
+                obj.SomeGenderedInt2.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt2Female");
+                break;
+            case "SomeGenderedInt3":
+                obj.SomeGenderedInt3.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt3Male");
+                obj.SomeGenderedInt3.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt3Female");
+                break;
+            default:
+                break;
+        }
     }
 
 }

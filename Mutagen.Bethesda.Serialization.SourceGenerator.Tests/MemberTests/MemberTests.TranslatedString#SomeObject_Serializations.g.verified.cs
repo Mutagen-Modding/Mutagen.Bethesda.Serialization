@@ -1,4 +1,5 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -72,49 +73,64 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            switch (name)
-            {
-                case "TranslatedString":
-                    obj.TranslatedString = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString2":
-                    obj.TranslatedString2 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString3":
-                    obj.TranslatedString3 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString4":
-                    obj.TranslatedString4 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString5":
-                    obj.TranslatedString5 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString6":
-                    obj.TranslatedString6 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString7":
-                    obj.TranslatedString7 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString8":
-                    obj.TranslatedString8 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString9":
-                    obj.TranslatedString9 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString10":
-                    obj.TranslatedString10 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString11":
-                    obj.TranslatedString11 = kernel.ReadTranslatedString(reader);
-                    break;
-                case "TranslatedString12":
-                    obj.TranslatedString12 = kernel.ReadTranslatedString(reader);
-                    break;
-                default:
-                    break;
-            }
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
         }
 
+    }
+
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+    {
+        switch (name)
+        {
+            case "TranslatedString":
+                obj.TranslatedString = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString2":
+                obj.TranslatedString2 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString3":
+                obj.TranslatedString3 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString4":
+                obj.TranslatedString4 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString5":
+                obj.TranslatedString5 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString6":
+                obj.TranslatedString6 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString7":
+                obj.TranslatedString7 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString8":
+                obj.TranslatedString8 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString9":
+                obj.TranslatedString9 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString10":
+                obj.TranslatedString10 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString11":
+                obj.TranslatedString11 = kernel.ReadTranslatedString(reader);
+                break;
+            case "TranslatedString12":
+                obj.TranslatedString12 = kernel.ReadTranslatedString(reader);
+                break;
+            default:
+                break;
+        }
     }
 
 }
