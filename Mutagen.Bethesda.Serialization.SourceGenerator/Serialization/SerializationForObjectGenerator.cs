@@ -121,6 +121,7 @@ public class SerializationForObjectGenerator
         
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(typeSet.Getter);
+        var isModHeader = _modObjectTypeTester.IsModHeader(typeSet.Getter);
         
         var genString = generics.ReaderGenericsString();
         using (var args = sb.Function($"public static {typeSet.Direct} Deserialize{genString}"))
@@ -151,6 +152,11 @@ public class SerializationForObjectGenerator
             else
             {
                 sb.AppendLine($"var obj = new {typeSet.Direct}();");
+            }
+
+            if (isModHeader)
+            {
+                sb.AppendLine($"obj.FormVersion = metaData.Release.GetDefaultFormVersion()!.Value;");
             }
             using (var c = sb.Call($"DeserializeInto{genString}"))
             {

@@ -80,22 +80,22 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeEnum":
-                obj.SomeEnum = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(reader);
+                obj.SomeEnum = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(reader), name: "SomeEnum");
                 break;
             case "SomeEnum2":
-                obj.SomeEnum2 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(reader);
+                obj.SomeEnum2 = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(reader), name: "SomeEnum2");
                 break;
             case "SomeEnum3":
-                obj.SomeEnum3 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(reader);
+                obj.SomeEnum3 = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(reader), name: "SomeEnum3");
                 break;
             case "SomeEnum4":
-                obj.SomeEnum4 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(reader);
+                obj.SomeEnum4 = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(reader), name: "SomeEnum4");
                 break;
             case "SomeEnum5":
-                obj.SomeEnum5 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(reader);
+                obj.SomeEnum5 = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(reader), name: "SomeEnum5");
                 break;
             case "SomeEnum6":
-                obj.SomeEnum6 = kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(reader);
+                obj.SomeEnum6 = SerializationHelper.StripNull(kernel.ReadEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(reader), name: "SomeEnum6");
                 break;
             default:
                 break;

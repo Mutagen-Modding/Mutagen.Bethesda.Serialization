@@ -12,6 +12,6 @@ public class NewtonsoftSerializationTests : ASerializationTests
 
     public override ISkyrimModGetter Deserialize(Stream stream)
     {
-        return MutagenJsonConverter.Instance.Deserialize(stream, OutputModKey, SkyrimRelease.SkyrimSE);
+        return MutagenJsonConverter.Instance.Deserialize(stream, ModKey, SkyrimRelease.SkyrimSE);
     }
 }

@@ -412,7 +412,6 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     public TranslatedString? ReadTranslatedString(JsonTextReader reader)
     {
         SkipPropertyName(reader);
-        if (reader.Value is null or "") return null;
         
         Language? targetLanguage = null;
         string? mainString = null;
@@ -486,6 +485,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
                     inArray = false;
                     break;
             }
+        }
+
+        if (targetLanguage == null && pairs == null && mainString == null)
+        {
+            return null;
         }
 
         var ret = new TranslatedString(targetLanguage ?? TranslatedString.DefaultLanguage);

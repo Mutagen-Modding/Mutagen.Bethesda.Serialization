@@ -158,7 +158,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 obj: obj,
                 fieldType: keyType,
                 readerAccessor: readerAccessor, 
-                fieldName: null, 
+                fieldName: fieldName, 
                 fieldAccessor: "var key = ",
                 sb: sb,
                 cancel: cancel);
@@ -167,7 +167,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 obj: obj,
                 fieldType: valType,
                 readerAccessor: readerAccessor, 
-                fieldName: null, 
+                fieldName: fieldName, 
                 fieldAccessor: "var val = ",
                 sb: sb,
                 cancel: cancel);

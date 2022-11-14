@@ -83,7 +83,32 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         CancellationToken cancel)
     {
         field = field.PeelNullable();
-        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadEnum<{field}>", linePerArgument: false))
+        fieldAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
+        
+        if (field.IsNullable())
+        {
+            AddReadCall(sb, field, kernelAccessor, readerAccessor, fieldAccessor);
+        }
+        
+        using (var strip = sb.Call($"{fieldAccessor}SerializationHelper.StripNull", linePerArgument: false))
+        {
+            strip.Add((subSb) =>
+            {
+                AddReadCall(subSb, field, kernelAccessor, readerAccessor, string.Empty);
+            });
+            if (fieldName == null) throw new NullReferenceException();
+            strip.Add($"name: \"{fieldName}\"");
+        }
+    }
+
+    private void AddReadCall(
+        StructuredStringBuilder sb,
+        ITypeSymbol field,
+        string kernelAccessor,
+        string readerAccessor,
+        string setAccessor)
+    {
+        using (var c = sb.Call($"{setAccessor}{kernelAccessor}.ReadEnum<{field}>", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

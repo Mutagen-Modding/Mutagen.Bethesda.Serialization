@@ -113,8 +113,8 @@ internal static class SomeObject_Serialization
                 kernel.StartDictionarySection(reader);
                 while (kernel.TryHasNextDictionaryItem(reader))
                 {
-                    var key = kernel.ReadInt32(reader);
-                    var val = kernel.ReadString(reader);
+                    var key = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeDict");
+                    var val = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeDict");
                     obj.SomeDict[key] = val;
                 }
                 kernel.EndDictionarySection(reader);
@@ -123,8 +123,8 @@ internal static class SomeObject_Serialization
                 kernel.StartDictionarySection(reader);
                 while (kernel.TryHasNextDictionaryItem(reader))
                 {
-                    var key = kernel.ReadInt32(reader);
-                    var val = kernel.ReadString(reader);
+                    var key = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeDict1");
+                    var val = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeDict1");
                     obj.SomeDict1[key] = val;
                 }
                 kernel.EndDictionarySection(reader);
@@ -133,8 +133,8 @@ internal static class SomeObject_Serialization
                 kernel.StartDictionarySection(reader);
                 while (kernel.TryHasNextDictionaryItem(reader))
                 {
-                    var key = kernel.ReadInt32(reader);
-                    var val = kernel.ReadString(reader);
+                    var key = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeDict2");
+                    var val = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeDict2");
                     obj.SomeDict2[key] = val;
                 }
                 kernel.EndDictionarySection(reader);

@@ -148,7 +148,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                             obj: obj,
                             fieldType: subType,
                             readerAccessor: "r", 
-                            fieldName: null, 
+                            fieldName: fieldName, 
                             fieldAccessor: "return ",
                             sb: subSb,
                             cancel: cancel);

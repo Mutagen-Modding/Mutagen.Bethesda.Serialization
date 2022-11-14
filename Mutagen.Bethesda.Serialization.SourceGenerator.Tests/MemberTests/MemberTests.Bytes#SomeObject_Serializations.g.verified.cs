@@ -115,7 +115,7 @@ internal static class SomeObject_Serialization
                         metaData: metaData,
                         itemReader: (r, k, m) =>
                         {
-                            return kernel.ReadUInt8(r);
+                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes2");
                         });
                 }
                 break;
@@ -130,7 +130,7 @@ internal static class SomeObject_Serialization
                         metaData: metaData,
                         itemReader: (r, k, m) =>
                         {
-                            return kernel.ReadUInt8(r);
+                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes4");
                         });
                 }
                 break;
@@ -142,7 +142,7 @@ internal static class SomeObject_Serialization
                         metaData: metaData,
                         itemReader: (r, k, m) =>
                         {
-                            return kernel.ReadUInt8(r);
+                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes5");
                         });
                 }
                 break;

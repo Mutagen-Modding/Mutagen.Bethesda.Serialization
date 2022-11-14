@@ -134,7 +134,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList");
                     obj.SomeList.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -143,7 +143,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList2");
                     obj.SomeList2.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -152,7 +152,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList3");
                     obj.SomeList3.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -161,7 +161,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList4");
                     obj.SomeList4.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -170,7 +170,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList5");
                     obj.SomeList5.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -179,7 +179,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadString(reader);
+                    var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeList6");
                     obj.SomeList6.Add(item);
                 }
                 kernel.EndListSection(reader);

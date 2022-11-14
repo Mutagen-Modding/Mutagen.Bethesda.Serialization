@@ -3,6 +3,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.IO;
 using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
@@ -12,17 +13,16 @@ public abstract class ASerializationTests
 {
     public abstract void Serialize(SkyrimMod mod, Stream stream);
     public abstract ISkyrimModGetter Deserialize(Stream stream);
-    public ModKey OriginalModKey => ModKey.FromFileName("InputMod.esp");
-    public ModKey OutputModKey => ModKey.FromFileName("TestMod.esp");
-    public FilePath OriginalModBinaryPath => $"C:/Binary/{OriginalModKey.FileName}";
-    public FilePath OutputModBinaryPath => $"C:/Binary/{OutputModKey.FileName}";
-    public FilePath OutputModSerializedPath => $"C:/Serialized/{OriginalModKey.FileName}";
+    public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
+    public string OriginalModBinaryPath => Path.Combine("Input", ModKey.FileName);
+    public string OutputModBinaryPath => Path.Combine("Output", ModKey.FileName);
+    public string OutputModSerializedPath => Path.Combine("Serialized", ModKey.FileName);
     
     [Theory]
     [TestAutoData]
     public async Task EmptySkyrimModExport()
     {
-        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
         Serialize(mod, stream);
         stream.Position = 0;
@@ -35,7 +35,7 @@ public abstract class ASerializationTests
     [TestAutoData]
     public async Task SingleGroupSkyrimModExport()
     {
-        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var npc = mod.Npcs.AddNew();
         npc.Name = "Goblin";
         npc.Configuration.Level = new NpcLevel();
@@ -66,7 +66,7 @@ public abstract class ASerializationTests
     {
         PassThrough(
             fileSystem,
-            new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE));
+            new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE));
     }
     
     [Theory]
@@ -76,7 +76,7 @@ public abstract class ASerializationTests
         Npc npc1,
         Npc npc2)
     {
-        var mod = new SkyrimMod(OriginalModKey, SkyrimRelease.SkyrimSE);
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var firstNpc = mod.Npcs.AddNew();
         firstNpc.DeepCopyIn(npc1);
         var secondNpc = mod.Npcs.AddNew();
@@ -91,9 +91,19 @@ public abstract class ASerializationTests
         IFileSystem fileSystem,
         SkyrimMod mod)
     {
-        fileSystem.Directory.CreateDirectory(OutputModSerializedPath.Directory);
-        Serialize(mod, fileSystem.File.OpenWrite(OutputModSerializedPath));
-        var mod2 = Deserialize(fileSystem.File.OpenRead(OutputModSerializedPath));
+        using var tmp = TempFolder.FactoryByAddedPath(fileSystem: fileSystem, addedFolderPath: "Mutagen.Bethesda.Serialization.Tests");
+        var filePath = Path.Combine(tmp.Dir, OutputModSerializedPath);
+        fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+        using (var stream = fileSystem.File.OpenWrite(filePath))
+        {
+            Serialize(mod, stream);
+        }
+
+        ISkyrimModGetter mod2;
+        using (var stream = fileSystem.File.OpenRead(filePath))
+        {
+            mod2 = Deserialize(stream);
+        }
         CheckEquality(fileSystem, mod, mod2);
     }
 
@@ -102,20 +112,27 @@ public abstract class ASerializationTests
         ISkyrimModGetter mod1,
         ISkyrimModGetter mod2)
     {
-        fileSystem.Directory.CreateDirectory(OriginalModBinaryPath.Directory);
-        fileSystem.Directory.CreateDirectory(OutputModBinaryPath.Directory);
-        using (var fs = fileSystem.FileStream.Create(OriginalModBinaryPath, FileMode.Create))
+        using var tmp = TempFolder.FactoryByAddedPath(fileSystem: fileSystem, addedFolderPath: "Mutagen.Bethesda.Serialization.Tests");
+        var mod1OutFile = Path.Combine(tmp.Dir, OriginalModBinaryPath);
+        fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod1OutFile));
+        var mod2OutFile = Path.Combine(tmp.Dir, OutputModBinaryPath);
+        fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod2OutFile));
+        using (var fs = fileSystem.FileStream.Create(mod1OutFile, FileMode.Create))
         {
             mod1.WriteToBinaryParallel(fs);
         }
-        using (var fs = fileSystem.FileStream.Create(OutputModBinaryPath, FileMode.Create))
+        using (var fs = fileSystem.FileStream.Create(mod2OutFile, FileMode.Create))
         {
             mod2.WriteToBinaryParallel(fs);
         }
+
+        var eqMask = mod1.GetEqualsMask(mod2);
+        var eq = eqMask.All(x => x);
+
         AssertFilesEqual(
-            fileSystem.FileStream.Create(OriginalModBinaryPath, FileMode.Open),
-            OutputModBinaryPath,
-            fileSystem.FileStream.Create(OutputModBinaryPath, FileMode.Open));
+            fileSystem.FileStream.Create(mod1OutFile, FileMode.Open),
+            mod2OutFile,
+            fileSystem.FileStream.Create(mod2OutFile, FileMode.Open));
     }
 
     public static void AssertFilesEqual(

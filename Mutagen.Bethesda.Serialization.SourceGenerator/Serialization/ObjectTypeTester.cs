@@ -27,4 +27,9 @@ public class ObjectTypeTester
     {
         return typeSymbol is INamedTypeSymbol { IsAbstract: false } named;
     }
+
+    public bool IsModHeader(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol.Name.Contains("ModHeader");
+    }
 }

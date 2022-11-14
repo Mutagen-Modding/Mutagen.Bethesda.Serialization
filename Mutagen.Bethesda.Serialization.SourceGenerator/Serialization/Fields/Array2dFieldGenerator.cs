@@ -142,7 +142,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                         obj: obj,
                         fieldType: subType,
                         readerAccessor: readerAccessor, 
-                        fieldName: null, 
+                        fieldName: fieldName, 
                         fieldAccessor: "var item = ",
                         sb: sb,
                         cancel: cancel);

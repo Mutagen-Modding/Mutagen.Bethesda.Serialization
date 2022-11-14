@@ -179,6 +179,7 @@ public static class SerializationHelper
     }
 
     public static T StripNull<T>(T? item, string name)
+        where T : class
     {
         if (item == null)
         {
@@ -186,5 +187,16 @@ public static class SerializationHelper
         }
 
         return item;
+    }
+
+    public static T StripNull<T>(T? item, string name)
+        where T : struct
+    {
+        if (item == null)
+        {
+            throw new NullReferenceException($"{name} was null");
+        }
+
+        return item.Value;
     }
 }

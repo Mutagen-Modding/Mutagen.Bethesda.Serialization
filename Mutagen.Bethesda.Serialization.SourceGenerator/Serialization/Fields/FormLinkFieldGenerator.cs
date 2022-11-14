@@ -25,6 +25,8 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
+    private bool IsNullable(ITypeSymbol field) => field.Name.Contains("Nullable");
+
     public bool Applicable(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -46,7 +48,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var nullable = field.Name.Contains("Nullable");
+        var nullable = IsNullable(field);
         using (var c = sb.Call($"{kernelAccessor}.WriteFormKey", linePerArgument: false))
         {
             c.Add(writerAccessor);
@@ -77,7 +79,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         CancellationToken cancel)
     {
         var named = (INamedTypeSymbol)field;
-        var nullable = field.Name.Contains("Nullable");
+        var nullable = IsNullable(field);
         var sub = named.TypeArguments[0];
         if (!compilation.Mapping.TryGetTypeSet(sub, out var typeSet))
         {
@@ -102,7 +104,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var nullable = field.Name.Contains("Nullable");
+        var nullable = IsNullable(field);
         if (insideCollection)
         {
             if (field is not INamedTypeSymbol named
@@ -111,11 +113,26 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             {
                 throw new NotImplementedException();
             }
-            sb.AppendLine($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadFormKey({readerAccessor}).As{(nullable ? "Nullable" : null)}Link<{named.TypeArguments[0]}>();");
+
+            if (nullable)
+            {
+                sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadFormKey({readerAccessor}).AsNullableLink<{named.TypeArguments[0]}>();");
+            }
+            else
+            {
+                sb.AppendLine($"{fieldAccessor}SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\").AsLink<{named.TypeArguments[0]}>();");
+            }
         }
         else
         {
-            sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}));");
+            if (nullable)
+            {
+                sb.AppendLine($"{fieldAccessor}.SetTo(SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\"));");
+            }
+            else
+            {
+                sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}));");   
+            }
         }
     }
 }

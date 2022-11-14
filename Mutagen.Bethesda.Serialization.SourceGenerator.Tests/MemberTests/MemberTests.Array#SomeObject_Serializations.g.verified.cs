@@ -97,7 +97,7 @@ internal static class SomeObject_Serialization
                         metaData: metaData,
                         itemReader: (r, k, m) =>
                         {
-                            return kernel.ReadString(r);
+                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray");
                         });
                 }
                 break;
@@ -109,7 +109,7 @@ internal static class SomeObject_Serialization
                         metaData: metaData,
                         itemReader: (r, k, m) =>
                         {
-                            return kernel.ReadString(r);
+                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray2");
                         });
                 }
                 break;
