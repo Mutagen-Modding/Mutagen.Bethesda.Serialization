@@ -176,6 +176,7 @@ internal static class SomeObject_Serialization
                 kernel.EndListSection(reader);
                 break;
             case "SomeList6":
+                obj.SomeList6 ??= new();
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {

@@ -182,6 +182,13 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
+        var nullable = field.IsNullable();
+
+        if (nullable)
+        {
+            sb.AppendLine($"{fieldAccessor} ??= new();");
+        }
+        
         sb.AppendLine($"{kernelAccessor}.StartListSection({readerAccessor});");
         sb.AppendLine($"while ({kernelAccessor}.TryHasNextItem({readerAccessor}))");
         using (sb.CurlyBrace())
