@@ -126,13 +126,13 @@ public abstract class ASerializationTests
             mod2.WriteToBinaryParallel(fs);
         }
 
-        var eqMask = mod1.GetEqualsMask(mod2);
-        var eq = eqMask.All(x => x);
+        using var stream1 = fileSystem.FileStream.Create(mod1OutFile, FileMode.Open);
+        using var stream2 = fileSystem.FileStream.Create(mod2OutFile, FileMode.Open);
 
         AssertFilesEqual(
-            fileSystem.FileStream.Create(mod1OutFile, FileMode.Open),
+            stream1,
             mod2OutFile,
-            fileSystem.FileStream.Create(mod2OutFile, FileMode.Open));
+            stream2);
     }
 
     public static void AssertFilesEqual(
@@ -142,7 +142,7 @@ public abstract class ASerializationTests
         ushort amountToReport = 5)
     {
         using var reader2 = new BinaryReadStream(stream2);
-        Stream compareStream = new ComparisonStream(
+        using Stream compareStream = new ComparisonStream(
             stream,
             reader2);
 
