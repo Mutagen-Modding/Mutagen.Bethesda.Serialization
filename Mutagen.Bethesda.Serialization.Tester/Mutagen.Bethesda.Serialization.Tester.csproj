@@ -7,4 +7,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="CommandLineParser"/>
+        <PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft"/>
+        <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml"/>
+        <PackageReference Include="Mutagen.Bethesda.Skyrim"/>
+        <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Testing\Mutagen.Bethesda.Serialization.Testing.csproj"/>
+    </ItemGroup>
+
 </Project>

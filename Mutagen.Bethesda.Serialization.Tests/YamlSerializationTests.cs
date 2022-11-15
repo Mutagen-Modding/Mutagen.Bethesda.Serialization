@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 
 public class YamlSerializationTests : ASerializationTests
 {
-    public override void Serialize(SkyrimMod mod, Stream stream)
+    public override void Serialize(ISkyrimModGetter mod, Stream stream)
     {
         MutagenYamlConverter.Instance.Serialize(mod, stream);
     }

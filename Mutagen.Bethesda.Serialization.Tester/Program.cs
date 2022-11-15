@@ -1,3 +1,48 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.IO.Abstractions;
+using System.Reactive.Disposables;
+using CommandLine;
+using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.Tester;
+using Mutagen.Bethesda.Serialization.Testing;
+using Mutagen.Bethesda.Serialization.Yaml;
+using Mutagen.Bethesda.Skyrim;
+using Noggog;
+using Noggog.IO;
 
-Console.WriteLine("Hello, World!");
+Parser.Default.ParseArguments<RunPassthroughCommand>(args)
+    .WithParsed<RunPassthroughCommand>(o =>
+    {
+        using var disp = new CompositeDisposable();
+        DirectoryPath dir;
+        if (o.TestFolder.IsNullOrWhitespace())
+        {
+            var tmp = TempFolder.Factory();
+            dir = tmp.Dir;
+            disp.Add(tmp);
+        }
+        else
+        {
+            dir = o.TestFolder;
+        }
+
+        using var mod = SkyrimMod.CreateFromBinaryOverlay(o.Path, SkyrimRelease.SkyrimSE);
+        
+        var modKey = ModKey.FromFileName("TestMod.esp");
+        
+        PassthroughTest.PassThrough<ISkyrimModGetter>(
+            new FileSystem(),
+            Path.Combine(dir, "Json"),
+            mod,
+            (m, s) => MutagenJsonConverter.Instance.Serialize(m, s),
+            s => MutagenJsonConverter.Instance.Deserialize(s, modKey, SkyrimRelease.SkyrimSE)
+        );
+        
+        PassthroughTest.PassThrough<ISkyrimModGetter>(
+            new FileSystem(),
+            Path.Combine(dir, "Yaml"),
+            mod,
+            (m, s) => MutagenYamlConverter.Instance.Serialize(m, s),
+            s => MutagenYamlConverter.Instance.Deserialize(s, modKey, SkyrimRelease.SkyrimSE)
+        );
+    });

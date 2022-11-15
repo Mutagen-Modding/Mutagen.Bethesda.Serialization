@@ -3,16 +3,14 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Skyrim;
-using Noggog;
 using Noggog.IO;
-using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 
 [UsesVerify]
 public abstract class ASerializationTests
 {
-    public abstract void Serialize(SkyrimMod mod, Stream stream);
+    public abstract void Serialize(ISkyrimModGetter mod, Stream stream);
     public abstract ISkyrimModGetter Deserialize(Stream stream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
     

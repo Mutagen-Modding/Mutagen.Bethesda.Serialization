@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 
 public class NewtonsoftSerializationTests : ASerializationTests
 {
-    public override void Serialize(SkyrimMod mod, Stream stream)
+    public override void Serialize(ISkyrimModGetter mod, Stream stream)
     {
         MutagenJsonConverter.Instance.Serialize(mod, stream);
     }

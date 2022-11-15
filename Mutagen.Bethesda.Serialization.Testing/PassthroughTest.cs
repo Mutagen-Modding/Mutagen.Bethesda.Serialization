@@ -7,13 +7,12 @@ namespace Mutagen.Bethesda.Serialization.Testing;
 
 public static class PassthroughTest
 {
-    public static void PassThrough<TMod, TModGetter>(
+    public static void PassThrough<TModGetter>(
         IFileSystem fileSystem,
         DirectoryPath dir,
-        TMod mod,
-        Action<TMod, Stream> serialize,
+        TModGetter mod,
+        Action<TModGetter, Stream> serialize,
         Func<Stream, TModGetter> deserialize)
-        where TMod : IMod, TModGetter
         where TModGetter : IModGetter
     {
         var filePath = Path.Combine(dir, "Serialized");

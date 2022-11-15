@@ -1,0 +1,13 @@
+﻿using CommandLine;
+
+namespace Mutagen.Bethesda.Serialization.Tester;
+
+[Verb("run-passthrough")]
+public class RunPassthroughCommand
+{
+    [Option('p', "Path", Required = true)]
+    public string Path { get; set; }
+    
+    [Option('t', "TestFolder")]
+    public string TestFolder { get; set; }
+}
