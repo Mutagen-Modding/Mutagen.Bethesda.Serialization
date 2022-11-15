@@ -1,4 +1,4 @@
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.Testing;
 
 public class ComparisonStream : Stream
 {

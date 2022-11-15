@@ -36,4 +36,8 @@
 	  <None Remove="Generated\**" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Testing\Mutagen.Bethesda.Serialization.Testing.csproj" />
+	</ItemGroup>
+
 </Project>

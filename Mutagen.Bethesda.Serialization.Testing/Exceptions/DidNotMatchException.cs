@@ -1,7 +1,7 @@
 using Noggog;
 using Noggog.StructuredStrings;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.Testing.Exceptions;
 
 public class DidNotMatchException : Exception, IPrintable
 {

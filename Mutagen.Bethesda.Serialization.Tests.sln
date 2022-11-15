@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutagen.Bethesda.Serialization.Testing", "Mutagen.Bethesda.Serialization.Testing\Mutagen.Bethesda.Serialization.Testing.csproj", "{11239EB0-B1B1-4084-8399-F5022D96B815}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutagen.Bethesda.Serialization.Tester", "Mutagen.Bethesda.Serialization.Tester\Mutagen.Bethesda.Serialization.Tester.csproj", "{BCF30532-12D9-4E5B-BA8E-59EB72EB7024}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,14 @@ Global
 		{03CA1DDF-C2A8-4316-AA12-CA195471F419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03CA1DDF-C2A8-4316-AA12-CA195471F419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03CA1DDF-C2A8-4316-AA12-CA195471F419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11239EB0-B1B1-4084-8399-F5022D96B815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11239EB0-B1B1-4084-8399-F5022D96B815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11239EB0-B1B1-4084-8399-F5022D96B815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11239EB0-B1B1-4084-8399-F5022D96B815}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCF30532-12D9-4E5B-BA8E-59EB72EB7024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCF30532-12D9-4E5B-BA8E-59EB72EB7024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCF30532-12D9-4E5B-BA8E-59EB72EB7024}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCF30532-12D9-4E5B-BA8E-59EB72EB7024}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,13 +1,13 @@
 using Noggog.StructuredStrings;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.Testing.Exceptions;
 
-public class UnexpectedlyMoreData : Exception, IPrintable
+public class MoreDataException : Exception, IPrintable
 {
     public readonly string Path;
     public readonly long Position;
 
-    public UnexpectedlyMoreData(string path, long pos)
+    public MoreDataException(string path, long pos)
     {
         Position = pos;
         Path = path;
@@ -15,7 +15,7 @@ public class UnexpectedlyMoreData : Exception, IPrintable
 
     public override string ToString()
     {
-        return $"{Path} had more data past position 0x{Position} than source stream.";
+        return $"{Path} had more data past position 0x{Position:X}";
     }
 
     public void Print(StructuredStringBuilder sb, string? name)
@@ -23,7 +23,7 @@ public class UnexpectedlyMoreData : Exception, IPrintable
         sb.AppendLine(Path);
         using (sb.IncreaseDepth())
         {
-            sb.AppendLine($"had more data past position 0x{Position} than source stream.");
+            sb.AppendLine($"had more data past position 0x{Position:X}");
         }
     }
 }

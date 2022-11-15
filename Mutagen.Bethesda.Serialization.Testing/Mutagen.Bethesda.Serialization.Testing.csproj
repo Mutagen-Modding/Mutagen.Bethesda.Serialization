@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Noggog.CSharpExt" />
+        <PackageReference Include="Mutagen.Bethesda.Core" />
+        <PackageReference Include="Mutagen.Bethesda.Testing" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Exceptions\DidNotMatchException.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="Exceptions\MoreDataException.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="Exceptions\UnexpectedlyMoreData.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="ComparisonStream.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+    </ItemGroup>
+
+</Project>
