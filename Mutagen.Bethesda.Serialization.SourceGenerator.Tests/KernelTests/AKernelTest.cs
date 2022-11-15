@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Drawing;
 using System.Text;
 using FluentAssertions;
@@ -6,11 +5,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
-using Mutagen.Bethesda.Testing.AutoData;
 using Noggog;
-using Noggog.StructuredStrings;
-using Noggog.StructuredStrings.CSharp;
-using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 

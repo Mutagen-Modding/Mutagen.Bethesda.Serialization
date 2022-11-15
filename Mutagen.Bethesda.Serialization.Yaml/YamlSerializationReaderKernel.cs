@@ -4,6 +4,7 @@ using Mutagen.Bethesda.Strings;
 using Noggog;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
+using YamlDotNet.Core.Tokens;
 using DocumentStart = YamlDotNet.Core.Events.DocumentStart;
 using Scalar = YamlDotNet.Core.Events.Scalar;
 using StreamStart = YamlDotNet.Core.Events.StreamStart;
@@ -25,6 +26,14 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
 
     public bool TryGetNextField(Parser reader, out string name)
     {
+        reader.TryConsume<MappingStart>(out _);
+
+        if (reader.Current is MappingEnd)
+        {
+            name = default!;
+            return false;
+        }
+        
         if (!reader.TryConsume<Scalar>(out var scalar))
         {
             name = default!;
@@ -48,7 +57,12 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
 
     public FormKey ExtractFormKey(Parser reader)
     {
-        reader.Consume<Scalar>();
+        if (!TryGetNextField(reader, out var name)
+            && name != "FormKey")
+        {
+            throw new NullReferenceException("Required FormKey for MajorRecord was not first");
+        }
+        
         return ReadFormKey(reader) ?? throw new NullReferenceException("Required FormKey for MajorRecord was null");
     }
 
@@ -482,8 +496,6 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         SerializationMetaData serializationMetaData,
         Read<ISerializationReaderKernel<Parser>, Parser, TObject> readCall)
     {
-        reader.Consume<MappingStart>();
-
         var ret = readCall(reader, this, serializationMetaData);
         
         reader.Consume<MappingEnd>();

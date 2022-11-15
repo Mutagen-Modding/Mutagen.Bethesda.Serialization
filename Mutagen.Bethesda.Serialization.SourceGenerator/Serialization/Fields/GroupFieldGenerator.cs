@@ -118,7 +118,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
-            f.Add($"itemReader: static (r, k, m) => {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>(r, k, m)");
+            f.Add($"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
         }
     }
 }
