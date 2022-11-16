@@ -3,6 +3,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Skyrim;
+using Noggog;
 using Noggog.IO;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
@@ -77,6 +78,21 @@ public abstract class ASerializationTests
         firstNpc.DeepCopyIn(npc1);
         var secondNpc = mod.Npcs.AddNew();
         secondNpc.DeepCopyIn(npc2);
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task EnumDictionary(
+        IFileSystem fileSystem,
+        Class c)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var newClass = mod.Classes.AddNew();
+        newClass.DeepCopyIn(c);
         
         PassThrough(
             fileSystem,
