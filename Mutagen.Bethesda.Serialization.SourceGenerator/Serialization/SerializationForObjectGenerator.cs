@@ -304,11 +304,6 @@ public class SerializationForObjectGenerator
             {
                 sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
             }
-
-            if (compilation.Mapping.IsInheritor(typeSet))
-            {
-                sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
-            }
             
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
@@ -502,6 +497,7 @@ public class SerializationForObjectGenerator
             {
                 GenerateMetaConstruction(sb, "item");
             }
+            sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
             sb.AppendLine("switch (item)");
             using (sb.CurlyBrace())
             {
