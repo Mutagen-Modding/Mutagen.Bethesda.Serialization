@@ -46,6 +46,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

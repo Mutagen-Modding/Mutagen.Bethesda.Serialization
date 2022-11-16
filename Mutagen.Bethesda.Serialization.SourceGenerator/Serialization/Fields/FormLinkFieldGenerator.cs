@@ -45,6 +45,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor, 
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -61,6 +62,11 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default(FormKey{Utility.NullChar(nullable)})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }

@@ -38,7 +38,18 @@ public class SerializationFieldGenerator
         var gen = GetGenerator(fieldType, cancel);
         if (gen != null)
         {
-            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, writerAccessor, "kernel", "metaData", sb, cancel);
+            gen.GenerateForSerialize(compilation,
+                obj,
+                fieldType,
+                fieldName,
+                fieldAccessor,
+                defaultValueAccessor,
+                writerAccessor,
+                "kernel",
+                "metaData",
+                insideCollection: true,
+                sb,
+                cancel);
         }
         else
         {
@@ -61,7 +72,18 @@ public class SerializationFieldGenerator
         cancel.ThrowIfCancellationRequested();
         if (gen != null)
         {
-            gen.GenerateForSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, writerAccessor, "kernel", "metaData", sb, cancel);
+            gen.GenerateForSerialize(compilation,
+                obj,
+                fieldType,
+                fieldName,
+                fieldAccessor,
+                defaultValueAccessor,
+                writerAccessor,
+                "kernel",
+                "metaData",
+                insideCollection: false,
+                sb,
+                cancel);
         }
         else
         {

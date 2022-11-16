@@ -25,7 +25,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeBytes2");
             foreach (var listItem in checkedSomeBytes2)
             {
-                kernel.WriteUInt8(writer, null, listItem, default(byte));
+                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }
@@ -35,7 +35,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeBytes4");
             foreach (var listItem in checkedSomeBytes4)
             {
-                kernel.WriteUInt8(writer, null, listItem, default(byte));
+                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }
@@ -44,7 +44,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeBytes5");
             foreach (var listItem in checkedSomeBytes5)
             {
-                kernel.WriteUInt8(writer, null, listItem, default(byte));
+                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }

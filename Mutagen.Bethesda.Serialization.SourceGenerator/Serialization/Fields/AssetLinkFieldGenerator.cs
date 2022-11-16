@@ -45,6 +45,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -60,6 +61,11 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default(string{field.NullChar()})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }

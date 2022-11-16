@@ -23,6 +23,7 @@ public interface ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool insideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel);
     

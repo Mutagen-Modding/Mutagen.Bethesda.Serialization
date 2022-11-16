@@ -88,11 +88,11 @@ public abstract class ASerializationTests
     [TestAutoData(ConfigureMembers: true)]
     public async Task EnumDictionary(
         IFileSystem fileSystem,
-        Class c)
+        IEnumerable<KeyValuePair<BasicStat, Byte>> vals)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var newClass = mod.Classes.AddNew();
-        newClass.DeepCopyIn(c);
+        newClass.StatWeights.SetTo(vals);
         
         PassThrough(
             fileSystem,

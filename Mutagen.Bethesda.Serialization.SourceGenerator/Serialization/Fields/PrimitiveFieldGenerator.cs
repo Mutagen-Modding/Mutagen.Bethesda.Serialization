@@ -45,6 +45,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor,
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -60,6 +61,11 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default({field})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }

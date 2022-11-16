@@ -50,6 +50,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor, 
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -153,6 +154,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"while ({kernelAccessor}.TryHasNextDictionaryItem({readerAccessor}))");
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{kernelAccessor}.StartDictionaryKey({readerAccessor});");
             _forFieldGenerator().Value.GenerateDeserializeForField(
                 compilation: compilation,
                 obj: obj,
@@ -162,6 +164,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldAccessor: "var key = ",
                 sb: sb,
                 cancel: cancel);
+            sb.AppendLine($"{kernelAccessor}.EndDictionaryKey({readerAccessor});");
+            sb.AppendLine($"{kernelAccessor}.StartDictionaryValue({readerAccessor});");
             _forFieldGenerator().Value.GenerateDeserializeForField(
                 compilation: compilation,
                 obj: obj,
@@ -171,7 +175,9 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldAccessor: "var val = ",
                 sb: sb,
                 cancel: cancel);
+            sb.AppendLine($"{kernelAccessor}.EndDictionaryValue({readerAccessor});");
             sb.AppendLine($"{fieldAccessor}[key] = val;");
+            sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({readerAccessor});");
         }
         sb.AppendLine($"{kernelAccessor}.EndDictionarySection({readerAccessor});");
     }

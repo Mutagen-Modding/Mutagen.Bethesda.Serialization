@@ -19,166 +19,166 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         _kernel.WriteType(writer, type);
     }
 
-    public void WriteChar(TWriterObject writer, string? fieldName, char? item, char? defaultVal)
+    public void WriteChar(TWriterObject writer, string? fieldName, char? item, char? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<char?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<char?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteChar(writer, fieldName, item);
     }
     
-    public void WriteBool(TWriterObject writer, string? fieldName, bool? item, bool? defaultVal)
+    public void WriteBool(TWriterObject writer, string? fieldName, bool? item, bool? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<bool?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<bool?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteBool(writer, fieldName, item);
     }
     
-    public void WriteString(TWriterObject writer, string? fieldName, string? item, string? defaultVal)
+    public void WriteString(TWriterObject writer, string? fieldName, string? item, string? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<string?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<string?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteString(writer, fieldName, item);
     }
     
-    public void WriteInt8(TWriterObject writer, string? fieldName, sbyte? item, sbyte? defaultVal)
+    public void WriteInt8(TWriterObject writer, string? fieldName, sbyte? item, sbyte? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<sbyte?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<sbyte?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteInt8(writer, fieldName, item);
     }
     
-    public void WriteInt16(TWriterObject writer, string? fieldName, short? item, short? defaultVal)
+    public void WriteInt16(TWriterObject writer, string? fieldName, short? item, short? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<short?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<short?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteInt16(writer, fieldName, item);
     }
     
-    public void WriteInt32(TWriterObject writer, string? fieldName, int? item, int? defaultVal)
+    public void WriteInt32(TWriterObject writer, string? fieldName, int? item, int? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<int?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<int?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteInt32(writer, fieldName, item);
     }
     
-    public void WriteInt64(TWriterObject writer, string? fieldName, long? item, long? defaultVal)
+    public void WriteInt64(TWriterObject writer, string? fieldName, long? item, long? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<long?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<long?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteInt64(writer, fieldName, item);
     }
     
-    public void WriteUInt8(TWriterObject writer, string? fieldName, byte? item, byte? defaultVal)
+    public void WriteUInt8(TWriterObject writer, string? fieldName, byte? item, byte? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<byte?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<byte?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteUInt8(writer, fieldName, item);
     }
     
-    public void WriteUInt16(TWriterObject writer, string? fieldName, ushort? item, ushort? defaultVal)
+    public void WriteUInt16(TWriterObject writer, string? fieldName, ushort? item, ushort? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<ushort?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<ushort?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteUInt16(writer, fieldName, item);
     }
     
-    public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item, uint? defaultVal)
+    public void WriteUInt32(TWriterObject writer, string? fieldName, uint? item, uint? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<uint?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<uint?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteUInt32(writer, fieldName, item);
     }
     
-    public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item, ulong? defaultVal)
+    public void WriteUInt64(TWriterObject writer, string? fieldName, ulong? item, ulong? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<ulong?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<ulong?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteUInt64(writer, fieldName, item);
     }
     
-    public void WriteFloat(TWriterObject writer, string? fieldName, float? item, float? defaultVal)
+    public void WriteFloat(TWriterObject writer, string? fieldName, float? item, float? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<float?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<float?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteFloat(writer, fieldName, item);
     }
     
-    public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? item, ModKey? defaultVal)
+    public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? item, ModKey? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<ModKey?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<ModKey?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteModKey(writer, fieldName, item);
     }
     
-    public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? item, FormKey? defaultVal)
+    public void WriteFormKey(TWriterObject writer, string? fieldName, FormKey? item, FormKey? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<FormKey?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<FormKey?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteFormKey(writer, fieldName, item);
     }
     
-    public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? item, RecordType? defaultVal)
+    public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? item, RecordType? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<RecordType?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<RecordType?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteRecordType(writer, fieldName, item);
     }
     
-    public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? item, P2Int? defaultVal)
+    public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? item, P2Int? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P2Int?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P2Int?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP2Int(writer, fieldName, item);
     }
     
-    public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? item, P2Int16? defaultVal)
+    public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? item, P2Int16? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P2Int16?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P2Int16?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP2Int16(writer, fieldName, item);
     }
     
-    public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item, P2Float? defaultVal)
+    public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item, P2Float? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P2Float?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P2Float?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP2Float(writer, fieldName, item);
     }
     
-    public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? item, P3Float? defaultVal)
+    public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? item, P3Float? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P3Float?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P3Float?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP3Float(writer, fieldName, item);
     }
     
-    public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? item, P3UInt8? defaultVal)
+    public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? item, P3UInt8? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P3UInt8?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P3UInt8?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP3UInt8(writer, fieldName, item);
     }
     
-    public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? item, P3Int16? defaultVal)
+    public void WriteP3Int16(TWriterObject writer, string? fieldName, P3Int16? item, P3Int16? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P3Int16?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P3Int16?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP3Int16(writer, fieldName, item);
     }
     
-    public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? item, P3UInt16? defaultVal)
+    public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? item, P3UInt16? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<P3UInt16?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<P3UInt16?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP3UInt16(writer, fieldName, item);
     }
     
-    public void WritePercent(TWriterObject writer, string? fieldName, Percent? item, Percent? defaultVal)
+    public void WritePercent(TWriterObject writer, string? fieldName, Percent? item, Percent? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<Percent?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<Percent?>.Default.Equals(item, defaultVal)) return;
         _kernel.WritePercent(writer, fieldName, item);
     }
     
-    public void WriteColor(TWriterObject writer, string? fieldName, Color? item, Color? defaultVal)
+    public void WriteColor(TWriterObject writer, string? fieldName, Color? item, Color? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<Color?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<Color?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteColor(writer, fieldName, item);
     }
     
-    public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item, ITranslatedStringGetter? defaultVal)
+    public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item, ITranslatedStringGetter? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<ITranslatedStringGetter?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<ITranslatedStringGetter?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteTranslatedString(writer, fieldName, item);
     }
     
-    public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item, ReadOnlyMemorySlice<byte>? defaultVal)
+    public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item, ReadOnlyMemorySlice<byte>? defaultVal, bool checkDefaults = true)
     {
-        if (EqualityComparer<ReadOnlyMemorySlice<byte>?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<ReadOnlyMemorySlice<byte>?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteBytes(writer, fieldName, item);
     }
     
-    public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item, TEnum? defaultVal)
+    public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item, TEnum? defaultVal, bool checkDefaults = true)
         where TEnum : struct, Enum, IConvertible
     {
-        if (EqualityComparer<TEnum?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && EqualityComparer<TEnum?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteEnum<TEnum>(writer, fieldName, item);
     }
     

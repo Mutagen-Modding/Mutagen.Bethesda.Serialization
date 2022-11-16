@@ -62,6 +62,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor, 
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -77,6 +78,11 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default({field})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }

@@ -39,6 +39,7 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor, 
         string kernelAccessor,
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {

@@ -33,6 +33,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor, 
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -49,6 +50,11 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default({field})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }
@@ -82,22 +88,25 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        var isNullable = field.IsNullable();
         field = field.PeelNullable();
         fieldAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
         
-        if (field.IsNullable())
+        if (isNullable)
         {
             AddReadCall(sb, field, kernelAccessor, readerAccessor, fieldAccessor);
         }
-        
-        using (var strip = sb.Call($"{fieldAccessor}SerializationHelper.StripNull", linePerArgument: false))
+        else
         {
-            strip.Add((subSb) =>
+            using (var strip = sb.Call($"{fieldAccessor}SerializationHelper.StripNull", linePerArgument: false))
             {
-                AddReadCall(subSb, field, kernelAccessor, readerAccessor, string.Empty);
-            });
-            if (fieldName == null) throw new NullReferenceException();
-            strip.Add($"name: \"{fieldName}\"");
+                strip.Add((subSb) =>
+                {
+                    AddReadCall(subSb, field, kernelAccessor, readerAccessor, string.Empty);
+                });
+                if (fieldName == null) throw new NullReferenceException();
+                strip.Add($"name: \"{fieldName}\"");
+            }
         }
     }
 

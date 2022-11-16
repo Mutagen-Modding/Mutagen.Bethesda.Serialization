@@ -41,6 +41,7 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         string writerAccessor,
         string kernelAccessor, 
         string metaAccessor,
+        bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -56,6 +57,11 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
             else
             {
                 c.Add($"default({field})");
+            }
+
+            if (isInsideCollection)
+            {
+                c.Add("checkDefaults: false");
             }
         }
     }

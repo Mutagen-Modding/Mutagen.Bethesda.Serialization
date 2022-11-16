@@ -23,7 +23,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeArray");
             foreach (var listItem in checkedSomeArray)
             {
-                kernel.WriteString(writer, null, listItem, default(string));
+                kernel.WriteString(writer, null, listItem, default(string), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }
@@ -32,7 +32,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeArray2");
             foreach (var listItem in checkedSomeArray2)
             {
-                kernel.WriteString(writer, null, listItem, default(string));
+                kernel.WriteString(writer, null, listItem, default(string), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }

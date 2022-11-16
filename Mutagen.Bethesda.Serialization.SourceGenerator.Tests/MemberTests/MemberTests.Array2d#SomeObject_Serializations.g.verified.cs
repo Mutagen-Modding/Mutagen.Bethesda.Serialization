@@ -24,7 +24,7 @@ internal static class SomeObject_Serialization
             for (int x = 0; x < item.SomeArray.Width; x++)
             {
                 kernel.StartArray2dXSection(writer);
-                kernel.WriteString(writer, null, item.SomeArray[x, y], default(string));
+                kernel.WriteString(writer, null, item.SomeArray[x, y], default(string), checkDefaults: false);
                 kernel.EndArray2dXSection(writer);
             }
             kernel.EndArray2dYSection(writer);
@@ -37,7 +37,7 @@ internal static class SomeObject_Serialization
             for (int x = 0; x < item.SomeArray2.Width; x++)
             {
                 kernel.StartArray2dXSection(writer);
-                kernel.WriteString(writer, null, item.SomeArray2[x, y], default(string));
+                kernel.WriteString(writer, null, item.SomeArray2[x, y], default(string), checkDefaults: false);
                 kernel.EndArray2dXSection(writer);
             }
             kernel.EndArray2dYSection(writer);
@@ -50,7 +50,7 @@ internal static class SomeObject_Serialization
             for (int x = 0; x < item.SomeArray3.Width; x++)
             {
                 kernel.StartArray2dXSection(writer);
-                kernel.WriteString(writer, null, item.SomeArray3[x, y], default(string));
+                kernel.WriteString(writer, null, item.SomeArray3[x, y], default(string), checkDefaults: false);
                 kernel.EndArray2dXSection(writer);
             }
             kernel.EndArray2dYSection(writer);

@@ -23,7 +23,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeFormKeys");
             foreach (var listItem in checkedSomeFormKeys)
             {
-                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey));
+                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }
@@ -33,7 +33,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeFormKeys2");
             foreach (var listItem in checkedSomeFormKeys2)
             {
-                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey));
+                kernel.WriteFormKey(writer, null, listItem.FormKeyNullable, default(FormKey), checkDefaults: false);
             }
             kernel.EndListSection(writer);
         }
