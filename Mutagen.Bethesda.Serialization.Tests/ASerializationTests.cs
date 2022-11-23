@@ -79,7 +79,7 @@ public abstract class ASerializationTests
         var secondNpc = mod.Npcs.AddNew();
         secondNpc.DeepCopyIn(npc2);
         
-        PassThrough(
+        PassThrough( 
             fileSystem,
             mod);
     }
@@ -93,6 +93,21 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var newClass = mod.Classes.AddNew();
         newClass.StatWeights.SetTo(vals);
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task GenderedItem(
+        IFileSystem fileSystem,
+        Faction f)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var newFaction = mod.Factions.AddNew();
+        newFaction.DeepCopyIn(f);
         
         PassThrough(
             fileSystem,

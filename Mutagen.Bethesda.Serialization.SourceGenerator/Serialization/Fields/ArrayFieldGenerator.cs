@@ -150,6 +150,8 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                             obj: obj,
                             fieldType: subType,
                             readerAccessor: "r", 
+                            kernelAccessor: kernelAccessor,
+                            metaDataAccessor: metaAccessor,
                             fieldName: fieldName, 
                             fieldAccessor: "return ",
                             sb: subSb,

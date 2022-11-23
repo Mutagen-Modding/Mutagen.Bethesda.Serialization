@@ -31,6 +31,8 @@ public class SerializationFieldGenerator
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
+        string kernelAccessor,
+        string metaDataAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
@@ -45,8 +47,8 @@ public class SerializationFieldGenerator
                 fieldAccessor,
                 defaultValueAccessor,
                 writerAccessor,
-                "kernel",
-                "metaData",
+                kernelAccessor,
+                metaDataAccessor,
                 insideCollection: true,
                 sb,
                 cancel);
@@ -97,6 +99,8 @@ public class SerializationFieldGenerator
         ITypeSymbol fieldType,
         string readerAccessor,
         string? fieldName,
+        string kernelAccessor,
+        string metaDataAccessor,
         string fieldAccessor,
         StructuredStringBuilder sb,
         CancellationToken cancel)
@@ -111,8 +115,8 @@ public class SerializationFieldGenerator
                 fieldName,
                 fieldAccessor,
                 readerAccessor,
-                "kernel",
-                "metaData",
+                kernelAccessor,
+                metaDataAccessor,
                 insideCollection: true,
                 canSet: false,
                 sb,

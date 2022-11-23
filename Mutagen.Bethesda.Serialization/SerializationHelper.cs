@@ -1,6 +1,4 @@
 using Loqui;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Plugins.Records;
 using Noggog;
 
@@ -96,6 +94,22 @@ public static class SerializationHelper
         }
     }
 
+    public static void WriteGendered<TKernel, TWriteObject, TObject>(
+        TWriteObject writer,
+        string? fieldName, 
+        IGenderedItemGetter<TObject> item,
+        SerializationMetaData metaData,
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        Write<TKernel, TWriteObject, TObject> itemWriter)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+    {
+        kernel.WriteLoqui(writer, fieldName, item, metaData, (w, o, k, m) =>
+        {
+            k.WriteWithName(w, "Male", o.Male, m, itemWriter);
+            k.WriteWithName(w, "Female", o.Female, m, itemWriter);
+        });
+    }
+    
     public static void ReadIntoArray<TKernel, TReadObject, TObject>(
         TReadObject reader,
         TObject[] arr,
@@ -198,5 +212,29 @@ public static class SerializationHelper
         }
 
         return item.Value;
+    }
+
+    public static GenderedItem<TObject> ReadGenderedItem<TKernel, TReadObject, TObject>(
+        TReadObject reader,
+        TKernel kernel,
+        SerializationMetaData metaData,
+        GenderedItem<TObject> ret,
+        ReadNamed<TKernel, TReadObject, TObject> itemReader)
+        where TKernel : ISerializationReaderKernel<TReadObject>
+    {
+        while (kernel.TryGetNextField(reader, out var name))
+        {
+            switch (name)
+            {
+                case "Male":
+                    ret.Male = itemReader(reader, kernel, metaData, "Male");
+                    break;
+                case "Female":
+                    ret.Female = itemReader(reader, kernel, metaData, "Female");
+                    break;
+            }
+        }
+
+        return ret;
     }
 }

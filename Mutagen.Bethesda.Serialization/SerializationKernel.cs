@@ -11,6 +11,13 @@ public delegate TObject Read<TKernel, TReaderObject, TObject>(
     SerializationMetaData metaData)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
+public delegate TObject ReadNamed<TKernel, TReaderObject, TObject>(
+    TReaderObject reader,
+    TKernel kernel,
+    SerializationMetaData metaData,
+    string name)
+    where TKernel : ISerializationReaderKernel<TReaderObject>;
+
 public delegate void ReadInto<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
     TObject obj,

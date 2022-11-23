@@ -1,6 +1,7 @@
 ﻿//HintName: SomeObject_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
@@ -17,12 +18,36 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        kernel.WriteString(writer, "SomeGenderedIntMale", item.SomeGenderedInt.Male, default(string), checkDefaults: false);
-        kernel.WriteString(writer, "SomeGenderedIntFemale", item.SomeGenderedInt.Female, default(string), checkDefaults: false);
-        kernel.WriteString(writer, "SomeGenderedInt2Male", item.SomeGenderedInt2.Male, default(string), checkDefaults: false);
-        kernel.WriteString(writer, "SomeGenderedInt2Female", item.SomeGenderedInt2.Female, default(string), checkDefaults: false);
-        kernel.WriteString(writer, "SomeGenderedInt3Male", item.SomeGenderedInt3.Male, default(string), checkDefaults: false);
-        kernel.WriteString(writer, "SomeGenderedInt3Female", item.SomeGenderedInt3.Female, default(string), checkDefaults: false);
+        kernel.WriteLoqui(
+            writer: writer,
+            fieldName: "SomeGenderedInt",
+            item: item.SomeGenderedInt,
+            serializationMetaData: metaData,
+            writeCall: static (w, o, k, m) =>
+            {
+                k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
+                k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
+            });
+        kernel.WriteLoqui(
+            writer: writer,
+            fieldName: "SomeGenderedInt2",
+            item: item.SomeGenderedInt2,
+            serializationMetaData: metaData,
+            writeCall: static (w, o, k, m) =>
+            {
+                k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
+                k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
+            });
+        kernel.WriteLoqui(
+            writer: writer,
+            fieldName: "SomeGenderedInt3",
+            item: item.SomeGenderedInt3,
+            serializationMetaData: metaData,
+            writeCall: static (w, o, k, m) =>
+            {
+                k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
+                k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
+            });
     }
 
     public static bool HasSerializationItems(
@@ -80,16 +105,55 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeGenderedInt":
-                obj.SomeGenderedInt.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedIntMale");
-                obj.SomeGenderedInt.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedIntFemale");
+                obj.SomeGenderedInt = kernel.ReadLoqui(
+                    reader: reader,
+                    serializationMetaData: metaData,
+                    readCall: static (r, k, m) =>
+                    {
+                        return SerializationHelper.ReadGenderedItem(
+                            reader: r,
+                            kernel: k,
+                            metaData: m,
+                            ret: new GenderedItem<string>(default(string), default(string)),
+                            itemReader: static (r2, k2, m2, n) =>
+                            {
+                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
+                            });
+                    });
                 break;
             case "SomeGenderedInt2":
-                obj.SomeGenderedInt2.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt2Male");
-                obj.SomeGenderedInt2.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt2Female");
+                obj.SomeGenderedInt2 = kernel.ReadLoqui(
+                    reader: reader,
+                    serializationMetaData: metaData,
+                    readCall: static (r, k, m) =>
+                    {
+                        return SerializationHelper.ReadGenderedItem(
+                            reader: r,
+                            kernel: k,
+                            metaData: m,
+                            ret: new GenderedItem<string>(default(string), default(string)),
+                            itemReader: static (r2, k2, m2, n) =>
+                            {
+                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
+                            });
+                    });
                 break;
             case "SomeGenderedInt3":
-                obj.SomeGenderedInt3.Male = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt3Male");
-                obj.SomeGenderedInt3.Female = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeGenderedInt3Female");
+                obj.SomeGenderedInt3 = kernel.ReadLoqui(
+                    reader: reader,
+                    serializationMetaData: metaData,
+                    readCall: static (r, k, m) =>
+                    {
+                        return SerializationHelper.ReadGenderedItem(
+                            reader: r,
+                            kernel: k,
+                            metaData: m,
+                            ret: new GenderedItem<string>(default(string), default(string)),
+                            itemReader: static (r2, k2, m2, n) =>
+                            {
+                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
+                            });
+                    });
                 break;
             default:
                 break;
