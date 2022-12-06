@@ -25,8 +25,10 @@ Parser.Default.ParseArguments<RunPassthroughCommand>(args)
         {
             dir = o.TestFolder;
         }
+        
+        var rel = o.GameRelease.ToSkyrimRelease();
 
-        using var mod = SkyrimMod.CreateFromBinaryOverlay(o.Path, SkyrimRelease.SkyrimSE);
+        using var mod = SkyrimMod.CreateFromBinaryOverlay(o.Path, rel);
         
         var modKey = ModKey.FromFileName("TestMod.esp");
         
@@ -35,7 +37,7 @@ Parser.Default.ParseArguments<RunPassthroughCommand>(args)
             Path.Combine(dir, "Json"),
             mod,
             (m, s) => MutagenJsonConverter.Instance.Serialize(m, s),
-            s => MutagenJsonConverter.Instance.Deserialize(s, modKey, SkyrimRelease.SkyrimSE)
+            s => MutagenJsonConverter.Instance.Deserialize(s, modKey, rel)
         );
         
         PassthroughTest.PassThrough<ISkyrimModGetter>(
@@ -43,6 +45,6 @@ Parser.Default.ParseArguments<RunPassthroughCommand>(args)
             Path.Combine(dir, "Yaml"),
             mod,
             (m, s) => MutagenYamlConverter.Instance.Serialize(m, s),
-            s => MutagenYamlConverter.Instance.Deserialize(s, modKey, SkyrimRelease.SkyrimSE)
+            s => MutagenYamlConverter.Instance.Deserialize(s, modKey, rel)
         );
     });
