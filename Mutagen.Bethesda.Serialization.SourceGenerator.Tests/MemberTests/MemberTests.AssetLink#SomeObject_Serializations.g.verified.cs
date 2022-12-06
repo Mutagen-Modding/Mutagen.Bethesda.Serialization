@@ -42,9 +42,10 @@ internal static class SomeObject_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (!EqualityComparer<IAssetLinkGetter<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>>.Default.Equals(item.SomeAssetLink, default(IAssetLinkGetter<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>))) return true;
         if (!EqualityComparer<IAssetLinkGetter<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>>.Default.Equals(item.SomeAssetLink2, default(IAssetLinkGetter<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>))) return true;
         if (!EqualityComparer<IAssetLinkGetter<Mutagen.Bethesda.Skyrim.ITestMajorRecordGetter>>.Default.Equals(item.SomeAssetLink3, default(IAssetLinkGetter<Mutagen.Bethesda.Skyrim.ITestMajorRecordGetter>))) return true;

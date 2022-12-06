@@ -21,9 +21,10 @@ internal static class SubclassLoquiA_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.HasSerializationItems(item, metaData)) return true;
         return false;
     }

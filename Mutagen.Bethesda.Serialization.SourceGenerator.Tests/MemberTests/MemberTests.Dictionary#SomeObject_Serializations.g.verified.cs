@@ -59,9 +59,10 @@ internal static class SomeObject_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (item.SomeDict.Count > 0) return true;
         if (item.SomeDict1.Count > 0) return true;
         if (item.SomeDict2.Count > 0) return true;

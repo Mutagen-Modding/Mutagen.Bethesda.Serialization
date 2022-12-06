@@ -26,9 +26,10 @@ internal static class SomeObject_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (!EqualityComparer<Noggog.Percent>.Default.Equals(item.SomeMember0, default(Noggog.Percent))) return true;
         if (!EqualityComparer<Noggog.Percent?>.Default.Equals(item.SomeMember1, default(Noggog.Percent?))) return true;
         if (!EqualityComparer<Nullable<Noggog.Percent>>.Default.Equals(item.SomeMember2, default(Nullable<Noggog.Percent>))) return true;

@@ -32,9 +32,10 @@ internal static class SomeObject_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (!EqualityComparer<short>.Default.Equals(item.SomeMember0, default(short))) return true;
         if (!EqualityComparer<Int16>.Default.Equals(item.SomeMember1, default(Int16))) return true;
         if (!EqualityComparer<short?>.Default.Equals(item.SomeMember2, default(short?))) return true;

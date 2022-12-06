@@ -19,8 +19,9 @@ internal static class TestMod_Serialization
         var metaData = new SerializationMetaData(item.GameRelease);
     }
 
-    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item)
+    public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter? item)
     {
+        if (item == null) return false;
         var metaData = new SerializationMetaData(item.GameRelease);
         return false;
     }

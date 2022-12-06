@@ -23,10 +23,11 @@ internal static class Group_Serialization
     }
 
     public static bool HasSerializationItems<T>(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T>? item,
         SerializationMetaData metaData)
         where T : class, IMajorRecordInternal
     {
+        if (item == null) return false;
         return true;
     }
 

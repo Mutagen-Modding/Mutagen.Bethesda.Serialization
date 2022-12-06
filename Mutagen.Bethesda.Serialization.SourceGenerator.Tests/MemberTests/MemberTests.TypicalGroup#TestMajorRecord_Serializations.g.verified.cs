@@ -20,9 +20,10 @@ internal static class TestMajorRecord_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         return false;
     }
 

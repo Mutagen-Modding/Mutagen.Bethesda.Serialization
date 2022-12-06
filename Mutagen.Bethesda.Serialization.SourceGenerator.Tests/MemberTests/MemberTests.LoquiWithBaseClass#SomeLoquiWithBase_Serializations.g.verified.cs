@@ -21,9 +21,10 @@ internal static class SomeLoquiWithBase_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.HasSerializationItems(item, metaData)) return true;
         return false;
     }

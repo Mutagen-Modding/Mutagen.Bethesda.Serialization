@@ -346,7 +346,7 @@ public class SerializationForObjectGenerator
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
         {
-            args.Add($"{typeSet.Getter} item");
+            args.Add($"{typeSet.Getter}? item");
             if (!isMod)
             {
                 args.Add("SerializationMetaData metaData");
@@ -356,6 +356,7 @@ public class SerializationForObjectGenerator
 
         using (sb.CurlyBrace())
         {
+            sb.AppendLine("if (item == null) return false;");
             if (isMod)
             {
                 GenerateMetaConstruction(sb, "item");

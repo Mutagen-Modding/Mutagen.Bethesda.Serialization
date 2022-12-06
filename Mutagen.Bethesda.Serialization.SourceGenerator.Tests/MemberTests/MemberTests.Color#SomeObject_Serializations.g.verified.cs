@@ -33,9 +33,10 @@ internal static class SomeObject_Serialization
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter? item,
         SerializationMetaData metaData)
     {
+        if (item == null) return false;
         if (!EqualityComparer<System.Drawing.Color>.Default.Equals(item.SomeMember0, default(System.Drawing.Color))) return true;
         if (!EqualityComparer<Color>.Default.Equals(item.SomeMember1, default(Color))) return true;
         if (!EqualityComparer<System.Drawing.Color?>.Default.Equals(item.SomeMember2, default(System.Drawing.Color?))) return true;
