@@ -502,24 +502,7 @@ public class SerializationForObjectGenerator
             sb.AppendLine("switch (item)");
             using (sb.CurlyBrace())
             {
-                foreach (var inherit in inheriting
-                             .Select(x => x.Getter)
-                             .OrderBy(x => x.Name))
-                {
-                    context.CancellationToken.ThrowIfCancellationRequested();
-                    var names = _nameRetriever.GetNames(inherit);
-                    if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
-                        continue;
-                    if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
-                    if (inheritTypes.Direct?.IsAbstract ?? true) continue;
-                    sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
-                    using (sb.IncreaseDepth())
-                    {
-                        sb.AppendLine(
-                            $"{inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
-                        sb.AppendLine("break;");
-                    }
-                }
+                GenerateSerializationCases(compilation, context, typeSet, sb, inheriting);
 
                 if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter, out var curSerializationItems)
                     && (!typeSet.Direct?.IsAbstract ?? false))
@@ -542,6 +525,46 @@ public class SerializationForObjectGenerator
         }
 
         sb.AppendLine();
+    }
+
+    private void GenerateSerializationCases(CompilationUnit compilation, SourceProductionContext context,
+        LoquiTypeSet typeSet, StructuredStringBuilder sb, IReadOnlyCollection<LoquiTypeSet> inheriting,
+         HashSet<LoquiTypeSet>? passed = null)
+    {
+        passed ??= new();
+        foreach (var inherit in inheriting
+                     .OrderBy(x => x.Getter.Name))
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+            var names = _nameRetriever.GetNames(inherit.Getter);
+            if (!compilation.Mapping.TryGetTypeSet(inherit.Getter, out var inheritTypes)) continue;
+            if (inheritTypes.Direct == null) continue;
+            if (inheritTypes.Direct.IsAbstract)
+            {
+                var inheritingFromAbstract = compilation.Mapping.TryGetInheritingClasses(inheritTypes.Getter);
+                GenerateSerializationCases(compilation, context, inheritTypes, sb, inheritingFromAbstract.Where(x => !x.Equals(inherit)).ToArray(), passed);
+            }
+            else
+            {
+                GenerateSerializationCallCase(sb, inherit, names, passed);
+            }
+        }
+    }
+
+    private void GenerateSerializationCallCase(StructuredStringBuilder sb, LoquiTypeSet inherit, Names names,
+        HashSet<LoquiTypeSet> passed)
+    {
+        if (!passed.Add(inherit)) return;
+        var getter = inherit.Getter;
+        if (!_loquiSerializationNaming.TryGetSerializationItems(getter, out var inheritSerializeItems))
+            return;
+        sb.AppendLine($"case {getter.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
+        using (sb.IncreaseDepth())
+        {
+            sb.AppendLine(
+                $"{inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
+            sb.AppendLine("break;");
+        }
     }
 
     private void GenerateDeserializeWithCheck(
