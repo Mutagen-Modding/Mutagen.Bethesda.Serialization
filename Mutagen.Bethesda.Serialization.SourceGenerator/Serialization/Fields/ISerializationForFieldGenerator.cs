@@ -15,7 +15,7 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -31,7 +31,7 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -42,7 +42,7 @@ public interface ISerializationForFieldGenerator
     
     void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,

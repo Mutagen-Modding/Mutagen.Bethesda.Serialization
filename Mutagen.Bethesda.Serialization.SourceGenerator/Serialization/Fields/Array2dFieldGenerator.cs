@@ -38,7 +38,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
+        LoquiTypeSet obj, 
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
@@ -91,7 +91,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
     public bool HasVariableHasSerialize => false;
 
     public void GenerateForHasSerialize(CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -105,7 +105,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,

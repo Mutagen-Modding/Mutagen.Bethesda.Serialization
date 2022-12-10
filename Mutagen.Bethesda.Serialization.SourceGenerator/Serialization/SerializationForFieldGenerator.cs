@@ -25,7 +25,7 @@ public class SerializationFieldGenerator
     
     public void GenerateSerializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string writerAccessor,
         string? fieldName,
@@ -61,7 +61,7 @@ public class SerializationFieldGenerator
     
     public void GenerateSerializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string writerAccessor,
         string? fieldName,
@@ -95,7 +95,7 @@ public class SerializationFieldGenerator
     
     public void GenerateDeserializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string readerAccessor,
         string? fieldName,
@@ -130,7 +130,7 @@ public class SerializationFieldGenerator
     
     public void GenerateDeserializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string readerAccessor,
         string? fieldName,
@@ -164,7 +164,7 @@ public class SerializationFieldGenerator
     
     public void GenerateHasSerializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string? fieldName,
         string fieldAccessor,
@@ -186,7 +186,7 @@ public class SerializationFieldGenerator
     
     public void GenerateHasSerializeForField(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol fieldType,
         string? fieldName,
         string fieldAccessor,

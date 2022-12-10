@@ -42,7 +42,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
+        LoquiTypeSet obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -54,7 +54,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj)) return;
+        if (_groupTester.IsGroup(obj.Getter)) return;
         if (defaultValueAccessor != null)
         {
             throw new NotImplementedException();
@@ -114,7 +114,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -128,7 +128,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -140,7 +140,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj)) return;
+        if (_groupTester.IsGroup(obj.Getter)) return;
         
         ITypeSymbol keyType;
         ITypeSymbol valType;

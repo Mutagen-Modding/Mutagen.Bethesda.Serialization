@@ -244,7 +244,7 @@ public class SerializationForObjectGenerator
                         {
                             _forFieldGenerator.GenerateDeserializeForField(
                                 compilation: compilation,
-                                obj: typeSet.Getter,
+                                obj: typeSet,
                                 fieldType: prop.Property.Type,
                                 readerAccessor: "reader",
                                 fieldName: prop.Property.Name,
@@ -319,7 +319,7 @@ public class SerializationForObjectGenerator
                 {
                     _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
-                        obj: typeSet.Getter,
+                        obj: typeSet,
                         fieldType: prop.Property.Type,
                         writerAccessor: "writer",
                         fieldName: prop.Property.Name,
@@ -387,7 +387,7 @@ public class SerializationForObjectGenerator
                     {
                         _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,
-                            obj: typeSet.Getter, 
+                            obj: typeSet, 
                             fieldType: prop.Property.Type,
                             fieldName: prop.Property.Name, 
                             fieldAccessor: $"item.{prop.Property.Name}", 

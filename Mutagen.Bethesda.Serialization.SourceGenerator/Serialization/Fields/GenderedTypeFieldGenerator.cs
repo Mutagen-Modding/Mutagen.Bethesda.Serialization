@@ -51,7 +51,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
+        LoquiTypeSet obj, 
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
@@ -122,7 +122,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -167,7 +167,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,

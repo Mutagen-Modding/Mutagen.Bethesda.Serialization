@@ -47,7 +47,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field, 
         string? fieldName,
         string fieldAccessor,
@@ -91,7 +91,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -107,7 +107,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,

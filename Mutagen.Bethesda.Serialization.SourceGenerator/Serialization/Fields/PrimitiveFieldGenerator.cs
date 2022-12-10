@@ -37,7 +37,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor, 
@@ -74,7 +74,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -88,7 +88,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
 
     public virtual void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,

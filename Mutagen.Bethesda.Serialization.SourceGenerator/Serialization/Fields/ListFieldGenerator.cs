@@ -73,7 +73,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj, 
+        LoquiTypeSet obj, 
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -85,7 +85,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj)) return;
+        if (_groupTester.IsGroup(obj.Getter)) return;
 
         var nullable = field.IsNullable();
 
@@ -141,7 +141,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -155,7 +155,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
 
     public void GenerateForDeserialize(
         CompilationUnit compilation,
-        ITypeSymbol obj,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
@@ -167,7 +167,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj)) return;
+        if (_groupTester.IsGroup(obj.Getter)) return;
 
         field = field.PeelNullable();
         
