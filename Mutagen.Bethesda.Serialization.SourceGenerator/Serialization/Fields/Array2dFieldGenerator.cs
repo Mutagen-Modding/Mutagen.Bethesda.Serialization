@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
@@ -24,7 +25,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
     
     public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
-        => Enumerable.Empty<string>();
+        => "Noggog".AsEnumerable();
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
@@ -59,33 +60,43 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
+        
+        var nullable = field.IsNullable();
 
-        sb.AppendLine($"{kernelAccessor}.StartArray2dSection({writerAccessor}, \"{fieldName}\");");
-        sb.AppendLine($"for (int y = 0; y < {fieldAccessor}.Height; y++)");
+        using (var i = sb.If(ands: true))
+        {
+            i.Add($"{fieldAccessor} is {{}} checked{fieldName}");
+            fieldAccessor = $"checked{fieldName}";
+        }
         using (sb.CurlyBrace())
         {
-            sb.AppendLine($"{kernelAccessor}.StartArray2dYSection({writerAccessor});");
-            sb.AppendLine($"for (int x = 0; x < {fieldAccessor}.Width; x++)");
+            sb.AppendLine($"{kernelAccessor}.StartArray2dSection({writerAccessor}, \"{fieldName}\");");
+            sb.AppendLine($"for (int y = 0; y < {fieldAccessor}.Height; y++)");
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
-                _forFieldGenerator().Value.GenerateSerializeForField(
-                    compilation: compilation, 
-                    obj: obj, 
-                    fieldType: subType,
-                    writerAccessor: writerAccessor, 
-                    kernelAccessor: kernelAccessor,
-                    metaDataAccessor: metaAccessor,
-                    fieldName: null, 
-                    fieldAccessor: $"{fieldAccessor}[x, y]", 
-                    defaultValueAccessor: null,
-                    sb: sb,
-                    cancel: cancel);
-                sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({writerAccessor});");
+                sb.AppendLine($"{kernelAccessor}.StartArray2dYSection({writerAccessor});");
+                sb.AppendLine($"for (int x = 0; x < {fieldAccessor}.Width; x++)");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
+                    _forFieldGenerator().Value.GenerateSerializeForField(
+                        compilation: compilation, 
+                        obj: obj, 
+                        fieldType: subType,
+                        writerAccessor: writerAccessor, 
+                        kernelAccessor: kernelAccessor,
+                        metaDataAccessor: metaAccessor,
+                        fieldName: null, 
+                        fieldAccessor: $"{fieldAccessor}[x, y]", 
+                        defaultValueAccessor: null,
+                        sb: sb,
+                        cancel: cancel);
+                    sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({writerAccessor});");
+                }
+                sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");
             }
-            sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");
+            sb.AppendLine($"{kernelAccessor}.EndArray2dSection({writerAccessor});");   
         }
-        sb.AppendLine($"{kernelAccessor}.EndArray2dSection({writerAccessor});");
     }
 
     public bool HasVariableHasSerialize => false;
@@ -126,7 +137,21 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         {
             return;
         }
-        
+
+        var nullable = field.IsNullable();
+
+        if (nullable)
+        {
+            if (obj.Direct == null)
+            {
+                throw new NullReferenceException("Object with Array2D was not concrete");
+            }
+            sb.AppendLine($"{fieldAccessor} = new Array2d<{subType.Name}>({obj.Direct.Name}.{fieldName}FixedSize);");
+        }
+        using (var i = sb.If(ands: true))
+        {
+            i.Add($"{fieldAccessor} is {{}} checked{fieldName}");
+        }
         using (sb.CurlyBrace())
         {
             sb.AppendLine($"{kernelAccessor}.StartArray2dSection({readerAccessor});");

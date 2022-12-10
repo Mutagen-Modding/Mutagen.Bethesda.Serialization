@@ -450,6 +450,9 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public Array2d<string> SomeArray { get; set; }");
             sb.AppendLine("public IArray2d<string> SomeArray2 { get; set; }");
             sb.AppendLine("public IReadOnlyArray2d<string> SomeArray3 { get; set; }");
+            sb.AppendLine("public Array2d<string>? SomeArray4 { get; set; }");
+            sb.AppendLine("public IArray2d<string>? SomeArray5 { get; set; }");
+            sb.AppendLine("public IReadOnlyArray2d<string>? SomeArray6 { get; set; }");
         });
        
         return TestHelper.VerifySerialization(source);
