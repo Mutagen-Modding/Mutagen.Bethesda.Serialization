@@ -2,5 +2,5 @@
   "Bytes1": "",
   "Bytes2": "[]",
   "Bytes3": "[]",
-  "Bytes4": "0102030405FEFF"
+  "Bytes4": "0x0102030405FEFF"
 }

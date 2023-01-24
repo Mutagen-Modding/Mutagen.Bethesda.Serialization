@@ -250,7 +250,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item.ToString());
+            writer.Writer.WriteValue(item.Value.ToString());
         }
     }
 
@@ -393,7 +393,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item.Value.CommaString(alpha: ColorExt.IncludeAlpha.Never));
+            writer.Writer.WriteValue(item.Value.ToHexString());
         }
     }
 
@@ -447,7 +447,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item.Value.Length == 0 ? "[]" : Convert.ToHexString(item.Value));
+            writer.Writer.WriteValue(item.Value.Length == 0 ? "[]" : $"0x{Convert.ToHexString(item.Value)}");
         }
     }
 
@@ -563,11 +563,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         writer.Writer.WriteEndArray();
     }
 
-    public void StartArray2dXSection(JsonWritingUnit writer)
+    public void StartArray2dXItem(JsonWritingUnit writer)
     {
     }
 
-    public void EndArray2dXSection(JsonWritingUnit writer)
+    public void EndArray2dXItem(JsonWritingUnit writer)
     {
     }
 

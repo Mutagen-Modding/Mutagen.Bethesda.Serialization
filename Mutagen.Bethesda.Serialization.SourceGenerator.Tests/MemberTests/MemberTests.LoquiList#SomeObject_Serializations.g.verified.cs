@@ -141,9 +141,8 @@ internal static class SomeObject_Serialization
                 break;
             case "SomeList4":
                 {
-                    SerializationHelper.ReadIntoArray(
+                    obj.SomeList4 = SerializationHelper.ReadArray(
                         reader: reader,
-                        arr: obj.SomeList4,
                         kernel: kernel,
                         metaData: metaData,
                         itemReader: (r, k, m) =>

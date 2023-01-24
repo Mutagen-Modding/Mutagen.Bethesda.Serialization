@@ -78,7 +78,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                 sb.AppendLine($"for (int x = 0; x < {fieldAccessor}.Width; x++)");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({writerAccessor});");
+                    sb.AppendLine($"{kernelAccessor}.StartArray2dXItem({writerAccessor});");
                     _forFieldGenerator().Value.GenerateSerializeForField(
                         compilation: compilation, 
                         obj: obj, 
@@ -91,7 +91,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                         defaultValueAccessor: null,
                         sb: sb,
                         cancel: cancel);
-                    sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({writerAccessor});");
+                    sb.AppendLine($"{kernelAccessor}.EndArray2dXItem({writerAccessor});");
                 }
                 sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");
             }
@@ -161,10 +161,10 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             {
                 sb.AppendLine($"{kernelAccessor}.StartArray2dYSection({readerAccessor});");
                 sb.AppendLine("int x = 0;");
-                sb.AppendLine($"while ({kernelAccessor}.TryHasNextArray2dYSection({readerAccessor}))");
+                sb.AppendLine($"while ({kernelAccessor}.TryHasNextArray2dXItem({readerAccessor}))");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"{kernelAccessor}.StartArray2dXSection({readerAccessor});");
+                    sb.AppendLine($"{kernelAccessor}.StartArray2dXItem({readerAccessor});");
                     _forFieldGenerator().Value.GenerateDeserializeForField(
                         compilation: compilation,
                         obj: obj,
@@ -177,7 +177,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                         sb: sb,
                         cancel: cancel);
                     sb.AppendLine($"{fieldAccessor}[x, y] = item;");
-                    sb.AppendLine($"{kernelAccessor}.EndArray2dXSection({readerAccessor});");
+                    sb.AppendLine($"{kernelAccessor}.EndArray2dXItem({readerAccessor});");
                     sb.AppendLine($"x++;");
                 }
                 sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({readerAccessor});");

@@ -72,7 +72,7 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
-    public void GenerateForHasSerialize(
+    public virtual void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -100,27 +100,20 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var setAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
-        if (field.IsNullable())
-        {
-            AddReadCall(sb, kernelAccessor, readerAccessor, setAccessor);
-        }
-        else
-        {
-            using (var strip = sb.Call($"{setAccessor}SerializationHelper.StripNull", linePerArgument: false))
-            {
-                strip.Add((subSb) =>
-                {
-                    AddReadCall(subSb, kernelAccessor, readerAccessor, string.Empty);
-                });
-                if (fieldName == null) throw new NullReferenceException();
-                strip.Add($"name: \"{fieldName}\"");
-            }
-        }
+        Utility.WrapStripNull(
+            field, 
+            fieldName,
+            fieldAccessor, 
+            readerAccessor, 
+            kernelAccessor,
+            insideCollection,
+            sb,
+            AddReadCall);
     }
 
     private void AddReadCall(
         StructuredStringBuilder sb,
+        ITypeSymbol? field,
         string kernelAccessor,
         string readerAccessor,
         string setAccessor)

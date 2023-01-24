@@ -99,8 +99,8 @@ public interface ISerializationReaderKernel<TReaderObject>
     public void StartArray2dSection(TReaderObject reader);
     public void EndArray2dSection(TReaderObject reader);
     public bool TryHasNextArray2dXItem(TReaderObject reader);
-    public void StartArray2dXSection(TReaderObject reader);
-    public void EndArray2dXSection(TReaderObject reader);
+    public void StartArray2dXItem(TReaderObject reader);
+    public void EndArray2dXItem(TReaderObject reader);
     public bool TryHasNextArray2dYSection(TReaderObject reader);
     public void StartArray2dYSection(TReaderObject reader);
     public void EndArray2dYSection(TReaderObject reader);
@@ -189,8 +189,8 @@ public interface ISerializationWriterKernel<TWriterObject>
 
     public void StartArray2dSection(TWriterObject writer, string? fieldName);
     public void EndArray2dSection(TWriterObject writer);
-    public void StartArray2dXSection(TWriterObject writer);
-    public void EndArray2dXSection(TWriterObject writer);
+    public void StartArray2dXItem(TWriterObject writer);
+    public void EndArray2dXItem(TWriterObject writer);
     public void StartArray2dYSection(TWriterObject writer);
     public void EndArray2dYSection(TWriterObject writer);
 

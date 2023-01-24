@@ -19,35 +19,14 @@ internal static class SomeObject_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
         kernel.WriteBytes(writer, "SomeBytes", item.SomeBytes, default(byte[]));
-        if (item.SomeBytes2 is {} checkedSomeBytes2
-            && checkedSomeBytes2.Length > 0)
-        {
-            kernel.StartListSection(writer, "SomeBytes2");
-            foreach (var listItem in checkedSomeBytes2)
-            {
-                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
-            }
-            kernel.EndListSection(writer);
-        }
-        kernel.WriteBytes(writer, "SomeBytes3", item.SomeBytes3, default(byte[]?));
-        if (item.SomeBytes4 is {} checkedSomeBytes4)
-        {
-            kernel.StartListSection(writer, "SomeBytes4");
-            foreach (var listItem in checkedSomeBytes4)
-            {
-                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
-            }
-            kernel.EndListSection(writer);
-        }
-        if (item.SomeBytes5 is {} checkedSomeBytes5)
-        {
-            kernel.StartListSection(writer, "SomeBytes5");
-            foreach (var listItem in checkedSomeBytes5)
-            {
-                kernel.WriteUInt8(writer, null, listItem, default(byte), checkDefaults: false);
-            }
-            kernel.EndListSection(writer);
-        }
+        kernel.WriteBytes(writer, "SomeBytes2", item.SomeBytes2, default(byte[]));
+        kernel.WriteBytes(writer, "SomeBytes3", item.SomeBytes3, default(byte[]));
+        kernel.WriteBytes(writer, "SomeBytes4", item.SomeBytes4, default(byte[]?));
+        kernel.WriteBytes(writer, "SomeBytes5", item.SomeBytes5, default(byte[]?));
+        kernel.WriteBytes(writer, "SomeBytes6", item.SomeBytes6, default(byte[]?));
+        kernel.WriteBytes(writer, "SomeBytes7", item.SomeBytes7, default(byte[]?));
+        kernel.WriteBytes(writer, "SomeBytes8", item.SomeBytes8, default(byte[]));
+        kernel.WriteBytes(writer, "SomeBytes9", item.SomeBytes9, default(byte[]));
     }
 
     public static bool HasSerializationItems(
@@ -56,10 +35,14 @@ internal static class SomeObject_Serialization
     {
         if (item == null) return false;
         if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes, default(byte[]))) return true;
-        if (item.SomeBytes2.Length > 0) return true;
-        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes3, default(byte[]?))) return true;
-        if (item.SomeBytes4?.Length > 0) return true;
-        if (item.SomeBytes5?.Length > 0) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes2, default(byte[]))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes3, default(byte[]))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes4, default(byte[]?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes5, default(byte[]?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes6, default(byte[]?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes7, default(byte[]?))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes8, default(byte[]))) return true;
+        if (!MemorySliceExt.SequenceEqual<byte>(item.SomeBytes9, default(byte[]))) return true;
         return false;
     }
 
@@ -105,47 +88,31 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeBytes":
-                obj.SomeBytes = kernel.ReadBytes(reader);
+                obj.SomeBytes = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes");
                 break;
             case "SomeBytes2":
-                {
-                    SerializationHelper.ReadIntoSlice(
-                        reader: reader,
-                        arr: obj.SomeBytes2,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes2");
-                        });
-                }
+                obj.SomeBytes2 = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes2");
                 break;
             case "SomeBytes3":
-                obj.SomeBytes3 = kernel.ReadBytes(reader);
+                obj.SomeBytes3 = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes3");
                 break;
             case "SomeBytes4":
-                {
-                    obj.SomeBytes4 = SerializationHelper.ReadSlice(
-                        reader: reader,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes4");
-                        });
-                }
+                obj.SomeBytes4 = kernel.ReadBytes(reader);
                 break;
             case "SomeBytes5":
-                {
-                    obj.SomeBytes5 = SerializationHelper.ReadSlice(
-                        reader: reader,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadUInt8(r), name: "SomeBytes5");
-                        });
-                }
+                obj.SomeBytes5 = kernel.ReadBytes(reader);
+                break;
+            case "SomeBytes6":
+                obj.SomeBytes6 = kernel.ReadBytes(reader);
+                break;
+            case "SomeBytes7":
+                obj.SomeBytes7 = kernel.ReadBytes(reader);
+                break;
+            case "SomeBytes8":
+                obj.SomeBytes8 = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes8");
+                break;
+            case "SomeBytes9":
+                obj.SomeBytes9 = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes9");
                 break;
             default:
                 break;

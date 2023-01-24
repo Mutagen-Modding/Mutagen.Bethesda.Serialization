@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -123,13 +123,13 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
     
     public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item, P2Float? defaultVal, bool checkDefaults = true)
     {
-        if (checkDefaults && EqualityComparer<P2Float?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && P2Float.NullableRawEqualityComparer.Equals(item, defaultVal)) return;
         _kernel.WriteP2Float(writer, fieldName, item);
     }
     
     public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? item, P3Float? defaultVal, bool checkDefaults = true)
     {
-        if (checkDefaults && EqualityComparer<P3Float?>.Default.Equals(item, defaultVal)) return;
+        if (checkDefaults && P3Float.NullableRawEqualityComparer.Equals(item, defaultVal)) return;
         _kernel.WriteP3Float(writer, fieldName, item);
     }
     
@@ -181,7 +181,7 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         if (checkDefaults && EqualityComparer<TEnum?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteEnum<TEnum>(writer, fieldName, item);
     }
-    
+
     public void WriteWithName<TObject>(
         TWriterObject writer, 
         string? fieldName, 
@@ -228,9 +228,9 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
     
     public void EndArray2dSection(TWriterObject writer) => _kernel.EndArray2dSection(writer);
     
-    public void StartArray2dXSection(TWriterObject writer) => _kernel.StartArray2dXSection(writer);
+    public void StartArray2dXItem(TWriterObject writer) => _kernel.StartArray2dXItem(writer);
     
-    public void EndArray2dXSection(TWriterObject writer) => _kernel.EndArray2dXSection(writer);
+    public void EndArray2dXItem(TWriterObject writer) => _kernel.EndArray2dXItem(writer);
     
     public void StartArray2dYSection(TWriterObject writer) => _kernel.StartArray2dYSection(writer);
     

@@ -17,7 +17,7 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        throw new NotImplementedException("Unknown type: Unknown");
+        throw new NotImplementedException("Unknown type: Unknown for field UnknownThing");
     }
 
     public static bool HasSerializationItems(
@@ -70,7 +70,7 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "UnknownThing":
-                throw new NotImplementedException("Unknown type: Unknown");
+                throw new NotImplementedException("Unknown type: Unknown for field UnknownThing");
                 break;
             default:
                 break;

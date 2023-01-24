@@ -60,7 +60,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
 
     public FormKey ExtractFormKey(JsonTextReader reader)
     {
-        if (reader.TokenType != JsonToken.StartObject || !reader.Read())
+        if (!reader.Read())
         {
             throw new DataMisalignedException("Did not start with a JSON start object character as expected");
         }
@@ -199,6 +199,16 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     public string? ReadString(JsonTextReader reader)
     {
         SkipPropertyName(reader);
+        if (reader.TokenType == JsonToken.StartObject)
+        {
+            reader.Read();
+            if (reader.TokenType != JsonToken.EndObject)
+            {
+                throw new DataMisalignedException("String with object start did not follow with object end.");
+            }
+
+            return null;
+        }
         return (string?)reader.Value!;
     }
 
@@ -295,7 +305,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        return ColorExt.ConvertFromCommaString(str.AsSpan());
+        return ColorExt.FromHexString(str);
     }
 
     public RecordType? ReadRecordType(JsonTextReader reader)
@@ -514,7 +524,12 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         var str = (string?)reader.Value!;
         if (str.IsNullOrEmpty()) return null;
         if (str == "[]") return Array.Empty<byte>();
-        return Convert.FromHexString(str);
+        var span = str.AsSpan();
+        if (span.StartsWith("0x"))
+        {
+            span = span[2..];
+        }
+        return Convert.FromHexString(span);
     }
 
     public TObject ReadLoqui<TObject>(
@@ -522,6 +537,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SerializationMetaData serializationMetaData,
         Read<ISerializationReaderKernel<JsonTextReader>, JsonTextReader, TObject> readCall)
     {
+        SkipPropertyName(reader);
         if (reader.TokenType != JsonToken.StartObject)
         {
             throw new DataMisalignedException();
@@ -629,11 +645,6 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
 
     public void EndArray2dSection(JsonTextReader reader)
     {
-        if (reader.TokenType != JsonToken.EndArray
-            || !reader.Read())
-        {
-            throw new DataMisalignedException();
-        }
     }
 
     public bool TryHasNextArray2dXItem(JsonTextReader reader)
@@ -641,11 +652,11 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return reader.TokenType != JsonToken.EndArray;
     }
 
-    public void StartArray2dXSection(JsonTextReader reader)
+    public void StartArray2dXItem(JsonTextReader reader)
     {
     }
 
-    public void EndArray2dXSection(JsonTextReader reader)
+    public void EndArray2dXItem(JsonTextReader reader)
     {
         if (!reader.Read())
         {

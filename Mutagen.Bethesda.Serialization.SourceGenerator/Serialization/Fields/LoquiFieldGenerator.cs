@@ -68,7 +68,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
 
-        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         var call = fieldSerializationItems.SerializationCall(withCheck: hasInheriting);
         
@@ -78,7 +78,10 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
             {
                 i.Add($"{fieldAccessor} is {{}} {fieldName}Checked");
                 fieldAccessor = $"{fieldName}Checked";
-                i.Add($"{fieldSerializationItems.HasSerializationCall(hasInheriting)}({fieldAccessor}, {metaAccessor})");
+                if (!field.IsNullable())
+                {
+                    i.Add($"{fieldSerializationItems.HasSerializationCall(hasInheriting)}({fieldAccessor}, {metaAccessor})");
+                }
             }
         }
         using (sb.CurlyBrace(doIt: fieldName != null))
@@ -102,7 +105,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     {
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
-        sb.AppendLine($"if ({fieldSerializationItems.HasSerializationCall(withCheck: compilation.Mapping.HasInheritingClasses(typeSet.Getter))}({fieldAccessor}, {metaAccessor})) return true;");
+        sb.AppendLine($"if ({fieldSerializationItems.HasSerializationCall(withCheck: compilation.Mapping.HasInheritingClasses(typeSet))}({fieldAccessor}, {metaAccessor})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -128,7 +131,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (!_loquiSerializationNaming.TryGetSerializationItems(field, out var fieldSerializationItems)) return;
         if (!compilation.Mapping.TryGetTypeSet(field, out var typeSet)) return;
 
-        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         var call = fieldSerializationItems.DeserializationCall(withCheck: hasInheriting);
 

@@ -197,7 +197,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)
     {
-        WriteString(writer, fieldName, item == null ? null : item.Value.CommaString());
+        WriteString(writer, fieldName, item == null ? null : item.Value.ToHexString());
     }
 
     public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
@@ -250,7 +250,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         }
         else
         {
-            writer.WriteScalar(item.Value.Length == 0 ? "[]" : Convert.ToHexString(item.Value));
+            writer.WriteScalar(item.Value.Length == 0 ? "[]" : $"0x{Convert.ToHexString(item.Value)}");
         }
     }
 
@@ -366,11 +366,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         writer.Emitter.Emit(new SequenceEnd());
     }
 
-    public void StartArray2dXSection(YamlWritingUnit writer)
+    public void StartArray2dXItem(YamlWritingUnit writer)
     {
     }
 
-    public void EndArray2dXSection(YamlWritingUnit writer)
+    public void EndArray2dXItem(YamlWritingUnit writer)
     {
     }
 

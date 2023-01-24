@@ -94,6 +94,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     {
         var kernel = new TReaderKernel();
         var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        using var disp = readerObj as IDisposable;
         var dict = results.ToDictionary(x => x.Name, x => x);
         while (kernel.TryGetNextField(readerObj, out var name))
         {
@@ -102,9 +103,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 throw new Exception();
             }
             result.Check(kernel, readerObj);
+            dict.Remove(name);
         }
 
-        if (readerObj is IDisposable disp) disp.Dispose();
+        if (dict.Count > 0)
+        {
+            throw new Exception();
+        }
     }
 
     private async Task<string> GetPrimitiveWriteTest<T>(
@@ -197,7 +202,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     [Fact]
     public async Task String()
     {
-        await DoPrimitiveTest<string>(
+        await DoPrimitiveTest<string?>(
             "String",
             (k, w, name, item, def) => k.WriteString(w, name, item, def),
             (k, r) => k.ReadString(r),
@@ -692,17 +697,17 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         {
             k.StartArray2dSection(w, "MyArr");
             k.StartArray2dYSection(w);
-            k.StartArray2dXSection(w);
+            k.StartArray2dXItem(w);
             k.WriteInt8(w, null, 1, default);
-            k.EndArray2dXSection(w);
-            k.StartArray2dXSection(w);
+            k.EndArray2dXItem(w);
+            k.StartArray2dXItem(w);
             k.WriteInt8(w, null, 2, default);
-            k.EndArray2dXSection(w);
+            k.EndArray2dXItem(w);
             k.EndArray2dYSection(w);
             k.StartArray2dYSection(w);
-            k.StartArray2dXSection(w);
+            k.StartArray2dXItem(w);
             k.WriteInt8(w, null, 4, default);
-            k.EndArray2dXSection(w);
+            k.EndArray2dXItem(w);
             k.EndArray2dYSection(w);
             k.EndArray2dSection(w);
         });
@@ -719,9 +724,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 int x = 0;
                 while (kernel.TryHasNextArray2dXItem(reader))
                 {
-                    kernel.StartArray2dXSection(reader);
+                    kernel.StartArray2dXItem(reader);
                     ret.Add((x, y, kernel.ReadInt32(reader)));
-                    kernel.EndArray2dXSection(reader);
+                    kernel.EndArray2dXItem(reader);
                     x++;
                 }
 

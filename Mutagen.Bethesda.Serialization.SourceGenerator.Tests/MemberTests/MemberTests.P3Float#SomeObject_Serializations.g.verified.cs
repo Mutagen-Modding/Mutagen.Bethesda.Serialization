@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Noggog;
 
 #nullable enable
 
@@ -30,12 +31,12 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
     {
         if (item == null) return false;
-        if (!EqualityComparer<Noggog.P3Float>.Default.Equals(item.SomeMember0, default(Noggog.P3Float))) return true;
-        if (!EqualityComparer<Noggog.P3Float?>.Default.Equals(item.SomeMember1, default(Noggog.P3Float?))) return true;
-        if (!EqualityComparer<Nullable<Noggog.P3Float>>.Default.Equals(item.SomeMember2, default(Nullable<Noggog.P3Float>))) return true;
-        if (!EqualityComparer<Noggog.P3Float>.Default.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember3Default)) return true;
-        if (!EqualityComparer<Noggog.P3Float?>.Default.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember4Default)) return true;
-        if (!EqualityComparer<Nullable<Noggog.P3Float>>.Default.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember5Default)) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember0, default(Noggog.P3Float))) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember1, default(Noggog.P3Float?))) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember2, default(Nullable<Noggog.P3Float>))) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember3Default)) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember4Default)) return true;
+        if (!P3Float.NullableRawEqualityComparer.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember5Default)) return true;
         return false;
     }
 

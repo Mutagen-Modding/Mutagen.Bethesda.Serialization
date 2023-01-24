@@ -36,6 +36,16 @@ internal static class SomeObject_Serialization
             }
             kernel.EndListSection(writer);
         }
+        if (item.SomeArray3 is {} checkedSomeArray3
+            && checkedSomeArray3.Length > 0)
+        {
+            kernel.StartListSection(writer, "SomeArray3");
+            foreach (var listItem in checkedSomeArray3)
+            {
+                kernel.WriteString(writer, null, listItem, default(string), checkDefaults: false);
+            }
+            kernel.EndListSection(writer);
+        }
     }
 
     public static bool HasSerializationItems(
@@ -45,6 +55,7 @@ internal static class SomeObject_Serialization
         if (item == null) return false;
         if (item.SomeArray.Length > 0) return true;
         if (item.SomeArray2?.Length > 0) return true;
+        if (item.SomeArray3.Length > 0) return true;
         return false;
     }
 
@@ -91,9 +102,8 @@ internal static class SomeObject_Serialization
         {
             case "SomeArray":
                 {
-                    SerializationHelper.ReadIntoArray(
+                    obj.SomeArray = SerializationHelper.ReadArray(
                         reader: reader,
-                        arr: obj.SomeArray,
                         kernel: kernel,
                         metaData: metaData,
                         itemReader: (r, k, m) =>
@@ -111,6 +121,19 @@ internal static class SomeObject_Serialization
                         itemReader: (r, k, m) =>
                         {
                             return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray2");
+                        });
+                }
+                break;
+            case "SomeArray3":
+                {
+                    SerializationHelper.ReadIntoArray(
+                        reader: reader,
+                        arr: obj.SomeArray3,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: (r, k, m) =>
+                        {
+                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray3");
                         });
                 }
                 break;

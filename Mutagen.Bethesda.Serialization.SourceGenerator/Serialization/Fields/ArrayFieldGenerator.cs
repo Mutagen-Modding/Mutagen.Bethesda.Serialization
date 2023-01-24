@@ -58,7 +58,8 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
         if (typeMembers.Length != 1) return false;
-        return _listStrings.Contains(typeSymbol.Name);
+        if (!_listStrings.Contains(typeSymbol.Name)) return false;
+        return typeMembers[0].Name != "Byte";
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
@@ -124,17 +125,18 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var isNullable = field.IsNullable();
         field = field.PeelNullable();
 
         var subType = GetSubtype(field);
 
+        var readOut = canSet;
+
         using (sb.CurlyBrace())
         {
-            using (var c = sb.Call($"{(isNullable ? $"{fieldAccessor} = " : null)}SerializationHelper.Read{(isNullable ? null : "Into")}{Name(field)}"))
+            using (var c = sb.Call($"{(readOut ? $"{fieldAccessor} = " : null)}SerializationHelper.Read{(readOut ? null : "Into")}{Name(field)}"))
             {
                 c.AddPassArg("reader");
-                if (!isNullable)
+                if (!readOut)
                 {
                     c.Add($"arr: {fieldAccessor}");
                 }

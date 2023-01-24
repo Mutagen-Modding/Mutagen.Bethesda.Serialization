@@ -276,7 +276,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        return ColorExt.ConvertFromCommaString(str);
+        return ColorExt.FromHexString(str);
     }
 
     public RecordType? ReadRecordType(Parser reader)
@@ -488,7 +488,12 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         if (str == "[]") return Array.Empty<byte>();
-        return Convert.FromHexString(str);
+        var span = str.AsSpan();
+        if (span.StartsWith("0x"))
+        {
+            span = span[2..];
+        }
+        return Convert.FromHexString(span);
     }
 
     public TObject ReadLoqui<TObject>(
@@ -579,11 +584,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return reader.Current is not SequenceEnd;
     }
 
-    public void StartArray2dXSection(Parser reader)
+    public void StartArray2dXItem(Parser reader)
     {
     }
 
-    public void EndArray2dXSection(Parser reader)
+    public void EndArray2dXItem(Parser reader)
     {
     }
 

@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
@@ -101,6 +102,66 @@ public abstract class ASerializationTests
     
     [Theory]
     [TestAutoData(ConfigureMembers: true)]
+    public async Task FlagEnum(IFileSystem fileSystem)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var added = mod.Races.AddNew();
+        added.Flags = Race.Flag.FaceGenHead 
+                      | Race.Flag.Child
+                      | Race.Flag.Swims
+                      | Race.Flag.Walks
+                      | Race.Flag.NoCombatInWater
+                      | Race.Flag.UsesHeadTrackAnims
+                      | Race.Flag.AllowPcDialog
+                      | Race.Flag.CanPickupItems
+                      | Race.Flag.CanDualWield;
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task ColorWithAlpha(IFileSystem fileSystem)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var added = mod.Keywords.AddNew();
+        added.Color = Color.FromArgb(55, 66, 77, 88);
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task NullableButDefaultLoqui(IFileSystem fileSystem)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var added = mod.Factions.AddNew();
+        added.VendorValues = new();
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task NullableButDefaultEnum(IFileSystem fileSystem)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var added = mod.TextureSets.AddNew();
+        added.Flags = default(TextureSet.Flag);
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
     public async Task GenderedItem(
         IFileSystem fileSystem,
         Faction f)
@@ -108,6 +169,20 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var newFaction = mod.Factions.AddNew();
         newFaction.DeepCopyIn(f);
+        
+        PassThrough(
+            fileSystem,
+            mod);
+    }
+    
+    [Theory]
+    [TestAutoData(ConfigureMembers: true)]
+    public async Task Subclassed(
+        IFileSystem fileSystem)
+    {
+        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var newFloat = mod.Globals.AddNewFloat();
+        newFloat.Data = 1.3f;
         
         PassThrough(
             fileSystem,

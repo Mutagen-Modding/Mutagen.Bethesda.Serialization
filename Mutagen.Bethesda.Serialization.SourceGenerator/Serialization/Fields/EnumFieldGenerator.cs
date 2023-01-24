@@ -37,6 +37,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        bool isNullable = field.IsNullable();
         field = field.PeelNullable();
         using (var c = sb.Call($"{kernelAccessor}.WriteEnum<{field}>", linePerArgument: false))
         {
@@ -49,7 +50,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
             }
             else
             {
-                c.Add($"default({field})");
+                c.Add($"default({field}{(isNullable ? "?" : null)})");
             }
 
             if (isInsideCollection)
@@ -88,31 +89,20 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        var isNullable = field.IsNullable();
-        field = field.PeelNullable();
-        fieldAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
-        
-        if (isNullable)
-        {
-            AddReadCall(sb, field, kernelAccessor, readerAccessor, fieldAccessor);
-        }
-        else
-        {
-            using (var strip = sb.Call($"{fieldAccessor}SerializationHelper.StripNull", linePerArgument: false))
-            {
-                strip.Add((subSb) =>
-                {
-                    AddReadCall(subSb, field, kernelAccessor, readerAccessor, string.Empty);
-                });
-                if (fieldName == null) throw new NullReferenceException();
-                strip.Add($"name: \"{fieldName}\"");
-            }
-        }
+        Utility.WrapStripNull(
+            field, 
+            fieldName,
+            fieldAccessor, 
+            readerAccessor, 
+            kernelAccessor,
+            insideCollection,
+            sb,
+            AddReadCall);
     }
 
     private void AddReadCall(
         StructuredStringBuilder sb,
-        ITypeSymbol field,
+        ITypeSymbol? field,
         string kernelAccessor,
         string readerAccessor,
         string setAccessor)

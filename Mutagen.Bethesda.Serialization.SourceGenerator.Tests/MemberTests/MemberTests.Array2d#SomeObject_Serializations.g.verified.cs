@@ -26,9 +26,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -42,9 +42,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray2.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray2[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -58,9 +58,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray3.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray3[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -74,9 +74,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray4.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray4[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -90,9 +90,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray5.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray5[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -106,9 +106,9 @@ internal static class SomeObject_Serialization
                 kernel.StartArray2dYSection(writer);
                 for (int x = 0; x < checkedSomeArray6.Width; x++)
                 {
-                    kernel.StartArray2dXSection(writer);
+                    kernel.StartArray2dXItem(writer);
                     kernel.WriteString(writer, null, checkedSomeArray6[x, y], default(string), checkDefaults: false);
-                    kernel.EndArray2dXSection(writer);
+                    kernel.EndArray2dXItem(writer);
                 }
                 kernel.EndArray2dYSection(writer);
             }
@@ -174,12 +174,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray");
                             obj.SomeArray[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);
@@ -197,12 +197,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray2");
                             obj.SomeArray2[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);
@@ -220,12 +220,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray3");
                             obj.SomeArray3[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);
@@ -244,12 +244,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray4");
                             obj.SomeArray4[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);
@@ -268,12 +268,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray5");
                             obj.SomeArray5[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);
@@ -292,12 +292,12 @@ internal static class SomeObject_Serialization
                     {
                         kernel.StartArray2dYSection(reader);
                         int x = 0;
-                        while (kernel.TryHasNextArray2dYSection(reader))
+                        while (kernel.TryHasNextArray2dXItem(reader))
                         {
-                            kernel.StartArray2dXSection(reader);
+                            kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray6");
                             obj.SomeArray6[x, y] = item;
-                            kernel.EndArray2dXSection(reader);
+                            kernel.EndArray2dXItem(reader);
                             x++;
                         }
                         kernel.EndArray2dYSection(reader);

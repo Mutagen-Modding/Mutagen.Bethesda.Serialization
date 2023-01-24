@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 10.0.40.0.1-dev219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serialization", "Mutagen.Bethesda.Serialization\Mutagen.Bethesda.Serialization.csproj", "{FBB8560A-BF9E-4B9B-97D0-41A79EB1C749}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serialization.Newtonsoft", "Mutagen.Bethesda.Serialization.Newtonsoft\Mutagen.Bethesda.Serialization.Newtonsoft.csproj", "{9C5AF60C-8958-40B8-84ED-B0CA99F78D1D}"

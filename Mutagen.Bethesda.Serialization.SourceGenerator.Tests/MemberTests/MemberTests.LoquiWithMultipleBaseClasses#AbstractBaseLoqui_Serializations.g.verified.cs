@@ -44,15 +44,7 @@ internal static class AbstractBaseLoqui_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
         SerializationMetaData metaData)
     {
-        switch (item)
-        {
-            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiAGetter SubclassLoquiAGetter:
-                return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.HasSerializationItems(SubclassLoquiAGetter, metaData);
-            case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiBGetter SubclassLoquiBGetter:
-                return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.HasSerializationItems(SubclassLoquiBGetter, metaData);
-            default:
-                throw new NotImplementedException();
-        }
+        return true;
     }
 
     public static bool HasSerializationItems(
@@ -68,7 +60,8 @@ internal static class AbstractBaseLoqui_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
     {
-        switch (kernel.GetNextType(reader, "Mutagen.Bethesda.Serialization.SourceGenerator.Tests").Name)
+        var type = kernel.GetNextType(reader, "Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        switch (type.Name)
         {
             case "SubclassLoquiA":
                 return Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Deserialize(reader, kernel, metaData);

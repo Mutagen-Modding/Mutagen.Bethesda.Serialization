@@ -57,6 +57,10 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
         var groupNames = _nameRetriever.GetNames(field);
         var subNames = _nameRetriever.GetNames(subType);
+        
+        if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
+        
         using (var f = sb.Call($"SerializationHelper.WriteGroup<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
         {
             f.Add($"writer: {writerAccessor}");
@@ -65,7 +69,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
-            f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
         }
     }
 
@@ -108,7 +112,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         
         if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
 
-        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet.Getter);
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         var isListGroup = groupNames.Getter.Contains("List");
 

@@ -18,11 +18,11 @@ internal static class SomeObject_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(writer, "SomeEnum", item.SomeEnum, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum));
-        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(writer, "SomeEnum2", item.SomeEnum2, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum));
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum>(writer, "SomeEnum2", item.SomeEnum2, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum?));
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(writer, "SomeEnum3", item.SomeEnum3, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2));
-        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(writer, "SomeEnum4", item.SomeEnum4, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2));
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2>(writer, "SomeEnum4", item.SomeEnum4, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum2?));
         kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(writer, "SomeEnum5", item.SomeEnum5, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3));
-        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(writer, "SomeEnum6", item.SomeEnum6, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3));
+        kernel.WriteEnum<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3>(writer, "SomeEnum6", item.SomeEnum6, default(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject.MyEnum3?));
     }
 
     public static bool HasSerializationItems(

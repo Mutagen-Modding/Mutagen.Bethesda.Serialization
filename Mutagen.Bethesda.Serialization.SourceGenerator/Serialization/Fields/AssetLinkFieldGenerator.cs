@@ -106,7 +106,8 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         var named = (INamedTypeSymbol)field;
         if (insideCollection)
         {
-            sb.AppendLine($"{fieldAccessor}new AssetLink<{named.TypeArguments[0]}>({kernelAccessor}.ReadString({readerAccessor}));");
+            sb.AppendLine($"var s = {kernelAccessor}.ReadString({readerAccessor});");
+            sb.AppendLine($"{fieldAccessor}s == null ? null : new AssetLink<{named.TypeArguments[0]}>(s);");
         }
         else
         {

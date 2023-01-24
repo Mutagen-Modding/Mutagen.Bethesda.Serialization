@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -249,12 +249,12 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public void StartArray2dXSection(TestWriter writer)
+    public void StartArray2dXItem(TestWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    public void EndArray2dXSection(TestWriter writer)
+    public void EndArray2dXItem(TestWriter writer)
     {
         throw new NotImplementedException();
     }
@@ -499,12 +499,12 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public void StartArray2dXSection(TestReader reader)
+    public void StartArray2dXItem(TestReader reader)
     {
         throw new NotImplementedException();
     }
 
-    public void EndArray2dXSection(TestReader reader)
+    public void EndArray2dXItem(TestReader reader)
     {
         throw new NotImplementedException();
     }

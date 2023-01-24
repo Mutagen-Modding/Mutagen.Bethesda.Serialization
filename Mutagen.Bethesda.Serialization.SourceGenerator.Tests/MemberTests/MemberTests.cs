@@ -209,6 +209,7 @@ public class MemberTests : ATestsBase
         var source = GetObjWithMember(sb =>
         {
             sb.AppendLine("public SomeLoqui MyLoqui { get; set; }");
+            sb.AppendLine("public SomeLoqui? MyLoqui2 { get; set; }");
         });
        
         return TestHelper.VerifySerialization(source);
@@ -249,9 +250,25 @@ public class MemberTests : ATestsBase
         {
             sb.AppendLine("public byte[] SomeBytes { get; set; }");
             sb.AppendLine("public ReadOnlyMemorySlice<byte> SomeBytes2 { get; set; }");
-            sb.AppendLine("public byte[]? SomeBytes3 { get; set; }");
-            sb.AppendLine("public ReadOnlyMemorySlice<byte>? SomeBytes4 { get; set; }");
-            sb.AppendLine("public Nullable<ReadOnlyMemorySlice<byte>> SomeBytes5 { get; set; }");
+            sb.AppendLine("public MemorySlice<byte> SomeBytes3 { get; set; } = new byte[5];");
+            sb.AppendLine("public byte[]? SomeBytes4 { get; set; }");
+            sb.AppendLine("public ReadOnlyMemorySlice<byte>? SomeBytes5 { get; set; }");
+            sb.AppendLine("public Nullable<ReadOnlyMemorySlice<byte>> SomeBytes6 { get; set; }");
+            sb.AppendLine("public Nullable<MemorySlice<byte>> SomeBytes7 { get; set; }");
+            sb.AppendLine("public byte[] SomeBytes8 { get; } = new byte[5];");
+            sb.AppendLine("public ReadOnlyMemorySlice<byte> SomeBytes9 { get; } = new byte[5];");
+        });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
+    public Task SliceList()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public IReadOnlyList<ReadOnlyMemorySlice<Byte>> SomeBytes { get; set; }");
+            sb.AppendLine("public SliceList<byte> SomeBytes2 { get; set; }");
         });
        
         return TestHelper.VerifySerialization(source);
@@ -437,6 +454,7 @@ public class MemberTests : ATestsBase
         {
             sb.AppendLine("public string[] SomeArray { get; set; }");
             sb.AppendLine("public string[]? SomeArray2 { get; set; }");
+            sb.AppendLine("public string[] SomeArray3 { get; } = new string[4];");
         });
        
         return TestHelper.VerifySerialization(source);

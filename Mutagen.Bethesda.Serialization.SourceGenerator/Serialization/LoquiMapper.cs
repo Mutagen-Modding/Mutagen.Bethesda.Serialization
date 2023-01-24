@@ -24,41 +24,51 @@ public record LoquiTypeSet(
 
 public class LoquiMapping
 {
-    private readonly IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> _inheritingClassMapping;
+    private readonly IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> _inheritingClassMapping;
+    private readonly IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> _deepInheritingClassMapping;
     private readonly IReadOnlyCollection<LoquiTypeSet> _isAnInheritor;
     private readonly IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> _typeSetMapping;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
 
     public LoquiMapping(
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSetMapping,
-        IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> inheritingClassMapping, 
+        IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> inheritingClassMapping, 
+        IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> deepInheritingClassMapping, 
         ImmutableHashSet<LoquiTypeSet> isAnInheritor,
         IsLoquiObjectTester isLoquiObjectTester)
     {
         _inheritingClassMapping = inheritingClassMapping;
+        _deepInheritingClassMapping = deepInheritingClassMapping;
         _isAnInheritor = isAnInheritor;
         _isLoquiObjectTester = isLoquiObjectTester;
         _typeSetMapping = typeSetMapping;
+        
     }
 
-    public ITypeSymbol? TryGetBaseClass(ITypeSymbol? typeSymbol)
+    public ITypeSymbol? TryGetBaseClass(LoquiTypeSet? typeSymbol)
     {
-        if (typeSymbol?.BaseType != null
-            && _isLoquiObjectTester.IsLoqui(typeSymbol.BaseType))
+        if (typeSymbol?.Direct?.BaseType != null
+            && _isLoquiObjectTester.IsLoqui(typeSymbol.Direct.BaseType))
         {
-            return typeSymbol.BaseType;
+            return typeSymbol.Direct.BaseType;
         }
 
         return default;
     }
 
-    public IReadOnlyCollection<LoquiTypeSet> TryGetInheritingClasses(ITypeSymbol typeSymbol)
+    public IReadOnlyCollection<LoquiTypeSet> TryGetInheritingClasses(LoquiTypeSet typeSymbol)
     {
         if (_inheritingClassMapping.TryGetValue(typeSymbol, out var inheriting)) return inheriting;
         return Array.Empty<LoquiTypeSet>();
     }
 
-    public bool HasInheritingClasses(ITypeSymbol typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
+    public IReadOnlyCollection<LoquiTypeSet> TryGetDeepInheritingClasses(LoquiTypeSet typeSymbol)
+    {
+        if (_deepInheritingClassMapping.TryGetValue(typeSymbol, out var inheriting)) return inheriting;
+        return Array.Empty<LoquiTypeSet>();
+    }
+
+    public bool HasInheritingClasses(LoquiTypeSet typeSymbol) => TryGetInheritingClasses(typeSymbol).Count > 0;
 
     public bool TryGetTypeSet(ITypeSymbol typeSymbol, out LoquiTypeSet typeSet) => _typeSetMapping.TryGetValue(typeSymbol.OriginalDefinition, out typeSet);
 
@@ -94,19 +104,53 @@ public class LoquiMapper
 
         var inheritors = inheritingClassMapping
             .Where(kv => kv.Value.Count > 1)
-            .Select(kv => (Key: typeSets[kv.Key], Value: kv.Value))
+            .Select(kv => (Key: typeSets[kv.Key.Getter], Value: kv.Value))
             .Where(kv => kv.Key.Direct != null)
             .Where(kv => !kv.Key.Direct!.Name.EndsWith("MajorRecord"))
             .SelectMany(x => x.Value)
             .ToImmutableHashSet();
 
+        var deepInheritance = AnalyzeDeepInheritance(typeSets, inheritingClassMapping);
+
         return new LoquiMapping(
             typeSets,
             inheritingClassMapping,
+            deepInheritance,
             inheritors,
             _isLoquiObjectTester);
     }
 
+    private IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> AnalyzeDeepInheritance(
+        IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> mapping,
+        IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> rawInheritance)
+    {
+        var ret = new Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>>();
+        foreach (var item in mapping.Values)
+        {
+            var set = new HashSet<LoquiTypeSet>();
+            AnalyzeDeepInheritance(item, rawInheritance, set);
+            set.Remove(item);
+            ret[item] = set;
+        }
+
+        return ret;
+    }
+
+    private void AnalyzeDeepInheritance(
+        LoquiTypeSet typeSet,
+        IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> raw,
+        HashSet<LoquiTypeSet> tracker)
+    {
+        if (!tracker.Add(typeSet)) return;
+        if (raw.TryGetValue(typeSet, out var inheriting))
+        {
+            foreach (var item in inheriting)
+            {
+                AnalyzeDeepInheritance(item, raw, tracker);
+            }
+        }
+    }
+    
     private IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> GetTypeSets(
         Compilation compilation,
         INamedTypeSymbol[] mutagenSymbols,
@@ -131,12 +175,12 @@ public class LoquiMapper
         return typeSets;
     }
 
-    private IReadOnlyDictionary<ITypeSymbol, HashSet<LoquiTypeSet>> GetInheritanceSets(
+    private IReadOnlyDictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> GetInheritanceSets(
         INamedTypeSymbol[] mutagenSymbols,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
         CancellationToken cancel)
     {
-        var inheritingClassMapping = new Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>>(SymbolEqualityComparer.Default);
+        var inheritingClassMapping = new Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>>();
         
         foreach (var symb in mutagenSymbols)
         {
@@ -156,7 +200,7 @@ public class LoquiMapper
     private void ProcessInheritance(
         LoquiTypeSet type,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
-        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
+        Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> mapping)
     {
         ProcessBaseTypeInheritance(type, typeSets, mapping);
         if (!typeSets.TryGetValue(type.Getter, out var typeSet)) return;
@@ -173,7 +217,7 @@ public class LoquiMapper
     private void ProcessBaseTypeInheritance(
         LoquiTypeSet type,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
-        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
+        Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> mapping)
     {
         var baseType = type.Direct?.BaseType;
         while (baseType != null
@@ -181,7 +225,7 @@ public class LoquiMapper
                && typeSets.TryGetValue(baseType, out var baseTypeSet))
         {
             mapping
-                .GetOrAdd(baseTypeSet.Getter)
+                .GetOrAdd(baseTypeSet)
                 .Add(type);
             baseType = baseType.BaseType;
         }
@@ -192,7 +236,7 @@ public class LoquiMapper
         ITypeSymbol interf,
         HashSet<ITypeSymbol> passed,
         IReadOnlyDictionary<ITypeSymbol, LoquiTypeSet> typeSets,
-        Dictionary<ITypeSymbol, HashSet<LoquiTypeSet>> mapping)
+        Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> mapping)
     {
         if (_isLoquiObjectTester.IsLoqui(interf)
             && typeSets.TryGetValue(interf, out var interfTypeSet)
@@ -200,7 +244,7 @@ public class LoquiMapper
             && passed.Add(interfTypeSet.Setter))
         {
             mapping
-                .GetOrAdd(interfTypeSet.Getter)
+                .GetOrAdd(interfTypeSet)
                 .Add(type);
             foreach (var otherInterface in interf.AllInterfaces)
             {

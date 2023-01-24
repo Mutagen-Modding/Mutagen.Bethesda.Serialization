@@ -18,12 +18,22 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
     {
-        kernel.WriteP2Float(writer, "SomeMember0", item.SomeMember0, default(Noggog.P2Float));
-        kernel.WriteP2Float(writer, "SomeMember1", item.SomeMember1, default(Noggog.P2Float?));
-        kernel.WriteP2Float(writer, "SomeMember2", item.SomeMember2, default(Nullable<Noggog.P2Float>));
-        kernel.WriteP2Float(writer, "SomeMember3", item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember3Default);
-        kernel.WriteP2Float(writer, "SomeMember4", item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember4Default);
-        kernel.WriteP2Float(writer, "SomeMember5", item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember5Default);
+        if (item.SomeBytes is {} checkedSomeBytes
+            && checkedSomeBytes.Count > 0)
+        {
+            kernel.StartListSection(writer, "SomeBytes");
+            foreach (var listItem in checkedSomeBytes)
+            {
+                kernel.WriteBytes(writer, null, listItem, default(byte[]), checkDefaults: false);
+            }
+            kernel.EndListSection(writer);
+        }
+        kernel.StartListSection(writer, "SomeBytes2");
+        foreach (var row in item.SomeBytes2)
+        {
+            kernel.WriteBytes(writer, null, row, default(byte[]), checkDefaults: false);
+        }
+        kernel.EndListSection(writer);
     }
 
     public static bool HasSerializationItems(
@@ -31,12 +41,8 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
     {
         if (item == null) return false;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember0, default(Noggog.P2Float))) return true;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember1, default(Noggog.P2Float?))) return true;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember2, default(Nullable<Noggog.P2Float>))) return true;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember3, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember3Default)) return true;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember4, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember4Default)) return true;
-        if (!P2Float.NullableRawEqualityComparer.Equals(item.SomeMember5, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject.SomeMember5Default)) return true;
+        if (item.SomeBytes.Count > 0) return true;
+        if (item.SomeBytes2.Count != 0) return true;
         return false;
     }
 
@@ -81,23 +87,26 @@ internal static class SomeObject_Serialization
     {
         switch (name)
         {
-            case "SomeMember0":
-                obj.SomeMember0 = SerializationHelper.StripNull(kernel.ReadP2Float(reader), name: "SomeMember0");
+            case "SomeBytes":
+                kernel.StartListSection(reader);
+                while (kernel.TryHasNextItem(reader))
+                {
+                    var item = SerializationHelper.StripNull(kernel.ReadBytes(reader), name: "SomeBytes");
+                    obj.SomeBytes.Add(item);
+                }
+                kernel.EndListSection(reader);
                 break;
-            case "SomeMember1":
-                obj.SomeMember1 = kernel.ReadP2Float(reader);
-                break;
-            case "SomeMember2":
-                obj.SomeMember2 = kernel.ReadP2Float(reader);
-                break;
-            case "SomeMember3":
-                obj.SomeMember3 = SerializationHelper.StripNull(kernel.ReadP2Float(reader), name: "SomeMember3");
-                break;
-            case "SomeMember4":
-                obj.SomeMember4 = kernel.ReadP2Float(reader);
-                break;
-            case "SomeMember5":
-                obj.SomeMember5 = kernel.ReadP2Float(reader);
+            case "SomeBytes2":
+                kernel.StartListSection(reader);
+                while (kernel.TryHasNextItem(reader))
+                {
+                    var item = kernel.ReadBytes(reader);
+                    if (item != null)
+                    {
+                        obj.SomeBytes2.Add(item.Value);
+                    }
+                }
+                kernel.EndListSection(reader);
                 break;
             default:
                 break;

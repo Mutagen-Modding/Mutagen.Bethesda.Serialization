@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mutagen.Bethesda.Core" />
+		<PackageReference Include="Mutagen.Bethesda.Core" />
     </ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

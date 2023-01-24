@@ -49,14 +49,14 @@ public class RelatedObjectAccumulator
         var details = typeSet.Getter;
         if (!_loquiObjectTester.IsLoqui(details)) return;
         if (!processedDetails.Add(typeSet)) return;
-        var baseType = mapper.TryGetBaseClass(typeSet.Direct);
+        var baseType = mapper.TryGetBaseClass(typeSet);
         if (baseType != null
             && mapper.TryGetTypeSet(baseType, out var baseSet))
         {
             GetRelatedObjects(mapper, baseSet, processedDetails, cancel);
         }
 
-        var inheriting = mapper.TryGetInheritingClasses(typeSet.Getter);
+        var inheriting = mapper.TryGetInheritingClasses(typeSet);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();

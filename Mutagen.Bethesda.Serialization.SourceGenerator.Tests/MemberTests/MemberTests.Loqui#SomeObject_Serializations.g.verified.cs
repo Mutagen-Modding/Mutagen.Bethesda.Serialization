@@ -22,6 +22,10 @@ internal static class SomeObject_Serialization
         {
             kernel.WriteLoqui(writer, "MyLoqui", MyLoquiChecked, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
         }
+        if (item.MyLoqui2 is {} MyLoqui2Checked)
+        {
+            kernel.WriteLoqui(writer, "MyLoqui2", MyLoqui2Checked, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+        }
     }
 
     public static bool HasSerializationItems(
@@ -30,6 +34,7 @@ internal static class SomeObject_Serialization
     {
         if (item == null) return false;
         if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.HasSerializationItems(item.MyLoqui, metaData)) return true;
+        if (Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.HasSerializationItems(item.MyLoqui2, metaData)) return true;
         return false;
     }
 
@@ -76,6 +81,9 @@ internal static class SomeObject_Serialization
         {
             case "MyLoqui":
                 obj.MyLoqui = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
+                break;
+            case "MyLoqui2":
+                obj.MyLoqui2 = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
                 break;
             default:
                 break;

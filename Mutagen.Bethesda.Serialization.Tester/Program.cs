@@ -1,7 +1,6 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using System.Reactive.Disposables;
 using CommandLine;
-using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Tester;
 using Mutagen.Bethesda.Serialization.Testing;
@@ -30,8 +29,8 @@ Parser.Default.ParseArguments<RunPassthroughCommand>(args)
 
         using var mod = SkyrimMod.CreateFromBinaryOverlay(o.Path, rel);
         
-        var modKey = ModKey.FromFileName("TestMod.esp");
-        
+        var modKey = mod.ModKey;
+
         PassthroughTest.PassThrough<ISkyrimModGetter>(
             new FileSystem(),
             Path.Combine(dir, "Json"),

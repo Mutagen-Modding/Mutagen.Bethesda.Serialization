@@ -55,7 +55,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
     
@@ -89,7 +89,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
     
@@ -124,7 +124,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
     
@@ -158,7 +158,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
     
@@ -180,7 +180,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
     
@@ -202,7 +202,7 @@ public class SerializationFieldGenerator
         }
         else
         {
-            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType}\");");
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
         }
     }
 

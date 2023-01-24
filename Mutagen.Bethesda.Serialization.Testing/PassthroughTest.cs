@@ -17,7 +17,7 @@ public static class PassthroughTest
     {
         var filePath = Path.Combine(dir, "Serialized");
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-        using (var stream = fileSystem.File.OpenWrite(filePath))
+        using (var stream = fileSystem.File.Open(filePath, FileMode.Create, FileAccess.Write))
         {
             serialize(mod, stream);
         }

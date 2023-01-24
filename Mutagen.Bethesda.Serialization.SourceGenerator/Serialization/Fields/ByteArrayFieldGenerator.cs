@@ -16,7 +16,9 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     private static readonly HashSet<string> _listStrings = new()
     {
         "ReadOnlyMemorySlice",
+        "MemorySlice",
         "Noggog.ReadOnlyMemorySlice",
+        "Noggog.MemorySlice",
     };
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
@@ -77,7 +79,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
             }
             else
             {
-                c.Add($"default({field})");
+                c.Add(DefaultString(field));
             }
 
             if (isInsideCollection)
@@ -89,6 +91,8 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string DefaultString(ITypeSymbol? field) => $"default(byte[]{(field != null && field.IsNullable() ? "?" : null)})";
+
     public void GenerateForHasSerialize(CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -99,7 +103,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        sb.AppendLine($"if (!MemorySliceExt.SequenceEqual<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
+        sb.AppendLine($"if (!MemorySliceExt.SequenceEqual<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? DefaultString(field)})) return true;");
     }
 
     public void GenerateForDeserialize(
@@ -116,7 +120,25 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadBytes", linePerArgument: false))
+        Utility.WrapStripNull(
+            field, 
+            fieldName,
+            fieldAccessor, 
+            readerAccessor, 
+            kernelAccessor,
+            insideCollection,
+            sb,
+            AddReadCall);
+    }
+
+    private void AddReadCall(
+        StructuredStringBuilder sb,
+        ITypeSymbol? field,
+        string kernelAccessor,
+        string readerAccessor,
+        string setAccessor)
+    {
+        using (var c = sb.Call($"{setAccessor}{kernelAccessor}.ReadBytes", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }
