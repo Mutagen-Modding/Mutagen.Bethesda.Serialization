@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Testing.Exceptions;
 using Noggog;
@@ -41,11 +41,11 @@ public static class PassthroughTest
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod1OutFile));
         var mod2OutFile = Path.Combine(dir, "Output");
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod2OutFile));
-        using (var fs = fileSystem.FileStream.Create(mod1OutFile, FileMode.Create))
+        using (var fs = fileSystem.FileStream.Create(mod1OutFile, FileMode.Create, FileAccess.ReadWrite))
         {
             mod1.WriteToBinaryParallel(fs);
         }
-        using (var fs = fileSystem.FileStream.Create(mod2OutFile, FileMode.Create))
+        using (var fs = fileSystem.FileStream.Create(mod2OutFile, FileMode.Create, FileAccess.ReadWrite))
         {
             mod2.WriteToBinaryParallel(fs);
         }

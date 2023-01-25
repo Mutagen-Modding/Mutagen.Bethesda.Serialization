@@ -20,3 +20,22 @@ TranslatedString6:
     String: Hello
   - Language: French
     String: Bonjour
+TranslatedString7:
+  TargetLanguage: English
+  Value: >-
+    Multi
+
+    Line
+TranslatedString8:
+  TargetLanguage: Spanish
+  Values:
+  - Language: English
+    String: >-
+      Multi
+
+      Line
+  - Language: French
+    String: >-
+      Multi
+
+      Line

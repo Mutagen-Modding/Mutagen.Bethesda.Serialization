@@ -9,6 +9,9 @@
       {
         "FormKey": "000800:InputMod.esp",
         "Configuration": {
+          "Level": {
+            "MutagenObjectType": "NpcLevel"
+          },
           "HealthOffset": 100
         },
         "Name": {
@@ -19,6 +22,9 @@
       {
         "FormKey": "000801:InputMod.esp",
         "Configuration": {
+          "Level": {
+            "MutagenObjectType": "NpcLevel"
+          },
           "HealthOffset": 200
         },
         "Attacks": [

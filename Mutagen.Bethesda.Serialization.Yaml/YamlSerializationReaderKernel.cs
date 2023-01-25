@@ -30,6 +30,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
 
         if (reader.Current is MappingEnd)
         {
+            reader.TryConsume<MappingEnd>(out _);
             name = default!;
             return false;
         }
@@ -192,7 +193,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
             return null;
         }
         var scalar = reader.Consume<Scalar>();
-        return scalar.Value;
+        return scalar.Value.ReplaceLineEndings("\r\n");
     }
 
     public sbyte? ReadInt8(Parser reader)
@@ -421,7 +422,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                         else if (propName == "String"
                                  && reader.Accept<Scalar>(out var strVal))
                         {
-                            str = strVal.Value;
+                            str = strVal.Value.ReplaceLineEndings("\r\n");
                         }
                     }
                     else if (propName == "TargetLanguage"
@@ -432,7 +433,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                     else if (propName == "Value"
                              && reader.Accept<Scalar>(out var val))
                     {
-                        mainString = val.Value;
+                        mainString = val.Value.ReplaceLineEndings("\r\n");
                     }
                     else if (propName == "Values"
                              && reader.Accept<SequenceStart>(out _))
@@ -501,11 +502,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         SerializationMetaData serializationMetaData,
         Read<ISerializationReaderKernel<Parser>, Parser, TObject> readCall)
     {
-        var ret = readCall(reader, this, serializationMetaData);
-        
-        reader.Consume<MappingEnd>();
-
-        return ret;
+        return readCall(reader, this, serializationMetaData);
     }
 
     public void StartListSection(Parser reader)

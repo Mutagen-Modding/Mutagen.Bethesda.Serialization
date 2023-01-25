@@ -1,3 +1,7 @@
 ﻿String1: {}
 String2: ''
 String3: Hello
+String4: >-
+  Hello
+
+  World

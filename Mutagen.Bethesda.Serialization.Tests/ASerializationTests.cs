@@ -69,16 +69,22 @@ public abstract class ASerializationTests
     
     [Theory]
     [TestAutoData(ConfigureMembers: true)]
-    public void SingleGroupPassthrough(
+    public void GroupPassthrough(
         IFileSystem fileSystem,
         Npc npc1,
-        Npc npc2)
+        Npc npc2,
+        Weapon weapon1,
+        Weapon weapon2)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var firstNpc = mod.Npcs.AddNew();
         firstNpc.DeepCopyIn(npc1);
         var secondNpc = mod.Npcs.AddNew();
         secondNpc.DeepCopyIn(npc2);
+        var firstWeapon = mod.Weapons.AddNew();
+        firstWeapon.DeepCopyIn(weapon1);
+        var secondWeapon = mod.Weapons.AddNew();
+        secondWeapon.DeepCopyIn(weapon2);
         
         PassThrough( 
             fileSystem,

@@ -3,7 +3,6 @@ using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
-using Noggog.Extensions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 

@@ -208,7 +208,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             (k, r) => k.ReadString(r),
             "Hello",
             string.Empty,
-            "Hello");
+            "Hello",
+            "Hello\r\nWorld");
     }
 
     [Fact]
@@ -759,7 +760,11 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 new KeyValuePair<Language, string>(Language.French, "Bonjour")),
             new TranslatedString(Language.Spanish,
                 new KeyValuePair<Language, string>(Language.English, "Hello"),
-                new KeyValuePair<Language, string>(Language.French, "Bonjour")));
+                new KeyValuePair<Language, string>(Language.French, "Bonjour")),
+            new TranslatedString(Language.English, "Multi\r\nLine"),
+            new TranslatedString(Language.Spanish,
+                new KeyValuePair<Language, string>(Language.English, "Multi\r\nLine"),
+                new KeyValuePair<Language, string>(Language.French, "Multi\r\nLine")));
     }
 
     [Fact]

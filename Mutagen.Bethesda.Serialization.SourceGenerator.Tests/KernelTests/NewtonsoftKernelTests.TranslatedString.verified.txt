@@ -35,5 +35,22 @@
         "String": "Bonjour"
       }
     ]
+  },
+  "TranslatedString7": {
+    "TargetLanguage": "English",
+    "Value": "Multi\r\nLine"
+  },
+  "TranslatedString8": {
+    "TargetLanguage": "Spanish",
+    "Values": [
+      {
+        "Language": "English",
+        "String": "Multi\r\nLine"
+      },
+      {
+        "Language": "French",
+        "String": "Multi\r\nLine"
+      }
+    ]
   }
 }
