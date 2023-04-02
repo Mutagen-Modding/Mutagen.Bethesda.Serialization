@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Noggog;
 
 #nullable enable
 
@@ -15,8 +16,24 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
     {
         var metaData = new SerializationMetaData(item.GameRelease);
+        SerializeFields<TKernel, TWriteObject>(
+            writer: writer,
+            item: item,
+            kernel: kernel,
+            metaData: metaData);
+    }
+
+    public static void SerializeFields<TKernel, TWriteObject>(
+        TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
+    {
     }
 
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter? item)
@@ -31,6 +48,7 @@ internal static class TestMod_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
         Serialization.SourceGenerator.TestsRelease release)
+        where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
         DeserializeInto<TReadObject>(
@@ -44,6 +62,7 @@ internal static class TestMod_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj)
+        where TReadObject : IContainStreamPackage
     {
         var metaData = new SerializationMetaData(obj.GameRelease);
         while (kernel.TryGetNextField(reader, out var name))
@@ -64,6 +83,7 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
         SerializationMetaData metaData,
         string name)
+        where TReadObject : IContainStreamPackage
     {
         switch (name)
         {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
+﻿using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
@@ -17,15 +15,9 @@ public class CustomizationProvider
         _interpreter = interpreter;
     }
 
-    public IncrementalValueProvider<ImmutableDictionary<LoquiTypeSet, CustomizationCatalog>> Get(
-        IncrementalGeneratorInitializationContext context,
-        IncrementalValueProvider<LoquiMapping> mappings)
+    public IncrementalValueProvider<CustomizationSpecifications> Get(
+        IncrementalGeneratorInitializationContext context)
     {
-        return _interpreter.Interpret(_customizationDetector.GetCustomizationMethods(context), mappings)
-            .Collect()
-            .Select((i, c) =>
-            {
-                return i.ToImmutableDictionary(x => x.Target, x => x);
-            });
+        return _interpreter.Interpret(_customizationDetector.GetCustomizationMethod(context));
     }
 }

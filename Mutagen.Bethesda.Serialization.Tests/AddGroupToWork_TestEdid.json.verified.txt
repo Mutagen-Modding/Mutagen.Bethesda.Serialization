@@ -1,0 +1,10 @@
+﻿{
+  "FormKey": "123456:Skyrim.esm",
+  "EditorID": "TestEdid",
+  "Configuration": {
+    "Level": {
+      "MutagenObjectType": "NpcLevel"
+    }
+  },
+  "Height": 5.0
+}

@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Noggog;
 
 #nullable enable
 
@@ -16,6 +17,22 @@ internal static class SomeLoqui_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
+    {
+        SerializeFields<TKernel, TWriteObject>(
+            writer: writer,
+            item: item,
+            kernel: kernel,
+            metaData: metaData);
+    }
+
+    public static void SerializeFields<TKernel, TWriteObject>(
+        TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiGetter item,
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
     {
     }
 
@@ -31,6 +48,7 @@ internal static class SomeLoqui_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui();
         DeserializeInto<TReadObject>(
@@ -46,6 +64,7 @@ internal static class SomeLoqui_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui obj,
         SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
@@ -65,6 +84,7 @@ internal static class SomeLoqui_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoqui obj,
         SerializationMetaData metaData,
         string name)
+        where TReadObject : IContainStreamPackage
     {
         switch (name)
         {

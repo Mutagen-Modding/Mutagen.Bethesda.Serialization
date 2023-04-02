@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -10,7 +11,10 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
     private Lazy<IEnumerable<string>> _associatedTypes;
     public IEnumerable<string> AssociatedTypes => _associatedTypes.Value;
     
-    public virtual IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) 
+    public virtual IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
         => Enumerable.Empty<string>();
     
     public PrimitiveFieldGenerator(
@@ -28,7 +32,10 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         });
     }
     
-    public bool Applicable(ITypeSymbol typeSymbol) => false;
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol) => false;
     
     public virtual bool ShouldGenerate(IPropertySymbol propertySymbol)
     {

@@ -27,12 +27,14 @@ public class TestWriter
 
 public class TestKernel : ISerializationReaderKernel<TestReader>, ISerializationWriterKernel<TestWriter>
 {
-    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(Stream stream)
+    public string ExpectedExtension => throw new NotImplementedException();
+
+    TestReader ISerializationReaderKernel<TestReader>.GetNewObject(StreamPackage stream)
     {
         throw new NotImplementedException();
     }
 
-    public void Finalize(Stream stream, TestWriter writer)
+    public void Finalize(StreamPackage stream, TestWriter writer)
     {
         throw new NotImplementedException();
     }
@@ -524,7 +526,7 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(Stream stream)
+    TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(StreamPackage stream)
     {
         throw new NotImplementedException();
     }

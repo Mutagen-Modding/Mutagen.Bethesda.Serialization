@@ -16,7 +16,9 @@ public class TestAutoDataAttribute : AutoDataAttribute
                 .Customize(new MutagenDefaultCustomization(
                     useMockFileSystem: UseMockFileSystem,
                     configureMembers: ConfigureMembers,
-                    release: Release));
+                    release: Release))
+                .Customize(
+                    new MutagenConcreteModsCustomization(release: Release));
         })
     {
     }

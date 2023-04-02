@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Testing.Exceptions;
@@ -11,21 +12,28 @@ public static class PassthroughTest
         IFileSystem fileSystem,
         DirectoryPath dir,
         TModGetter mod,
-        Action<TModGetter, Stream> serialize,
-        Func<Stream, TModGetter> deserialize)
+        Action<TModGetter, StreamPackage> serialize,
+        Func<StreamPackage, TModGetter> deserialize)
         where TModGetter : IModGetter
     {
-        var filePath = Path.Combine(dir, "Serialized");
+        var filePath = new FilePath(Path.Combine(dir, "Serialized", "SerializedResult"));
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+        Stopwatch sw = new();
         using (var stream = fileSystem.File.Open(filePath, FileMode.Create, FileAccess.Write))
         {
-            serialize(mod, stream);
+            sw.Start();
+            serialize(mod, new StreamPackage(stream, filePath.Directory, fileSystem));
+            sw.Stop();
+            Console.WriteLine($"Serialization took {sw.ElapsedMilliseconds / 1000d}s");
         }
 
         TModGetter mod2;
         using (var stream = fileSystem.File.OpenRead(filePath))
         {
-            mod2 = deserialize(stream);
+            sw.Restart();
+            mod2 = deserialize(new StreamPackage(stream, filePath.Directory, fileSystem));
+            sw.Stop();
+            Console.WriteLine($"Deserialization took {sw.ElapsedMilliseconds / 1000d}s");
         }
         CheckEquality(fileSystem, dir, mod, mod2);
     }
@@ -41,13 +49,14 @@ public static class PassthroughTest
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod1OutFile));
         var mod2OutFile = Path.Combine(dir, "Output");
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(mod2OutFile));
+        var options = new Plugins.Binary.Parameters.BinaryWriteParameters();
         using (var fs = fileSystem.FileStream.Create(mod1OutFile, FileMode.Create, FileAccess.ReadWrite))
         {
-            mod1.WriteToBinaryParallel(fs);
+            mod1.WriteToBinary(fs, options);
         }
         using (var fs = fileSystem.FileStream.Create(mod2OutFile, FileMode.Create, FileAccess.ReadWrite))
         {
-            mod2.WriteToBinaryParallel(fs);
+            mod2.WriteToBinary(fs, options);
         }
 
         using var stream1 = fileSystem.FileStream.Create(mod1OutFile, FileMode.Open);
@@ -57,6 +66,7 @@ public static class PassthroughTest
             stream1,
             mod2OutFile,
             stream2);
+        Console.WriteLine($"Files equal");
     }
 
     public static void AssertFilesEqual(

@@ -35,7 +35,8 @@ public delegate void ReadNamedInto<TKernel, TReaderObject, TObject>(
 
 public interface ISerializationReaderKernel<TReaderObject>
 {
-    public TReaderObject GetNewObject(Stream stream);
+    public string ExpectedExtension { get; }
+    public TReaderObject GetNewObject(StreamPackage stream);
     public bool TryGetNextField(TReaderObject reader, out string name);
     public Type GetNextType(TReaderObject reader, string namespaceString);
     public FormKey ExtractFormKey(TReaderObject reader);
@@ -117,8 +118,9 @@ public delegate void Write<TKernel, TWriterObject, TObject>(
 
 public interface ISerializationWriterKernel<TWriterObject>
 {
-    public TWriterObject GetNewObject(Stream stream);
-    public void Finalize(Stream stream, TWriterObject writer);
+    public string ExpectedExtension { get; }
+    public TWriterObject GetNewObject(StreamPackage stream);
+    public void Finalize(StreamPackage stream, TWriterObject writer);
     public void WriteType(TWriterObject writer, Type type);
     public void WriteChar(TWriterObject writer, string? fieldName, char? item);
     public void WriteBool(TWriterObject writer, string? fieldName, bool? item);

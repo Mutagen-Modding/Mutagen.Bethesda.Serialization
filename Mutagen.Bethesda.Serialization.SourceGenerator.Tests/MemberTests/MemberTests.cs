@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MemberTests;
@@ -351,6 +352,24 @@ public class MemberTests : ATestsBase
     }
     
     [Fact]
+    public Task MajorRecordList()
+    {
+        var source = GetObjWithMember(sb =>
+            {
+                sb.AppendLine("public List<TestMajorRecord> SomeList { get; set; }");
+                sb.AppendLine("public IReadOnlyList<TestMajorRecord> SomeList2 { get; set; }");
+                sb.AppendLine("public ExtendedList<TestMajorRecord> SomeList3 { get; set; }");
+                sb.AppendLine("public TestMajorRecord[] SomeList4 { get; set; }");
+            },
+            sb =>
+            {
+                CustomizeForFolderRecord(sb);
+            });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
     public Task FormLinkList()
     {
         var source = GetObjWithMember(sb =>
@@ -411,6 +430,19 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public IFormLinkNullable<ITestMajorRecordGetter> SomeFormKey4 { get; set; }");
             sb.AppendLine("public IFormLinkGetter<ITestMajorRecordGetter> SomeFormKey5 { get; set; }");
             sb.AppendLine("public IFormLinkNullableGetter<ITestMajorRecordGetter> SomeFormKey6 { get; set; }");
+        });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
+    public Task FormLinkOrIndex()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public FormLinkOrIndex<ITestMajorRecordGetter> SomeFormKey { get; set; }");
+            sb.AppendLine("public IFormLinkOrIndex<ITestMajorRecordGetter> SomeFormKey3 { get; set; }");
+            sb.AppendLine("public IFormLinkOrIndexGetter<ITestMajorRecordGetter> SomeFormKey5 { get; set; }");
         });
        
         return TestHelper.VerifySerialization(source);
@@ -489,6 +521,19 @@ public class MemberTests : ATestsBase
        
         return TestHelper.VerifySerialization(source);
     }
+
+    private void CustomizeForFolderRecord(StructuredStringBuilder sb)
+    {
+        sb.AppendLine("public class Customization : ICustomize");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public void Customize(ICustomizationBuilder builder)");
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder.FolderPerRecord();");
+            }
+        }
+    }
     
     [Fact]
     public Task TypicalGroup()
@@ -537,6 +582,98 @@ public class MemberTests : ATestsBase
                     sb.AppendLine("public IReadOnlyCache<T, int> Items { get; set; }");
                     sb.AppendLine("public int SomeInt2 { get; set; }");
                 }
+            });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
+    public Task ListBlockGroup()
+    {
+        var source = GetModWithMember(
+            sb =>
+            {
+                sb.AppendLine("public ListGroup<CellBlock> SomeGroup { get; set; }");
+                sb.AppendLine("public IListGroup<CellBlock> SomeGroup2 { get; set; }");
+                sb.AppendLine("public IListGroupGetter<CellBlock> SomeGroup3 { get; set; }");
+            },
+            sb =>
+            {
+                sb.AppendLine("public interface IListGroupGetter<T> : ILoquiObjectGetter, IListGroupGetter");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public IReadOnlyList<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+                
+                sb.AppendLine("public interface IListGroup<T> : ILoquiObject, IListGroupGetter<T>");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public IReadOnlyList<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+                
+                sb.AppendLine("public class ListGroup<T> : SomeBaseClass, IListGroup<T>");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine("where T : class, IMajorRecordInternal");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("public int SomeInt { get; set; }");
+                    sb.AppendLine("public IExtendedList<T> Items { get; set; }");
+                    sb.AppendLine("public int SomeInt2 { get; set; }");
+                }
+
+                sb.AppendLine("public interface ICellBlockGetter : ILoquiObjectGetter");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                }
+                
+                sb.AppendLine("public interface ICellBlock : ILoquiObject, ICellBlockGetter");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                }
+                
+                sb.AppendLine("public class CellBlock : ICellBlock");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                    sb.AppendLine("public IExtendedList<SubCellBlock> SubBlocks { get; }");
+                }
+                
+                sb.AppendLine("public interface ISubCellBlockGetter : ILoquiObjectGetter");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                }
+                
+                sb.AppendLine("public interface ISubCellBlock : ILoquiObject, ISubCellBlockGetter");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                }
+                
+                sb.AppendLine("public class SubCellBlock : ISubCellBlock");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; set; }");
+                    sb.AppendLine("public IExtendedList<TestMajorRecord> Records { get; }");
+                }
+
+                CustomizeForFolderRecord(sb);
             });
        
         return TestHelper.VerifySerialization(source);

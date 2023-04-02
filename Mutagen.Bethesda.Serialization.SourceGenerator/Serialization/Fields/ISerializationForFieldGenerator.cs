@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -7,9 +8,15 @@ public interface ISerializationForFieldGenerator
 {
     IEnumerable<string> AssociatedTypes { get; }
 
-    IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel);
+    IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol);
 
-    bool Applicable(ITypeSymbol typeSymbol);
+    bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol);
 
     bool ShouldGenerate(IPropertySymbol propertySymbol);
     

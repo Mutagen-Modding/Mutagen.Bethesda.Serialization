@@ -11,8 +11,9 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
     private readonly TKernel _kernel = new();
     public static readonly MutagenSerializationWriterKernel<TKernel, TWriterObject> Instance = new();
 
-    public TWriterObject GetNewObject(Stream stream) => _kernel.GetNewObject(stream);
-    public void Finalize(Stream stream, TWriterObject writer) => _kernel.Finalize(stream, writer);
+    public string ExpectedExtension => _kernel.ExpectedExtension;
+    public TWriterObject GetNewObject(StreamPackage stream) => _kernel.GetNewObject(stream);
+    public void Finalize(StreamPackage stream, TWriterObject writer) => _kernel.Finalize(stream, writer);
 
     public void WriteType(TWriterObject writer, Type type)
     {

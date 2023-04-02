@@ -37,7 +37,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(fieldType, cancel);
+        var gen = GetGenerator(obj, compilation, fieldType);
         if (gen != null)
         {
             gen.GenerateForSerialize(compilation,
@@ -106,7 +106,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(fieldType, cancel);
+        var gen = GetGenerator(obj, compilation, fieldType);
         if (gen != null)
         {
             gen.GenerateForDeserialize(compilation,
@@ -173,7 +173,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(fieldType, cancel);
+        var gen = GetGenerator(obj, compilation, fieldType);
         if (gen != null)
         {
             gen.GenerateForHasSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, "metaData", sb, cancel);
@@ -207,10 +207,11 @@ public class SerializationFieldGenerator
     }
 
     public ISerializationForFieldGenerator? GetGenerator(
-        ITypeSymbol fieldType,
-        CancellationToken cancel)
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol fieldType)
     {
-        cancel.ThrowIfCancellationRequested();
+        compilation.Context.CancellationToken.ThrowIfCancellationRequested();
         if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
         {
             return gen;
@@ -219,8 +220,8 @@ public class SerializationFieldGenerator
         {
             foreach (var fieldGenerator in _variableFieldGenerators)
             {
-                cancel.ThrowIfCancellationRequested();
-                if (fieldGenerator.Applicable(fieldType))
+                compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+                if (fieldGenerator.Applicable(obj, compilation.Customization.Overall, fieldType))
                 {
                     return fieldGenerator;
                 }

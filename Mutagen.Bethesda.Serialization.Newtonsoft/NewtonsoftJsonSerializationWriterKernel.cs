@@ -6,15 +6,18 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
-public class JsonWritingUnit : IDisposable
+public class JsonWritingUnit : IDisposable, IContainStreamPackage
 {
-    private IDisposable _streamDispose;
+    private readonly IDisposable _streamDispose;
     public JsonTextWriter Writer { get; }
+
+    public StreamPackage StreamPackage { get; }
     
     public JsonWritingUnit(
-        Stream stream)
+        StreamPackage stream)
     {
-        var sw = new StreamWriter(stream, leaveOpen: true);
+        StreamPackage = stream;
+        var sw = new StreamWriter(stream.Stream, leaveOpen: true);
         _streamDispose = sw;
         Writer = new JsonTextWriter(sw)
         {
@@ -39,14 +42,16 @@ public class JsonWritingUnit : IDisposable
 
 public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKernel<JsonWritingUnit>
 {
-    public JsonWritingUnit GetNewObject(Stream stream)
+    public string ExpectedExtension => ".json";
+    
+    public JsonWritingUnit GetNewObject(StreamPackage stream)
     {
         var ret = new JsonWritingUnit(stream);
         ret.Writer.WriteStartObject();
         return ret;
     }
 
-    public void Finalize(Stream stream, JsonWritingUnit writer)
+    public void Finalize(StreamPackage stream, JsonWritingUnit writer)
     {
         writer.Writer.WriteEndObject();
         writer.Dispose();

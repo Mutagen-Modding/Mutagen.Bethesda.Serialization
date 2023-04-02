@@ -7,32 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommandLineParser" />
+        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
         <PackageReference Include="Noggog.CSharpExt" />
         <PackageReference Include="Mutagen.Bethesda.Core" />
-        <PackageReference Include="Mutagen.Bethesda.Testing" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Exceptions\DidNotMatchException.cs">
-        <CodeLanguage>cs</CodeLanguage>
-        <DefaultPackFolder>content</DefaultPackFolder>
-        <BuildAction>Compile</BuildAction>
-      </Compile>
-      <Compile Update="Exceptions\MoreDataException.cs">
-        <CodeLanguage>cs</CodeLanguage>
-        <DefaultPackFolder>content</DefaultPackFolder>
-        <BuildAction>Compile</BuildAction>
-      </Compile>
-      <Compile Update="Exceptions\UnexpectedlyMoreData.cs">
-        <CodeLanguage>cs</CodeLanguage>
-        <DefaultPackFolder>content</DefaultPackFolder>
-        <BuildAction>Compile</BuildAction>
-      </Compile>
-      <Compile Update="ComparisonStream.cs">
-        <CodeLanguage>cs</CodeLanguage>
-        <DefaultPackFolder>content</DefaultPackFolder>
-        <BuildAction>Compile</BuildAction>
-      </Compile>
+		<PackageReference Include="Mutagen.Bethesda.Testing" />
+		<PackageReference Include="Mutagen.Bethesda.Serialization" />
     </ItemGroup>
 
 </Project>

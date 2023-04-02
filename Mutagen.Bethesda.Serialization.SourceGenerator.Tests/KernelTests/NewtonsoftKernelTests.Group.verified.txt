@@ -3,11 +3,11 @@
     "SomeGroupField": true,
     "Records": [
       {
-        "Int": 7,
+        "FormKey": "123456:Skyrim.esm",
         "String": "Hello"
       },
       {
-        "Int": 10,
+        "FormKey": "123457:Skyrim.esm",
         "String": "World"
       }
     ]

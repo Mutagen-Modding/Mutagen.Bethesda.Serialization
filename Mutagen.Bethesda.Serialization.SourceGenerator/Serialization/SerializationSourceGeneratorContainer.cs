@@ -1,5 +1,4 @@
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using StrongInject;
 
@@ -21,11 +20,15 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register<LoquiNameRetriever>]
 [Register<WhereClauseGenerator>]
 [Register<IsGroupTester>]
+[Register<IsMajorRecordTester>]
 [Register<PropertyCollectionRetriever>]
 [Register<ObjectTypeTester>]
 [Register<CustomizationDetector>]
 [Register<CustomizationInterpreter>]
 [Register<CustomizationProvider>]
+[Register<RecordCustomizationDetector>]
+[Register<RecordCustomizationInterpreter>]
+[Register<RecordCustomizationProvider>]
 [Register<CustomizationDriver>]
 [Register<ReleaseRetriever>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -51,9 +54,11 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(P2Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(PercentFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ListFieldGenerator))]
+[Register(typeof(MajorRecordListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(MajorRecordListFieldGenerator))]
 [Register(typeof(ModKeyFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FormKeyFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FormLinkFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(FormLinkOrIndexFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ColorFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ByteArrayFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ByteArrayFieldGenerator))]
 [Register(typeof(RecordTypeFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -63,6 +68,9 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(SliceListGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ArrayFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ArrayFieldGenerator))]
 [Register(typeof(GroupFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(BlocksFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(BlocksXYFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(BlocksXYFieldGenerator))]
+[Register(typeof(BlocksXYSerializationInterceptor), typeof(ISerializationInterceptor))]
 [Register(typeof(CharFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(CacheFieldGenerator), typeof(ISerializationForFieldGenerator))]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
@@ -22,15 +23,18 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         "IGenderedItemGetter",
     };
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Mutagen.Bethesda.Plugins.Records";
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(subType, cancel);
+            .GetGenerator(obj, compilation, subType);
         if (gen != null)
         {
-            foreach (var ns in gen.RequiredNamespaces(subType, cancel))
+            foreach (var ns in gen.RequiredNamespaces(obj, compilation, subType))
             {
                 yield return ns;
             }
@@ -39,7 +43,10 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization,
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;

@@ -6,7 +6,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
 public record Omission(string Name, ExpressionSyntax? Filter);
 
-public record CustomizationCatalog(ITypeSymbol CustomizationClass, LoquiTypeSet Target)
+public record RecordCustomizationSpecifications(ITypeSymbol CustomizationClass, LoquiTypeSet Target)
 {
     public Dictionary<string, Omission> ToOmit = new();
 }

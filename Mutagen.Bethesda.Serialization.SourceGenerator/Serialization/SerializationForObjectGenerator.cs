@@ -1,16 +1,14 @@
-using System.Collections.Immutable;
 using System.Text;
-using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
-
 
 public class SerializationForObjectGenerator
 {
@@ -22,6 +20,7 @@ public class SerializationForObjectGenerator
     private readonly CustomizationDriver _customizationDriver;
     private readonly ObjectTypeTester _modObjectTypeTester;
     private readonly ReleaseRetriever _releaseRetriever;
+    private readonly ISerializationInterceptor[] _serializationInterceptors;
 
     public SerializationForObjectGenerator(
         LoquiNameRetriever nameRetriever,
@@ -31,7 +30,8 @@ public class SerializationForObjectGenerator
         PropertyCollectionRetriever propertyCollectionRetriever, 
         CustomizationDriver customizationDriver,
         ObjectTypeTester modObjectTypeTester,
-        ReleaseRetriever releaseRetriever)
+        ReleaseRetriever releaseRetriever,
+        ISerializationInterceptor[] serializationInterceptors)
     {
         _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
@@ -41,15 +41,14 @@ public class SerializationForObjectGenerator
         _customizationDriver = customizationDriver;
         _modObjectTypeTester = modObjectTypeTester;
         _releaseRetriever = releaseRetriever;
+        _serializationInterceptors = serializationInterceptors;
     }
     
     public void Generate(
         CompilationUnit compilation, 
-        CustomizationCatalog? customizationDriver,
-        SourceProductionContext context,
         LoquiTypeSet typeSet)
     {
-        context.CancellationToken.ThrowIfCancellationRequested();
+        compilation.Context.CancellationToken.ThrowIfCancellationRequested();
         
         var baseType = compilation.Mapping.TryGetBaseClass(typeSet);
         var inheriting = compilation.Mapping.TryGetDeepInheritingClasses(typeSet);
@@ -57,10 +56,10 @@ public class SerializationForObjectGenerator
         var sb = new StructuredStringBuilder();
         
         var properties = _propertyCollectionRetriever.GetPropertyCollection(
-            context,
+            compilation,
             typeSet);
         
-        GenerateUsings(context, typeSet.Setter, sb, properties);
+        GenerateUsings(compilation, typeSet, sb, properties);
 
         using (sb.Namespace(typeSet.Setter.ContainingNamespace.ToString()))
         {
@@ -83,38 +82,42 @@ public class SerializationForObjectGenerator
         {
             if (inheriting.Count > 0)
             {
-                GenerateSerializeWithCheck(compilation, context, typeSet, sb, gens, inheriting);
+                GenerateSerializeWithCheck(compilation, typeSet, sb, gens, inheriting);
             }
             
-            GenerateSerialize(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
+            GenerateSerialize(compilation, typeSet, sb, baseType, properties, gens);
+            
+            GenerateSerializeFields(compilation, typeSet, sb, baseType, properties, gens);
             
             if (inheriting.Count > 0)
             {
-                GenerateHasSerializationItemsWithCheck(compilation, context, typeSet, sb, gens, inheriting);
+                GenerateHasSerializationItemsWithCheck(compilation, typeSet, sb, gens, inheriting);
             }
             
-            GenerateHasSerializationItems(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
+            GenerateHasSerializationItems(compilation, typeSet, sb, baseType, properties, gens);
             
             if (inheriting.Count > 0)
             {
-                GenerateDeserializeWithCheck(compilation, context, typeSet, sb, gens, inheriting);
+                GenerateDeserializeWithCheck(compilation, typeSet, sb, gens, inheriting);
             }
 
             if (isConcrete && !isGroup)
             {
-                GenerateDeserialize(typeSet, sb, gens);
+                GenerateDeserialize(compilation, typeSet, sb, properties, gens);
             }
             
-            GenerateDeserializeInto(compilation, context, typeSet, sb, baseType, properties, customizationDriver, gens);
+            GenerateDeserializeInto(compilation, typeSet, sb, baseType, properties, gens);
         }
         sb.AppendLine();
         
-        context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
+        compilation.Context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
     private void GenerateDeserialize(
+        CompilationUnit compilation,
         LoquiTypeSet typeSet,
         StructuredStringBuilder sb,
+        PropertyCollection properties,
         SerializationGenerics generics)
     {
         if (typeSet.Direct == null) return;
@@ -137,6 +140,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add("SerializationMetaData metaData");
             }
+            args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
         using (sb.CurlyBrace())
@@ -175,25 +179,24 @@ public class SerializationForObjectGenerator
 
     private void GenerateDeserializeInto(
         CompilationUnit compilation,
-        SourceProductionContext context,
-        LoquiTypeSet typeSet,
+        LoquiTypeSet obj,
         StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
-        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
         var genString = generics.ReaderGenericsString();
-        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
+        var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
         using (var args = sb.Function($"public static void DeserializeInto{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            args.Add($"{typeSet.Setter} obj");
+            args.Add($"{obj.Setter} obj");
             if (!isMod)
             {
                 args.Add("SerializationMetaData metaData");
             }
+            args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
 
@@ -204,19 +207,11 @@ public class SerializationForObjectGenerator
                 GenerateMetaConstruction(sb, "obj");
             }
 
-            sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
-            using (sb.CurlyBrace())
-            {
-                using (var c = sb.Call("DeserializeSingleFieldInto"))
-                {
-                    c.AddPassArg("reader");
-                    c.AddPassArg("kernel");
-                    c.AddPassArg("obj");
-                    c.AddPassArg("metaData");
-                    c.AddPassArg("name");
-                }
-            }
-            sb.AppendLine();
+            _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
+
+            GenerateDeserializeCall(compilation, obj, sb, baseType, properties, generics);
+
+            _customizationDriver.SerializationPostWork(obj, compilation, sb, properties);
         }
         sb.AppendLine();
         
@@ -224,9 +219,14 @@ public class SerializationForObjectGenerator
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            args.Add($"{typeSet.Setter} obj");
+            args.Add($"{obj.Setter} obj");
             args.Add("SerializationMetaData metaData");
             args.Add("string name");
+            if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
+            {
+                args.Add("List<Action> parallelToDo");
+            }
+            args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
         using (sb.CurlyBrace())
@@ -236,15 +236,15 @@ public class SerializationForObjectGenerator
             {
                 foreach (var prop in properties.InOrder)
                 {
-                    context.CancellationToken.ThrowIfCancellationRequested();
-                    _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                    compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+                    _customizationDriver.WrapOmission(compilation, sb, prop, () =>
                     {
                         sb.AppendLine($"case \"{prop.Property.Name}\":");
                         using (sb.IncreaseDepth())
                         {
                             _forFieldGenerator.GenerateDeserializeForField(
                                 compilation: compilation,
-                                obj: typeSet,
+                                obj: obj,
                                 fieldType: prop.Property.Type,
                                 readerAccessor: "reader",
                                 fieldName: prop.Property.Name,
@@ -252,7 +252,7 @@ public class SerializationForObjectGenerator
                                 canSet: prop.Property.IsSettable(),
                                 prop.Generator,
                                 sb: sb,
-                                cancel: context.CancellationToken);
+                                cancel: compilation.Context.CancellationToken);
                             sb.AppendLine("break;");
                         }
                     });
@@ -274,16 +274,71 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
+    private void GenerateDeserializeCall(
+        CompilationUnit compilation, 
+        LoquiTypeSet obj,
+        StructuredStringBuilder sb,
+        ITypeSymbol? baseType,
+        PropertyCollection properties,
+        SerializationGenerics generics)
+    {
+        foreach (var interceptor in _serializationInterceptors)
+        {
+            if (interceptor.Applicable(compilation, obj))
+            {
+                interceptor.GenerateDeserialize(
+                    compilation,
+                    obj,
+                    sb,
+                    baseType,
+                    properties,
+                    generics);
+                return;
+            }
+        }
+
+        sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
+        using (sb.CurlyBrace())
+        {
+            using (var c = sb.Call("DeserializeSingleFieldInto"))
+            {
+                c.AddPassArg("reader");
+                c.AddPassArg("kernel");
+                c.AddPassArg("obj");
+                c.AddPassArg("metaData");
+                c.AddPassArg("name");
+                if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
+                {
+                    c.AddPassArg("parallelToDo");
+                }
+            }
+        }            
+        sb.AppendLine();
+    }
+
     private void GenerateSerialize(
         CompilationUnit compilation,
-        SourceProductionContext context,
         LoquiTypeSet typeSet,
         StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
-        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
+        foreach (var interceptor in _serializationInterceptors)
+        {
+            if (interceptor.Applicable(compilation, typeSet))
+            {
+                interceptor.GenerateSerialize(
+                    compilation,
+                    typeSet,
+                    sb,
+                    baseType,
+                    properties,
+                    generics);
+                return;
+            }
+        }
+        
         var genString = generics.WriterGenericsString(forHas: false);
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Setter);
         using (var args = sb.Function($"public static void Serialize{genString}"))
@@ -296,15 +351,46 @@ public class SerializationForObjectGenerator
                 args.Add("SerializationMetaData metaData");
             }
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
+            args.Wheres.Add("where TWriteObject : IContainStreamPackage");
         }
-
         using (sb.CurlyBrace())
         {
             if (isMod)
             {
                 sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
             }
-            
+
+            using (var args = sb.Call($"SerializeFields{genString}"))
+            {
+                args.AddPassArg($"writer");
+                args.AddPassArg($"item");
+                args.AddPassArg($"kernel");
+                args.AddPassArg($"metaData");
+            }
+        }
+        sb.AppendLine();
+    }
+
+    private void GenerateSerializeFields(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
+        StructuredStringBuilder sb,
+        ITypeSymbol? baseType,
+        PropertyCollection properties,
+        SerializationGenerics generics)
+    {
+        var genString = generics.WriterGenericsString(forHas: false);
+        using (var args = sb.Function($"public static void SerializeFields{genString}"))
+        {
+            args.Add($"TWriteObject writer");
+            args.Add($"{obj.Getter} item");
+            args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
+            args.Add("SerializationMetaData metaData");
+            args.Wheres.AddRange(generics.WriterWheres(forHas: false));
+            args.Wheres.Add("where TWriteObject : IContainStreamPackage");
+        }
+        using (sb.CurlyBrace())
+        {
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
@@ -312,14 +398,16 @@ public class SerializationForObjectGenerator
                     $"{baseSerializationItems.SerializationCall()}{genString}(writer, item, kernel, metaData);");
             }
 
+            _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
+            
             foreach (var prop in properties.InOrder)
             {
-                context.CancellationToken.ThrowIfCancellationRequested();
-                _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+                _customizationDriver.WrapOmission(compilation, sb, prop, () =>
                 {
                     _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
-                        obj: typeSet,
+                        obj: obj,
                         fieldType: prop.Property.Type,
                         writerAccessor: "writer",
                         fieldName: prop.Property.Name,
@@ -327,26 +415,27 @@ public class SerializationForObjectGenerator
                         defaultValueAccessor: prop.DefaultString,
                         prop.Generator,
                         sb: sb,
-                        cancel: context.CancellationToken);
+                        cancel: compilation.Context.CancellationToken);
                 });
             }
+
+            _customizationDriver.SerializationPostWork(obj, compilation, sb, properties);
         }
         sb.AppendLine();
     }
 
-    private void GenerateHasSerializationItems(CompilationUnit compilation,
-        SourceProductionContext context,
-        LoquiTypeSet typeSet,
+    private void GenerateHasSerializationItems(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
         StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
-        CustomizationCatalog? customizationCatalog,
         SerializationGenerics generics)
     {
-        var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
+        var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
         using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
         {
-            args.Add($"{typeSet.Getter}? item");
+            args.Add($"{obj.Getter}? item");
             if (!isMod)
             {
                 args.Add("SerializationMetaData metaData");
@@ -370,7 +459,7 @@ public class SerializationForObjectGenerator
 
             var hasInvariable = properties.InOrder.Any(x =>
             {
-                var gen = _forFieldGenerator.GetGenerator(x.Property.Type, context.CancellationToken);
+                var gen = _forFieldGenerator.GetGenerator(obj, compilation, x.Property.Type);
                 return !gen?.HasVariableHasSerialize ?? true;
             });
 
@@ -382,19 +471,19 @@ public class SerializationForObjectGenerator
             {
                 foreach (var prop in properties.InOrder)
                 {
-                    context.CancellationToken.ThrowIfCancellationRequested();
-                    _customizationDriver.WrapOmission(customizationCatalog, sb, prop, () =>
+                    compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+                    _customizationDriver.WrapOmission(compilation, sb, prop, () =>
                     {
                         _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,
-                            obj: typeSet, 
+                            obj: obj, 
                             fieldType: prop.Property.Type,
                             fieldName: prop.Property.Name, 
                             fieldAccessor: $"item.{prop.Property.Name}", 
                             defaultValueAccessor: prop.DefaultString,
                             prop.Generator,
                             sb: sb, 
-                            cancel: context.CancellationToken);
+                            cancel: compilation.Context.CancellationToken);
                     });
                 }
             
@@ -404,8 +493,8 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
     }
 
-    private void GenerateHasSerializationItemsWithCheck(CompilationUnit compilation,
-        SourceProductionContext context,
+    private void GenerateHasSerializationItemsWithCheck(
+        CompilationUnit compilation,
         LoquiTypeSet typeSet,
         StructuredStringBuilder sb,
         SerializationGenerics generics,
@@ -476,7 +565,6 @@ public class SerializationForObjectGenerator
 
     private void GenerateSerializeWithCheck(
         CompilationUnit compilation,
-        SourceProductionContext context, 
         LoquiTypeSet typeSet,
         StructuredStringBuilder sb, 
         SerializationGenerics generics,
@@ -493,8 +581,8 @@ public class SerializationForObjectGenerator
                 args.Add("SerializationMetaData metaData");
             }
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
+            args.Wheres.Add("where TWriteObject : IContainStreamPackage");
         }
-
         using (sb.CurlyBrace())
         {
             if (isMod)
@@ -509,7 +597,7 @@ public class SerializationForObjectGenerator
                              .Select(x => x.Getter)
                              .OrderBy(x => x.Name))
                 {
-                    context.CancellationToken.ThrowIfCancellationRequested();
+                    compilation.Context.CancellationToken.ThrowIfCancellationRequested();
                     var names = _nameRetriever.GetNames(inherit);
                     if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
                         continue;
@@ -549,7 +637,6 @@ public class SerializationForObjectGenerator
 
     private void GenerateDeserializeWithCheck(
         CompilationUnit compilation,
-        SourceProductionContext context, 
         LoquiTypeSet typeSet,
         StructuredStringBuilder sb, 
         SerializationGenerics generics,
@@ -564,15 +651,9 @@ public class SerializationForObjectGenerator
             {
                 args.Add("SerializationMetaData metaData");
             }
+            args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
-
-        if (typeSet.Getter.Name.Contains("IPlaced"))
-        {
-            int wer = 23;
-            wer++;
-        }
-
         using (sb.CurlyBrace())
         {
             sb.AppendLine($"var type = kernel.GetNextType(reader, \"{typeSet.Getter.ContainingNamespace}\");");
@@ -583,7 +664,7 @@ public class SerializationForObjectGenerator
                              .Select(x => x.Getter)
                              .OrderBy(x => x.Name))
                 {
-                    context.CancellationToken.ThrowIfCancellationRequested();
+                    compilation.Context.CancellationToken.ThrowIfCancellationRequested();
                     var names = _nameRetriever.GetNames(inherit);
                     if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
                         continue;
@@ -618,18 +699,19 @@ public class SerializationForObjectGenerator
     }
 
     private static void GenerateUsings(
-        SourceProductionContext context,
-        ITypeSymbol obj,
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
         StructuredStringBuilder sb,
         PropertyCollection propertyDict)
     {
          sb.AppendLines(propertyDict.InOrder
             .SelectMany(x =>
-                x.Generator?.RequiredNamespaces(x.Property.Type, context.CancellationToken) ?? Enumerable.Empty<string>())
+                x.Generator?.RequiredNamespaces(obj, compilation, x.Property.Type) ?? Enumerable.Empty<string>())
             .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
             .And("Loqui")
-            .And(obj.ContainingNamespace.ToString())
+            .And("Noggog")
+            .And(obj.Setter.ContainingNamespace.ToString())
             .Distinct()
             .OrderBy(x => x)
             .Select(x => $"using {x};"));

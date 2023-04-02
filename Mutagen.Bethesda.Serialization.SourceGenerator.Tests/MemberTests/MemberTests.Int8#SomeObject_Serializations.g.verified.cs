@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Noggog;
 
 #nullable enable
 
@@ -16,6 +17,22 @@ internal static class SomeObject_Serialization
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
+    {
+        SerializeFields<TKernel, TWriteObject>(
+            writer: writer,
+            item: item,
+            kernel: kernel,
+            metaData: metaData);
+    }
+
+    public static void SerializeFields<TKernel, TWriteObject>(
+        TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
     {
         kernel.WriteInt8(writer, "SomeMember0", item.SomeMember0, default(sbyte));
         kernel.WriteInt8(writer, "SomeMember1", item.SomeMember1, default(SByte));
@@ -67,6 +84,7 @@ internal static class SomeObject_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
         DeserializeInto<TReadObject>(
@@ -82,6 +100,7 @@ internal static class SomeObject_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
         SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
@@ -101,6 +120,7 @@ internal static class SomeObject_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
         SerializationMetaData metaData,
         string name)
+        where TReadObject : IContainStreamPackage
     {
         switch (name)
         {

@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -26,11 +27,17 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         "IMajorRecordInternal"
     };
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol) => Enumerable.Empty<string>();
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (_groupTester.IsGroup(typeSymbol)) return false;
         if (_isLoquiObjectTester.IsLoqui(typeSymbol)) return true;

@@ -1,0 +1,5 @@
+﻿{
+  "FormKey": "000800:modKey.esp",
+  "EditorID": "MyWorldspace",
+  "SubCellsTimestamp": 123
+}

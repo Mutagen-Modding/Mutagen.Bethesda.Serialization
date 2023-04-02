@@ -16,6 +16,7 @@ public abstract class ATestsBase
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using Mutagen.Bethesda.Serialization.Newtonsoft;");
         sb.AppendLine("using Mutagen.Bethesda.Plugins.Records;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
         sb.AppendLine();
         
         using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
@@ -28,11 +29,17 @@ public abstract class ATestsBase
             memberBuilder(sb);
         }
         
+        sb.AppendLine("public partial interface ITestMod : ITestModGetter");
+        using (sb.CurlyBrace())
+        {
+            memberBuilder(sb);
+        }
+        
         using (var c = sb.Class("TestMod"))
         {
             c.Partial = true;
             c.BaseClass = "AMod";
-            c.Interfaces.Add("ITestModGetter");
+            c.Interfaces.Add("ITestMod");
         }
 
         using (sb.CurlyBrace())
@@ -65,7 +72,8 @@ public abstract class ATestsBase
         StructuredStringBuilder sb,
         Action<StructuredStringBuilder> memberBuilder,
         Action<StructuredStringBuilder>? namespaceBuilder = null,
-        Action<StructuredStringBuilder>? outsideBuilder = null)
+        Action<StructuredStringBuilder>? outsideBuilder = null,
+        string objName = "SomeObject")
     {
         sb.AppendLine("using Noggog;");
         sb.AppendLine("using Loqui;");
@@ -79,19 +87,19 @@ public abstract class ATestsBase
         
         outsideBuilder?.Invoke(sb);
         
-        sb.AppendLine("public partial interface ISomeObject : ISomeObjectGetter");
+        sb.AppendLine($"public partial interface I{objName} : I{objName}Getter");
         using (sb.CurlyBrace())
         {
             memberBuilder(sb);
         }
         
-        sb.AppendLine("public partial interface ISomeObjectGetter : ILoquiObject");
+        sb.AppendLine($"public partial interface I{objName}Getter : ILoquiObject");
         using (sb.CurlyBrace())
         {
             memberBuilder(sb);
         }
         
-        using (var c = sb.Class("SomeObject_Registration"))
+        using (var c = sb.Class($"{objName}_Registration"))
         {
             c.Partial = true;
             c.BaseClass = "ARegistration";
@@ -99,21 +107,21 @@ public abstract class ATestsBase
         using (sb.CurlyBrace())
         {
             sb.AppendLine("public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 15, 0);");
-            sb.AppendLine("public override Type ClassType => typeof(SomeObject);");
-            sb.AppendLine("public override Type GetterType => typeof(ISomeObjectGetter);");
-            sb.AppendLine("public override Type SetterType => typeof(ISomeObject);");
-            sb.AppendLine("public override string Name => nameof(SomeObject);");
+            sb.AppendLine($"public override Type ClassType => typeof({objName});");
+            sb.AppendLine($"public override Type GetterType => typeof(I{objName}Getter);");
+            sb.AppendLine($"public override Type SetterType => typeof(I{objName});");
+            sb.AppendLine($"public override string Name => nameof({objName});");
         }
 
-        using (var c = sb.Class("SomeObject"))
+        using (var c = sb.Class(objName))
         {
             c.Partial = true;
-            c.Interfaces.Add("ISomeObject");
+            c.Interfaces.Add($"I{objName}");
         }
         using (sb.CurlyBrace())
         {
             memberBuilder(sb);
-            sb.AppendLine($"public ILoquiRegistration Registration {{ get; }} = new SomeObject_Registration();");
+            sb.AppendLine($"public ILoquiRegistration Registration {{ get; }} = new {objName}_Registration();");
             sb.AppendLine();
             using (var f = sb.Function("public void SomeFunction"))
             {
@@ -121,7 +129,7 @@ public abstract class ATestsBase
 
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"var theObj = new SomeObject();");
+                sb.AppendLine($"var theObj = new {objName}();");
                 sb.AppendLine("MutagenTestConverter.Instance.Convert(theObj);");
             }
         }
@@ -129,4 +137,15 @@ public abstract class ATestsBase
         return sb.ToString();
     }
 
+    protected void GenerateGroup(StructuredStringBuilder sb)
+    {
+        using (var c = sb.Class("Group<T>"))
+        {
+            c.Interfaces.Add("IGroup<T>");
+            c.Interfaces.Add("IGroupGetter<T>");
+        }
+        using (sb.CurlyBrace())
+        {}
+        
+    }
 }

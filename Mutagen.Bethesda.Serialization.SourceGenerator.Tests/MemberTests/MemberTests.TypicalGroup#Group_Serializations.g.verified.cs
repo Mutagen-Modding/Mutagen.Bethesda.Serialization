@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Noggog;
 
 #nullable enable
 
@@ -17,6 +18,23 @@ internal static class Group_Serialization
         SerializationMetaData metaData)
         where T : class, IMajorRecordInternal
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
+    {
+        SerializeFields<TKernel, TWriteObject, T>(
+            writer: writer,
+            item: item,
+            kernel: kernel,
+            metaData: metaData);
+    }
+
+    public static void SerializeFields<TKernel, TWriteObject, T>(
+        TWriteObject writer,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroupGetter<T> item,
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        SerializationMetaData metaData)
+        where T : class, IMajorRecordInternal
+        where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        where TWriteObject : IContainStreamPackage
     {
         kernel.WriteInt32(writer, "SomeInt", item.SomeInt, default(int));
         kernel.WriteInt32(writer, "SomeInt2", item.SomeInt2, default(int));
@@ -36,6 +54,7 @@ internal static class Group_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroup<T> obj,
         SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
         where T : class, IMajorRecordInternal
     {
         while (kernel.TryGetNextField(reader, out var name))
@@ -56,6 +75,7 @@ internal static class Group_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IGroup<T> obj,
         SerializationMetaData metaData,
         string name)
+        where TReadObject : IContainStreamPackage
         where T : class, IMajorRecordInternal
     {
         switch (name)

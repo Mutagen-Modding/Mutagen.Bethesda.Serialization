@@ -202,7 +202,7 @@ public abstract class ASerializationTests
             fileSystem,
             tmp.Dir,
             skyrimMod,
-            Serialize,
-            Deserialize);
+            (m, s) => Serialize(m, s.Stream),
+            (s) => Deserialize(s.Stream));
     }
 }

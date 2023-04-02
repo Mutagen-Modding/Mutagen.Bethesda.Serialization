@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using VerifyTests;
+using Noggog.Verify.FileAbstractions;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
@@ -9,6 +9,7 @@ public static class ModuleInitializer
     public static void Init()
     {
         VerifySourceGenerators.Enable();
+        VerifyFileAbstractions.Enable();
         VerifyDiffPlex.Initialize();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
@@ -39,15 +40,21 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         throw new NotImplementedException();
     }
     
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         var subType = GetSubtype(typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(subType, cancel);
-        return gen?.RequiredNamespaces(subType, cancel) ?? Enumerable.Empty<string>();
+            .GetGenerator(obj, compilation, subType);
+        return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
     }
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {

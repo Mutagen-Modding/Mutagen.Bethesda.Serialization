@@ -13,7 +13,10 @@ public class FormKeyFieldGenerator : PrimitiveFieldGenerator
 
     public override bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
-    public override IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public override IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Mutagen.Bethesda.Plugins";
     }

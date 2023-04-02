@@ -136,6 +136,43 @@ public class SerializationTests
     }
     
     [Fact]
+    public async Task SkyrimModFolderPerRecordGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Skyrim;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptySkyrimMod()
+    { 
+        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var stream = new MemoryStream();
+        MutagenTestConverter.Instance.Serialize(mod, stream);
+    }
+}
+
+public class Customization : ICustomize
+{
+    public void Customize(ICustomizationBuilder builder)
+    {
+        builder.FolderPerRecord();
+    }
+}";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
+    
+    [Fact]
     public async Task SkyrimModInterfaceGenerationBootstrapper()
     {
         var source = @"

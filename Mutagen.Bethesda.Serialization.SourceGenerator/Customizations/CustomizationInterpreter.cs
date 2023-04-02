@@ -1,35 +1,24 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
 public class CustomizationInterpreter
 {
-    public IncrementalValuesProvider<CustomizationCatalog> Interpret(
-        IncrementalValuesProvider<CustomizeMethodDeclaration> customizationDeclarations,
-        IncrementalValueProvider<LoquiMapping> mappings)
+    public IncrementalValueProvider<CustomizationSpecifications> Interpret(
+        IncrementalValueProvider<CustomizeMethodDeclaration?> customizationDeclarations)
     {
         return customizationDeclarations
-            .Combine(mappings)
-            .Select((x, c) => InterpretDriver(x.Left, x.Right, c))
-            .NotNull();
+            .Select(InterpretDriver);
     }
-
-    private CustomizationCatalog? InterpretDriver(
-        CustomizeMethodDeclaration decl,
-        LoquiMapping mapping,
+    
+    private CustomizationSpecifications InterpretDriver(
+        CustomizeMethodDeclaration? decl,
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        if (!mapping.TryGetTypeSet(decl.Target, out var typeSet))
-        {
-            // ToDo
-            // Add error
-            return default;
-        }
-        var driver = new CustomizationCatalog(decl.ContainingClass, typeSet);
+        if (decl == null) return new CustomizationSpecifications(null);
+        var driver = new CustomizationSpecifications(decl.ContainingClass);
         foreach (var invoke in decl.MethodSyntax.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
             cancel.ThrowIfCancellationRequested();
@@ -44,43 +33,25 @@ public class CustomizationInterpreter
     }
 
     private bool AddCustomization(
-        CustomizationCatalog catalog,
+        CustomizationSpecifications specifications,
         InvocationExpressionSyntax invoke)
     {
         if (invoke.Expression is not MemberAccessExpressionSyntax member) return false;
         switch (member.Name.ToString())
         {
-            case "Omit" when invoke.ArgumentList.Arguments.Count is 1 or 2:
-                return HandleOmit(catalog, invoke, member);
+            case "FolderPerRecord" when invoke.ArgumentList.Arguments.Count is 0:
+                return HandleFolderPerRecord(specifications, invoke, member);
             default:
                 return false;
         }
     }
 
-    private bool HandleOmit(
-        CustomizationCatalog catalog,
+    private bool HandleFolderPerRecord(
+        CustomizationSpecifications specifications,
         InvocationExpressionSyntax invoke,
         MemberAccessExpressionSyntax memberAccess)
     {
-        if (invoke.ArgumentList.Arguments.Count is not 1 
-            // ToDo
-            // Implement filters
-            // and not 2
-            )
-        {
-            return false;
-        }
-        var arg = invoke.ArgumentList.Arguments[0];
-        if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
-        if (simpleLambda.ExpressionBody is not MemberAccessExpressionSyntax memberAccessExpressionSyntax) return false;
-        ExpressionSyntax? filter = null;
-        if (invoke.ArgumentList.Arguments.Count == 2
-            && invoke.ArgumentList.Arguments[1].Expression is { } arg2Syntax)
-        {
-            filter = arg2Syntax;
-        }
-        var name = memberAccessExpressionSyntax.Name.ToString();
-        catalog.ToOmit[name] = new Omission(name, filter);
+        specifications.FolderPerRecord = true;
         return true;
     }
 }

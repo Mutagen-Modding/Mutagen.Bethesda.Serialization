@@ -17,6 +17,7 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPackable>true</IsPackable>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 
 	<ItemGroup>

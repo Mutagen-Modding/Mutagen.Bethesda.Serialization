@@ -42,12 +42,12 @@ public class PropertyCollectionRetriever
     }
 
     public PropertyCollection GetPropertyCollection(
-        SourceProductionContext context, 
+        CompilationUnit compilation, 
         LoquiTypeSet obj)
     {
         var ret = new PropertyCollection();
         
-        FillMembers(context, obj, ret);
+        FillMembers(compilation, obj, ret);
 
         FillDefaults(obj, ret);
         
@@ -55,15 +55,15 @@ public class PropertyCollectionRetriever
     }
     
     private void FillMembers(
-        SourceProductionContext context, 
+        CompilationUnit compilation, 
         LoquiTypeSet obj,
         PropertyCollection collection)
     {
         foreach (var prop in obj.Setter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
         {
-            context.CancellationToken.ThrowIfCancellationRequested();
-            var gen = _forFieldGenerator.GetGenerator(prop.Type, context.CancellationToken);
-            if (_propertyFilter.Skip(obj, prop, gen)) continue;
+            compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+            var gen = _forFieldGenerator.GetGenerator(obj, compilation, prop.Type);
+            if (_propertyFilter.Skip(obj, compilation, prop, gen)) continue;
             var meta = new PropertyMetadata(prop, gen);
             collection.Register(meta);
         }

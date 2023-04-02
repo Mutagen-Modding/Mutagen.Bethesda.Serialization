@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
 using Loqui;
 using Microsoft.CodeAnalysis;
@@ -9,6 +10,8 @@ using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.StructuredStrings;
+using Noggog.StructuredStrings.CSharp;
 using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
@@ -68,6 +71,11 @@ public static class TestHelper
     public static Task VerifyString(string str, [CallerFilePath] string sourceFile = "")
     {
         return Verifier.Verify(str, GetVerifySettings(), sourceFile);
+    }
+
+    public static Task VerifyFileSystem(IFileSystem fileSystem)
+    {
+        return Verifier.Verify(fileSystem, GetVerifySettings());
     }
 
     public static GeneratorDriverRunResult RunSourceGenerator(string source)

@@ -2,47 +2,65 @@
   <ItemGroup>
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="GitInfo">
-      <Version>2.3.0</Version>
+      <Version>3.0.4</Version>
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Loqui">
-      <Version>2.55</Version>
+      <Version>2.56</Version>
     </PackageVersion>
-    <PackageVersion Include="Loqui.Generation" Version="2.54" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.41-pr001" />
-    <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.41-pr001" />
-    <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.41-pr001" />
+    <PackageVersion Include="Loqui.Generation">
+      <Version>2.56</Version>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
+      <Version>3.3.4</Version>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp">
+      <Version>4.5.0</Version>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="Mutagen.Bethesda.Core">
+      <Version>0.41.0.1-dev</Version>
+    </PackageVersion>
+    <PackageVersion Include="Mutagen.Bethesda.Skyrim">
+      <Version>0.41.0.1-dev</Version>
+    </PackageVersion>
+    <PackageVersion Include="Mutagen.Bethesda.Testing">
+      <Version>0.41.0.1-dev</Version>
+    </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-dev" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-dev" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="0.0.0.1-dev" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="0.0.0.1-dev" />
     <PackageVersion Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
+      <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>2.55</Version>
+      <Version>2.56</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>2.55</Version>
+      <Version>2.56</Version>
     </PackageVersion>
-    <PackageVersion Include="NuGetizer" Version="0.9.1" />
+    <PackageVersion Include="NuGetizer" Version="0.9.5" />
     <PackageVersion Include="StrongInject" Version="1.4.4" />
+    <PackageVersion Include="System.IO.Abstractions">
+      <Version>19.2.1</Version>
+    </PackageVersion>
+    <PackageVersion Include="Verify">
+      <Version>19.11.1</Version>
+    </PackageVersion>
     <PackageVersion Include="Verify.DiffPlex">
-      <Version>2.0.1</Version>
+      <Version>2.2.0</Version>
     </PackageVersion>
     <PackageVersion Include="Verify.SourceGenerators">
-      <Version>2.0.1</Version>
+      <Version>2.1.0</Version>
     </PackageVersion>
     <PackageVersion Include="Verify.Xunit">
-      <Version>19.5.0</Version>
+      <Version>19.11.1</Version>
     </PackageVersion>
     <PackageVersion Include="xunit" Version="2.4.2" />
     <PackageVersion Include="YamlDotNet">
-      <Version>12.3.1</Version>
+      <Version>13.0.2</Version>
     </PackageVersion>
     <PackageVersion Include="xunit.runner.console" Version="2.4.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />

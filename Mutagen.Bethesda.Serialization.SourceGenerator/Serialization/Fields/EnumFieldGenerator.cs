@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -8,12 +9,18 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
 {
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         return Enumerable.Empty<string>();
     }
 
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization,
+        ITypeSymbol typeSymbol)
     {
         typeSymbol = typeSymbol.PeelNullable();
         return typeSymbol.TypeKind == TypeKind.Enum

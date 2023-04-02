@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 public class IsGroupTester
 {

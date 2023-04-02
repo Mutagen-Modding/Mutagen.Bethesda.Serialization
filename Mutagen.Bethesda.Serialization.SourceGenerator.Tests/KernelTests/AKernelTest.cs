@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO.Abstractions;
 using System.Text;
 using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
@@ -6,21 +7,26 @@ using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
 using Noggog;
+using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 
 public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader>
     where TWriterKernel : ISerializationWriterKernel<TWriter>, new()
     where TReaderKernel : ISerializationReaderKernel<TReader>, new()
+    where TWriter : IContainStreamPackage
 {
+    protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem);
+    
     private async Task<string> GetResults(
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter> toDo)
     {
         var kernel = MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance;
-        var memStream = new MemoryStream();
-        var writerObj = kernel.GetNewObject(memStream);
+        using var memStream = new MemoryStream();
+        var stream = GetStreamPackage(memStream);
+        var writerObj = kernel.GetNewObject(stream);
         toDo(kernel, writerObj);
-        kernel.Finalize(memStream, writerObj);
+        kernel.Finalize(stream, writerObj);
         if (writerObj is IDisposable disp) disp.Dispose();
         memStream.Position = 0;
         StreamReader reader = new StreamReader(memStream);
@@ -34,7 +40,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         Func<TReaderKernel, TReader, T> toDo)
     {
         var kernel = new TReaderKernel();
-        var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        var readerObj = kernel.GetNewObject(stream);
         T obj = default;
         bool found = false;
         while (kernel.TryGetNextField(readerObj, out var name))
@@ -93,7 +100,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         params IReadResults[] results)
     {
         var kernel = new TReaderKernel();
-        var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        using var mem = new MemoryStream(Encoding.UTF8.GetBytes(str));
+        var stream = GetStreamPackage(mem);
+        var readerObj = kernel.GetNewObject(stream);
         using var disp = readerObj as IDisposable;
         var dict = results.ToDictionary(x => x.Name, x => x);
         while (kernel.TryGetNextField(readerObj, out var name))
@@ -370,7 +379,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var str = await GetResults((k, w) => { k.WriteFormKey(w, "FormKey", fk, default); });
 
         var kernel = new TReaderKernel();
-        var readerObj = kernel.GetNewObject(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+        var readerObj = kernel.GetNewObject(stream);
         kernel.ExtractFormKey(readerObj)
             .Should().Be(fk);
     }
@@ -780,27 +790,496 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new ReadOnlyMemorySlice<byte>(Array.Empty<byte>()),
             new ReadOnlyMemorySlice<byte>(new byte[] { 1, 2, 3, 4, 5, 254, 255 }));
     }
-
+    
     [Fact]
     public async Task Group()
     {
+        var objs = new TestGroup()
+        {
+            SomeGroupField = true,
+        };
+        objs.Records.SetTo(new List<TestMajorRecord>()
+        {
+            new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello"),
+            new TestMajorRecord(Plugins.FormKey.Factory("123457:Skyrim.esm"), "World"),
+        });
+        
         var str = await GetResults((k, w) =>
         {
-            var objs = new List<SomeClass>()
-            {
-                new SomeClass(7, "Hello"),
-                new SomeClass(10, "World"),
-            };
             var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
-                (w, g, k, m) => { k.WriteBool(w, "SomeGroupField", true, default); },
-                new Write<TWriterKernel, TWriter, SomeClass>((w, i, k, m) =>
+                (w, g, k, m) =>
                 {
-                    k.WriteInt32(w, "Int", i.Int, default);
+                    k.WriteBool(w, nameof(TestGroup.SomeGroupField), true, default);
+                },
+                new Write<TWriterKernel, TWriter, TestMajorRecord>((w, i, k, m) =>
+                {
+                    k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), i.FormKey, default);
                     k.WriteString(w, "String", i.String, default);
+                    k.WriteString(w, "EditorID", i.EditorID, default);
                 }));
         });
         await TestHelper.VerifyString(str);
+
+        CheckReadResults(str,
+            new ReadResults<TestGroup>(
+                "MyGroup",
+                (kernel, reader) =>
+                {
+                    var g = new TestGroup();
+                    var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+                    SerializationHelper.ReadIntoGroup(reader, g, meta, kernel,
+                        groupReader: (r, o, k, m, n) =>
+                        {
+                            switch (n)
+                            {
+                                case nameof(TestGroup.SomeGroupField):
+                                    o.SomeGroupField = (bool)k.ReadBool(r);
+                                    break;
+                                default:
+                                    throw new NotImplementedException();
+                            }
+                        },
+                        itemReader: (r, k, m) =>
+                        {
+                            FormKey fk = default;
+                            string s = string.Empty;
+                            while (k.TryGetNextField(r, out var name))
+                            {
+                                switch (name)
+                                {
+                                    case "FormKey":
+                                        fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
+                                        break;
+                                    case "String":
+                                        s = k.ReadString(r);
+                                        break;
+                                    default:
+                                        throw new DataMisalignedException();
+                                }
+                            }
+
+                            return new TestMajorRecord(fk, s);
+                        });
+                    return g;
+                },
+                objs));
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task GroupFolder(
+        DirectoryPath existingDir,
+        IFileSystem fileSystem)
+    {
+        var objs = new TestGroup()
+        {
+            SomeGroupField = true,
+        };
+        objs.Records.SetTo(new List<TestMajorRecord>()
+        {
+            new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello")
+            {
+                EditorID = "EditorID01"
+            },
+            new TestMajorRecord(Plugins.FormKey.Factory("123457:Skyrim.esm"), "World")
+            {
+                EditorID = "EditorID02"
+            },
+        });
+        
+        var streamPackage = new StreamPackage(null, existingDir, fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+        var toDo = new List<Action>();
+        SerializationHelper.WriteFolderPerRecord(
+            streamPackage,
+            objs,
+            "MyGroup",
+            meta,
+            MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
+            (w, g, k, m) =>
+            {
+                k.WriteBool(w, nameof(TestGroup.SomeGroupField), true, default);
+            },
+            new Write<TWriterKernel, TWriter, TestMajorRecord>((w, i, k, m) =>
+            {
+                k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), i.FormKey, default);
+                k.WriteString(w, "String", i.String, default);
+                k.WriteString(w, "EditorID", i.EditorID, default);
+            }),
+            toDo);
+        toDo.ForEach(t => t());
+        
+        await TestHelper.VerifyFileSystem(fileSystem);
+
+        var g = new TestGroup();
+        toDo.Clear();
+        SerializationHelper.ReadFolderPerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
+            new StreamPackage(null, Path.Combine(existingDir, "MyGroup"), fileSystem),
+            g, 
+            meta,
+            new TReaderKernel(),
+            groupReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(TestGroup.SomeGroupField):
+                        o.SomeGroupField = (bool)k.ReadBool(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            itemReader: (r, k, m) =>
+            {
+                FormKey fk = default;
+                string s = string.Empty;
+                string? edid = null;
+                while (k.TryGetNextField(r, out var name))
+                {
+                    switch (name)
+                    {
+                        case "FormKey":
+                            fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
+                            break;
+                        case "String":
+                            s = k.ReadString(r);
+                            break;
+                        case "EditorID":
+                            edid = k.ReadString(r);
+                            break;
+                        default:
+                            throw new DataMisalignedException();
+                    }
+                }
+        
+                return new TestMajorRecord(fk, s)
+                {
+                    EditorID = edid
+                };
+            },
+            toDo);
+        toDo.ForEach(t => t());
+
+        g.Equals(objs).Should().BeTrue();
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task BlocksListGroup(
+        DirectoryPath existingDir,
+        IFileSystem fileSystem)
+    {
+        var objs = new TestBlockGroup()
+        {
+            SomeValue = 123,
+            Blocks = new List<Block>()
+            {
+                new Block()
+                {
+                    BlockNumber = 456,
+                    SomeValue = "Hello",
+                    SubBlocks = new List<SubBlock>()
+                    {
+                        new SubBlock()
+                        {
+                            BlockNumber = 279,
+                            SomeValue = "EmptySubBlock",
+                        },
+                        new SubBlock()
+                        {
+                            BlockNumber = 987,
+                            SomeValue = "World",
+                            Records = new List<TestMajorRecord>()
+                            {
+                                new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello World")
+                            }
+                        },
+                    }
+                },
+                new Block()
+                {
+                    BlockNumber = 742,
+                    SomeValue = "EmptyBlock",
+                }
+            }
+        };
+        
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        List<Action> toDo = new();
+        SerializationHelper.AddBlocksToWork(
+            streamPackage,
+            objs,
+            "MyBlocks",
+            blockRetriever: b => b.Blocks,
+            subBlockRetriever: b => b.SubBlocks,
+            majorRetriever: b => b.Records,
+            blockNumberRetriever: b => b.BlockNumber,
+            subBlockNumberRetriever: b => b.BlockNumber,
+            metaData: meta,
+            kernel: MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
+            metaWriter: (w, o, k, m) =>
+            {
+                k.WriteInt32(w, nameof(TestBlockGroup.SomeValue), o.SomeValue, default);
+            },
+            blockWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(Block.SomeValue), o.SomeValue, default);
+            },
+            subBlockWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(SubBlock.SomeValue), o.SomeValue, default);
+            },
+            majorWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
+                k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
+            },
+            toDo: toDo);
+        toDo.ForEach(t => t());
+        
+        await TestHelper.VerifyFileSystem(fileSystem);
+    
+        toDo.Clear();
+        
+        var g = new TestBlockGroup();
+        SerializationHelper.ReadFolderPerRecordIntoBlocks<TReaderKernel, TReader, TestBlockGroup, Block, SubBlock, TestMajorRecord>(
+            streamPackage with { Path = Path.Combine(streamPackage.Path, "MyBlocks")},
+            g, meta, new TReaderKernel(),
+            groupReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(TestBlockGroup.SomeValue):
+                        o.SomeValue = (int)k.ReadInt32(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            groupSetter: (b, blocks) =>
+            {
+                b.Blocks.SetTo(blocks);
+            },
+            blockReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(Block.SomeValue):
+                        o.SomeValue = (string)k.ReadString(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            blockSet: (b, blockNum, subBlocks) =>
+            {
+                b.BlockNumber = blockNum;
+                b.SubBlocks.SetTo(subBlocks);
+            },
+            subBlockReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(SubBlock.SomeValue):
+                        o.SomeValue = (string)k.ReadString(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            subBlockSet: (b, blockNum, recs) =>
+            {
+                b.BlockNumber = blockNum;
+                b.Records.SetTo(recs);
+            },
+            majorReader: (r, k, m) =>
+            {
+                FormKey fk = default;
+                string s = string.Empty;
+                while (k.TryGetNextField(r, out var name))
+                {
+                    switch (name)
+                    {
+                        case "FormKey":
+                            fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
+                            break;
+                        case "String":
+                            s = k.ReadString(r);
+                            break;
+                        default:
+                            throw new DataMisalignedException();
+                    }
+                }
+    
+                return new TestMajorRecord(fk, s);
+            },
+            toDo: toDo);
+        toDo.ForEach(t => t());
+
+        g.Equals(objs).Should().BeTrue();
+    }
+
+    
+    [Theory, DefaultAutoData]
+    public async Task XYBlocksListGroup(
+        DirectoryPath existingDir,
+        IFileSystem fileSystem)
+    {
+        var objs = new TestXYBlockGroup()
+        {
+            SomeValue = 123,
+            Blocks = new List<XYBlock>()
+            {
+                new XYBlock()
+                {
+                    BlockNumberX = 456,
+                    BlockNumberY = 654,
+                    SomeValue = "Hello",
+                    SubBlocks = new List<XYSubBlock>()
+                    {
+                        new XYSubBlock()
+                        {
+                            BlockNumberX = 279,
+                            BlockNumberY = 972,
+                            SomeValue = "EmptySubBlock",
+                        },
+                        new XYSubBlock()
+                        {
+                            BlockNumberX = 987,
+                            BlockNumberY = 789,
+                            SomeValue = "World",
+                            Records = new List<TestMajorRecord>()
+                            {
+                                new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello World")
+                            }
+                        },
+                    }
+                },
+                new XYBlock()
+                {
+                    BlockNumberX = 742,
+                    BlockNumberY = 247,
+                    SomeValue = "EmptyBlock",
+                }
+            }
+        };
+        
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        List<Action> toDo = new();
+        SerializationHelper.AddXYBlocksToWork(
+            streamPackage,
+            objs,
+            "MyBlocks",
+            blockRetriever: b => b.Blocks,
+            subBlockRetriever: b => b.SubBlocks,
+            majorRetriever: b => b.Records,
+            blockNumberRetriever: b => new P2Int16(b.BlockNumberX, b.BlockNumberY),
+            subBlockNumberRetriever: b => new P2Int16(b.BlockNumberX, b.BlockNumberY),
+            metaData: meta,
+            kernel: MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
+            metaWriter: (w, o, k, m) =>
+            {
+                k.WriteInt32(w, nameof(TestBlockGroup.SomeValue), o.SomeValue, default);
+            },
+            blockWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(XYBlock.SomeValue), o.SomeValue, default);
+            },
+            subBlockWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(XYSubBlock.SomeValue), o.SomeValue, default);
+            },
+            majorWriter: (w, o, k, m) =>
+            {
+                k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
+                k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
+            },
+            toDo: toDo);
+        toDo.ForEach(t => t());
+        
+        await TestHelper.VerifyFileSystem(fileSystem);
+    
+        toDo.Clear();
+
+        var g = new TestXYBlockGroup();
+        SerializationHelper.ReadFolderPerRecordIntoXYBlocks<TReaderKernel, TReader, TestXYBlockGroup, XYBlock, XYSubBlock, TestMajorRecord>(
+            streamPackage with { Path = Path.Combine(streamPackage.Path, "MyBlocks")},
+            g, meta, new TReaderKernel(),
+            objReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(TestXYBlockGroup.SomeValue):
+                        o.SomeValue = (int)k.ReadInt32(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            groupSetter: (b, blocks) =>
+            {
+                b.Blocks.SetTo(blocks);
+            },
+            blockReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(XYBlock.SomeValue):
+                        o.SomeValue = (string)k.ReadString(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            blockSet: (b, blockNum, subBlocks) =>
+            {
+                b.BlockNumberX = blockNum.X;
+                b.BlockNumberY = blockNum.Y;
+                b.SubBlocks.SetTo(subBlocks);
+            },
+            subBlockReader: (r, o, k, m, n) =>
+            {
+                switch (n)
+                {
+                    case nameof(XYSubBlock.SomeValue):
+                        o.SomeValue = (string)k.ReadString(r);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            },
+            subBlockSet: (b, blockNum, recs) =>
+            {
+                b.BlockNumberX = blockNum.X;
+                b.BlockNumberY = blockNum.Y;
+                b.Records.SetTo(recs);
+            },
+            majorReader: (r, k, m) =>
+            {
+                FormKey fk = default;
+                string s = string.Empty;
+                while (k.TryGetNextField(r, out var name))
+                {
+                    switch (name)
+                    {
+                        case "FormKey":
+                            fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
+                            break;
+                        case "String":
+                            s = k.ReadString(r);
+                            break;
+                        default:
+                            throw new DataMisalignedException();
+                    }
+                }
+    
+                return new TestMajorRecord(fk, s);
+            },
+            toDo: toDo);
+        toDo.ForEach(t => t());
+
+        g.Equals(objs).Should().BeTrue();
     }
 
     public enum SomeEnum

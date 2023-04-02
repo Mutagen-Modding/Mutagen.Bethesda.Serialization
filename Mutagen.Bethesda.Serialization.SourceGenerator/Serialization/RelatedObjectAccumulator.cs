@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using Noggog;
 
@@ -30,37 +31,39 @@ public class RelatedObjectAccumulator
     public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
         LoquiMapping mapper,
         ITypeSymbol details, 
+        CustomizationSpecifications customization,
         CancellationToken cancel)
     {
         if (!mapper.TryGetTypeSet(details, out var typeSet)) return ImmutableHashSet<LoquiTypeSet>.Empty;
         
         var objs = new HashSet<LoquiTypeSet>();
-        GetRelatedObjects(mapper, typeSet, objs, cancel);
+        GetRelatedObjects(mapper, typeSet, objs, customization, cancel);
         return objs.ToImmutableHashSet<LoquiTypeSet>();
     }
 
     private void GetRelatedObjects(
         LoquiMapping mapper,
-        LoquiTypeSet typeSet, 
+        LoquiTypeSet obj, 
         HashSet<LoquiTypeSet> processedDetails,
+        CustomizationSpecifications customization,
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var details = typeSet.Getter;
+        var details = obj.Getter;
         if (!_loquiObjectTester.IsLoqui(details)) return;
-        if (!processedDetails.Add(typeSet)) return;
-        var baseType = mapper.TryGetBaseClass(typeSet);
+        if (!processedDetails.Add(obj)) return;
+        var baseType = mapper.TryGetBaseClass(obj);
         if (baseType != null
             && mapper.TryGetTypeSet(baseType, out var baseSet))
         {
-            GetRelatedObjects(mapper, baseSet, processedDetails, cancel);
+            GetRelatedObjects(mapper, baseSet, processedDetails, customization, cancel);
         }
 
-        var inheriting = mapper.TryGetInheritingClasses(typeSet);
+        var inheriting = mapper.TryGetInheritingClasses(obj);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
-            GetRelatedObjects(mapper, inherit, processedDetails, cancel);
+            GetRelatedObjects(mapper, inherit, processedDetails, customization, cancel);
         }
         foreach (var memb in details.GetMembers())
         {
@@ -68,23 +71,26 @@ public class RelatedObjectAccumulator
             if (memb is not IPropertySymbol prop) continue;
             if (prop.IsStatic) continue;
 
-            foreach (var type in TransformSymbol(prop.Type))
+            foreach (var type in TransformSymbol(obj, customization, prop.Type))
             {
                 if (!mapper.TryGetTypeSet(type, out var transformedTypeSet)) continue;
-                GetRelatedObjects(mapper, transformedTypeSet, processedDetails, cancel);
+                GetRelatedObjects(mapper, transformedTypeSet, processedDetails, customization, cancel);
             }
         }
     }
 
-    private ITypeSymbol PeelList(ITypeSymbol typeSymbol)
+    private ITypeSymbol PeelList(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization,
+        ITypeSymbol typeSymbol)
     {
-        if (_listFieldGenerator.Applicable(typeSymbol)
+        if (_listFieldGenerator.Applicable(obj, customization, typeSymbol)
             && typeSymbol is INamedTypeSymbol namedTypeSymbol)
         {
             return namedTypeSymbol.TypeArguments[0];
         }
 
-        if (_arrayFieldGenerator.Applicable(typeSymbol))
+        if (_arrayFieldGenerator.Applicable(obj, customization, typeSymbol))
         {
             return _arrayFieldGenerator.GetSubtype(typeSymbol);
         }
@@ -92,11 +98,14 @@ public class RelatedObjectAccumulator
         return typeSymbol;
     }
 
-    private IEnumerable<ITypeSymbol> TransformSymbol(ITypeSymbol typeSymbol)
+    private IEnumerable<ITypeSymbol> TransformSymbol(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (_isGroupTester.IsGroup(typeSymbol))
         {
-            yield return PeelList(typeSymbol);
+            yield return PeelList(obj, customization, typeSymbol);
         }
 
         if (typeSymbol.Name == "IReadOnlyDictionary"
@@ -116,21 +125,24 @@ public class RelatedObjectAccumulator
         while (true)
         {
             var old = typeSymbol;
-            typeSymbol = InternalTransformSymbol(typeSymbol);
+            typeSymbol = InternalTransformSymbol(obj, customization, typeSymbol);
             if (ReferenceEquals(old, typeSymbol)) break;
         }
 
         yield return typeSymbol;
     }
 
-    private ITypeSymbol InternalTransformSymbol(ITypeSymbol typeSymbol)
+    private ITypeSymbol InternalTransformSymbol(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization,
+        ITypeSymbol typeSymbol)
     {
         if (TryGetAsGroup(typeSymbol, out var replacement))
         {
             return replacement;
         }
         
-        if (TryGetAsGenderedItem(typeSymbol, out replacement))
+        if (TryGetAsGenderedItem(obj, customization, typeSymbol, out replacement))
         {
             return replacement;
         }
@@ -140,7 +152,7 @@ public class RelatedObjectAccumulator
             return typeSymbol.WithNullableAnnotation(NullableAnnotation.None);
         }
 
-        typeSymbol = PeelList(typeSymbol);
+        typeSymbol = PeelList(obj, customization, typeSymbol);
 
         return typeSymbol;
     }
@@ -157,10 +169,14 @@ public class RelatedObjectAccumulator
         return false;
     }
 
-    private bool TryGetAsGenderedItem(ITypeSymbol typeSymbol, out ITypeSymbol replacement)
+    private bool TryGetAsGenderedItem(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol,
+        out ITypeSymbol replacement)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && _genderedTypeFieldGenerator.Applicable(namedTypeSymbol))
+            && _genderedTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;

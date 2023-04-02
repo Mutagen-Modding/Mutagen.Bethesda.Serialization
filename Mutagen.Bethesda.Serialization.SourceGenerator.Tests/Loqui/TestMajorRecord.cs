@@ -16,25 +16,19 @@ public interface ITestMajorRecordGetter : ILoquiObjectGetter, IMajorRecordGetter
 {
 }
 
-public class TestMajorRecord : ITestMajorRecord
+public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>
 {
-    private ushort? _formVersion;
-    private FormKey _formKey;
-    private string? _editorId;
-    private bool _isCompressed;
-    private bool _isDeleted;
-    private ushort? _formVersion1;
-    private int _majorRecordFlagsRaw;
-    private uint _versionControl;
-    private string? _editorId1;
-    private FormKey _formKey1;
-    private bool _isCompressed1;
-    private bool _isDeleted1;
-    private int _majorRecordFlagsRaw1;
-    private uint _versionControl1;
-    private string? _editorId2;
-    private FormKey _formKey2;
+    public string String { get; set; }
+    public FormKey FormKey { get; set; }
 
+    public string? EditorID { get; set; }
+
+    public TestMajorRecord(FormKey i, string s)
+    {
+        String = s;
+        FormKey = i;
+    }
+    
     public IEnumerable<IFormLinkGetter> EnumerateFormLinks()
     {
         throw new NotImplementedException();
@@ -61,7 +55,7 @@ public class TestMajorRecord : ITestMajorRecord
         throw new NotImplementedException();
     }
 
-    public ILoquiRegistration Registration { get; }
+    public ILoquiRegistration Registration => throw new NotImplementedException();
     public void Print(StructuredStringBuilder sb, string? name = null)
     {
         throw new NotImplementedException();
@@ -174,47 +168,39 @@ public class TestMajorRecord : ITestMajorRecord
 
     bool IMajorRecord.IsCompressed
     {
-        get => _isCompressed1;
-        set => _isCompressed1 = value;
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
     }
 
     bool IMajorRecord.IsDeleted
     {
-        get => _isDeleted1;
-        set => _isDeleted1 = value;
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
     }
 
-    bool IMajorRecordGetter.IsCompressed => _isCompressed;
+    bool IMajorRecordGetter.IsCompressed => throw new NotImplementedException();
 
-    bool IMajorRecordGetter.IsDeleted => _isDeleted;
+    bool IMajorRecordGetter.IsDeleted => throw new NotImplementedException();
 
-    ushort? IMajorRecordGetter.FormVersion => _formVersion1;
+    ushort? IMajorRecordGetter.FormVersion => throw new NotImplementedException();
 
-    int IMajorRecordGetter.MajorRecordFlagsRaw => _majorRecordFlagsRaw;
+    int IMajorRecordGetter.MajorRecordFlagsRaw => throw new NotImplementedException();
 
     uint IMajorRecord.VersionControl
     {
-        get => _versionControl1;
-        set => _versionControl1 = value;
-    }
-
-    string? IMajorRecord.EditorID
-    {
-        get => _editorId2;
-        set => _editorId2 = value;
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
     }
 
     int IMajorRecord.MajorRecordFlagsRaw
     {
-        get => _majorRecordFlagsRaw1;
-        set => _majorRecordFlagsRaw1 = value;
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
     }
 
-    uint IMajorRecordGetter.VersionControl => _versionControl;
+    uint IMajorRecordGetter.VersionControl => throw new NotImplementedException();
 
-    string? IMajorRecordGetter.EditorID => _editorId1;
-
-    ushort? IFormVersionGetter.FormVersion => _formVersion;
+    ushort? IFormVersionGetter.FormVersion => throw new NotImplementedException();
 
     public bool Disable()
     {
@@ -223,17 +209,17 @@ public class TestMajorRecord : ITestMajorRecord
 
     FormKey IMajorRecordInternal.FormKey
     {
-        get => _formKey2;
-        set => _formKey2 = value;
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
     }
 
-    FormKey IMajorRecord.FormKey => _formKey1;
+    FormKey IMajorRecord.FormKey => FormKey;
 
-    FormKey IFormKeyGetter.FormKey => _formKey;
+    FormKey IFormKeyGetter.FormKey => FormKey;
 
-    string? IMajorRecordIdentifier.EditorID => _editorId;
+    string? IMajorRecordIdentifier.EditorID => throw new NotImplementedException();
 
-    public Type Type { get; }
+    public Type Type => throw new NotImplementedException();
     public bool Equals(IFormLinkGetter? other)
     {
         throw new NotImplementedException();
@@ -244,7 +230,22 @@ public class TestMajorRecord : ITestMajorRecord
         throw new NotImplementedException();
     }
 
-    public object BinaryWriteTranslator { get; }
+    public object BinaryWriteTranslator => throw new NotImplementedException();
+
+    public bool Equals(TestMajorRecord? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return String == other.String && FormKey == other.FormKey && EditorID == other.EditorID;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((TestMajorRecord)obj);
+    }
 }
 
 internal class TestMajorRecord_Registration : ARegistration

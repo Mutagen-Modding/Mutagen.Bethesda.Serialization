@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -8,7 +9,10 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
 {
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Noggog";
     }
@@ -23,7 +27,10 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {

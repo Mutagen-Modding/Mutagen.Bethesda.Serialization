@@ -1,91 +1,97 @@
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
-public class ListFieldGenerator : ISerializationForFieldGenerator
+public class ListFieldGenerator : AListFieldGenerator
 {
-    private readonly IsGroupTester _groupTester;
+    private readonly BlocksXYFieldGenerator _xyFieldGenerator;
+    private readonly IsMajorRecordTester _isMajorRecordTester;
     
-    private readonly Func<IOwned<SerializationFieldGenerator>> _forFieldGenerator;
-    public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
-
     public ListFieldGenerator(
-        Func<IOwned<SerializationFieldGenerator>> forFieldGenerator, 
-        IsGroupTester groupTester)
+        BlocksXYFieldGenerator xyFieldGenerator,
+        IsMajorRecordTester isMajorRecordTester,
+        Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsGroupTester groupTester) 
+        : base(forFieldGenerator, groupTester)
     {
-        _forFieldGenerator = forFieldGenerator;
-        _groupTester = groupTester;
+        _xyFieldGenerator = xyFieldGenerator;
+        _isMajorRecordTester = isMajorRecordTester;
     }
 
-    private static readonly HashSet<string> _listStrings = new()
-    {
-        "List",
-        "IReadOnlyList",
-        "IList",
-        "ExtendedList",
-    };
-    
-    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
-
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
-    {
-        var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
-        var gen = _forFieldGenerator().Value
-            .GetGenerator(subType, cancel);
-        return gen?.RequiredNamespaces(subType, cancel) ?? Enumerable.Empty<string>();
-    }
-
-    public bool Applicable(ITypeSymbol typeSymbol)
-    {
-        if (typeSymbol is IArrayTypeSymbol arr)
-        {
-            if (arr.ElementType.Name == "Byte") return false;
-            return true;
-        }
-        else
-        {
-            typeSymbol = typeSymbol.PeelNullable();
-            if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
-            var typeMembers = namedTypeSymbol.TypeArguments;
-            if (typeMembers.Length != 1) return false;
-            return _listStrings.Contains(typeSymbol.Name);
-        }
-    }
-
-    private ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
-
-    private string GetCountAccessor(ITypeSymbol t)
-    {
-        switch (t.Name)
-        {
-            case "List":
-            case "IReadOnlyList":
-            case "IList":
-            case "ExtendedList":
-                return ".Count";
-            default:
-                return ".Length";
-        }
-    }
-
-    public void GenerateForSerialize(
-        CompilationUnit compilation,
+    public override bool Applicable(
         LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
+    {
+        if (!base.Applicable(obj, customization, typeSymbol)) return false;
+        
+        if (customization.FolderPerRecord)
+        {
+            if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
+            return !_isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);
+        }
+
+        return true;
+    }
+
+    private bool IsXYBlock(
+        CompilationUnit compilation,
+        INamedTypeSymbol t)
+    {
+        if (!compilation.Customization.Overall.FolderPerRecord) return false;
+        return GetSubtype(t).Name.Contains("WorldspaceBlock");
+    }
+    
+    public override void GenerateForHasSerialize(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string? defaultValueAccessor, 
+        string metaAccessor,
+        StructuredStringBuilder sb, 
+        CancellationToken cancel)
+    {
+        if (field is INamedTypeSymbol namedTypeSymbol)
+        {
+            if (IsXYBlock(compilation, namedTypeSymbol))
+            {
+                _xyFieldGenerator.GenerateForHasSerialize(
+                    compilation,
+                    obj,
+                    field,
+                    fieldName,
+                    fieldAccessor,
+                    defaultValueAccessor,
+                    metaAccessor,
+                    sb,
+                    cancel);
+                return;
+            }
+        }
+        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}{GetCountAccessor(field)} > 0) return true;");
+    }
+    
+    public override void GenerateForSerialize(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
         ITypeSymbol field,
         string? fieldName,
         string fieldAccessor,
         string? defaultValueAccessor,
         string writerAccessor,
-        string kernelAccessor, 
+        string kernelAccessor,
         string metaAccessor,
         bool isInsideCollection,
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj.Getter)) return;
+        if (ShouldSkip(compilation.Customization.Overall, obj, fieldName)) return;
 
         var nullable = field.IsNullable();
 
@@ -98,6 +104,23 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         }
         else if (field is INamedTypeSymbol namedTypeSymbol)
         {
+            if (IsXYBlock(compilation, namedTypeSymbol))
+            {
+                _xyFieldGenerator.GenerateForSerialize(
+                    compilation,
+                    obj,
+                    field,
+                    fieldName,
+                    fieldAccessor,
+                    defaultValueAccessor,
+                    writerAccessor,
+                    kernelAccessor,
+                    metaAccessor,
+                    isInsideCollection: isInsideCollection,
+                    sb,
+                    cancel);
+                return;
+            }
             subType = GetSubtype(namedTypeSymbol);
         }
         else
@@ -120,7 +143,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
             using (sb.CurlyBrace())
             {
-                _forFieldGenerator().Value.GenerateSerializeForField(
+                ForFieldGenerator().Value.GenerateSerializeForField(
                     compilation: compilation,
                     obj: obj,
                     fieldType: subType,
@@ -137,23 +160,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         }
     }
 
-    public bool HasVariableHasSerialize => true;
-
-    public void GenerateForHasSerialize(
-        CompilationUnit compilation,
-        LoquiTypeSet obj,
-        ITypeSymbol field,
-        string? fieldName,
-        string fieldAccessor,
-        string? defaultValueAccessor, 
-        string metaAccessor,
-        StructuredStringBuilder sb, 
-        CancellationToken cancel)
-    {
-        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}{GetCountAccessor(field)} > 0) return true;");
-    }
-
-    public void GenerateForDeserialize(
+    public override void GenerateForDeserialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -167,7 +174,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (_groupTester.IsGroup(obj.Getter)) return;
+        if (ShouldSkip(compilation.Customization.Overall, obj, fieldName)) return;
 
         field = field.PeelNullable();
         
@@ -178,6 +185,23 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         }
         else if (field is INamedTypeSymbol namedTypeSymbol)
         {
+            if (IsXYBlock(compilation, namedTypeSymbol))
+            {
+                _xyFieldGenerator.GenerateForDeserialize(
+                    compilation,
+                    obj,
+                    field,
+                    fieldName,
+                    fieldAccessor,
+                    readerAccessor,
+                    kernelAccessor,
+                    metaAccessor,
+                    insideCollection,
+                    canSet,
+                    sb,
+                    cancel);
+                return;
+            }
             subType = GetSubtype(namedTypeSymbol);
         }
         else
@@ -196,7 +220,7 @@ public class ListFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"while ({kernelAccessor}.TryHasNextItem({readerAccessor}))");
         using (sb.CurlyBrace())
         {
-            _forFieldGenerator().Value.GenerateDeserializeForField(
+            ForFieldGenerator().Value.GenerateDeserializeForField(
                 compilation: compilation,
                 obj: obj,
                 fieldType: subType,

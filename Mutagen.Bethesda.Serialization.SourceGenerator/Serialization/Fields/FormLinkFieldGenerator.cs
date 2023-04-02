@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -18,7 +19,10 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         "IFormLinkNullableGetter",
     };
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Mutagen.Bethesda.Plugins";
     }
@@ -27,7 +31,12 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
 
     private bool IsNullable(ITypeSymbol field) => field.Name.Contains("Nullable");
 
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool HasVariableHasSerialize => true;
+
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -70,8 +79,6 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             }
         }
     }
-
-    public bool HasVariableHasSerialize => true;
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
@@ -126,7 +133,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             }
             else
             {
-                sb.AppendLine($"{fieldAccessor}SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\").AsLink<{named.TypeArguments[0]}>();");
+                sb.AppendLine($"{fieldAccessor}SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\").ToLink<{named.TypeArguments[0]}>();");
             }
         }
         else

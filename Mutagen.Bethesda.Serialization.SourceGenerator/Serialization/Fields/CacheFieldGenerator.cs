@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -17,11 +18,17 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         "Noggog.ICache",
     };
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel) => Enumerable.Empty<string>();
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol) => Enumerable.Empty<string>();
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization,
+        ITypeSymbol typeSymbol)
     {
         typeSymbol = typeSymbol.PeelNullable();
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;

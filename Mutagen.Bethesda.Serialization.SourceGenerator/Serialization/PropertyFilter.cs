@@ -12,7 +12,11 @@ public class PropertyFilter
         _enumFieldGenerator = enumFieldGenerator;
     }
 
-    public bool Skip(LoquiTypeSet typeSet, IPropertySymbol propertySymbol, ISerializationForFieldGenerator? generator)
+    public bool Skip(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        IPropertySymbol propertySymbol, 
+        ISerializationForFieldGenerator? generator)
     {
         if (propertySymbol.IsIndexer) return true;
         switch (propertySymbol.Name)
@@ -23,13 +27,13 @@ public class PropertyFilter
             case "BinaryWriteTranslator":
                 return true;
             case "FormVersion":
-                return typeSet.Getter.Name == "IMajorRecordGetter";
+                return obj.Getter.Name == "IMajorRecordGetter";
             default:
                 break;
         }
 
         if (propertySymbol.Name.EndsWith("Release")
-            && _enumFieldGenerator.Applicable(propertySymbol.Type))
+            && _enumFieldGenerator.Applicable(obj, compilation.Customization.Overall, propertySymbol.Type))
         {
             return true;
         }

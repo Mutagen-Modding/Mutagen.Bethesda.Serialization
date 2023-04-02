@@ -4,38 +4,58 @@ using Mutagen.Bethesda.Strings;
 using Noggog;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
-using YamlDotNet.Core.Tokens;
 using DocumentStart = YamlDotNet.Core.Events.DocumentStart;
 using Scalar = YamlDotNet.Core.Events.Scalar;
 using StreamStart = YamlDotNet.Core.Events.StreamStart;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
-public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
+public readonly struct YamlReadingUnit : IDisposable, IContainStreamPackage
 {
-    public Parser GetNewObject(Stream stream)
-    {
-        var reader = new Parser(new StreamReader(stream));
+    private readonly IDisposable _streamDispose;
+    public Parser Parser { get; }
+    public StreamPackage StreamPackage { get; }
 
-        reader.Consume<StreamStart>();
-        reader.Consume<DocumentStart>();
-        reader.Consume<MappingStart>();
-        
-        return reader;
+    public YamlReadingUnit(StreamPackage stream)
+    {
+        var sw = new StreamReader(stream.Stream, leaveOpen: true);
+        Parser = new Parser(sw);
+        _streamDispose = sw;
+
+        Parser.Consume<StreamStart>();
+        Parser.Consume<DocumentStart>();
+        Parser.Consume<MappingStart>();
+
+        StreamPackage = stream;
     }
 
-    public bool TryGetNextField(Parser reader, out string name)
+    public void Dispose()
     {
-        reader.TryConsume<MappingStart>(out _);
+        _streamDispose.Dispose();
+    }
+}
 
-        if (reader.Current is MappingEnd)
+public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlReadingUnit>
+{
+    public string ExpectedExtension => ".yaml";
+    
+    public YamlReadingUnit GetNewObject(StreamPackage stream)
+    {
+        return new YamlReadingUnit(stream);
+    }
+
+    public bool TryGetNextField(YamlReadingUnit reader, out string name)
+    {
+        reader.Parser.TryConsume<MappingStart>(out _);
+
+        if (reader.Parser.Current is MappingEnd)
         {
-            reader.TryConsume<MappingEnd>(out _);
+            reader.Parser.TryConsume<MappingEnd>(out _);
             name = default!;
             return false;
         }
         
-        if (!reader.TryConsume<Scalar>(out var scalar))
+        if (!reader.Parser.TryConsume<Scalar>(out var scalar))
         {
             name = default!;
             return false;
@@ -45,18 +65,18 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return true;
     }
 
-    public Type GetNextType(Parser reader, string namespaceString)
+    public Type GetNextType(YamlReadingUnit reader, string namespaceString)
     {
-        reader.Consume<MappingStart>();
-        reader.Consume<Scalar>();
+        reader.Parser.Consume<MappingStart>();
+        reader.Parser.Consume<Scalar>();
         
-        var scalar = reader.Consume<Scalar>();
+        var scalar = reader.Parser.Consume<Scalar>();
         var val = scalar.Value;
         var typeStr = $"{namespaceString}.{val}, {namespaceString}";
         return Type.GetType(typeStr)!;
     }
 
-    public FormKey ExtractFormKey(Parser reader)
+    public FormKey ExtractFormKey(YamlReadingUnit reader)
     {
         if (!TryGetNextField(reader, out var name)
             && name != "FormKey")
@@ -67,33 +87,33 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return ReadFormKey(reader) ?? throw new NullReferenceException("Required FormKey for MajorRecord was null");
     }
 
-    public void Skip(Parser reader)
+    public void Skip(YamlReadingUnit reader)
     {
-        if (reader.Current is MappingStart)
+        if (reader.Parser.Current is MappingStart)
         {
             SkipObject(reader);
         }
-        else if (reader.Current is SequenceStart)
+        else if (reader.Parser.Current is SequenceStart)
         {
             SkipArray(reader);
         }
         else
         {
-            reader.MoveNext();
+            reader.Parser.MoveNext();
         }
     }
 
-    private void SkipObject(Parser reader)
+    private void SkipObject(YamlReadingUnit reader)
     {
-        reader.Consume<MappingStart>();
+        reader.Parser.Consume<MappingStart>();
         int objCount = 1;
         while (objCount > 0)
         {
-            if (reader.TryConsume<MappingStart>(out _))
+            if (reader.Parser.TryConsume<MappingStart>(out _))
             {
                 objCount++;
             }
-            else if (reader.TryConsume<MappingEnd>(out _))
+            else if (reader.Parser.TryConsume<MappingEnd>(out _))
             {
                 objCount--;
                 if (objCount == 0)
@@ -101,24 +121,24 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                     break;
                 }
             }
-            else if (!reader.MoveNext())
+            else if (!reader.Parser.MoveNext())
             {
                 break;
             }
         }
     }
 
-    private void SkipArray(Parser reader)
+    private void SkipArray(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceStart>();
+        reader.Parser.Consume<SequenceStart>();
         int objCount = 1;
         while (objCount > 0)
         {
-            if (reader.TryConsume<SequenceStart>(out _))
+            if (reader.Parser.TryConsume<SequenceStart>(out _))
             {
                 objCount++;
             }
-            else if (reader.TryConsume<SequenceEnd>(out _))
+            else if (reader.Parser.TryConsume<SequenceEnd>(out _))
             {
                 objCount--;
                 if (objCount == 0)
@@ -127,33 +147,33 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                 }
             }
 
-            if (!reader.MoveNext()) break;
+            if (!reader.Parser.MoveNext()) break;
         }
     }
 
-    public char? ReadChar(Parser reader)
+    public char? ReadChar(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return str[0];
     }
 
-    public bool? ReadBool(Parser reader)
+    public bool? ReadBool(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return bool.Parse(str);
     }
 
-    public TEnum? ReadEnum<TEnum>(Parser reader)
+    public TEnum? ReadEnum<TEnum>(YamlReadingUnit reader)
         where TEnum : struct, Enum, IConvertible
     {
         if (Enums<TEnum>.IsFlagsEnum)
         {
-            if (reader.TryConsume<SequenceStart>(out _))
+            if (reader.Parser.TryConsume<SequenceStart>(out _))
             {
                 TEnum ret = default;
-                while (reader.TryConsume<Scalar>(out var e))
+                while (reader.Parser.TryConsume<Scalar>(out var e))
                 {
                     var strSpan = e.Value.AsSpan();
                     if (Enum.TryParse<TEnum>(strSpan, out var otherEnum))
@@ -170,7 +190,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                     throw new ArgumentException($"Could not convert to {typeof(TEnum)}: {e.Value}");
                 }
 
-                reader.Consume<SequenceEnd>();
+                reader.Parser.Consume<SequenceEnd>();
                 return ret;
             }
             var str = ReadString(reader);
@@ -185,102 +205,102 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         }
     }
 
-    public string? ReadString(Parser reader)
+    public string? ReadString(YamlReadingUnit reader)
     {
-        if (reader.TryConsume<MappingStart>(out _))
+        if (reader.Parser.TryConsume<MappingStart>(out _))
         {
-            reader.Consume<MappingEnd>();
+            reader.Parser.Consume<MappingEnd>();
             return null;
         }
-        var scalar = reader.Consume<Scalar>();
+        var scalar = reader.Parser.Consume<Scalar>();
         return scalar.Value.ReplaceLineEndings("\r\n");
     }
 
-    public sbyte? ReadInt8(Parser reader)
+    public sbyte? ReadInt8(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return sbyte.Parse(str);
     }
 
-    public short? ReadInt16(Parser reader)
+    public short? ReadInt16(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return short.Parse(str);
     }
 
-    public int? ReadInt32(Parser reader)
+    public int? ReadInt32(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return int.Parse(str);
     }
 
-    public long? ReadInt64(Parser reader)
+    public long? ReadInt64(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return long.Parse(str);
     }
 
-    public byte? ReadUInt8(Parser reader)
+    public byte? ReadUInt8(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return byte.Parse(str);
     }
 
-    public ushort? ReadUInt16(Parser reader)
+    public ushort? ReadUInt16(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return ushort.Parse(str);
     }
 
-    public uint? ReadUInt32(Parser reader)
+    public uint? ReadUInt32(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return uint.Parse(str);
     }
 
-    public ulong? ReadUInt64(Parser reader)
+    public ulong? ReadUInt64(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return ulong.Parse(str);
     }
 
-    public float? ReadFloat(Parser reader)
+    public float? ReadFloat(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return float.Parse(str);
     }
 
-    public ModKey? ReadModKey(Parser reader)
+    public ModKey? ReadModKey(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return ModKey.FromNameAndExtension(str);
     }
 
-    public FormKey? ReadFormKey(Parser reader)
+    public FormKey? ReadFormKey(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return FormKey.Factory(str);
     }
 
-    public Color? ReadColor(Parser reader)
+    public Color? ReadColor(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
         return ColorExt.FromHexString(str);
     }
 
-    public RecordType? ReadRecordType(Parser reader)
+    public RecordType? ReadRecordType(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -291,7 +311,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return new RecordType(str);
     }
 
-    public P2Int? ReadP2Int(Parser reader)
+    public P2Int? ReadP2Int(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -303,7 +323,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P2Int)}: {str}");
     }
 
-    public P2Int16? ReadP2Int16(Parser reader)
+    public P2Int16? ReadP2Int16(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -315,7 +335,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {str}");
     }
 
-    public P2Float? ReadP2Float(Parser reader)
+    public P2Float? ReadP2Float(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -327,7 +347,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P2Float)}: {str}");
     }
 
-    public P3Float? ReadP3Float(Parser reader)
+    public P3Float? ReadP3Float(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -339,7 +359,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P3Float)}: {str}");
     }
 
-    public P3UInt8? ReadP3UInt8(Parser reader)
+    public P3UInt8? ReadP3UInt8(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -351,7 +371,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P3UInt8)}: {str}");
     }
 
-    public P3Int16? ReadP3Int16(Parser reader)
+    public P3Int16? ReadP3Int16(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -363,7 +383,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P3Int16)}: {str}");
     }
 
-    public P3UInt16? ReadP3UInt16(Parser reader)
+    public P3UInt16? ReadP3UInt16(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -375,7 +395,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(P3UInt16)}: {str}");
     }
 
-    public Percent? ReadPercent(Parser reader)
+    public Percent? ReadPercent(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -387,7 +407,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         throw new ArgumentException($"Could not parse string into {nameof(Percent)}: {str}");
     }
 
-    public TranslatedString? ReadTranslatedString(Parser reader)
+    public TranslatedString? ReadTranslatedString(YamlReadingUnit reader)
     {
         Language? targetLanguage = null;
         string? mainString = null;
@@ -398,11 +418,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         bool stop = false;
         bool inArray = false;
 
-        reader.Consume<MappingStart>();
+        reader.Parser.Consume<MappingStart>();
         
         while (!stop)
         {
-            switch (reader.Current)
+            switch (reader.Parser.Current)
             {
                 case MappingStart:
                     language = null;
@@ -411,32 +431,32 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                     break;
                 case Scalar s:
                     var propName = s.Value;
-                    reader.Consume<Scalar>();
+                    reader.Parser.Consume<Scalar>();
                     if (inArray)
                     {
                         if (propName == "Language"
-                            && reader.Accept<Scalar>(out var lang))
+                            && reader.Parser.Accept<Scalar>(out var lang))
                         {
                             language = Enum.Parse<Language>(lang.Value);
                         }
                         else if (propName == "String"
-                                 && reader.Accept<Scalar>(out var strVal))
+                                 && reader.Parser.Accept<Scalar>(out var strVal))
                         {
                             str = strVal.Value.ReplaceLineEndings("\r\n");
                         }
                     }
                     else if (propName == "TargetLanguage"
-                             && reader.Accept<Scalar>(out var lang))
+                             && reader.Parser.Accept<Scalar>(out var lang))
                     {
                         targetLanguage = Enum.Parse<Language>(lang.Value);
                     }
                     else if (propName == "Value"
-                             && reader.Accept<Scalar>(out var val))
+                             && reader.Parser.Accept<Scalar>(out var val))
                     {
                         mainString = val.Value.ReplaceLineEndings("\r\n");
                     }
                     else if (propName == "Values"
-                             && reader.Accept<SequenceStart>(out _))
+                             && reader.Parser.Accept<SequenceStart>(out _))
                     {
                         inArray = true;
                     }
@@ -463,7 +483,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
                     throw new DataMisalignedException();
             }
 
-            reader.MoveNext();
+            reader.Parser.MoveNext();
         }
 
         if (pairs == null && mainString == null && targetLanguage == null) return null;
@@ -484,7 +504,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
         return ret;
     }
 
-    public MemorySlice<byte>? ReadBytes(Parser reader)
+    public MemorySlice<byte>? ReadBytes(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
@@ -498,109 +518,109 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<Parser>
     }
 
     public TObject ReadLoqui<TObject>(
-        Parser reader, 
+        YamlReadingUnit reader, 
         SerializationMetaData serializationMetaData,
-        Read<ISerializationReaderKernel<Parser>, Parser, TObject> readCall)
+        Read<ISerializationReaderKernel<YamlReadingUnit>, YamlReadingUnit, TObject> readCall)
     {
         return readCall(reader, this, serializationMetaData);
     }
 
-    public void StartListSection(Parser reader)
+    public void StartListSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceStart>();
+        reader.Parser.Consume<SequenceStart>();
     }
 
-    public void EndListSection(Parser reader)
+    public void EndListSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceEnd>();
+        reader.Parser.Consume<SequenceEnd>();
     }
 
-    public bool TryHasNextItem(Parser reader)
+    public bool TryHasNextItem(YamlReadingUnit reader)
     {
-        return reader.Current is not SequenceEnd;
+        return reader.Parser.Current is not SequenceEnd;
     }
 
-    public void StartDictionarySection(Parser reader)
+    public void StartDictionarySection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceStart>();
+        reader.Parser.Consume<SequenceStart>();
     }
 
-    public void EndDictionarySection(Parser reader)
+    public void EndDictionarySection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceEnd>();
+        reader.Parser.Consume<SequenceEnd>();
     }
 
-    public bool TryHasNextDictionaryItem(Parser reader)
+    public bool TryHasNextDictionaryItem(YamlReadingUnit reader)
     {
-        return reader.TryConsume<MappingStart>(out _);
+        return reader.Parser.TryConsume<MappingStart>(out _);
     }
 
-    public void StartDictionaryKey(Parser reader)
+    public void StartDictionaryKey(YamlReadingUnit reader)
     {
-        var scalar = reader.Consume<Scalar>();
+        var scalar = reader.Parser.Consume<Scalar>();
         if (scalar.Value != "Key")
         {
             throw new DataMisalignedException();
         }
     }
 
-    public void EndDictionaryKey(Parser reader)
+    public void EndDictionaryKey(YamlReadingUnit reader)
     {
     }
 
-    public void StartDictionaryValue(Parser reader)
+    public void StartDictionaryValue(YamlReadingUnit reader)
     {
-        var scalar = reader.Consume<Scalar>();
+        var scalar = reader.Parser.Consume<Scalar>();
         if (scalar.Value != "Value")
         {
             throw new DataMisalignedException();
         }
     }
 
-    public void EndDictionaryValue(Parser reader)
+    public void EndDictionaryValue(YamlReadingUnit reader)
     {
     }
 
-    public void EndDictionaryItem(Parser reader)
+    public void EndDictionaryItem(YamlReadingUnit reader)
     {
-        reader.Consume<MappingEnd>();
+        reader.Parser.Consume<MappingEnd>();
     }
 
-    public void StartArray2dSection(Parser reader)
+    public void StartArray2dSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceStart>();
+        reader.Parser.Consume<SequenceStart>();
     }
 
-    public void EndArray2dSection(Parser reader)
+    public void EndArray2dSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceEnd>();
+        reader.Parser.Consume<SequenceEnd>();
     }
 
-    public bool TryHasNextArray2dXItem(Parser reader)
+    public bool TryHasNextArray2dXItem(YamlReadingUnit reader)
     {
-        return reader.Current is not SequenceEnd;
+        return reader.Parser.Current is not SequenceEnd;
     }
 
-    public void StartArray2dXItem(Parser reader)
-    {
-    }
-
-    public void EndArray2dXItem(Parser reader)
+    public void StartArray2dXItem(YamlReadingUnit reader)
     {
     }
 
-    public bool TryHasNextArray2dYSection(Parser reader)
+    public void EndArray2dXItem(YamlReadingUnit reader)
     {
-        return reader.Current is SequenceStart;
     }
 
-    public void StartArray2dYSection(Parser reader)
+    public bool TryHasNextArray2dYSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceStart>();
+        return reader.Parser.Current is SequenceStart;
     }
 
-    public void EndArray2dYSection(Parser reader)
+    public void StartArray2dYSection(YamlReadingUnit reader)
     {
-        reader.Consume<SequenceEnd>();
+        reader.Parser.Consume<SequenceStart>();
+    }
+
+    public void EndArray2dYSection(YamlReadingUnit reader)
+    {
+        reader.Parser.Consume<SequenceEnd>();
     }
 }

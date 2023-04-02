@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Mutagen.Bethesda.Serialization.Tester;
+namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
 
 [Verb("run-passthrough")]
 public class RunPassthroughCommand

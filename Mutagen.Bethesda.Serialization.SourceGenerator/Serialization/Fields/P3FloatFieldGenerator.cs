@@ -23,7 +23,10 @@ public class P3FloatFieldGenerator : PrimitiveFieldGenerator
         sb.AppendLine($"if (!P3Float.NullableRawEqualityComparer.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({field})"})) return true;");
     }
 
-    public override IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public override IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Noggog";
     }

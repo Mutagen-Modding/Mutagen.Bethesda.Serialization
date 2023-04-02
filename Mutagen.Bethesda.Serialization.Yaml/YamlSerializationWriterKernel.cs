@@ -8,14 +8,19 @@ using YamlDotNet.Core.Events;
 
 namespace Mutagen.Bethesda.Serialization.Yaml;
 
-public readonly struct YamlWritingUnit
+public readonly struct YamlWritingUnit : IDisposable, IContainStreamPackage
 {
+    private readonly IDisposable _streamDispose;
     public readonly IEmitter Emitter;
     public readonly StreamWriter StreamWriter;
 
-    public YamlWritingUnit(Stream stream)
+    public StreamPackage StreamPackage { get; }
+
+    public YamlWritingUnit(StreamPackage stream)
     {
-        StreamWriter = new StreamWriter(stream, leaveOpen: true);
+        StreamPackage = stream;
+        StreamWriter = new StreamWriter(stream.Stream, leaveOpen: true);
+        _streamDispose = StreamWriter;
         Emitter = new Emitter(StreamWriter);
     }
 
@@ -31,11 +36,18 @@ public readonly struct YamlWritingUnit
     {
         Emitter.Emit(new Scalar(str));
     }
+
+    public void Dispose()
+    {
+        _streamDispose.Dispose();
+    }
 }
 
 public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWritingUnit>
 {
-    public YamlWritingUnit GetNewObject(Stream stream)
+    public string ExpectedExtension => ".yaml";
+
+    public YamlWritingUnit GetNewObject(StreamPackage stream)
     {
         var ret = new YamlWritingUnit(stream);
         ret.Emitter.Emit(new StreamStart());
@@ -44,7 +56,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         return ret;
     }
 
-    public void Finalize(Stream stream, YamlWritingUnit writer)
+    public void Finalize(StreamPackage stream, YamlWritingUnit writer)
     {
         writer.Emitter.Emit(new MappingEnd());
         writer.Emitter.Emit(new DocumentEnd(true));

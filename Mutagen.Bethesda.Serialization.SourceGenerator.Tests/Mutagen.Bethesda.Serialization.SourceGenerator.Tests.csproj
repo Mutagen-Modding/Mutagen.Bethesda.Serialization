@@ -11,6 +11,7 @@
         <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Newtonsoft\Mutagen.Bethesda.Serialization.Newtonsoft.csproj" />
         <ProjectReference Include="..\Mutagen.Bethesda.Serialization.SourceGenerator\Mutagen.Bethesda.Serialization.SourceGenerator.csproj" />
         <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Yaml\Mutagen.Bethesda.Serialization.Yaml.csproj" />
+        <ProjectReference Include="..\Noggog.Verify.FileAbstractions\Noggog.Verify.FileAbstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

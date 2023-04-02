@@ -20,7 +20,11 @@ public class ObjectTypeTester
     public bool IsGroup(ITypeSymbol typeSymbol)
     {
         return typeSymbol.AllInterfaces
-            .Any(x => x.ToString().Contains("Group"));
+            .Any(x =>
+            {
+                var str = x.ToString();
+                return str.Contains("IGroupGetter") || str.Contains("IListGroupGetter");
+            });
     }
 
     public bool IsConcrete(ITypeSymbol? typeSymbol)

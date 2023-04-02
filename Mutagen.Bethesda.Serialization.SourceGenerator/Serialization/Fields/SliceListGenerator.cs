@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
-using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
@@ -12,7 +12,10 @@ public class SliceListGenerator : ISerializationForFieldGenerator
     
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
-    public IEnumerable<string> RequiredNamespaces(ITypeSymbol typeSymbol, CancellationToken cancel)
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol)
     {
         yield return "Noggog";
     }
@@ -30,7 +33,10 @@ public class SliceListGenerator : ISerializationForFieldGenerator
     
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
     
-    public bool Applicable(ITypeSymbol typeSymbol)
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;

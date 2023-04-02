@@ -22,7 +22,8 @@ public class SerializationForObjectsGenerator
         IncrementalGeneratorInitializationContext context, 
         IncrementalValuesProvider<BootstrapInvocation> bootstrapInvocations,
         IncrementalValueProvider<LoquiMapping> mappings,
-        IncrementalValueProvider<ImmutableDictionary<LoquiTypeSet, CustomizationCatalog>> customizationDriver)
+        IncrementalValueProvider<CustomizationSpecifications> customization,
+        IncrementalValueProvider<ImmutableDictionary<LoquiTypeSet, RecordCustomizationSpecifications>> recordCustomizationDriver)
     {
         var distinctBootstraps = bootstrapInvocations.Collect()
             .Select((allSymbols, cancel) =>
@@ -36,10 +37,11 @@ public class SerializationForObjectsGenerator
         var allClassesToGenerate = distinctBootstraps
             .SelectMany((items, _) => items)
             .Combine(mappings)
+            .Combine(customization)
             .SelectMany((item, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                return _accumulator.GetRelatedObjects(item.Right, item.Left!, cancel);
+                return _accumulator.GetRelatedObjects(item.Left.Right, item.Left.Left!, item.Right, cancel);
             })
             .Collect()
             .SelectMany((objs, cancel) =>
@@ -51,20 +53,25 @@ public class SerializationForObjectsGenerator
             allClassesToGenerate
                 .Combine(context.CompilationProvider)
                 .Combine(mappings)
-                .Combine(customizationDriver),
+                .Combine(recordCustomizationDriver)
+                .Combine(customization),
             (compilation, i) =>
             {
-                var compUnit = new CompilationUnit(i.Left.Left.Right, i.Left.Right);
-                var target = i.Left.Left.Left;
-                CustomizationCatalog? customization = null;
-                if (i.Right.TryGetValue(target, out var customDriver))
+                var target = i.Left.Left.Left.Left;
+                RecordCustomizationSpecifications? recordCustomization = null;
+                if (i.Left.Right.TryGetValue(target, out var customDriver))
                 {
-                    customization = customDriver;
+                    recordCustomization = customDriver;
                 }
+                var compUnit = new CompilationUnit(
+                    i.Left.Left.Left.Right,
+                    i.Left.Left.Right,
+                    new CustomizationCatalog(
+                        i.Right,
+                        recordCustomization),
+                    compilation);
                 _serializationForObjectGenerator.Generate(
-                    compUnit, 
-                    customization,
-                    compilation,
+                    compUnit,
                     target);
             });
     }
