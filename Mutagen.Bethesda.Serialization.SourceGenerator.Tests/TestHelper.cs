@@ -10,8 +10,6 @@ using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
-using Noggog.StructuredStrings;
-using Noggog.StructuredStrings.CSharp;
 using StrongInject;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;

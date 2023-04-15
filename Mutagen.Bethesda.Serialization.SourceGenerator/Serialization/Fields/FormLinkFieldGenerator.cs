@@ -36,7 +36,8 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -103,7 +104,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if (!EqualityComparer<{linkStr}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({linkStr})"})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -147,5 +148,11 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
                 sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}));");   
             }
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

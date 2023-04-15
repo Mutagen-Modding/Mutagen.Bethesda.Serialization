@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -153,25 +154,6 @@ internal static class SomeObject_Serialization
             obj: obj,
             metaData: metaData);
         return obj;
-    }
-
-    public static void DeserializeInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
-        SerializationMetaData metaData)
-        where TReadObject : IContainStreamPackage
-    {
-        while (kernel.TryGetNextField(reader, out var name))
-        {
-            DeserializeSingleFieldInto(
-                reader: reader,
-                kernel: kernel,
-                obj: obj,
-                metaData: metaData,
-                name: name);
-        }
-
     }
 
     public static void DeserializeSingleFieldInto<TReadObject>(
@@ -328,6 +310,25 @@ internal static class SomeObject_Serialization
             default:
                 break;
         }
+    }
+    
+    public static void DeserializeInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData)
+        where TReadObject : IContainStreamPackage
+    {
+        while (kernel.TryGetNextField(reader, out var name))
+        {
+            DeserializeSingleFieldInto(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
+        }
+
     }
 
 }

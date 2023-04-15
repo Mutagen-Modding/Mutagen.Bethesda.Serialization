@@ -14,6 +14,11 @@ public record SerializationItems(
         return $"{Namespace}.{SerializationHousingClassName}.Serialize{(withCheck ? "WithCheck" : null)}";
     }
 
+    public string SerializeFieldsCall()
+    {
+        return $"{Namespace}.{SerializationHousingClassName}.SerializeFields";
+    }
+
     public string DeserializationCall(bool withCheck = false)
     {
         return $"{Namespace}.{SerializationHousingClassName}.Deserialize{(withCheck ? "WithCheck" : null)}";

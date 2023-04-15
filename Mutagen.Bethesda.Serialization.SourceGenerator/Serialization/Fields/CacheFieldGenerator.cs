@@ -28,7 +28,8 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         typeSymbol = typeSymbol.PeelNullable();
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
@@ -68,7 +69,7 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         throw new NotImplementedException();
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -81,6 +82,12 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel)
+    {
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
     {
     }
 }

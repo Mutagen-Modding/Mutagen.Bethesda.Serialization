@@ -14,19 +14,21 @@
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>3.3.4</Version>
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp">
       <Version>4.5.0</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>0.41.0.1-dev</Version>
+      <Version>0.41.0</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>0.41.0.1-dev</Version>
+      <Version>0.41.0</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>0.41.0.1-dev</Version>
+      <Version>0.41.0</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-dev" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-dev" />
@@ -36,12 +38,15 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>2.56</Version>
+      <Version>2.56.0.1-dev</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>2.56</Version>
+      <Version>2.56.0.1-dev</Version>
     </PackageVersion>
-    <PackageVersion Include="NuGetizer" Version="0.9.5" />
+    <PackageVersion Include="NuGetizer" Version="0.9.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.IO.Abstractions">
       <Version>19.2.1</Version>

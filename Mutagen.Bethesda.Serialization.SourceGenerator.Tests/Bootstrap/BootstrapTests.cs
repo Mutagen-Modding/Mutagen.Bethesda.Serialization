@@ -136,7 +136,7 @@ public class SerializationTests
     }
     
     [Fact]
-    public async Task SkyrimModFolderPerRecordGenerationBootstrapper()
+    public async Task SkyrimModFilePerRecordGenerationBootstrapper()
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -158,7 +158,7 @@ public class Customization : ICustomize
 {
     public void Customize(ICustomizationBuilder builder)
     {
-        builder.FolderPerRecord();
+        builder.FilePerRecord();
     }
 }";
         var result = TestHelper.RunSourceGenerator(source);

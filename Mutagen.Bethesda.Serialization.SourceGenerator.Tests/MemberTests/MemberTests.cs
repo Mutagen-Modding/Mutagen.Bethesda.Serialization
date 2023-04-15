@@ -530,7 +530,7 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public void Customize(ICustomizationBuilder builder)");
             using (sb.CurlyBrace())
             {
-                sb.AppendLine("builder.FolderPerRecord();");
+                sb.AppendLine("builder.FilePerRecord();");
             }
         }
     }
@@ -638,35 +638,39 @@ public class MemberTests : ATestsBase
                 sb.AppendLine("public interface ICellBlockGetter : ILoquiObjectGetter");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine("int BlockNumber { get; set; }");
+                    sb.AppendLine("int BlockNumber { get; }");
+                    sb.AppendLine("IReadOnlyList<CellSubBlock> SubBlocks { get; }");
                 }
                 
                 sb.AppendLine("public interface ICellBlock : ILoquiObject, ICellBlockGetter");
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("int BlockNumber { get; set; }");
+                    sb.AppendLine("IExtendedList<CellSubBlock> SubBlocks { get; }");
                 }
                 
                 sb.AppendLine("public class CellBlock : ICellBlock");
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("int BlockNumber { get; set; }");
-                    sb.AppendLine("public IExtendedList<SubCellBlock> SubBlocks { get; }");
+                    sb.AppendLine("public IExtendedList<CellSubBlock> SubBlocks { get; }");
                 }
                 
-                sb.AppendLine("public interface ISubCellBlockGetter : ILoquiObjectGetter");
+                sb.AppendLine("public interface ICellSubBlockGetter : ILoquiObjectGetter");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("int BlockNumber { get; }");
+                    sb.AppendLine("IReadOnlyList<TestMajorRecord> Records { get; }");
+                }
+                
+                sb.AppendLine("public interface ICellSubBlock : ILoquiObject, ICellSubBlockGetter");
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("int BlockNumber { get; set; }");
+                    sb.AppendLine("IExtendedList<TestMajorRecord> Records { get; }");
                 }
                 
-                sb.AppendLine("public interface ISubCellBlock : ILoquiObject, ISubCellBlockGetter");
-                using (sb.CurlyBrace())
-                {
-                    sb.AppendLine("int BlockNumber { get; set; }");
-                }
-                
-                sb.AppendLine("public class SubCellBlock : ISubCellBlock");
+                sb.AppendLine("public class CellSubBlock : ICellSubBlock");
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("int BlockNumber { get; set; }");

@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -106,6 +107,21 @@ internal static class BaseLoqui_Serialization
         return obj;
     }
 
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoqui obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+    {
+        switch (name)
+        {
+            default:
+                break;
+        }
+    }
+    
     public static void DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -123,21 +139,6 @@ internal static class BaseLoqui_Serialization
                 name: name);
         }
 
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IBaseLoqui obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            default:
-                break;
-        }
     }
 
 }

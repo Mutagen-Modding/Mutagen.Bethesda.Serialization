@@ -30,7 +30,8 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {
@@ -113,7 +114,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if (!MemorySliceExt.SequenceEqual<{GetSubtype(field)}>({fieldAccessor}, {defaultValueAccessor ?? DefaultString(field)})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -149,5 +150,11 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
         {
             c.Add(readerAccessor);
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

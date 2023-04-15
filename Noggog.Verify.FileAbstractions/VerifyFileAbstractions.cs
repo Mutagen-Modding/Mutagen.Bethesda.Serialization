@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using EmptyFiles;
 
 namespace Noggog.Verify.FileAbstractions;
 
@@ -26,7 +27,18 @@ public static class VerifyFileAbstractions
 
     static Target FileToTarget(IFileSystem fileSystem, string filePath)
     {
-        var data = fileSystem.File.ReadAllText(filePath);
-        return new(Path.GetExtension(filePath).TrimStart('.'), data, Path.GetFileNameWithoutExtension(filePath));
+        var ext = Path.GetExtension(filePath).TrimStart('.');
+        if (FileExtensions.IsText(ext))
+        {
+            var data = fileSystem.File.ReadAllText(filePath);
+            return new(Path.GetExtension(filePath).TrimStart('.'), data, Path.GetFileNameWithoutExtension(filePath));
+        }
+        else
+        {
+            
+            var data = fileSystem.File.OpenRead(filePath);
+            return new(Path.GetExtension(filePath).TrimStart('.'), data, Path.GetFileNameWithoutExtension(filePath));
+
+        }
     }
 }

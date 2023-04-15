@@ -6,6 +6,7 @@ public class Customization : ICustomize
 {
     public void Customize(ICustomizationBuilder builder)
     {
-        builder.FolderPerRecord();
+        builder.FilePerRecord()
+            .EnforceRecordOrder();
     }
 }

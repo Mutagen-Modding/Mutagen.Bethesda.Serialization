@@ -28,10 +28,11 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
     public override bool Applicable(
         LoquiTypeSet obj,
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
-        if (!customization.FolderPerRecord) return false;
-        if (!base.Applicable(obj, customization, typeSymbol)) return false;
+        if (!customization.FilePerRecord) return false;
+        if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (ShouldSkip(customization, obj, null)) return false;
         return _isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);
@@ -59,6 +60,7 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
             f.Add($"toDo: parallelToDo");
         }
     }
@@ -70,7 +72,13 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
     }
 
-    public override void GenerateForDeserialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+    public override void GenerateForDeserializeSingleFieldInto(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
+    }
+
+    public override void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
         string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
         bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
     {
@@ -79,8 +87,6 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         var subType = namedTypeSymbol.TypeArguments[0];
         
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
-
-        var subNames = _nameRetriever.GetNames(subType);
 
         if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);

@@ -62,7 +62,7 @@ public class PropertyCollectionRetriever
         foreach (var prop in obj.Setter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
         {
             compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-            var gen = _forFieldGenerator.GetGenerator(obj, compilation, prop.Type);
+            var gen = _forFieldGenerator.GetGenerator(obj, compilation, prop.Type, prop.Name);
             if (_propertyFilter.Skip(obj, compilation, prop, gen)) continue;
             var meta = new PropertyMetadata(prop, gen);
             collection.Register(meta);

@@ -36,7 +36,8 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -121,7 +122,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         throw new NotImplementedException();
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -192,5 +193,11 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             }
             sb.AppendLine($"{kernelAccessor}.EndArray2dSection({readerAccessor});");
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

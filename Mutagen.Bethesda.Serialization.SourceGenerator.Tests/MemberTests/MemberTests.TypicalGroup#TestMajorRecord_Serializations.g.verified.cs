@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -34,6 +35,7 @@ internal static class TestMajorRecord_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
+        kernel.WriteString(writer, "String", item.String, default(string));
     }
 
     public static bool HasSerializationItems(
@@ -41,6 +43,7 @@ internal static class TestMajorRecord_Serialization
         SerializationMetaData metaData)
     {
         if (item == null) return false;
+        if (!EqualityComparer<string>.Default.Equals(item.String, default(string))) return true;
         return false;
     }
 
@@ -59,6 +62,24 @@ internal static class TestMajorRecord_Serialization
         return obj;
     }
 
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecord obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+    {
+        switch (name)
+        {
+            case "String":
+                obj.String = SerializationHelper.StripNull(kernel.ReadString(reader), name: "String");
+                break;
+            default:
+                break;
+        }
+    }
+    
     public static void DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -76,21 +97,6 @@ internal static class TestMajorRecord_Serialization
                 name: name);
         }
 
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecord obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            default:
-                break;
-        }
     }
 
 }

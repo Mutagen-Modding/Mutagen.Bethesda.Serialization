@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -90,55 +91,6 @@ internal static class SomeObject_Serialization
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
-        while (kernel.TryGetNextField(reader, out var name))
-        {
-            DeserializeSingleFieldInto(
-                reader: reader,
-                kernel: kernel,
-                obj: obj,
-                metaData: metaData,
-                name: name);
-        }
-
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            case "SomeMember0":
-                break;
-            case "SomeMember1":
-                break;
-            case "SomeMember2":
-                break;
-            case "SomeMember3":
-                break;
-            case "SomeMember4":
-                break;
-            case "SomeMember5":
-                break;
-            case "SomeMember6":
-                break;
-            case "SomeMember7":
-                break;
-            case "SomeMember8":
-                break;
-            case "SomeMember9":
-                break;
-            case "SomeMember10":
-                break;
-            case "SomeMember11":
-                break;
-            default:
-                break;
-        }
     }
 
 }

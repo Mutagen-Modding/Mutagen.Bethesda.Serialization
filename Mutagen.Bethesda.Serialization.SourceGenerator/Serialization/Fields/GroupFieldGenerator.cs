@@ -9,14 +9,23 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 {
     private readonly LoquiSerializationNaming _serializationNaming;
     private readonly LoquiNameRetriever _nameRetriever;
+    private readonly FolderPerRecordGroupFieldGenerator _folderPerRecordGroupFieldGenerator;
+    private readonly BlocksFieldGenerator _blocksFieldGenerator;
+    private readonly BlocksXYFieldGenerator _blocksXyFieldGenerator;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
     public GroupFieldGenerator(
         LoquiSerializationNaming serializationNaming,
-        LoquiNameRetriever nameRetriever)
+        LoquiNameRetriever nameRetriever,
+        FolderPerRecordGroupFieldGenerator folderPerRecordGroupFieldGenerator,
+        BlocksFieldGenerator blocksFieldGenerator,
+        BlocksXYFieldGenerator blocksXyFieldGenerator)
     {
         _serializationNaming = serializationNaming;
         _nameRetriever = nameRetriever;
+        _folderPerRecordGroupFieldGenerator = folderPerRecordGroupFieldGenerator;
+        _blocksFieldGenerator = blocksFieldGenerator;
+        _blocksXyFieldGenerator = blocksXyFieldGenerator;
     }
 
     public IEnumerable<string> RequiredNamespaces(
@@ -29,15 +38,23 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
+        if (_blocksFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
+            || _blocksXyFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
+            || _folderPerRecordGroupFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName))
+        {
+            return false;
+        }
+
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeParameters.Length == 1)
         {
             var name = _nameRetriever.GetNames(typeSymbol.Name);
             if (name.Direct == "ListGroup")
             {
-                return !customization.FolderPerRecord;
+                return !customization.FilePerRecord;
             }
             
             if (name.Direct.EndsWith("Group"))
@@ -74,9 +91,9 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
-        if (compilation.Customization.Overall.FolderPerRecord)
+        if (compilation.Customization.Overall.FilePerRecord)
         {
-            using (var f = sb.Call($"SerializationHelper.WriteFolderPerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+            using (var f = sb.Call($"SerializationHelper.WriteFilePerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
             {
                 f.Add($"streamPackage: {writerAccessor}.StreamPackage");
                 f.Add($"group: {fieldAccessor}");
@@ -85,6 +102,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
                 f.Add($"kernel: {kernelAccessor}");
                 f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
                 f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
+                f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
                 f.Add($"toDo: parallelToDo");
             }
         }
@@ -119,7 +137,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -133,49 +151,64 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
+        if (compilation.Customization.Overall.FilePerRecord) return;
         if (field is not INamedTypeSymbol namedTypeSymbol) return;
         var subType = namedTypeSymbol.TypeArguments[0];
         if (!_serializationNaming.TryGetSerializationItems(field, out var fieldSerializationNames)) return;
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
         var groupNames = _nameRetriever.GetNames(field);
         var subNames = _nameRetriever.GetNames(subType);
-        
+
         if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
 
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         var isListGroup = groupNames.Getter.Contains("List");
 
-        if (compilation.Customization.Overall.FolderPerRecord)
+        using (var f = sb.Call(
+                   $"SerializationHelper.ReadInto{(isListGroup ? "List" : null)}Group<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
         {
-            using (var f = sb.Call(
-                       $"SerializationHelper.ReadFolderPerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
-            {
-                f.Add($"streamPackage: {readerAccessor}.StreamPackage");
-                f.Add($"group: {fieldAccessor}");
-                f.Add($"metaData: {metaAccessor}");
-                f.Add($"kernel: {kernelAccessor}");
-                f.Add(
-                    $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
-                f.Add(
-                    $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
-                f.Add($"toDo: parallelToDo");
-            }
+            f.Add($"reader: {readerAccessor}");
+            f.Add($"group: {fieldAccessor}");
+            f.Add($"metaData: {metaAccessor}");
+            f.Add($"kernel: {kernelAccessor}");
+            f.Add(
+                $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
+            f.Add(
+                $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
         }
-        else
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation,
+        LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
+        if (!compilation.Customization.Overall.FilePerRecord) return;
+        if (field is not INamedTypeSymbol namedTypeSymbol) return;
+        var subType = namedTypeSymbol.TypeArguments[0];
+        if (!_serializationNaming.TryGetSerializationItems(field, out var fieldSerializationNames)) return;
+        if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
+        var groupNames = _nameRetriever.GetNames(field);
+        var subNames = _nameRetriever.GetNames(subType);
+
+        if (!compilation.Mapping.TryGetTypeSet(subType, out var typeSet)) return;
+
+        var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
+        
+        using (var f = sb.Call(
+                   $"SerializationHelper.ReadFilePerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
         {
-            using (var f = sb.Call(
-                       $"SerializationHelper.ReadInto{(isListGroup ? "List" : null)}Group<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
-            {
-                f.Add($"reader: {readerAccessor}");
-                f.Add($"group: {fieldAccessor}");
-                f.Add($"metaData: {metaAccessor}");
-                f.Add($"kernel: {kernelAccessor}");
-                f.Add(
-                    $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
-                f.Add(
-                    $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
-            }
+            f.Add($"streamPackage: {readerAccessor}.StreamPackage");
+            f.Add($"fieldName: \"{fieldName}\"");
+            f.Add($"group: {fieldAccessor}");
+            f.Add($"metaData: {metaAccessor}");
+            f.Add($"kernel: {kernelAccessor}");
+            f.Add(
+                $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
+            f.Add(
+                $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
+            f.Add($"toDo: parallelToDo");
         }
     }
 }

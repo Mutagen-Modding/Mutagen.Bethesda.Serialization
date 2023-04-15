@@ -24,6 +24,15 @@
 
     <ItemGroup>
 		<PackageReference Include="Mutagen.Bethesda.Core" />
+		<PackageReference Include="Noggog.CSharpExt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Utility\SerializationHelper.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
     </ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

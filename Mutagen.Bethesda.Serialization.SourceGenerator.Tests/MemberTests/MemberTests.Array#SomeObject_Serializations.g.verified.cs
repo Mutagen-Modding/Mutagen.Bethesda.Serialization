@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -91,6 +92,58 @@ internal static class SomeObject_Serialization
         return obj;
     }
 
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+    {
+        switch (name)
+        {
+            case "SomeArray":
+                {
+                    obj.SomeArray = SerializationHelper.ReadArray(
+                        reader: reader,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: static (r, k, m) =>
+                        {
+                            return SerializationHelper.StripNull(k.ReadString(r), name: "SomeArray");
+                        });
+                }
+                break;
+            case "SomeArray2":
+                {
+                    obj.SomeArray2 = SerializationHelper.ReadArray(
+                        reader: reader,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: static (r, k, m) =>
+                        {
+                            return SerializationHelper.StripNull(k.ReadString(r), name: "SomeArray2");
+                        });
+                }
+                break;
+            case "SomeArray3":
+                {
+                    SerializationHelper.ReadIntoArray(
+                        reader: reader,
+                        arr: obj.SomeArray3,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: static (r, k, m) =>
+                        {
+                            return SerializationHelper.StripNull(k.ReadString(r), name: "SomeArray3");
+                        });
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    
     public static void DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -108,58 +161,6 @@ internal static class SomeObject_Serialization
                 name: name);
         }
 
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            case "SomeArray":
-                {
-                    obj.SomeArray = SerializationHelper.ReadArray(
-                        reader: reader,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray");
-                        });
-                }
-                break;
-            case "SomeArray2":
-                {
-                    obj.SomeArray2 = SerializationHelper.ReadArray(
-                        reader: reader,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray2");
-                        });
-                }
-                break;
-            case "SomeArray3":
-                {
-                    SerializationHelper.ReadIntoArray(
-                        reader: reader,
-                        arr: obj.SomeArray3,
-                        kernel: kernel,
-                        metaData: metaData,
-                        itemReader: (r, k, m) =>
-                        {
-                            return SerializationHelper.StripNull(kernel.ReadString(r), name: "SomeArray3");
-                        });
-                }
-                break;
-            default:
-                break;
-        }
     }
 
 }

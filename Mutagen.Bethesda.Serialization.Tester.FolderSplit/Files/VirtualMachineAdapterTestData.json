@@ -1,0 +1,59 @@
+﻿{
+  "FormKey": "02167E:Skyrim.esm",
+  "EditorID": "MS11InsideHjerimTrigger",
+  "VirtualMachineAdapter": {
+    "Scripts": [
+      {
+        "Name": "MS11InsideHjerim",
+        "Properties": [
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "MS11Script",
+            "Object": "01F7A3:Skyrim.esm"
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "Witness1",
+            "Object": "01F7A3:Skyrim.esm",
+            "Alias": 0
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "MS11",
+            "Object": "01F7A3:Skyrim.esm"
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "Witness3",
+            "Object": "01F7A3:Skyrim.esm",
+            "Alias": 2
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "Calixto",
+            "Object": "01F7A3:Skyrim.esm",
+            "Alias": 19
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "Viola",
+            "Object": "01F7A3:Skyrim.esm",
+            "Alias": 13
+          },
+          {
+            "MutagenObjectType": "ScriptObjectProperty",
+            "Name": "Witness2",
+            "Object": "01F7A3:Skyrim.esm",
+            "Alias": 1
+          }
+        ]
+      }
+    ]
+  },
+  "ObjectBounds": {
+    "First": "-64, -64, -96",
+    "Second": "64, 64, 96"
+  },
+  "MarkerColor": "#00CC4C33",
+  "Flags": []
+}

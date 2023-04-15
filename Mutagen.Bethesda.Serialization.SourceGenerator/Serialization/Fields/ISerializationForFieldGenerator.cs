@@ -16,7 +16,8 @@ public interface ISerializationForFieldGenerator
     bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol);
+        ITypeSymbol typeSymbol, 
+        string? fieldName);
 
     bool ShouldGenerate(IPropertySymbol propertySymbol);
     
@@ -47,7 +48,21 @@ public interface ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel);
     
-    void GenerateForDeserialize(
+    void GenerateForDeserializeSingleFieldInto(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
+        ITypeSymbol field,
+        string? fieldName,
+        string fieldAccessor,
+        string readerAccessor,
+        string kernelAccessor,
+        string metaAccessor,
+        bool insideCollection,
+        bool canSet,
+        StructuredStringBuilder sb,
+        CancellationToken cancel);
+    
+    void GenerateForDeserializeSection(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,

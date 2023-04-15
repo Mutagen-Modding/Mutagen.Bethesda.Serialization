@@ -4,7 +4,12 @@ namespace Mutagen.Bethesda.Serialization.Customizations;
 
 public interface ICustomizationBuilder
 {
-    ICustomizationBuilder FolderPerRecord();
+    IFilePerRecordCustomizationBuilder FilePerRecord();
+}
+
+public interface IFilePerRecordCustomizationBuilder : ICustomizationBuilder
+{
+    IFilePerRecordCustomizationBuilder EnforceRecordOrder();
 }
 
 public interface ICustomizationBuilder<TObject>

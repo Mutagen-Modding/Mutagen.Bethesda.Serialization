@@ -104,7 +104,7 @@ public class CustomizationTests : ATestsBase
     }
     
     [Fact]
-    public Task FolderPerRecordNothingApplicable()
+    public Task FilePerRecordNothingApplicable()
     {
         var sb = new StructuredStringBuilder();
         GetObjWithMember(sb, sb =>
@@ -135,7 +135,7 @@ public class CustomizationTests : ATestsBase
                 sb.AppendLine("builder");
                 using (sb.IncreaseDepth())
                 {
-                    sb.AppendLine(".FolderPerRecord();");
+                    sb.AppendLine(".FilePerRecord();");
                 }
             }
         }
@@ -144,7 +144,7 @@ public class CustomizationTests : ATestsBase
     }
     
     [Fact]
-    public Task FolderPerRecordWithGroup()
+    public Task FilePerRecordWithGroup()
     {
         var sb = new StructuredStringBuilder();
         
@@ -178,7 +178,7 @@ public class CustomizationTests : ATestsBase
                 sb.AppendLine("builder");
                 using (sb.IncreaseDepth())
                 {
-                    sb.AppendLine(".FolderPerRecord();");
+                    sb.AppendLine(".FilePerRecord();");
                 }
             }
         }

@@ -34,9 +34,10 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
-        if (!customization.FolderPerRecord) return false;
+        if (!customization.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeArguments.Length == 1)
         {
@@ -156,15 +157,16 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
             f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
-            f.Add($"blockRetriever: x => x.{blockInfo.Group.ListName}");
-            f.Add($"subBlockRetriever: x => x.{blockInfo.Block.ListName}");
-            f.Add($"majorRetriever: x => x.{blockInfo.SubBlock.ListName}");
-            f.Add($"blockNumberRetriever: x => x.BlockNumber");
-            f.Add($"subBlockNumberRetriever: x => x.BlockNumber");
+            f.Add($"blockRetriever: static x => x.{blockInfo.Group.ListName}");
+            f.Add($"subBlockRetriever: static x => x.{blockInfo.Block.ListName}");
+            f.Add($"majorRetriever: static x => x.{blockInfo.SubBlock.ListName}");
+            f.Add($"blockNumberRetriever: static x => x.BlockNumber");
+            f.Add($"subBlockNumberRetriever: static x => x.BlockNumber");
             f.Add($"metaWriter: static (w, i, k, m) => {blockInfo.Group.SerializationItems.SerializationCall()}<TKernel, TWriteObject, {blockInfo.Block.Names.Getter}>(w, i, k, m)");
             f.Add($"blockWriter: static (w, i, k, m) => {blockInfo.Block.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"subBlockWriter: static (w, i, k, m) => {blockInfo.SubBlock.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"majorWriter: static (w, i, k, m) => {blockInfo.Record.SerializationItems.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
             f.Add($"toDo: parallelToDo");
         }
     }
@@ -176,7 +178,13 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
     }
 
-    public void GenerateForDeserialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+    public void GenerateForDeserializeSingleFieldInto(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
         string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
         bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
     {
@@ -187,10 +195,11 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
         var hasInheriting = compilation.Mapping.HasInheritingClasses(recordTypeSet);
 
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadFolderPerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, {blockInfo.Group.Names.Setter}<{blockInfo.Block.Names.Direct}>, {blockInfo.Block.Names.Direct}, {blockInfo.SubBlock.Names.Direct}, {blockInfo.Record.Names.Direct}>"))
+                   $"SerializationHelper.ReadFilePerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, {blockInfo.Group.Names.Setter}<{blockInfo.Block.Names.Direct}>, {blockInfo.Block.Names.Direct}, {blockInfo.SubBlock.Names.Direct}, {blockInfo.Record.Names.Direct}>"))
         {
             f.Add($"streamPackage: {readerAccessor}.StreamPackage");
             f.Add($"group: {fieldAccessor}");
+            f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add(

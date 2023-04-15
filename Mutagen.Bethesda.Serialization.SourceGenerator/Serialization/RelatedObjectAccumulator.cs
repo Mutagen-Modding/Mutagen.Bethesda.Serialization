@@ -71,7 +71,7 @@ public class RelatedObjectAccumulator
             if (memb is not IPropertySymbol prop) continue;
             if (prop.IsStatic) continue;
 
-            foreach (var type in TransformSymbol(obj, customization, prop.Type))
+            foreach (var type in TransformSymbol(obj, customization, prop.Type, prop.Name))
             {
                 if (!mapper.TryGetTypeSet(type, out var transformedTypeSet)) continue;
                 GetRelatedObjects(mapper, transformedTypeSet, processedDetails, customization, cancel);
@@ -82,15 +82,16 @@ public class RelatedObjectAccumulator
     private ITypeSymbol PeelList(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
-        if (_listFieldGenerator.Applicable(obj, customization, typeSymbol)
+        if (_listFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
             && typeSymbol is INamedTypeSymbol namedTypeSymbol)
         {
             return namedTypeSymbol.TypeArguments[0];
         }
 
-        if (_arrayFieldGenerator.Applicable(obj, customization, typeSymbol))
+        if (_arrayFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName))
         {
             return _arrayFieldGenerator.GetSubtype(typeSymbol);
         }
@@ -101,11 +102,12 @@ public class RelatedObjectAccumulator
     private IEnumerable<ITypeSymbol> TransformSymbol(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (_isGroupTester.IsGroup(typeSymbol))
         {
-            yield return PeelList(obj, customization, typeSymbol);
+            yield return PeelList(obj, customization, typeSymbol, fieldName);
         }
 
         if (typeSymbol.Name == "IReadOnlyDictionary"
@@ -125,7 +127,7 @@ public class RelatedObjectAccumulator
         while (true)
         {
             var old = typeSymbol;
-            typeSymbol = InternalTransformSymbol(obj, customization, typeSymbol);
+            typeSymbol = InternalTransformSymbol(obj, customization, typeSymbol, fieldName);
             if (ReferenceEquals(old, typeSymbol)) break;
         }
 
@@ -135,14 +137,15 @@ public class RelatedObjectAccumulator
     private ITypeSymbol InternalTransformSymbol(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (TryGetAsGroup(typeSymbol, out var replacement))
         {
             return replacement;
         }
         
-        if (TryGetAsGenderedItem(obj, customization, typeSymbol, out replacement))
+        if (TryGetAsGenderedItem(obj, customization, typeSymbol, fieldName, out replacement))
         {
             return replacement;
         }
@@ -152,7 +155,7 @@ public class RelatedObjectAccumulator
             return typeSymbol.WithNullableAnnotation(NullableAnnotation.None);
         }
 
-        typeSymbol = PeelList(obj, customization, typeSymbol);
+        typeSymbol = PeelList(obj, customization, typeSymbol, fieldName);
 
         return typeSymbol;
     }
@@ -172,11 +175,12 @@ public class RelatedObjectAccumulator
     private bool TryGetAsGenderedItem(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol,
+        ITypeSymbol typeSymbol, 
+        string? fieldName,
         out ITypeSymbol replacement)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && _genderedTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol))
+            && _genderedTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol, fieldName))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;

@@ -33,7 +33,8 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         namedTypeSymbol = namedTypeSymbol.PeelNullable();
@@ -96,7 +97,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if (!EqualityComparer<{linkStr}>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default({linkStr})"})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -123,5 +124,11 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
                 c.Add(readerAccessor);
             }
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

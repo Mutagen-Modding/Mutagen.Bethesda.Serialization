@@ -4,6 +4,7 @@ using System.Text;
 using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
 using Noggog;
@@ -890,7 +891,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var streamPackage = new StreamPackage(null, existingDir, fileSystem);
         var meta = new SerializationMetaData(GameRelease.SkyrimSE);
         var toDo = new List<Action>();
-        SerializationHelper.WriteFolderPerRecord(
+        SerializationHelper.WriteFilePerRecord(
             streamPackage,
             objs,
             "MyGroup",
@@ -906,6 +907,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 k.WriteString(w, "String", i.String, default);
                 k.WriteString(w, "EditorID", i.EditorID, default);
             }),
+            withNumbering: true,
             toDo);
         toDo.ForEach(t => t());
         
@@ -913,9 +915,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var g = new TestGroup();
         toDo.Clear();
-        SerializationHelper.ReadFolderPerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
-            new StreamPackage(null, Path.Combine(existingDir, "MyGroup"), fileSystem),
-            g, 
+        SerializationHelper.ReadFilePerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
+            new StreamPackage(null, existingDir, fileSystem),
+            g,
+            "MyGroup",
             meta,
             new TReaderKernel(),
             groupReader: (r, o, k, m, n) =>
@@ -960,7 +963,14 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             toDo);
         toDo.ForEach(t => t());
 
-        g.Equals(objs).Should().BeTrue();
+        try
+        {
+            g.Equals(objs).Should().BeTrue();
+        }
+        catch (Exception)
+        {
+            g.Equals(objs).Should().BeTrue();
+        }
     }
     
     [Theory, DefaultAutoData]
@@ -1034,6 +1044,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
             },
+            withNumbering: true,
             toDo: toDo);
         toDo.ForEach(t => t());
         
@@ -1042,9 +1053,11 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         toDo.Clear();
         
         var g = new TestBlockGroup();
-        SerializationHelper.ReadFolderPerRecordIntoBlocks<TReaderKernel, TReader, TestBlockGroup, Block, SubBlock, TestMajorRecord>(
-            streamPackage with { Path = Path.Combine(streamPackage.Path, "MyBlocks")},
-            g, meta, new TReaderKernel(),
+        SerializationHelper.ReadFilePerRecordIntoBlocks<TReaderKernel, TReader, TestBlockGroup, Block, SubBlock, TestMajorRecord>(
+            streamPackage,
+            g, 
+            "MyBlocks",
+            meta, new TReaderKernel(),
             groupReader: (r, o, k, m, n) =>
             {
                 switch (n)
@@ -1125,41 +1138,48 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         DirectoryPath existingDir,
         IFileSystem fileSystem)
     {
-        var objs = new TestXYBlockGroup()
+        var group = new TestXYBlockGroup()
         {
-            SomeValue = 123,
-            Blocks = new List<XYBlock>()
+            SomeValue = 936,
+            Records = new List<TestXYRecord>()
             {
-                new XYBlock()
+                new TestXYRecord(Plugins.FormKey.Factory("556677:Skyrim.esm"), "RecordData")
                 {
-                    BlockNumberX = 456,
-                    BlockNumberY = 654,
-                    SomeValue = "Hello",
-                    SubBlocks = new List<XYSubBlock>()
+                    SomeValue = 123,
+                    Blocks = new List<XYBlock>()
                     {
-                        new XYSubBlock()
+                        new XYBlock()
                         {
-                            BlockNumberX = 279,
-                            BlockNumberY = 972,
-                            SomeValue = "EmptySubBlock",
-                        },
-                        new XYSubBlock()
-                        {
-                            BlockNumberX = 987,
-                            BlockNumberY = 789,
-                            SomeValue = "World",
-                            Records = new List<TestMajorRecord>()
+                            BlockNumberX = 456,
+                            BlockNumberY = 654,
+                            SomeValue = "Hello",
+                            SubBlocks = new List<XYSubBlock>()
                             {
-                                new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello World")
+                                new XYSubBlock()
+                                {
+                                    BlockNumberX = 279,
+                                    BlockNumberY = 972,
+                                    SomeValue = "EmptySubBlock",
+                                },
+                                new XYSubBlock()
+                                {
+                                    BlockNumberX = 987,
+                                    BlockNumberY = 789,
+                                    SomeValue = "World",
+                                    Records = new List<TestMajorRecord>()
+                                    {
+                                        new TestMajorRecord(Plugins.FormKey.Factory("123456:Skyrim.esm"), "Hello World")
+                                    }
+                                },
                             }
                         },
+                        new XYBlock()
+                        {
+                            BlockNumberX = 742,
+                            BlockNumberY = 247,
+                            SomeValue = "EmptyBlock",
+                        }
                     }
-                },
-                new XYBlock()
-                {
-                    BlockNumberX = 742,
-                    BlockNumberY = 247,
-                    SomeValue = "EmptyBlock",
                 }
             }
         };
@@ -1169,8 +1189,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         List<Action> toDo = new();
         SerializationHelper.AddXYBlocksToWork(
             streamPackage,
-            objs,
-            "MyBlocks",
+            group,
+            "Worldspaces",
+            topRecordRetriever: b => b.Records,
             blockRetriever: b => b.Blocks,
             subBlockRetriever: b => b.SubBlocks,
             majorRetriever: b => b.Records,
@@ -1178,9 +1199,14 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             subBlockNumberRetriever: b => new P2Int16(b.BlockNumberX, b.BlockNumberY),
             metaData: meta,
             kernel: MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
-            metaWriter: (w, o, k, m) =>
+            groupWriter: (w, o, k, m) =>
             {
-                k.WriteInt32(w, nameof(TestBlockGroup.SomeValue), o.SomeValue, default);
+                k.WriteInt32(w, nameof(TestXYBlockGroup.SomeValue), o.SomeValue, default);
+            },
+            topRecordWriter: (w, o, k, m) =>
+            {
+                k.WriteInt32(w, nameof(TestXYRecord.SomeValue), o.SomeValue, default);
+                k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
             },
             blockWriter: (w, o, k, m) =>
             {
@@ -1195,6 +1221,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
             },
+            withNumbering: true,
             toDo: toDo);
         toDo.ForEach(t => t());
         
@@ -1202,11 +1229,14 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     
         toDo.Clear();
 
-        var g = new TestXYBlockGroup();
-        SerializationHelper.ReadFolderPerRecordIntoXYBlocks<TReaderKernel, TReader, TestXYBlockGroup, XYBlock, XYSubBlock, TestMajorRecord>(
-            streamPackage with { Path = Path.Combine(streamPackage.Path, "MyBlocks")},
-            g, meta, new TReaderKernel(),
-            objReader: (r, o, k, m, n) =>
+        var outGroup = new TestXYBlockGroup();
+        SerializationHelper.ReadIntoXYBlocks<TReaderKernel, TReader, TestXYBlockGroup, TestXYRecord, XYBlock, XYSubBlock, TestMajorRecord>(
+            streamPackage,
+            outGroup,
+            "Worldspaces",
+            meta,
+            new TReaderKernel(),
+            groupReader: (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1217,9 +1247,30 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         throw new NotImplementedException();
                 }
             },
-            groupSetter: (b, blocks) =>
+            objReader: (r, k, m) =>
             {
-                b.Blocks.SetTo(blocks);
+                FormKey fk = default;
+                string s = string.Empty;
+                int i = default;
+                while (k.TryGetNextField(r, out var name))
+                {
+                    switch (name)
+                    {
+                        case "FormKey":
+                            fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
+                            break;
+                        case nameof(TestXYRecord.String):
+                            s = k.ReadString(r);
+                            break;
+                        case nameof(TestXYRecord.SomeValue):
+                            i = k.ReadInt32(r) ?? 0;
+                            break;
+                        default:
+                            throw new DataMisalignedException();
+                    }
+                }
+    
+                return new TestXYRecord(fk, s) { SomeValue = i };
             },
             blockReader: (r, o, k, m, n) =>
             {
@@ -1276,10 +1327,18 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     
                 return new TestMajorRecord(fk, s);
             },
+            groupSetter: (b, recs) =>
+            {
+                b.Records.SetTo(recs);
+            },
+            topRecordSetter: (b, blocks) =>
+            {
+                b.Blocks.SetTo(blocks);
+            },
             toDo: toDo);
         toDo.ForEach(t => t());
 
-        g.Equals(objs).Should().BeTrue();
+        outGroup.Equals(group).Should().BeTrue();
     }
 
     public enum SomeEnum

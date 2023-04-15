@@ -52,9 +52,9 @@ public class MixinGenerator
         var writer = interf.TypeArguments[3];
         var isMod = _modObjectTypeTester.IsModObject(bootstrap.ObjectRegistration);
 
-        if (!isMod && customization.FolderPerRecord)
+        if (!isMod && customization.FilePerRecord)
         {
-            // Don't generate mixins if we're doing FolderPerRecord
+            // Don't generate mixins if we're doing FilePerRecord
             return;
         }
         
@@ -62,9 +62,9 @@ public class MixinGenerator
         
         var sb = new StructuredStringBuilder();
 
-        var pathInput = customization.FolderPerRecord ? "DirectoryPath" : "FilePath";
-        var streamInput = customization.FolderPerRecord ? "StreamPackage" : "Stream";
-        var streamPassAlong = customization.FolderPerRecord ? "stream" : "new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem)";
+        var pathInput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
+        var streamInput = customization.FilePerRecord ? "StreamPackage" : "Stream";
+        var streamPassAlong = customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem)";
 
         sb.AppendLine($"using Mutagen.Bethesda.Plugins;");
         sb.AppendLine($"using {bootstrap.ObjectRegistration.ContainingNamespace};");
@@ -103,11 +103,11 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                if (customization.FolderPerRecord)
+                if (customization.FilePerRecord)
                 {
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
-                var pathStreamPassAlong = customization.FolderPerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path, fileSystem)" : "fileSystem.File.Create(path)";
+                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path, fileSystem)" : "fileSystem.File.Create(path)";
                 using (var f = sb.Call("Serialize"))
                 {
                     f.AddPassArg("converterBootstrap");
@@ -177,7 +177,7 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
-                var pathStreamPassAlong = customization.FolderPerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path, fileSystem)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
+                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path, fileSystem)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
                 using (var c = sb.Call($"DeserializeInto"))
                 {
                     c.AddPassArg("converterBootstrap");

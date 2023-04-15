@@ -39,7 +39,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -133,7 +134,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if ({fieldAccessor}.Count > 0) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -195,5 +196,11 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({readerAccessor});");
         }
         sb.AppendLine($"{kernelAccessor}.EndDictionarySection({readerAccessor});");
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

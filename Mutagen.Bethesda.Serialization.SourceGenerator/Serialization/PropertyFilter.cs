@@ -33,7 +33,11 @@ public class PropertyFilter
         }
 
         if (propertySymbol.Name.EndsWith("Release")
-            && _enumFieldGenerator.Applicable(obj, compilation.Customization.Overall, propertySymbol.Type))
+            && _enumFieldGenerator.Applicable(
+                obj,
+                compilation.Customization.Overall,
+                propertySymbol.Type,
+                propertySymbol.Name))
         {
             return true;
         }

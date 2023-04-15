@@ -31,7 +31,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         yield return "Mutagen.Bethesda.Plugins.Records";
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType);
+            .GetGenerator(obj, compilation, subType, fieldName: null);
         if (gen != null)
         {
             foreach (var ns in gen.RequiredNamespaces(obj, compilation, subType))
@@ -46,7 +46,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -172,7 +173,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             cancel: cancel);
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -239,5 +240,11 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                 }
             });
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

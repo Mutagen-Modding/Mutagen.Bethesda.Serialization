@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -52,6 +53,28 @@ internal static class ListGroup_Serialization
         return false;
     }
 
+    public static void DeserializeSingleFieldInto<TReadObject, T>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroup<T> obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+        where T : class, IMajorRecordInternal
+    {
+        switch (name)
+        {
+            case "SomeInt":
+                obj.SomeInt = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeInt");
+                break;
+            case "SomeInt2":
+                obj.SomeInt2 = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeInt2");
+                break;
+            default:
+                break;
+        }
+    }
+    
     public static void DeserializeInto<TReadObject, T>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -70,30 +93,6 @@ internal static class ListGroup_Serialization
                 name: name);
         }
 
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject, T>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroup<T> obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-        where T : class, IMajorRecordInternal
-    {
-        switch (name)
-        {
-            case "SomeInt":
-                obj.SomeInt = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeInt");
-                break;
-            case "Items":
-                break;
-            case "SomeInt2":
-                obj.SomeInt2 = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeInt2");
-                break;
-            default:
-                break;
-        }
     }
 
 }

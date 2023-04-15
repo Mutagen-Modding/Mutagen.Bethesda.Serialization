@@ -26,7 +26,8 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol) => false;
+        ITypeSymbol typeSymbol, 
+        string? fieldName) => false;
 
     public IEnumerable<string> RequiredNamespaces(
         LoquiTypeSet obj,
@@ -89,7 +90,7 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if (!EqualityComparer<ITranslatedStringGetter?>.Default.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default(ITranslatedStringGetter?)"})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -107,5 +108,11 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         {
             c.Add(readerAccessor);
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

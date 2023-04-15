@@ -39,19 +39,30 @@ public class CustomizationInterpreter
         if (invoke.Expression is not MemberAccessExpressionSyntax member) return false;
         switch (member.Name.ToString())
         {
-            case "FolderPerRecord" when invoke.ArgumentList.Arguments.Count is 0:
-                return HandleFolderPerRecord(specifications, invoke, member);
+            case "FilePerRecord" when invoke.ArgumentList.Arguments.Count is 0:
+                return HandleFilePerRecord(specifications, invoke, member);
+            case "EnforceRecordOrder" when invoke.ArgumentList.Arguments.Count is 0:
+                return EnforceRecordOrder(specifications, invoke, member);
             default:
                 return false;
         }
     }
 
-    private bool HandleFolderPerRecord(
+    private bool HandleFilePerRecord(
         CustomizationSpecifications specifications,
         InvocationExpressionSyntax invoke,
         MemberAccessExpressionSyntax memberAccess)
     {
-        specifications.FolderPerRecord = true;
+        specifications.FilePerRecord = true;
+        return true;
+    }
+
+    private bool EnforceRecordOrder(
+        CustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        specifications.EnforceRecordOrder = true;
         return true;
     }
 }

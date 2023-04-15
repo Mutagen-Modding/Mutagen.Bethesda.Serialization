@@ -37,7 +37,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
         if (gen != null)
         {
             gen.GenerateForSerialize(compilation,
@@ -106,10 +106,10 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
         if (gen != null)
         {
-            gen.GenerateForDeserialize(compilation,
+            gen.GenerateForDeserializeSingleFieldInto(compilation,
                 obj,
                 fieldType,
                 fieldName,
@@ -143,7 +143,41 @@ public class SerializationFieldGenerator
         cancel.ThrowIfCancellationRequested();
         if (gen != null)
         {
-            gen.GenerateForDeserialize(compilation,
+            gen.GenerateForDeserializeSingleFieldInto(compilation,
+                obj,
+                fieldType,
+                fieldName,
+                fieldAccessor,
+                readerAccessor,
+                "kernel",
+                "metaData",
+                insideCollection: false,
+                canSet: canSet,
+                sb,
+                cancel);
+        }
+        else
+        {
+            sb.AppendLine($"throw new NotImplementedException(\"Unknown type: {fieldType} for field {fieldName}\");");
+        }
+    }
+    
+    public void GenerateForDeserializeSection(
+        CompilationUnit compilation,
+        LoquiTypeSet obj,
+        ITypeSymbol fieldType,
+        string readerAccessor,
+        string? fieldName,
+        string fieldAccessor,
+        bool canSet,
+        ISerializationForFieldGenerator? gen,
+        StructuredStringBuilder sb,
+        CancellationToken cancel)
+    {
+        cancel.ThrowIfCancellationRequested();
+        if (gen != null)
+        {
+            gen.GenerateForDeserializeSection(compilation,
                 obj,
                 fieldType,
                 fieldName,
@@ -173,7 +207,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
         if (gen != null)
         {
             gen.GenerateForHasSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, "metaData", sb, cancel);
@@ -209,7 +243,8 @@ public class SerializationFieldGenerator
     public ISerializationForFieldGenerator? GetGenerator(
         LoquiTypeSet obj,
         CompilationUnit compilation,
-        ITypeSymbol fieldType)
+        ITypeSymbol fieldType, 
+        string? fieldName)
     {
         compilation.Context.CancellationToken.ThrowIfCancellationRequested();
         if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
@@ -221,7 +256,7 @@ public class SerializationFieldGenerator
             foreach (var fieldGenerator in _variableFieldGenerators)
             {
                 compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                if (fieldGenerator.Applicable(obj, compilation.Customization.Overall, fieldType))
+                if (fieldGenerator.Applicable(obj, compilation.Customization.Overall, fieldType, fieldName))
                 {
                     return fieldGenerator;
                 }

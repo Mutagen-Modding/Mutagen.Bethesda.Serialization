@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Serialization.Utility;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 

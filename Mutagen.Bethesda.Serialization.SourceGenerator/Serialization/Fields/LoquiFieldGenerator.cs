@@ -37,7 +37,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (_groupTester.IsGroup(typeSymbol)) return false;
         if (_isLoquiObjectTester.IsLoqui(typeSymbol)) return true;
@@ -115,7 +116,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if ({fieldSerializationItems.HasSerializationCall(withCheck: compilation.Mapping.HasInheritingClasses(typeSet))}({fieldAccessor}, {metaAccessor})) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -151,5 +152,11 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
             sb.AppendLine($"var tmp{fieldName} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
             sb.AppendLine($"{fieldAccessor}.DeepCopyIn(tmp{fieldName});");
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

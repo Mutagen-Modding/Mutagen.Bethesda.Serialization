@@ -47,14 +47,15 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
     {
         var subType = GetSubtype(typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType);
+            .GetGenerator(obj, compilation, subType, fieldName: null);
         return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
     }
     
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {
@@ -118,7 +119,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
             cancel: cancel);
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -151,7 +152,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                 c.AddPassArg("metaData");
                 c.Add((subSb) =>
                 {
-                    subSb.AppendLine("itemReader: (r, k, m) =>");
+                    subSb.AppendLine("itemReader: static (r, k, m) =>");
                     using (subSb.CurlyBrace())
                     {
                         _forFieldGenerator().Value.GenerateDeserializeForField(
@@ -159,8 +160,8 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                             obj: obj,
                             fieldType: subType,
                             readerAccessor: "r", 
-                            kernelAccessor: kernelAccessor,
-                            metaDataAccessor: metaAccessor,
+                            kernelAccessor: "k",
+                            metaDataAccessor: "m",
                             fieldName: fieldName, 
                             fieldAccessor: "return ",
                             sb: subSb,
@@ -169,5 +170,11 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                 });
             }
         }
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

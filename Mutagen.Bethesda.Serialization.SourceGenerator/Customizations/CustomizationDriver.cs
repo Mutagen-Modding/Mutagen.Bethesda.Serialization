@@ -22,10 +22,14 @@ public class CustomizationDriver
         CompilationUnit compilation,
         PropertyCollection propertyCollection)
     {
-        return compilation.Customization.Overall.FolderPerRecord
+        return compilation.Customization.Overall.FilePerRecord
             && propertyCollection.InOrder.Any(
                 x => _isGroupTester.IsGroup(x.Property.Type)
-                    || _majorRecordListFieldGenerator.Applicable(obj, compilation.Customization.Overall, x.Property.Type));
+                    || _majorRecordListFieldGenerator.Applicable(
+                        obj,
+                        compilation.Customization.Overall, 
+                        x.Property.Type,
+                        x.Property.Name));
     }
     
     public void SerializationPreWork(

@@ -54,7 +54,7 @@ public class SerializationForObjectGenerator
         var inheriting = compilation.Mapping.TryGetDeepInheritingClasses(typeSet);
         
         var sb = new StructuredStringBuilder();
-        
+
         var properties = _propertyCollectionRetriever.GetPropertyCollection(
             compilation,
             typeSet);
@@ -187,6 +187,9 @@ public class SerializationForObjectGenerator
     {
         var genString = generics.ReaderGenericsString();
         var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
+        
+        var hadIntoFields = GenerateDeserializeSingleFieldInto(compilation, obj, sb, baseType, properties, generics, genString);
+
         using (var args = sb.Function($"public static void DeserializeInto{genString}"))
         {
             args.Add($"TReadObject reader");
@@ -199,7 +202,6 @@ public class SerializationForObjectGenerator
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
-
         using (sb.CurlyBrace())
         {
             if (isMod)
@@ -209,12 +211,30 @@ public class SerializationForObjectGenerator
 
             _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
 
-            GenerateDeserializeCall(compilation, obj, sb, baseType, properties, generics);
-
+            GenerateDeserializeCall(compilation, obj, sb, baseType, properties, generics, 
+                generateLoop: hadIntoFields);
+            
             _customizationDriver.SerializationPostWork(obj, compilation, sb, properties);
         }
         sb.AppendLine();
-        
+    }
+
+    private bool GenerateDeserializeSingleFieldInto(
+        CompilationUnit compilation, 
+        LoquiTypeSet obj,
+        StructuredStringBuilder sb,
+        ITypeSymbol? baseType,
+        PropertyCollection properties, 
+        SerializationGenerics generics,
+        string genString)
+    {        
+        var hasInheritingClasses = compilation.Mapping.HasInheritingClasses(obj);
+        var hasBaseClass = compilation.Mapping.TryGetBaseClass(obj) != null;
+
+        var alwaysGenerate = hasInheritingClasses || hasBaseClass;
+
+        var orig = sb;
+        sb = new StructuredStringBuilder();
         using (var args = sb.Function($"public static void DeserializeSingleFieldInto{genString}"))
         {
             args.Add($"TReadObject reader");
@@ -226,52 +246,69 @@ public class SerializationForObjectGenerator
             {
                 args.Add("List<Action> parallelToDo");
             }
+
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
+
         using (sb.CurlyBrace())
         {
             sb.AppendLine("switch (name)");
             using (sb.CurlyBrace())
             {
+                bool generatedForProperty = false;
                 foreach (var prop in properties.InOrder)
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
                     _customizationDriver.WrapOmission(compilation, sb, prop, () =>
                     {
+                        var subSb = new StructuredStringBuilder();
+                        _forFieldGenerator.GenerateDeserializeForField(
+                            compilation: compilation,
+                            obj: obj,
+                            fieldType: prop.Property.Type,
+                            readerAccessor: "reader",
+                            fieldName: prop.Property.Name,
+                            fieldAccessor: $"obj.{prop.Property.Name}",
+                            canSet: prop.Property.IsSettable(),
+                            prop.Generator,
+                            sb: subSb,
+                            cancel: compilation.Context.CancellationToken);
+                        if (subSb.Count == 0) return;
+                        generatedForProperty = true;
+
                         sb.AppendLine($"case \"{prop.Property.Name}\":");
                         using (sb.IncreaseDepth())
                         {
-                            _forFieldGenerator.GenerateDeserializeForField(
-                                compilation: compilation,
-                                obj: obj,
-                                fieldType: prop.Property.Type,
-                                readerAccessor: "reader",
-                                fieldName: prop.Property.Name,
-                                fieldAccessor: $"obj.{prop.Property.Name}",
-                                canSet: prop.Property.IsSettable(),
-                                prop.Generator,
-                                sb: sb,
-                                cancel: compilation.Context.CancellationToken);
+                            sb.AppendLines(subSb);
                             sb.AppendLine("break;");
                         }
                     });
                 }
+
+                if (!generatedForProperty && !alwaysGenerate)
+                {
+                    return false;
+                }
+
                 sb.AppendLine("default:");
                 using (sb.IncreaseDepth())
                 {
-            
                     if (baseType != null
                         && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
                     {
                         sb.AppendLine(
                             $"{baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
                     }
+
                     sb.AppendLine("break;");
                 }
             }
         }
+
         sb.AppendLine();
+        orig.AppendLines(sb);
+        return true;
     }
 
     private void GenerateDeserializeCall(
@@ -280,7 +317,8 @@ public class SerializationForObjectGenerator
         StructuredStringBuilder sb,
         ITypeSymbol? baseType,
         PropertyCollection properties,
-        SerializationGenerics generics)
+        SerializationGenerics generics,
+        bool generateLoop)
     {
         foreach (var interceptor in _serializationInterceptors)
         {
@@ -297,23 +335,45 @@ public class SerializationForObjectGenerator
             }
         }
 
-        sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
-        using (sb.CurlyBrace())
+        if (generateLoop)
         {
-            using (var c = sb.Call("DeserializeSingleFieldInto"))
+            sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
+            using (sb.CurlyBrace())
             {
-                c.AddPassArg("reader");
-                c.AddPassArg("kernel");
-                c.AddPassArg("obj");
-                c.AddPassArg("metaData");
-                c.AddPassArg("name");
-                if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
+                using (var c = sb.Call("DeserializeSingleFieldInto"))
                 {
-                    c.AddPassArg("parallelToDo");
+                    c.AddPassArg("reader");
+                    c.AddPassArg("kernel");
+                    c.AddPassArg("obj");
+                    c.AddPassArg("metaData");
+                    c.AddPassArg("name");
+                    if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
+                    {
+                        c.AddPassArg("parallelToDo");
+                    }
                 }
-            }
-        }            
-        sb.AppendLine();
+            }            
+            sb.AppendLine();
+        }
+        
+        foreach (var prop in properties.InOrder)
+        {
+            compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+            _customizationDriver.WrapOmission(compilation, sb, prop, () =>
+            {
+                _forFieldGenerator.GenerateForDeserializeSection(
+                    compilation: compilation,
+                    obj: obj,
+                    fieldType: prop.Property.Type,
+                    readerAccessor: "reader",
+                    fieldName: prop.Property.Name,
+                    fieldAccessor: $"obj.{prop.Property.Name}",
+                    canSet: prop.Property.IsSettable(),
+                    prop.Generator,
+                    sb: sb,
+                    cancel: compilation.Context.CancellationToken);
+            });
+        }
     }
 
     private void GenerateSerialize(
@@ -389,6 +449,7 @@ public class SerializationForObjectGenerator
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
             args.Wheres.Add("where TWriteObject : IContainStreamPackage");
         }
+
         using (sb.CurlyBrace())
         {
             if (baseType != null
@@ -459,7 +520,7 @@ public class SerializationForObjectGenerator
 
             var hasInvariable = properties.InOrder.Any(x =>
             {
-                var gen = _forFieldGenerator.GetGenerator(obj, compilation, x.Property.Type);
+                var gen = _forFieldGenerator.GetGenerator(obj, compilation, x.Property.Type, x.Property.Name);
                 return !gen?.HasVariableHasSerialize ?? true;
             });
 
@@ -709,6 +770,7 @@ public class SerializationForObjectGenerator
                 x.Generator?.RequiredNamespaces(obj, compilation, x.Property.Type) ?? Enumerable.Empty<string>())
             .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
+            .And("Mutagen.Bethesda.Serialization.Utility")
             .And("Loqui")
             .And("Noggog")
             .And(obj.Setter.ContainingNamespace.ToString())

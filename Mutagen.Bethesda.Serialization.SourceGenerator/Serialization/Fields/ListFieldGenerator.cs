@@ -8,42 +8,34 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public class ListFieldGenerator : AListFieldGenerator
 {
-    private readonly BlocksXYFieldGenerator _xyFieldGenerator;
     private readonly IsMajorRecordTester _isMajorRecordTester;
     
     public ListFieldGenerator(
-        BlocksXYFieldGenerator xyFieldGenerator,
         IsMajorRecordTester isMajorRecordTester,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
         IsGroupTester groupTester) 
         : base(forFieldGenerator, groupTester)
     {
-        _xyFieldGenerator = xyFieldGenerator;
         _isMajorRecordTester = isMajorRecordTester;
     }
 
     public override bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
-        if (!base.Applicable(obj, customization, typeSymbol)) return false;
+        if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
+
+        if (ShouldSkip(customization, obj, fieldName)) return true;
         
-        if (customization.FolderPerRecord)
+        if (customization.FilePerRecord)
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             return !_isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);
         }
 
         return true;
-    }
-
-    private bool IsXYBlock(
-        CompilationUnit compilation,
-        INamedTypeSymbol t)
-    {
-        if (!compilation.Customization.Overall.FolderPerRecord) return false;
-        return GetSubtype(t).Name.Contains("WorldspaceBlock");
     }
     
     public override void GenerateForHasSerialize(
@@ -57,23 +49,6 @@ public class ListFieldGenerator : AListFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        if (field is INamedTypeSymbol namedTypeSymbol)
-        {
-            if (IsXYBlock(compilation, namedTypeSymbol))
-            {
-                _xyFieldGenerator.GenerateForHasSerialize(
-                    compilation,
-                    obj,
-                    field,
-                    fieldName,
-                    fieldAccessor,
-                    defaultValueAccessor,
-                    metaAccessor,
-                    sb,
-                    cancel);
-                return;
-            }
-        }
         sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}{GetCountAccessor(field)} > 0) return true;");
     }
     
@@ -104,23 +79,6 @@ public class ListFieldGenerator : AListFieldGenerator
         }
         else if (field is INamedTypeSymbol namedTypeSymbol)
         {
-            if (IsXYBlock(compilation, namedTypeSymbol))
-            {
-                _xyFieldGenerator.GenerateForSerialize(
-                    compilation,
-                    obj,
-                    field,
-                    fieldName,
-                    fieldAccessor,
-                    defaultValueAccessor,
-                    writerAccessor,
-                    kernelAccessor,
-                    metaAccessor,
-                    isInsideCollection: isInsideCollection,
-                    sb,
-                    cancel);
-                return;
-            }
             subType = GetSubtype(namedTypeSymbol);
         }
         else
@@ -160,7 +118,7 @@ public class ListFieldGenerator : AListFieldGenerator
         }
     }
 
-    public override void GenerateForDeserialize(
+    public override void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -185,23 +143,6 @@ public class ListFieldGenerator : AListFieldGenerator
         }
         else if (field is INamedTypeSymbol namedTypeSymbol)
         {
-            if (IsXYBlock(compilation, namedTypeSymbol))
-            {
-                _xyFieldGenerator.GenerateForDeserialize(
-                    compilation,
-                    obj,
-                    field,
-                    fieldName,
-                    fieldAccessor,
-                    readerAccessor,
-                    kernelAccessor,
-                    metaAccessor,
-                    insideCollection,
-                    canSet,
-                    sb,
-                    cancel);
-                return;
-            }
             subType = GetSubtype(namedTypeSymbol);
         }
         else

@@ -10,10 +10,12 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public interface ITestMajorRecord : ITestMajorRecordGetter, IMajorRecordInternal
 {
+    new string String { get; set; }
 }
 
 public interface ITestMajorRecordGetter : ILoquiObjectGetter, IMajorRecordGetter
 {
+    string String { get; }
 }
 
 public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>

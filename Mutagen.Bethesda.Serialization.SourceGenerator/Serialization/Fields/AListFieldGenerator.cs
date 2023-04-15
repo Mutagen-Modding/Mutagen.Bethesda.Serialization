@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using StrongInject;
@@ -7,7 +7,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 {
-    private readonly IsGroupTester _groupTester;
+    protected readonly IsGroupTester GroupTester;
     protected readonly Func<IOwned<SerializationFieldGenerator>> ForFieldGenerator;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
@@ -16,7 +16,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         IsGroupTester groupTester)
     {
         ForFieldGenerator = forFieldGenerator;
-        _groupTester = groupTester;
+        GroupTester = groupTester;
     }
 
     private static readonly HashSet<string> _listStrings = new()
@@ -25,6 +25,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         "IReadOnlyList",
         "IList",
         "ExtendedList",
+        "IExtendedList",
     };
 
     public static IReadOnlyCollection<string> ListNameStrings => _listStrings;
@@ -38,7 +39,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     {
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = ForFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType);
+            .GetGenerator(obj, compilation, subType, fieldName: null);
         return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
     }
     
@@ -47,8 +48,8 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         string? fieldName)
     {
-        if (_groupTester.IsGroup(obj.Getter)) return true;
-        if (customization.FolderPerRecord)
+        if (GroupTester.IsGroup(obj.Getter)) return true;
+        if (customization.FilePerRecord)
         {
             if (obj.Direct == null) return false;
             if (obj.Direct.Name.Equals("CellBlock")) return true;
@@ -63,7 +64,8 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     public virtual bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {
@@ -123,7 +125,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel);
 
-    public abstract void GenerateForDeserialize(
+    public abstract void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -136,4 +138,11 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         bool canSet,
         StructuredStringBuilder sb,
         CancellationToken cancel);
+
+    public virtual void GenerateForDeserializeSection(
+        CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
+    }
 }

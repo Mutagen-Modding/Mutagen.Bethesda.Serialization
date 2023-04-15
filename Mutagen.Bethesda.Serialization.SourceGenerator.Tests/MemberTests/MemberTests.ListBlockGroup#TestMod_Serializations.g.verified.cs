@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -35,53 +36,56 @@ internal static class TestMod_Serialization
         where TWriteObject : IContainStreamPackage
     {
         List<Action> parallelToDo = new List<Action>();
-        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ISubCellBlockGetter, ITestMajorRecordGetter>(
+        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
             streamPackage: writer.StreamPackage,
             obj: item.SomeGroup,
             fieldName: "SomeGroup",
             metaData: metaData,
             kernel: kernel,
-            blockRetriever: x => x.Items,
-            subBlockRetriever: x => x.SubBlocks,
-            majorRetriever: x => x.Records,
-            blockNumberRetriever: x => x.BlockNumber,
-            subBlockNumberRetriever: x => x.BlockNumber,
+            blockRetriever: static x => x.Items,
+            subBlockRetriever: static x => x.SubBlocks,
+            majorRetriever: static x => x.Records,
+            blockNumberRetriever: static x => x.BlockNumber,
+            subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            withNumbering: false,
             toDo: parallelToDo);
-        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ISubCellBlockGetter, ITestMajorRecordGetter>(
+        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
             streamPackage: writer.StreamPackage,
             obj: item.SomeGroup2,
             fieldName: "SomeGroup2",
             metaData: metaData,
             kernel: kernel,
-            blockRetriever: x => x.Items,
-            subBlockRetriever: x => x.SubBlocks,
-            majorRetriever: x => x.Records,
-            blockNumberRetriever: x => x.BlockNumber,
-            subBlockNumberRetriever: x => x.BlockNumber,
+            blockRetriever: static x => x.Items,
+            subBlockRetriever: static x => x.SubBlocks,
+            majorRetriever: static x => x.Records,
+            blockNumberRetriever: static x => x.BlockNumber,
+            subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            withNumbering: false,
             toDo: parallelToDo);
-        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ISubCellBlockGetter, ITestMajorRecordGetter>(
+        SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
             streamPackage: writer.StreamPackage,
             obj: item.SomeGroup3,
             fieldName: "SomeGroup3",
             metaData: metaData,
             kernel: kernel,
-            blockRetriever: x => x.Items,
-            subBlockRetriever: x => x.SubBlocks,
-            majorRetriever: x => x.Records,
-            blockNumberRetriever: x => x.BlockNumber,
-            subBlockNumberRetriever: x => x.BlockNumber,
+            blockRetriever: static x => x.Items,
+            subBlockRetriever: static x => x.SubBlocks,
+            majorRetriever: static x => x.Records,
+            blockNumberRetriever: static x => x.BlockNumber,
+            subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            withNumbering: false,
             toDo: parallelToDo);
         Parallel.Invoke(parallelToDo.ToArray());
     }
@@ -119,112 +123,82 @@ internal static class TestMod_Serialization
     {
         var metaData = new SerializationMetaData(obj.GameRelease);
         List<Action> parallelToDo = new List<Action>();
-        while (kernel.TryGetNextField(reader, out var name))
-        {
-            DeserializeSingleFieldInto(
-                reader: reader,
-                kernel: kernel,
-                obj: obj,
-                metaData: metaData,
-                name: name,
-                parallelToDo: parallelToDo);
-        }
-
+        SerializationHelper.ReadFilePerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, CellSubBlock, TestMajorRecord>(
+            streamPackage: reader.StreamPackage,
+            group: obj.SomeGroup,
+            fieldName: "SomeGroup",
+            metaData: metaData,
+            kernel: kernel,
+            groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
+            blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
+            groupSetter: static (b, sub) =>
+            {
+                b.Items.SetTo(sub);
+            },
+            blockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.SubBlocks.SetTo(sub);
+            },
+            subBlockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.Records.SetTo(sub);
+            },
+            toDo: parallelToDo);
+        SerializationHelper.ReadFilePerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, CellSubBlock, TestMajorRecord>(
+            streamPackage: reader.StreamPackage,
+            group: obj.SomeGroup2,
+            fieldName: "SomeGroup2",
+            metaData: metaData,
+            kernel: kernel,
+            groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
+            blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
+            groupSetter: static (b, sub) =>
+            {
+                b.Items.SetTo(sub);
+            },
+            blockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.SubBlocks.SetTo(sub);
+            },
+            subBlockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.Records.SetTo(sub);
+            },
+            toDo: parallelToDo);
+        SerializationHelper.ReadFilePerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, CellSubBlock, TestMajorRecord>(
+            streamPackage: reader.StreamPackage,
+            group: obj.SomeGroup3,
+            fieldName: "SomeGroup3",
+            metaData: metaData,
+            kernel: kernel,
+            groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
+            blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
+            majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
+            groupSetter: static (b, sub) =>
+            {
+                b.Items.SetTo(sub);
+            },
+            blockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.SubBlocks.SetTo(sub);
+            },
+            subBlockSet: static (b, i, sub) =>
+            {
+                b.BlockNumber = i;
+                b.Records.SetTo(sub);
+            },
+            toDo: parallelToDo);
         Parallel.Invoke(parallelToDo.ToArray());
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
-        SerializationMetaData metaData,
-        string name,
-        List<Action> parallelToDo)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            case "SomeGroup":
-                SerializationHelper.ReadFolderPerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, SubCellBlock, TestMajorRecord>(
-                    streamPackage: reader.StreamPackage,
-                    group: obj.SomeGroup,
-                    metaData: metaData,
-                    kernel: kernel,
-                    groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
-                    blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
-                    groupSetter: static (b, sub) =>
-                    {
-                        b.Items.SetTo(sub);
-                    },
-                    blockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.SubBlocks.SetTo(sub);
-                    },
-                    subBlockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.Records.SetTo(sub);
-                    },
-                    toDo: parallelToDo);
-                break;
-            case "SomeGroup2":
-                SerializationHelper.ReadFolderPerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, SubCellBlock, TestMajorRecord>(
-                    streamPackage: reader.StreamPackage,
-                    group: obj.SomeGroup2,
-                    metaData: metaData,
-                    kernel: kernel,
-                    groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
-                    blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
-                    groupSetter: static (b, sub) =>
-                    {
-                        b.Items.SetTo(sub);
-                    },
-                    blockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.SubBlocks.SetTo(sub);
-                    },
-                    subBlockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.Records.SetTo(sub);
-                    },
-                    toDo: parallelToDo);
-                break;
-            case "SomeGroup3":
-                SerializationHelper.ReadFolderPerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, SubCellBlock, TestMajorRecord>(
-                    streamPackage: reader.StreamPackage,
-                    group: obj.SomeGroup3,
-                    metaData: metaData,
-                    kernel: kernel,
-                    groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
-                    blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubCellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-                    majorReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>),
-                    groupSetter: static (b, sub) =>
-                    {
-                        b.Items.SetTo(sub);
-                    },
-                    blockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.SubBlocks.SetTo(sub);
-                    },
-                    subBlockSet: static (b, i, sub) =>
-                    {
-                        b.BlockNumber = i;
-                        b.Records.SetTo(sub);
-                    },
-                    toDo: parallelToDo);
-                break;
-            default:
-                break;
-        }
     }
 
 }

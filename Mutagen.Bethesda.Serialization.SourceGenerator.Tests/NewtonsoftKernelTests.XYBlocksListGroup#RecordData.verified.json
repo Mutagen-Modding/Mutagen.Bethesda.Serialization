@@ -1,3 +1,4 @@
 ﻿{
-  "SomeValue": 123
+  "SomeValue": 123,
+  "String": "RecordData"
 }

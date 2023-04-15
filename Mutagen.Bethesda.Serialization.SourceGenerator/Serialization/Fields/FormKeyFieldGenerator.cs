@@ -26,9 +26,10 @@ public class FormKeyFieldGenerator : PrimitiveFieldGenerator
     {
     }
 
-    public override void GenerateForDeserialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+    public override void GenerateForDeserializeSingleFieldInto(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
         string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
         bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
     {
+        // FormKey isn't set by setting a member
     }
 }

@@ -8,5 +8,6 @@ public record CustomizationCatalog(
 
 public record CustomizationSpecifications(ITypeSymbol? CustomizationClass)
 {
-    public bool FolderPerRecord { get; set; }
+    public bool FilePerRecord { get; set; }
+    public bool EnforceRecordOrder { get; set; }
 }

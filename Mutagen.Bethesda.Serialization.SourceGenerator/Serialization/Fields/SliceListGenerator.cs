@@ -36,7 +36,8 @@ public class SliceListGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol)
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;
@@ -96,7 +97,7 @@ public class SliceListGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"if ({fieldAccessor}.Count != 0) return true;");
     }
 
-    public void GenerateForDeserialize(
+    public void GenerateForDeserializeSingleFieldInto(
         CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,
@@ -123,7 +124,7 @@ public class SliceListGenerator : ISerializationForFieldGenerator
         sb.AppendLine($"while ({kernelAccessor}.TryHasNextItem({readerAccessor}))");
         using (sb.CurlyBrace())
         {
-            _byteArrGenerator.GenerateForDeserialize(
+            _byteArrGenerator.GenerateForDeserializeSingleFieldInto(
                 compilation: compilation,
                 obj: obj,
                 field: null!,
@@ -143,5 +144,11 @@ public class SliceListGenerator : ISerializationForFieldGenerator
             }
         }
         sb.AppendLine($"{kernelAccessor}.EndListSection({readerAccessor});");
+    }
+
+    public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
+        string fieldAccessor, string readerAccessor, string kernelAccessor, string metaAccessor, bool insideCollection,
+        bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
+    {
     }
 }

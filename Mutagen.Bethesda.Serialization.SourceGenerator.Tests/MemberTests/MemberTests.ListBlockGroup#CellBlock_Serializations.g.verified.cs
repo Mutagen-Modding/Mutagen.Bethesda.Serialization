@@ -3,6 +3,7 @@ using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 
 #nullable enable
@@ -43,6 +44,7 @@ internal static class CellBlock_Serialization
     {
         if (item == null) return false;
         if (!EqualityComparer<int>.Default.Equals(item.BlockNumber, default(int))) return true;
+        if (item.SubBlocks.Length > 0) return true;
         return false;
     }
 
@@ -61,6 +63,24 @@ internal static class CellBlock_Serialization
         return obj;
     }
 
+    public static void DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ICellBlock obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+    {
+        switch (name)
+        {
+            case "BlockNumber":
+                obj.BlockNumber = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "BlockNumber");
+                break;
+            default:
+                break;
+        }
+    }
+    
     public static void DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -78,24 +98,6 @@ internal static class CellBlock_Serialization
                 name: name);
         }
 
-    }
-
-    public static void DeserializeSingleFieldInto<TReadObject>(
-        TReadObject reader,
-        ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ICellBlock obj,
-        SerializationMetaData metaData,
-        string name)
-        where TReadObject : IContainStreamPackage
-    {
-        switch (name)
-        {
-            case "BlockNumber":
-                obj.BlockNumber = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "BlockNumber");
-                break;
-            default:
-                break;
-        }
     }
 
 }
