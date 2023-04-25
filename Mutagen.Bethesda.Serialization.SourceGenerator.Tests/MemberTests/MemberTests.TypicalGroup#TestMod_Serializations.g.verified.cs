@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,22 +14,23 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
-        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        IWorkDropoff workDropoff)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(item.GameRelease);
-        SerializeFields<TKernel, TWriteObject>(
+        var metaData = new SerializationMetaData(item.GameRelease, workDropoff);
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -35,7 +38,7 @@ internal static class TestMod_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+        await SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
             writer: writer,
             group: item.SomeGroup,
             fieldName: "SomeGroup",
@@ -43,7 +46,7 @@ internal static class TestMod_Serialization
             kernel: kernel,
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
-        SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+        await SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
             writer: writer,
             group: item.SomeGroup2,
             fieldName: "SomeGroup2",
@@ -51,7 +54,7 @@ internal static class TestMod_Serialization
             kernel: kernel,
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ITestMajorRecordGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
-        SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
+        await SerializationHelper.WriteGroup<TKernel, TWriteObject, IGroupGetter<ITestMajorRecordGetter>, ITestMajorRecordGetter>(
             writer: writer,
             group: item.SomeGroup3,
             fieldName: "SomeGroup3",
@@ -64,29 +67,31 @@ internal static class TestMod_Serialization
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter? item)
     {
         if (item == null) return false;
-        var metaData = new SerializationMetaData(item.GameRelease);
+        var metaData = new SerializationMetaData(item.GameRelease, null!);
         if (item.SomeGroup.Count > 0) return true;
         if (item.SomeGroup2.Count > 0) return true;
         if (item.SomeGroup3.Count > 0) return true;
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
-        Serialization.SourceGenerator.TestsRelease release)
+        Serialization.SourceGenerator.TestsRelease release,
+        IWorkDropoff workDropoff)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
-            obj: obj);
+            obj: obj,
+            workDropoff: workDropoff);
         return obj;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
@@ -97,7 +102,7 @@ internal static class TestMod_Serialization
         switch (name)
         {
             case "SomeGroup":
-                SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
+                await SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                     reader: reader,
                     group: obj.SomeGroup,
                     metaData: metaData,
@@ -106,7 +111,7 @@ internal static class TestMod_Serialization
                     itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>));
                 break;
             case "SomeGroup2":
-                SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
+                await SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                     reader: reader,
                     group: obj.SomeGroup2,
                     metaData: metaData,
@@ -115,7 +120,7 @@ internal static class TestMod_Serialization
                     itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>));
                 break;
             case "SomeGroup3":
-                SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
+                await SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
                     reader: reader,
                     group: obj.SomeGroup3,
                     metaData: metaData,
@@ -128,16 +133,17 @@ internal static class TestMod_Serialization
         }
     }
     
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj)
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
+        IWorkDropoff workDropoff)
         where TReadObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(obj.GameRelease);
+        var metaData = new SerializationMetaData(obj.GameRelease, workDropoff);
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

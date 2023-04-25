@@ -5,16 +5,15 @@ namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static partial class SerializationHelper
 {
-    public static void WriteFolderPerRecord<TKernel, TWriteObject, TGroup, TObject>(
+    public static async Task WriteFolderPerRecord<TKernel, TWriteObject, TGroup, TObject>(
         StreamPackage streamPackage,
         TGroup group,
         string? fieldName,
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        Write<TKernel, TWriteObject, TGroup> groupWriter,
-        Write<TKernel, TWriteObject, TObject> itemWriter,
-        bool withNumbering,
-        List<Action> toDo)
+        WriteAsync<TKernel, TWriteObject, TGroup> groupWriter,
+        WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
+        bool withNumbering)
         where TGroup : class, IReadOnlyCollection<TObject>
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TObject : class, IMajorRecordGetter
@@ -22,25 +21,22 @@ public static partial class SerializationHelper
     {
         if (fieldName == null) throw new ArgumentNullException(paramName: nameof(fieldName));
 
-        var groupDir = WriteGroupRecordData(
+        var groupDir = await WriteGroupRecordData(
             streamPackage: streamPackage,
             @group: group,
             folderName: fieldName,
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: groupWriter,
-            toDo: toDo);
+            groupWriter: groupWriter);
         
-        var fileName = RecordFileName(kernel.ExpectedExtension);
+        var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
-        int? i = withNumbering ? 1 : null;
-        foreach (var recordGetter in group)
-        {
-            int? number = i;
-            toDo.Add(() =>
+        await metaData.WorkDropoff.EnqueueAndWait(
+            group.WithIndex(),
+            async recordGetter =>
             {
-                var recordDirName = FileNameProvider(recordGetter, string.Empty, number);
+                var recordDirName = RecordFileNameProvider(recordGetter.Item, string.Empty, withNumbering ? recordGetter.Index : null);
 
                 var dir = Path.Combine(groupDir, recordDirName);
                 streamPackage.FileSystem.Directory.CreateDirectory(dir);
@@ -49,22 +45,19 @@ public static partial class SerializationHelper
                 using var stream = streamPackage.FileSystem.File.Create(recordPath);
                 var recordStreamPackage = streamPackage with { Stream = stream, Path = dir };
                 var recordWriter = kernel.GetNewObject(recordStreamPackage);
-                itemWriter(recordWriter, recordGetter, kernel, metaData);
+                await itemWriter(recordWriter, recordGetter.Item, kernel, metaData);
                 kernel.Finalize(recordStreamPackage, recordWriter);
             });
-            i++;
-        }
     }
 
-    public static void ReadFolderPerRecord<TKernel, TReadObject, TGroup, TObject>(
+    public static async Task ReadFolderPerRecord<TKernel, TReadObject, TGroup, TObject>(
         StreamPackage streamPackage,
         TGroup group,
         string? fieldName,
         SerializationMetaData metaData,
         TKernel kernel,
         ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
-        Read<TKernel, TReadObject, TObject> itemReader,
-        List<Action> toDo)
+        ReadAsync<TKernel, TReadObject, TObject> itemReader)
         where TGroup : class, IGroup<TObject>
         where TObject : class, IMajorRecord
         where TKernel : ISerializationReaderKernel<TReadObject>
@@ -77,30 +70,32 @@ public static partial class SerializationHelper
         }
         if (!streamPackage.FileSystem.Directory.Exists(streamPackage.Path)) return;
         
-        ReadGroupHeaderPathToWork(
-            streamPackage, group, metaData, kernel, groupReader, toDo);
+        await ReadGroupHeaderPathToWork(
+            streamPackage, group, metaData, kernel, groupReader);
         
-        var fileName = RecordFileName(kernel.ExpectedExtension);
+        var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
-        toDo.Add(() =>
-        {
-            var records = streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!)
-                .AsParallel()
-                .Select(recordDir =>
+        var records = await metaData.WorkDropoff.EnqueueAndWait(
+            streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+            async recordDir =>
+            {
+                var recordPath = Path.Combine(recordDir, fileName);
+
+                using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+
+                var reader = kernel.GetNewObject(streamPackage with
                 {
-                    var recordPath = Path.Combine(recordDir, fileName);
-                    
-                    using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+                    Stream = stream,
+                    Path = recordDir
+                });
 
-                    var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
-
-                    return (Path.GetFileName(recordDir), itemReader(reader, kernel, metaData));
-                })
-                .ToArray()
+                return (Path.GetFileName(recordDir), await itemReader(reader, kernel, metaData));
+            });
+        
+        group.RecordCache.SetTo(
+            x => x.FormKey,
+            records
                 .OrderBy(x => TryGetNumber(x.Item1))
-                .Select(x => x.Item2);
-            group.RecordCache.SetTo(
-                x => x.FormKey, records);
-        });
+                .Select(x => x.Item2));
     }
 }

@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,7 +14,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -20,14 +22,14 @@ internal static class SomeObject_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializeFields<TKernel, TWriteObject>(
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -41,7 +43,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeList");
             foreach (var listItem in checkedSomeList)
             {
-                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -51,7 +53,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeList2");
             foreach (var listItem in checkedSomeList2)
             {
-                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -61,7 +63,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeList3");
             foreach (var listItem in checkedSomeList3)
             {
-                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -71,7 +73,7 @@ internal static class SomeObject_Serialization
             kernel.StartListSection(writer, "SomeList4");
             foreach (var listItem in checkedSomeList4)
             {
-                kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
             }
             kernel.EndListSection(writer);
         }
@@ -89,14 +91,14 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
             obj: obj,
@@ -104,7 +106,7 @@ internal static class SomeObject_Serialization
         return obj;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
@@ -118,7 +120,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
+                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList");
                     obj.SomeList.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -127,7 +129,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
+                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList2");
                     obj.SomeList2.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -136,20 +138,20 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
+                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList3");
                     obj.SomeList3.Add(item);
                 }
                 kernel.EndListSection(reader);
                 break;
             case "SomeList4":
                 {
-                    obj.SomeList4 = SerializationHelper.ReadArray(
+                    obj.SomeList4 = await SerializationHelper.ReadArray<ISerializationReaderKernel<TReadObject>, TReadObject, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui>(
                         reader: reader,
                         kernel: kernel,
                         metaData: metaData,
-                        itemReader: static (r, k, m) =>
+                        itemReader: static async (r, k, m) =>
                         {
-                            return k.ReadLoqui(r, m, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m));
+                            return SerializationHelper.StripNull(await k.ReadLoqui(r, m, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList4");
                         });
                 }
                 break;
@@ -158,7 +160,7 @@ internal static class SomeObject_Serialization
         }
     }
     
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
@@ -167,7 +169,7 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

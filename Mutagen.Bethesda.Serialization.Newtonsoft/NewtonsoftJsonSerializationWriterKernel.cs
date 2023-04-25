@@ -8,7 +8,6 @@ namespace Mutagen.Bethesda.Serialization.Newtonsoft;
 
 public class JsonWritingUnit : IDisposable, IContainStreamPackage
 {
-    private readonly IDisposable _streamDispose;
     public JsonTextWriter Writer { get; }
 
     public StreamPackage StreamPackage { get; }
@@ -18,7 +17,6 @@ public class JsonWritingUnit : IDisposable, IContainStreamPackage
     {
         StreamPackage = stream;
         var sw = new StreamWriter(stream.Stream, leaveOpen: true);
-        _streamDispose = sw;
         Writer = new JsonTextWriter(sw)
         {
             Formatting = Formatting.Indented
@@ -27,7 +25,8 @@ public class JsonWritingUnit : IDisposable, IContainStreamPackage
 
     public void Dispose()
     {
-        _streamDispose.Dispose();
+        IDisposable disp = Writer;
+        disp.Dispose();
     }
 
     public void WriteName(string? fieldName)
@@ -485,11 +484,26 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         string? fieldName,
         TObject item, 
         SerializationMetaData serializationMetaData,
-        Write<TKernel, JsonWritingUnit, TObject> writeCall) 
+        WriteAsync<TKernel, JsonWritingUnit, TObject> writeCall) 
         where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
     {
         writer.WriteName(fieldName);
         writeCall(writer, item, kernel, serializationMetaData);
+    }
+
+    public async Task WriteLoqui<TKernel, TObject>(
+        MutagenSerializationWriterKernel<TKernel, JsonWritingUnit> kernel,
+        JsonWritingUnit writer, 
+        string? fieldName,
+        TObject item,
+        SerializationMetaData serializationMetaData,
+        WriteAsync<TKernel, JsonWritingUnit, TObject> writeCall) 
+        where TKernel : ISerializationWriterKernel<JsonWritingUnit>, new()
+    {
+        writer.WriteName(fieldName);
+        writer.Writer.WriteStartObject();
+        await writeCall(writer, item, kernel, serializationMetaData);
+        writer.Writer.WriteEndObject();
     }
 
     public void WriteLoqui<TKernel, TObject>(

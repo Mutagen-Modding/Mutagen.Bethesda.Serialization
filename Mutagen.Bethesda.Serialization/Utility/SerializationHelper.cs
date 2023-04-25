@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Plugins.Records;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
@@ -26,7 +27,7 @@ public static partial class SerializationHelper
         }
     }
     
-    private static string RecordFileName(string expectedExtension)
+    private static string RecordDataFileName(string expectedExtension)
     {
         return $"RecordData{expectedExtension}";
     }
@@ -34,6 +35,23 @@ public static partial class SerializationHelper
     private static string TypicalGroupFileName(string expectedExtension)
     {
         return $"GroupRecordData{expectedExtension}";
+    }
+    
+    public static string RecordFileNameProvider(
+        IMajorRecordGetter recordGetter, 
+        string expectedExtension,
+        int? number)
+    {
+        var edid = recordGetter.EditorID;
+        return DecorateWithNumber($"{edid ?? recordGetter.FormKey.ToFilesafeString()}{expectedExtension}", number);
+    }
+    
+    public static string RecordNameProvider(
+        IMajorRecordGetter recordGetter,
+        int? number)
+    {
+        var edid = recordGetter.EditorID;
+        return DecorateWithNumber($"{edid ?? recordGetter.FormKey.ToFilesafeString()}", number);
     }
 
     public static string DecorateWithNumber(string str, int? number)
@@ -57,28 +75,18 @@ public static partial class SerializationHelper
         }
         return null;
     }
-    
-    public static string FileNameProvider(
-        IMajorRecordGetter recordGetter, 
-        string expectedExtension,
-        int? number)
-    {
-        var edid = recordGetter.EditorID;
-        return DecorateWithNumber($"{edid ?? recordGetter.FormKey.ToFilesafeString()}{expectedExtension}", number);
-    }
 
-    private static string ReadPathToWork<TKernel, TReadObject, TGroup>(
+    private static async Task<string> ReadPathToWork<TKernel, TReadObject, TGroup>(
         StreamPackage streamPackage,
         TGroup group,
         string fileName,
         SerializationMetaData metaData, 
         TKernel kernel, 
-        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
-        List<Action> toDo)
+        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader)
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         var path = Path.Combine(streamPackage.Path!, fileName);
-        toDo.Add(() =>
+        await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
             if (streamPackage.FileSystem.File.Exists(path))
             {

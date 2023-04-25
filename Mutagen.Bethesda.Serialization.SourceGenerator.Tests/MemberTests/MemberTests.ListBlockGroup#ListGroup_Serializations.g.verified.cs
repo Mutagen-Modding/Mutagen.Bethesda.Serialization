@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,7 +14,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class ListGroup_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject, T>(
+    public static async Task Serialize<TKernel, TWriteObject, T>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroupGetter<T> item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -21,14 +23,14 @@ internal static class ListGroup_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializeFields<TKernel, TWriteObject, T>(
+        await SerializeFields<TKernel, TWriteObject, T>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject, T>(
+    public static async Task SerializeFields<TKernel, TWriteObject, T>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroupGetter<T> item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -53,7 +55,7 @@ internal static class ListGroup_Serialization
         return false;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject, T>(
+    public static async Task DeserializeSingleFieldInto<TReadObject, T>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroup<T> obj,
@@ -75,7 +77,7 @@ internal static class ListGroup_Serialization
         }
     }
     
-    public static void DeserializeInto<TReadObject, T>(
+    public static async Task DeserializeInto<TReadObject, T>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IListGroup<T> obj,
@@ -85,7 +87,7 @@ internal static class ListGroup_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

@@ -1,32 +1,31 @@
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Testing.Passthrough;
-using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
-using Noggog;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit;
 
 public class Test : IPassthroughTest
 {
-    public void JsonSerialize(ISkyrimModGetter modGetter, StreamPackage stream)
+    public async Task JsonSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff)
     {
-        MutagenJsonConverter.Instance.Serialize(modGetter, stream);
+        await MutagenJsonConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff);
     }
 
-    public ISkyrimModGetter JsonDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release)
+    public async Task<ISkyrimModGetter> JsonDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff)
     {
-        return MutagenJsonConverter.Instance.Deserialize(stream, modKey, release);
+        return await MutagenJsonConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff);
     }
 
-    public void YamlSerialize(ISkyrimModGetter modGetter, StreamPackage stream)
+    public async Task YamlSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff)
     {
-        MutagenYamlConverter.Instance.Serialize(modGetter, stream);
+        await MutagenYamlConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff);
     }
 
-    public ISkyrimModGetter YamlDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release)
+    public async Task<ISkyrimModGetter> YamlDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff)
     {
-        return MutagenYamlConverter.Instance.Deserialize(stream, modKey, release);
+        return await MutagenYamlConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff);
     }
 }

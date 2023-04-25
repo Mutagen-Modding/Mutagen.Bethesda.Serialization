@@ -553,10 +553,10 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return Convert.FromHexString(span);
     }
 
-    public TObject ReadLoqui<TObject>(
+    public async Task<TObject?> ReadLoqui<TObject>(
         JsonReadingUnit reader, 
         SerializationMetaData serializationMetaData,
-        Read<ISerializationReaderKernel<JsonReadingUnit>, JsonReadingUnit, TObject> readCall)
+        ReadAsync<ISerializationReaderKernel<JsonReadingUnit>, JsonReadingUnit, TObject> readCall)
     {
         SkipPropertyName(reader);
         if (reader.Reader.TokenType != JsonToken.StartObject)
@@ -564,7 +564,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
             throw new DataMisalignedException();
         }
 
-        var ret = readCall(reader, this, serializationMetaData);
+        var ret = await readCall(reader, this, serializationMetaData);
         
         if (reader.Reader.TokenType != JsonToken.EndObject)
         {

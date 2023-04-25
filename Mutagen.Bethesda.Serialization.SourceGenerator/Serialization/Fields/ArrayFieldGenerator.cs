@@ -141,7 +141,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
 
         using (sb.CurlyBrace())
         {
-            using (var c = sb.Call($"{(readOut ? $"{fieldAccessor} = " : null)}SerializationHelper.Read{(readOut ? null : "Into")}{Name(field)}"))
+            using (var c = sb.Call($"{(readOut ? $"{fieldAccessor} = " : null)}await SerializationHelper.Read{(readOut ? null : "Into")}{Name(field)}<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>"))
             {
                 c.AddPassArg("reader");
                 if (!readOut)
@@ -152,7 +152,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                 c.AddPassArg("metaData");
                 c.Add((subSb) =>
                 {
-                    subSb.AppendLine("itemReader: static (r, k, m) =>");
+                    subSb.AppendLine("itemReader: static async (r, k, m) =>");
                     using (subSb.CurlyBrace())
                     {
                         _forFieldGenerator().Value.GenerateDeserializeForField(

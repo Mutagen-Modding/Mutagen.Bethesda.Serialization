@@ -52,7 +52,8 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
 
-        using (var f = sb.Call($"SerializationHelper.WriteMajorRecordList<TKernel, TWriteObject, {subNames.Getter}>"))
+        using (var f = sb.Call($"tasks.Add(SerializationHelper.WriteMajorRecordList<TKernel, TWriteObject, {subNames.Getter}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: {writerAccessor}.StreamPackage");
             f.Add($"list: {fieldAccessor}");
@@ -61,7 +62,6 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
-            f.Add($"toDo: parallelToDo");
         }
     }
 
@@ -92,15 +92,16 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
         
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadMajorRecordList<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>"))
+                   $"tasks.Add(SerializationHelper.ReadMajorRecordList<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: {readerAccessor}.StreamPackage");
+            f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
             f.Add($"list: {fieldAccessor}");
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add(
-                $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
-            f.Add($"toDo: parallelToDo");
+                $"itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
         }
     }
 }

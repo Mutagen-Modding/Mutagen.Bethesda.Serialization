@@ -55,7 +55,7 @@ public class BootstrapInvocationDetector
         
         var ret = new BootstrapInvocation(namedTypeSymbol, default);
         if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
-        if (invocationExpressionSyntax.ArgumentList.Arguments.Count is not (2 or 1)) return ret;
+        if (invocationExpressionSyntax.ArgumentList.Arguments.Count == 0) return ret;
         
         var symb = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax.ArgumentList.Arguments[0].Expression).Symbol;
         if (symb == null) return ret;

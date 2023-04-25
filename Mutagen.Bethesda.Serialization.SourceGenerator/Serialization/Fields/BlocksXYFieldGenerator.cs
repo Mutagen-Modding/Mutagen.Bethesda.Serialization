@@ -232,7 +232,8 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
         }
         var hasInheriting = compilation.Mapping.HasInheritingClasses(recordTypeSet);
 
-        using (var f = sb.Call($"SerializationHelper.AddXYBlocksToWork<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}, {blockInfo.Block.Names.Getter}, {blockInfo.SubBlock.Names.Getter}, {blockInfo.Record.Names.Getter}>"))
+        using (var f = sb.Call($"tasks.Add(SerializationHelper.AddXYBlocksToWork<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}, {blockInfo.Block.Names.Getter}, {blockInfo.SubBlock.Names.Getter}, {blockInfo.Record.Names.Getter}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: writer.StreamPackage");
             f.Add($"group: {fieldAccessor}");
@@ -251,7 +252,6 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
             f.Add($"subBlockWriter: static (w, i, k, m) => {blockInfo.SubBlock.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"majorWriter: static (w, i, k, m) => {blockInfo.Record.SerializationItems.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
-            f.Add($"toDo: parallelToDo");
         }
     }
 
@@ -299,7 +299,8 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
 
         
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadIntoXYBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Direct}<{subNames.Direct}>, {subNames.Direct}, {blockInfo.Block.Names.Direct}, {blockInfo.SubBlock.Names.Direct}, {blockInfo.Record.Names.Direct}>"))
+                   $"tasks.Add(SerializationHelper.ReadIntoXYBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Direct}<{subNames.Direct}>, {subNames.Direct}, {blockInfo.Block.Names.Direct}, {blockInfo.SubBlock.Names.Direct}, {blockInfo.Record.Names.Direct}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: reader.StreamPackage");
             f.Add($"group: {fieldAccessor}");
@@ -309,13 +310,13 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
             f.Add(
                 $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
             f.Add(
-                $"objReader: static (r, k, m) => k.ReadLoqui(r, m, {naming.DeserializationCall()}<TReadObject>)");
+                $"objReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {naming.DeserializationCall()}<TReadObject>), \"{fieldName}\")");
             f.Add(
                 $"blockReader: static (r, i, k, m, n) => {blockInfo.Block.SerializationItems.DeserializationSingleFieldIntoCall()}<TReadObject>(r, k, i, m, n)");
             f.Add(
                 $"subBlockReader: static (r, i, k, m, n) => {blockInfo.SubBlock.SerializationItems.DeserializationSingleFieldIntoCall()}<TReadObject>(r, k, i, m, n)");
             f.Add(
-                $"majorReader: static (r, k, m) => k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>)");
+                $"majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
             f.Add(subSb =>
             {
                 subSb.AppendLine("groupSetter: static (b, items) =>");
@@ -352,7 +353,6 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
                     subSb.AppendLine($"b.{listTarget.Name}.SetTo(sub);");
                 }
             });
-            f.Add($"toDo: parallelToDo");
         }
     }
 }

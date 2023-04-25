@@ -67,7 +67,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
 
     public Type GetNextType(YamlReadingUnit reader, string namespaceString)
     {
-        reader.Parser.Consume<MappingStart>();
+        reader.Parser.TryConsume<MappingStart>(out _);
         reader.Parser.Consume<Scalar>();
         
         var scalar = reader.Parser.Consume<Scalar>();
@@ -517,12 +517,12 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         return Convert.FromHexString(span);
     }
 
-    public TObject ReadLoqui<TObject>(
+    public async Task<TObject?> ReadLoqui<TObject>(
         YamlReadingUnit reader, 
         SerializationMetaData serializationMetaData,
-        Read<ISerializationReaderKernel<YamlReadingUnit>, YamlReadingUnit, TObject> readCall)
+        ReadAsync<ISerializationReaderKernel<YamlReadingUnit>, YamlReadingUnit, TObject> readCall)
     {
-        return readCall(reader, this, serializationMetaData);
+        return await readCall(reader, this, serializationMetaData);
     }
 
     public void StartListSection(YamlReadingUnit reader)

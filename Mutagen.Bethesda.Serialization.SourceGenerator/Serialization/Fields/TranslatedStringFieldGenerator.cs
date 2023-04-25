@@ -104,7 +104,25 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        using (var c = sb.Call($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadTranslatedString", linePerArgument: false))
+        Utility.WrapStripNull(
+            field, 
+            fieldName,
+            fieldAccessor, 
+            readerAccessor, 
+            kernelAccessor,
+            insideCollection,
+            sb,
+            AddReadCall);
+    }
+
+    private void AddReadCall(
+        StructuredStringBuilder sb,
+        ITypeSymbol? field,
+        string kernelAccessor,
+        string readerAccessor,
+        string fieldAccessor)
+    {
+        using (var c = sb.Call($"{fieldAccessor}{kernelAccessor}.ReadTranslatedString", linePerArgument: false))
         {
             c.Add(readerAccessor);
         }

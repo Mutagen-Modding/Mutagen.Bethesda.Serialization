@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 
 namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
 
@@ -12,5 +12,8 @@ public class RunPassthroughCommand
     public GameRelease GameRelease { get; set; }
     
     [Option('t', "TestFolder")]
-    public string TestFolder { get; set; }
+    public string? TestFolder { get; set; }
+
+    [Option('l', "Parallel")]
+    public bool Parallel { get; set; }
 }

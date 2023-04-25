@@ -1,4 +1,4 @@
-﻿using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using Noggog.StructuredStrings;
 
@@ -40,7 +40,7 @@ public class CustomizationDriver
     {
         if (ShouldMakeParallel(obj, compilation, propertyCollection))
         {
-            sb.AppendLine("List<Action> parallelToDo = new List<Action>();");
+            sb.AppendLine("var tasks = new List<Task>();");
         }
     }
     
@@ -52,7 +52,7 @@ public class CustomizationDriver
     {
         if (ShouldMakeParallel(obj, compilation, propertyCollection))
         {
-            sb.AppendLine("Parallel.Invoke(parallelToDo.ToArray());");
+            sb.AppendLine("await Task.WhenAll(tasks.ToArray());");
         }
     }
     
@@ -64,7 +64,7 @@ public class CustomizationDriver
     {
         if (ShouldMakeParallel(obj, compilation, propertyCollection))
         {
-            sb.AppendLine("List<Action> parallelToDo = new List<Action>();");
+            sb.AppendLine("var tasks = new List<Task>();");
         }
     }
     
@@ -76,7 +76,7 @@ public class CustomizationDriver
     {
         if (ShouldMakeParallel(obj, compilation, propertyCollection))
         {
-            sb.AppendLine("Parallel.Invoke(parallelToDo.ToArray());");
+            sb.AppendLine("await Task.WhenAll(tasks.ToArray());");
         }
     }
     

@@ -112,6 +112,7 @@ public class BasicPassthroughs
         var source = @"
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 
@@ -121,7 +122,9 @@ public class SerializationTests
     { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        MutagenTestConverter.Instance.Serialize(mod, stream);
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
     }
 }";
         var result = TestHelper.RunSourceGenerator(source);
@@ -141,6 +144,7 @@ public class SerializationTests
         var source = @"
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 
@@ -150,7 +154,9 @@ public class SerializationTests
     { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        MutagenTestConverter.Instance.Serialize(mod, stream);
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
     }
 }
 

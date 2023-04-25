@@ -6,6 +6,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -13,7 +15,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeObject_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -21,14 +23,14 @@ internal static class SomeObject_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializeFields<TKernel, TWriteObject>(
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObjectGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -36,32 +38,32 @@ internal static class SomeObject_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        kernel.WriteLoqui(
+        await kernel.WriteLoqui(
             writer: writer,
             fieldName: "SomeGenderedInt",
             item: item.SomeGenderedInt,
             serializationMetaData: metaData,
-            writeCall: static (w, o, k, m) =>
+            writeCall: static async (w, o, k, m) =>
             {
                 k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
                 k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
             });
-        kernel.WriteLoqui(
+        await kernel.WriteLoqui(
             writer: writer,
             fieldName: "SomeGenderedInt2",
             item: item.SomeGenderedInt2,
             serializationMetaData: metaData,
-            writeCall: static (w, o, k, m) =>
+            writeCall: static async (w, o, k, m) =>
             {
                 k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
                 k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
             });
-        kernel.WriteLoqui(
+        await kernel.WriteLoqui(
             writer: writer,
             fieldName: "SomeGenderedInt3",
             item: item.SomeGenderedInt3,
             serializationMetaData: metaData,
-            writeCall: static (w, o, k, m) =>
+            writeCall: static async (w, o, k, m) =>
             {
                 k.WriteString(w, "Male", o.Male, default(string), checkDefaults: false);
                 k.WriteString(w, "Female", o.Female, default(string), checkDefaults: false);
@@ -82,14 +84,14 @@ internal static class SomeObject_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeObject();
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
             obj: obj,
@@ -97,7 +99,7 @@ internal static class SomeObject_Serialization
         return obj;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
@@ -108,51 +110,51 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeGenderedInt":
-                obj.SomeGenderedInt = kernel.ReadLoqui(
+                obj.SomeGenderedInt = await kernel.ReadLoqui(
                     reader: reader,
                     serializationMetaData: metaData,
                     readCall: static (r, k, m) =>
                     {
-                        return SerializationHelper.ReadGenderedItem(
+                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
                             reader: r,
                             kernel: k,
                             metaData: m,
                             ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static (r2, k2, m2, n) =>
+                            itemReader: static async (r2, k2, m2, n) =>
                             {
                                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
                             });
                     });
                 break;
             case "SomeGenderedInt2":
-                obj.SomeGenderedInt2 = kernel.ReadLoqui(
+                obj.SomeGenderedInt2 = await kernel.ReadLoqui(
                     reader: reader,
                     serializationMetaData: metaData,
                     readCall: static (r, k, m) =>
                     {
-                        return SerializationHelper.ReadGenderedItem(
+                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
                             reader: r,
                             kernel: k,
                             metaData: m,
                             ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static (r2, k2, m2, n) =>
+                            itemReader: static async (r2, k2, m2, n) =>
                             {
                                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
                             });
                     });
                 break;
             case "SomeGenderedInt3":
-                obj.SomeGenderedInt3 = kernel.ReadLoqui(
+                obj.SomeGenderedInt3 = await kernel.ReadLoqui(
                     reader: reader,
                     serializationMetaData: metaData,
                     readCall: static (r, k, m) =>
                     {
-                        return SerializationHelper.ReadGenderedItem(
+                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
                             reader: r,
                             kernel: k,
                             metaData: m,
                             ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static (r2, k2, m2, n) =>
+                            itemReader: static async (r2, k2, m2, n) =>
                             {
                                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
                             });
@@ -163,7 +165,7 @@ internal static class SomeObject_Serialization
         }
     }
     
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeObject obj,
@@ -172,7 +174,7 @@ internal static class SomeObject_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

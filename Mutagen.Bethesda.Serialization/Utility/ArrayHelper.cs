@@ -4,19 +4,19 @@ namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static partial class SerializationHelper
 {
-    public static void ReadIntoArray<TKernel, TReadObject, TObject>(
+    public static async Task ReadIntoArray<TKernel, TReadObject, TObject>(
         TReadObject reader,
         TObject[] arr,
         TKernel kernel,
         SerializationMetaData metaData,
-        Read<TKernel, TReadObject, TObject> itemReader)
+        ReadAsync<TKernel, TReadObject, TObject> itemReader)
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         int i = 0;
         kernel.StartListSection(reader);
         while (i < arr.Length && kernel.TryHasNextItem(reader))
         {
-            var item = itemReader(reader, kernel, metaData);
+            var item = await itemReader(reader, kernel, metaData);
             arr[i] = item;
             i++;
         }

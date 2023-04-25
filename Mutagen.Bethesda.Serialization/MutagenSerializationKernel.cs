@@ -188,10 +188,21 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         string? fieldName, 
         TObject? item,
         SerializationMetaData serializationMetaData,
-        Write<TKernel, TWriterObject, TObject> writeCall)
+        WriteAsync<TKernel, TWriterObject, TObject> writeCall)
     {
         if (item == null) return;
         _kernel.WriteWithName(this, writer, fieldName, item, serializationMetaData, writeCall);
+    }
+    
+    public async Task WriteLoqui<TObject>(
+        TWriterObject writer,
+        string? fieldName,
+        TObject? item,
+        SerializationMetaData serializationMetaData,
+        WriteAsync<TKernel, TWriterObject, TObject> writeCall)
+    {
+        if (item == null) return;
+        await _kernel.WriteLoqui(this, writer, fieldName, item, serializationMetaData, writeCall);
     }
     
     public void WriteLoqui<TObject>(

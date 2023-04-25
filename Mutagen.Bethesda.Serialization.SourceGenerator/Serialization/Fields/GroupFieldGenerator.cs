@@ -93,7 +93,8 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 
         if (compilation.Customization.Overall.FilePerRecord)
         {
-            using (var f = sb.Call($"SerializationHelper.WriteFilePerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+            using (var f = sb.Call($"tasks.Add(SerializationHelper.WriteFilePerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>",
+                       suffixLine: ")"))
             {
                 f.Add($"streamPackage: {writerAccessor}.StreamPackage");
                 f.Add($"group: {fieldAccessor}");
@@ -103,12 +104,11 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
                 f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
                 f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
                 f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
-                f.Add($"toDo: parallelToDo");
             }
         }
         else
         {
-            using (var f = sb.Call($"SerializationHelper.WriteGroup<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+            using (var f = sb.Call($"await SerializationHelper.WriteGroup<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
             {
                 f.Add($"writer: {writerAccessor}");
                 f.Add($"group: {fieldAccessor}");
@@ -166,7 +166,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         var isListGroup = groupNames.Getter.Contains("List");
 
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadInto{(isListGroup ? "List" : null)}Group<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
+                   $"await SerializationHelper.ReadInto{(isListGroup ? "List" : null)}Group<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
         {
             f.Add($"reader: {readerAccessor}");
             f.Add($"group: {fieldAccessor}");
@@ -197,7 +197,8 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
         
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadFilePerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
+                   $"tasks.Add(SerializationHelper.ReadFilePerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: {readerAccessor}.StreamPackage");
             f.Add($"fieldName: \"{fieldName}\"");
@@ -207,8 +208,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             f.Add(
                 $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
             f.Add(
-                $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
-            f.Add($"toDo: parallelToDo");
+                $"itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
         }
     }
 }

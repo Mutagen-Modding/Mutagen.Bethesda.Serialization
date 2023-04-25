@@ -14,21 +14,21 @@ public class DidNotMatchException : Exception, IPrintable
     {
         Errors = errs;
         Path = path;
-        //this.ErrorBytes = new byte[Errors.Length][];
-        //for (int i = 0; i < Errors.Length; i++)
-        //{
-        //    var err = this.Errors[i];
-        //    var pos = err.Min - ErrorBytePrefixLen;
-        //    if (pos < 0)
-        //    {
-        //        pos = 0;
-        //    }
-        //    stream.Position = pos;
-        //    var len = Math.Min(ErrorBytePrefixLen, err.Width);
-        //    byte[] bytes = new byte[ErrorBytePrefixLen + len];
-        //    stream.Read(bytes.AsSpan());
-        //    this.ErrorBytes[i] = bytes;
-        //}
+        this.ErrorBytes = new byte[Errors.Length][];
+        for (int i = 0; i < Errors.Length; i++)
+        {
+            var err = this.Errors[i];
+            var pos = err.Min - ErrorBytePrefixLen;
+            if (pos < 0)
+            {
+                pos = 0;
+            }
+            stream.Position = pos;
+            var len = Math.Min(ErrorBytePrefixLen, err.Width);
+            byte[] bytes = new byte[ErrorBytePrefixLen + len];
+            stream.Read(bytes.AsSpan());
+            this.ErrorBytes[i] = bytes;
+        }
     }
 
     public override string ToString()

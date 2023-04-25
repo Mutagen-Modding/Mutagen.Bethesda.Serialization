@@ -31,10 +31,12 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register<RecordCustomizationProvider>]
 [Register<CustomizationDriver>]
 [Register<ReleaseRetriever>]
+[Register<ObjRequiresFolderTester>]
+[Register<IsLoquiFieldTester>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]
-[Register(typeof(LoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(LoquiFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(LoquiFieldGenerator))]
 [Register(typeof(EnumFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(EnumFieldGenerator))]
 [Register(typeof(StringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(Int8FieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -75,6 +77,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FolderPerRecordGroupFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(FolderPerRecordGroupFieldGenerator))]
 [Register(typeof(CacheFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(FolderForSingleLoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SerializationSourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

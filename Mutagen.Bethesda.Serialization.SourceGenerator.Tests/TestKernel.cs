@@ -180,13 +180,19 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public void WriteWithName<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
-        TObject item, SerializationMetaData serializationMetaData, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
+        TObject item, SerializationMetaData serializationMetaData, WriteAsync<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }
 
     public void WriteLoqui<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
         TObject item, SerializationMetaData serializationMetaData, Write<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task WriteLoqui<TKernel, TObject>(MutagenSerializationWriterKernel<TKernel, TestWriter> kernel, TestWriter writer, string? fieldName,
+        TObject item, SerializationMetaData serializationMetaData, WriteAsync<TKernel, TestWriter, TObject> writeCall) where TKernel : ISerializationWriterKernel<TestWriter>, new()
     {
         throw new NotImplementedException();
     }
@@ -426,7 +432,7 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
-    public TObject? ReadLoqui<TObject>(TestReader reader, SerializationMetaData serializationMetaData, Read<ISerializationReaderKernel<TestReader>, TestReader, TObject> readCall)
+    public async Task<TObject?> ReadLoqui<TObject>(TestReader reader, SerializationMetaData serializationMetaData, ReadAsync<ISerializationReaderKernel<TestReader>, TestReader, TObject> readCall)
     {
         throw new NotImplementedException();
     }

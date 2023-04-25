@@ -127,7 +127,7 @@ public class SerializationForObjectGenerator
         var isModHeader = _modObjectTypeTester.IsModHeader(typeSet.Getter);
         
         var genString = generics.ReaderGenericsString();
-        using (var args = sb.Function($"public static {typeSet.Direct} Deserialize{genString}"))
+        using (var args = sb.Function($"public static async Task<{typeSet.Direct}> Deserialize{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
@@ -135,6 +135,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add($"ModKey modKey");
                 args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release release");
+                args.Add($"IWorkDropoff workDropoff");
             }
             else
             {
@@ -162,12 +163,16 @@ public class SerializationForObjectGenerator
             {
                 sb.AppendLine($"obj.FormVersion = metaData.Release.GetDefaultFormVersion()!.Value;");
             }
-            using (var c = sb.Call($"DeserializeInto{genString}"))
+            using (var c = sb.Call($"await DeserializeInto{genString}"))
             {
                 c.AddPassArg("reader");
                 c.AddPassArg("kernel");
                 c.AddPassArg("obj");
-                if (!isMod)
+                if (isMod)
+                {
+                    c.AddPassArg("workDropoff");
+                }
+                else
                 {
                     c.AddPassArg("metaData");
                 }
@@ -190,12 +195,16 @@ public class SerializationForObjectGenerator
         
         var hadIntoFields = GenerateDeserializeSingleFieldInto(compilation, obj, sb, baseType, properties, generics, genString);
 
-        using (var args = sb.Function($"public static void DeserializeInto{genString}"))
+        using (var args = sb.Function($"public static async Task DeserializeInto{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
             args.Add($"{obj.Setter} obj");
-            if (!isMod)
+            if (isMod)
+            {
+                args.Add("IWorkDropoff workDropoff");
+            }
+            else
             {
                 args.Add("SerializationMetaData metaData");
             }
@@ -206,7 +215,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "obj");
+                GenerateMetaConstruction(sb, "obj", "workDropoff");
             }
 
             _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
@@ -235,17 +244,13 @@ public class SerializationForObjectGenerator
 
         var orig = sb;
         sb = new StructuredStringBuilder();
-        using (var args = sb.Function($"public static void DeserializeSingleFieldInto{genString}"))
+        using (var args = sb.Function($"public static async Task DeserializeSingleFieldInto{genString}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
             args.Add($"{obj.Setter} obj");
             args.Add("SerializationMetaData metaData");
             args.Add("string name");
-            if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
-            {
-                args.Add("List<Action> parallelToDo");
-            }
 
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
@@ -298,7 +303,7 @@ public class SerializationForObjectGenerator
                         && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
                     {
                         sb.AppendLine(
-                            $"{baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
+                            $"await {baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
                     }
 
                     sb.AppendLine("break;");
@@ -340,17 +345,13 @@ public class SerializationForObjectGenerator
             sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
             using (sb.CurlyBrace())
             {
-                using (var c = sb.Call("DeserializeSingleFieldInto"))
+                using (var c = sb.Call("await DeserializeSingleFieldInto"))
                 {
                     c.AddPassArg("reader");
                     c.AddPassArg("kernel");
                     c.AddPassArg("obj");
                     c.AddPassArg("metaData");
                     c.AddPassArg("name");
-                    if (_customizationDriver.ShouldMakeParallel(obj, compilation, properties))
-                    {
-                        c.AddPassArg("parallelToDo");
-                    }
                 }
             }            
             sb.AppendLine();
@@ -401,12 +402,16 @@ public class SerializationForObjectGenerator
         
         var genString = generics.WriterGenericsString(forHas: false);
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Setter);
-        using (var args = sb.Function($"public static void Serialize{genString}"))
+        using (var args = sb.Function($"public static async Task Serialize{genString}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{typeSet.Getter} item");
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
-            if (!isMod)
+            if (isMod)
+            {
+                args.Add("IWorkDropoff workDropoff");
+            }
+            else
             {
                 args.Add("SerializationMetaData metaData");
             }
@@ -417,10 +422,10 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease);");
+                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease, workDropoff);");
             }
 
-            using (var args = sb.Call($"SerializeFields{genString}"))
+            using (var args = sb.Call($"await SerializeFields{genString}"))
             {
                 args.AddPassArg($"writer");
                 args.AddPassArg($"item");
@@ -440,7 +445,7 @@ public class SerializationForObjectGenerator
         SerializationGenerics generics)
     {
         var genString = generics.WriterGenericsString(forHas: false);
-        using (var args = sb.Function($"public static void SerializeFields{genString}"))
+        using (var args = sb.Function($"public static async Task SerializeFields{genString}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{obj.Getter} item");
@@ -456,7 +461,7 @@ public class SerializationForObjectGenerator
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
                 sb.AppendLine(
-                    $"{baseSerializationItems.SerializationCall()}{genString}(writer, item, kernel, metaData);");
+                    $"await {baseSerializationItems.SerializationCall()}{genString}(writer, item, kernel, metaData);");
             }
 
             _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
@@ -509,7 +514,7 @@ public class SerializationForObjectGenerator
             sb.AppendLine("if (item == null) return false;");
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item");
+                GenerateMetaConstruction(sb, "item", "null!");
             }
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
@@ -632,7 +637,7 @@ public class SerializationForObjectGenerator
         IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
-        using (var args = sb.Function($"public static void SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
+        using (var args = sb.Function($"public static async Task SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
         {
             args.Add($"TWriteObject writer");
             args.Add($"{typeSet.Getter} item");
@@ -648,7 +653,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item");
+                GenerateMetaConstruction(sb, "item", "null!");
             }
             sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
             sb.AppendLine("switch (item)");
@@ -668,7 +673,7 @@ public class SerializationForObjectGenerator
                     using (sb.IncreaseDepth())
                     {
                         sb.AppendLine(
-                            $"{inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
+                            $"await {inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
                         sb.AppendLine("break;");
                     }
                 }
@@ -680,7 +685,7 @@ public class SerializationForObjectGenerator
                     using (sb.IncreaseDepth())
                     {
                         sb.AppendLine(
-                            $"{curSerializationItems.SerializationCall()}(writer, {typeSet.Getter.Name}, kernel, metaData);");
+                            $"await {curSerializationItems.SerializationCall()}(writer, {typeSet.Getter.Name}, kernel, metaData);");
                         sb.AppendLine("break;");
                     }
                 }
@@ -704,7 +709,7 @@ public class SerializationForObjectGenerator
         IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
-        using (var args = sb.Function($"public static {typeSet.Direct ?? typeSet.Setter} DeserializeWithCheck{generics.ReaderGenericsString()}"))
+        using (var args = sb.Function($"public static async Task<{typeSet.Direct ?? typeSet.Setter}> DeserializeWithCheck{generics.ReaderGenericsString()}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
@@ -734,7 +739,7 @@ public class SerializationForObjectGenerator
                     sb.AppendLine($"case \"{names.Direct}\":");
                     using (sb.IncreaseDepth())
                     {
-                        sb.AppendLine($"return {inheritSerializeItems.DeserializationCall()}(reader, kernel, metaData);");
+                        sb.AppendLine($"return await {inheritSerializeItems.DeserializationCall()}(reader, kernel, metaData);");
                     }
                 }
 
@@ -744,7 +749,7 @@ public class SerializationForObjectGenerator
                     sb.AppendLine($"case \"{typeSet.Direct?.Name}\":");
                     using (sb.IncreaseDepth())
                     {
-                        sb.AppendLine($"return {curSerializationItems.DeserializationCall()}(reader, kernel, metaData);");
+                        sb.AppendLine($"return await {curSerializationItems.DeserializationCall()}(reader, kernel, metaData);");
                     }
                 }
 
@@ -771,6 +776,8 @@ public class SerializationForObjectGenerator
             .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
             .And("Mutagen.Bethesda.Serialization.Utility")
+            .And("System.Threading.Tasks")
+            .And("Noggog.WorkEngine")
             .And("Loqui")
             .And("Noggog")
             .And(obj.Setter.ContainingNamespace.ToString())
@@ -809,8 +816,8 @@ public class SerializationForObjectGenerator
         return ret ?? SerializationGenerics.Instance;
     }
 
-    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor)
+    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor, string workDropoffAccessor)
     {
-        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease);");
+        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease, {workDropoffAccessor});");
     }
 }

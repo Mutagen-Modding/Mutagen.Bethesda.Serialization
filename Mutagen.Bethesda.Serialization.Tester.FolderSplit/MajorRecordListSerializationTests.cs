@@ -6,6 +6,7 @@ using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit;
 
@@ -32,19 +33,16 @@ public class MajorRecordListSerializationTests
             npc2
         };
 
-        var toDo = new List<Action>();
-        
-        SerializationHelper.WriteMajorRecordList<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Npc>(
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+
+        await SerializationHelper.WriteMajorRecordList<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Npc>(
             streamPackage,
             "Npcs",
             list,
-            new SerializationMetaData(GameRelease.SkyrimSE),
+            metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            withNumbering: false,
-            toDo);
-
-        toDo.ForEach(x => x());
+            withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         var npcPath1 = Path.Combine(existingDir, "Npcs", "TestEdid.json");

@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,7 +14,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SubclassLoquiB_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiBGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -20,14 +22,14 @@ internal static class SubclassLoquiB_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializeFields<TKernel, TWriteObject>(
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiBGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -35,7 +37,7 @@ internal static class SubclassLoquiB_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.Serialize<TKernel, TWriteObject>(writer, item, kernel, metaData);
+        await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.Serialize<TKernel, TWriteObject>(writer, item, kernel, metaData);
     }
 
     public static bool HasSerializationItems(
@@ -47,14 +49,14 @@ internal static class SubclassLoquiB_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB();
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
             obj: obj,
@@ -62,7 +64,7 @@ internal static class SubclassLoquiB_Serialization
         return obj;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiB obj,
@@ -73,12 +75,12 @@ internal static class SubclassLoquiB_Serialization
         switch (name)
         {
             default:
-                Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.DeserializeSingleFieldInto<TReadObject>(reader, kernel, obj, metaData, name);
+                await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.AbstractBaseLoqui_Serialization.DeserializeSingleFieldInto<TReadObject>(reader, kernel, obj, metaData, name);
                 break;
         }
     }
     
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISubclassLoquiB obj,
@@ -87,7 +89,7 @@ internal static class SubclassLoquiB_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

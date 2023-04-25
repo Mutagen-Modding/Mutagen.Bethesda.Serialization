@@ -4,7 +4,7 @@ namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit;
 
 public static class TestHelper
 {
-    private static bool AutoVerify = true;
+    private static bool AutoVerify = false;
 
     private static VerifySettings GetVerifySettings()
     {

@@ -2,6 +2,7 @@ using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Strings;
 using Noggog;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization;
 
@@ -11,21 +12,27 @@ public delegate TObject Read<TKernel, TReaderObject, TObject>(
     SerializationMetaData metaData)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
-public delegate TObject ReadNamed<TKernel, TReaderObject, TObject>(
+public delegate Task<TObject> ReadAsync<TKernel, TReaderObject, TObject>(
+    TReaderObject reader,
+    TKernel kernel,
+    SerializationMetaData metaData)
+    where TKernel : ISerializationReaderKernel<TReaderObject>;
+
+public delegate Task<TObject> ReadNamedAsync<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
     TKernel kernel,
     SerializationMetaData metaData,
     string name)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
-public delegate void ReadInto<TKernel, TReaderObject, TObject>(
+public delegate Task ReadInto<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
     TObject obj,
     TKernel kernel,
     SerializationMetaData metaData)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
-public delegate void ReadNamedInto<TKernel, TReaderObject, TObject>(
+public delegate Task ReadNamedInto<TKernel, TReaderObject, TObject>(
     TReaderObject reader,
     TObject obj,
     TKernel kernel,
@@ -69,10 +76,10 @@ public interface ISerializationReaderKernel<TReaderObject>
     public Percent? ReadPercent(TReaderObject reader);
     public TranslatedString? ReadTranslatedString(TReaderObject reader);
     public MemorySlice<byte>? ReadBytes(TReaderObject reader);
-    public TObject? ReadLoqui<TObject>(
+    public Task<TObject?> ReadLoqui<TObject>(
         TReaderObject reader,
         SerializationMetaData serializationMetaData,
-        Read<ISerializationReaderKernel<TReaderObject>, TReaderObject, TObject> readCall);
+        ReadAsync<ISerializationReaderKernel<TReaderObject>, TReaderObject, TObject> readCall);
 
     #region List
     
@@ -110,6 +117,13 @@ public interface ISerializationReaderKernel<TReaderObject>
 }
 
 public delegate void Write<TKernel, TWriterObject, TObject>(
+    TWriterObject writer,
+    TObject obj,
+    MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel,
+    SerializationMetaData metaData)
+    where TKernel : ISerializationWriterKernel<TWriterObject>, new();
+
+public delegate Task WriteAsync<TKernel, TWriterObject, TObject>(
     TWriterObject writer,
     TObject obj,
     MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel,
@@ -156,7 +170,7 @@ public interface ISerializationWriterKernel<TWriterObject>
         string? fieldName, 
         TObject item,
         SerializationMetaData serializationMetaData,
-        Write<TKernel, TWriterObject, TObject> writeCall)
+        WriteAsync<TKernel, TWriterObject, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<TWriterObject>, new();
     public void WriteLoqui<TKernel, TObject>(
         MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel, 
@@ -165,6 +179,14 @@ public interface ISerializationWriterKernel<TWriterObject>
         TObject item,
         SerializationMetaData serializationMetaData,
         Write<TKernel, TWriterObject, TObject> writeCall)
+        where TKernel : ISerializationWriterKernel<TWriterObject>, new();
+    public Task WriteLoqui<TKernel, TObject>(
+        MutagenSerializationWriterKernel<TKernel, TWriterObject> kernel, 
+        TWriterObject writer,
+        string? fieldName,
+        TObject item,
+        SerializationMetaData serializationMetaData,
+        WriteAsync<TKernel, TWriterObject, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<TWriterObject>, new();
 
     #region List

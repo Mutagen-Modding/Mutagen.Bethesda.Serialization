@@ -9,6 +9,7 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 using Noggog.Testing.AutoFixture;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 
@@ -20,13 +21,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem);
     
     private async Task<string> GetResults(
-        Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter> toDo)
+        Func<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, Task> toDo)
     {
         var kernel = MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance;
         using var memStream = new MemoryStream();
         var stream = GetStreamPackage(memStream);
         var writerObj = kernel.GetNewObject(stream);
-        toDo(kernel, writerObj);
+        await toDo(kernel, writerObj);
         kernel.Finalize(stream, writerObj);
         if (writerObj is IDisposable disp) disp.Dispose();
         memStream.Position = 0;
@@ -70,15 +71,15 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
     interface IReadResults
     {
-        string Name { get; }
-        void Check(TReaderKernel kernel, TReader reader);
+        string Name { get; } 
+        Task Check(TReaderKernel kernel, TReader reader);
     }
 
-    record ReadResults<T>(string Name, Func<TReaderKernel, TReader, T> Reader, T Expected) : IReadResults
+    record ReadResults<T>(string Name, Func<TReaderKernel, TReader, Task<T>> Reader, T Expected) : IReadResults
     {
-        public void Check(TReaderKernel kernel, TReader reader)
+        public async Task Check(TReaderKernel kernel, TReader reader)
         {
-            var val = Reader(kernel, reader);
+            var val = await Reader(kernel, reader);
             if (Expected is IReadOnlyList<object> e)
             {
                 var list = (IReadOnlyList<object>)val;
@@ -96,7 +97,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         }
     }
     
-    private void CheckReadResults(
+    private async Task CheckReadResults(
         string str,
         params IReadResults[] results)
     {
@@ -112,7 +113,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             {
                 throw new Exception();
             }
-            result.Check(kernel, readerObj);
+            await result.Check(kernel, readerObj);
             dict.Remove(name);
         }
 
@@ -128,7 +129,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         T nonDefaultToTest,
         params T[] items)
     {
-        return await GetResults((k, w) =>
+        return await GetResults(async (k, w) =>
         {
             int i = 0;
             callback(k, w, $"{nickName}{i++}", default, default);
@@ -166,22 +167,22 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     {
         var str = await GetPrimitiveWriteTest(nickName, writeCallback, nonDefaultToTest, items);
         await TestHelper.VerifyString(str);
-        CheckReadResults(
+        await CheckReadResults(
             str,
             new ReadResults<T>[]
             {
-                new ReadResults<T>($"{nickName}1", readCallback, default(T)),
+                new ReadResults<T>($"{nickName}1", async (k, r) => readCallback(k, r), default(T)),
             }.Concat(items.Select((x, i) =>
             {
                 var name = $"{nickName}{(2 + i)}";
-                return new ReadResults<T>(name, readCallback, x);
+                return new ReadResults<T>(name, async (k, r) => readCallback(k, r), x);
             })).ToArray());
     }
 
     [Fact]
     public async Task Nothing()
     {
-        var str = await GetResults((k, w) => { });
+        var str = await GetResults(async (k, w) => { });
         await TestHelper.VerifyString(str);
     }
 
@@ -377,7 +378,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     public async Task ExtractFormKey()
     {
         var fk = Plugins.FormKey.Factory("000800:InputMod.esp");
-        var str = await GetResults((k, w) => { k.WriteFormKey(w, "FormKey", fk, default); });
+        var str = await GetResults(async (k, w) => { k.WriteFormKey(w, "FormKey", fk, default); });
 
         var kernel = new TReaderKernel();
         var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
@@ -525,9 +526,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     [Fact]
     public async Task ObjectType()
     {
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
-            k.WriteLoqui<int>(w, "Loqui", 4, null, (w, o, k, m) =>
+            await k.WriteLoqui<int>(w, "Loqui", 4, null, async (w, o, k, m) =>
             {
                 k.WriteType(w, typeof(NpcLevel));
             });
@@ -546,7 +547,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     [Fact]
     public async Task List()
     {
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
             k.StartListSection(w, "MyList");
             k.WriteString(w, null, "Hello", default);
@@ -558,10 +559,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         await TestHelper.VerifyString(str);
 
-        CheckReadResults(str,
+        await CheckReadResults(str,
             new ReadResults<List<string>>(
                 "MyList",
-                (kernel, reader) =>
+                async (kernel, reader) =>
                 {
                     var ret = new List<string>();
                     kernel.StartListSection(reader);
@@ -575,7 +576,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                     return ret;
                 },
                 new List<string>() { "Hello", "There", "World" }),
-            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
+            new ReadResults<int?>("SomeInt", async (k, r) => k.ReadUInt8(r), 4));
     }
 
     record SomeClass(int? Int, string String);
@@ -586,16 +587,16 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var item1 = new SomeClass(4, "Hello");
         var item2 = new SomeClass(6, "World");
 
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!);
             k.StartListSection(w, "MyList");
-            k.WriteLoqui(w, null, item1, meta, (subW, obj, subKernel, meta) =>
+            await k.WriteLoqui(w, null, item1, meta, async (subW, obj, subKernel, meta) =>
             {
                 subKernel.WriteInt32(subW, "Int", obj.Int, default);
                 subKernel.WriteString(subW, "String", obj.String, default);
             });
-            k.WriteLoqui(w, null, item2, meta, (subW, obj, subKernel, meta) =>
+            await k.WriteLoqui(w, null, item2, meta, async (subW, obj, subKernel, meta) =>
             {
                 subKernel.WriteInt32(subW, "Int", obj.Int, default);
                 subKernel.WriteString(subW, "String", obj.String, default);
@@ -605,17 +606,17 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         await TestHelper.VerifyString(str);
 
-        CheckReadResults(str,
+        await CheckReadResults(str,
             new ReadResults<List<SomeClass>>(
                 "MyList",
-                (kernel, reader) =>
+                async (kernel, reader) =>
                 {
-                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE);
+                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE, null);
                     var ret = new List<SomeClass>();
                     kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadLoqui(reader, metaData, static (r, k, m) =>
+                        var item = await kernel.ReadLoqui(reader, metaData, static async (r, k, m) =>
                         {
                             int? i = default;
                             string s = string.Empty;
@@ -643,7 +644,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                     return ret;
                 },
                 new List<SomeClass> { item1, item2 }),
-            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
+            new ReadResults<int?>("SomeInt", async (k, r) => k.ReadUInt8(r), 4));
     }
 
     [Fact]
@@ -652,7 +653,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var item1 = new SomeClass(1, "value");
         var item2 = new SomeClass(2, "value2");
 
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
             k.StartDictionarySection(w, "MyDict");
             k.StartDictionaryItem(w);
@@ -676,10 +677,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         await TestHelper.VerifyString(str);
 
-        CheckReadResults(str,
+        await CheckReadResults(str,
             new ReadResults<List<SomeClass>>(
                 "MyDict", 
-                (kernel, reader) =>
+                async (kernel, reader) =>
                 {
                     var ret = new List<SomeClass>();
                     kernel.StartDictionarySection(reader);
@@ -699,13 +700,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                     return ret;
                 },
                 new List<SomeClass>() { item1, item2 }),
-            new ReadResults<int?>("SomeInt", (k, r) => k.ReadUInt8(r), 4));
+            new ReadResults<int?>("SomeInt", async (k, r) => k.ReadUInt8(r), 4));
     }
 
     [Fact]
     public async Task Array2d()
     {
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
             k.StartArray2dSection(w, "MyArr");
             k.StartArray2dYSection(w);
@@ -805,15 +806,15 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new TestMajorRecord(Plugins.FormKey.Factory("123457:Skyrim.esm"), "World"),
         });
         
-        var str = await GetResults((k, w) =>
+        var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
-            SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
-                (w, g, k, m) =>
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null);
+            await SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
+                async (w, g, k, m) =>
                 {
                     k.WriteBool(w, nameof(TestGroup.SomeGroupField), true, default);
                 },
-                new Write<TWriterKernel, TWriter, TestMajorRecord>((w, i, k, m) =>
+                new WriteAsync<TWriterKernel, TWriter, TestMajorRecord>(async (w, i, k, m) =>
                 {
                     k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), i.FormKey, default);
                     k.WriteString(w, "String", i.String, default);
@@ -822,15 +823,15 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         await TestHelper.VerifyString(str);
 
-        CheckReadResults(str,
+        await CheckReadResults(str,
             new ReadResults<TestGroup>(
                 "MyGroup",
-                (kernel, reader) =>
+                async (kernel, reader) =>
                 {
                     var g = new TestGroup();
-                    var meta = new SerializationMetaData(GameRelease.SkyrimSE);
-                    SerializationHelper.ReadIntoGroup(reader, g, meta, kernel,
-                        groupReader: (r, o, k, m, n) =>
+                    var meta = new SerializationMetaData(GameRelease.SkyrimSE, null);
+                    await SerializationHelper.ReadIntoGroup(reader, g, meta, kernel,
+                        groupReader: async (r, o, k, m, n) =>
                         {
                             switch (n)
                             {
@@ -841,7 +842,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                                     throw new NotImplementedException();
                             }
                         },
-                        itemReader: (r, k, m) =>
+                        itemReader: async (r, k, m) =>
                         {
                             FormKey fk = default;
                             string s = string.Empty;
@@ -889,39 +890,35 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         
         var streamPackage = new StreamPackage(null, existingDir, fileSystem);
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
-        var toDo = new List<Action>();
-        SerializationHelper.WriteFilePerRecord(
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        await SerializationHelper.WriteFilePerRecord(
             streamPackage,
             objs,
             "MyGroup",
             meta,
             MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
-            (w, g, k, m) =>
+            async (w, g, k, m) =>
             {
                 k.WriteBool(w, nameof(TestGroup.SomeGroupField), true, default);
             },
-            new Write<TWriterKernel, TWriter, TestMajorRecord>((w, i, k, m) =>
+            new WriteAsync<TWriterKernel, TWriter, TestMajorRecord>(async (w, i, k, m) =>
             {
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), i.FormKey, default);
                 k.WriteString(w, "String", i.String, default);
                 k.WriteString(w, "EditorID", i.EditorID, default);
             }),
-            withNumbering: true,
-            toDo);
-        toDo.ForEach(t => t());
+            withNumbering: true);
         
         await TestHelper.VerifyFileSystem(fileSystem);
 
         var g = new TestGroup();
-        toDo.Clear();
-        SerializationHelper.ReadFilePerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
+        await SerializationHelper.ReadFilePerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
             new StreamPackage(null, existingDir, fileSystem),
             g,
             "MyGroup",
             meta,
             new TReaderKernel(),
-            groupReader: (r, o, k, m, n) =>
+            groupReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -932,7 +929,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         throw new NotImplementedException();
                 }
             },
-            itemReader: (r, k, m) =>
+            itemReader: async (r, k, m) =>
             {
                 FormKey fk = default;
                 string s = string.Empty;
@@ -959,18 +956,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 {
                     EditorID = edid
                 };
-            },
-            toDo);
-        toDo.ForEach(t => t());
+            });
 
-        try
-        {
-            g.Equals(objs).Should().BeTrue();
-        }
-        catch (Exception)
-        {
-            g.Equals(objs).Should().BeTrue();
-        }
+        g.Equals(objs).Should().BeTrue();
     }
     
     [Theory, DefaultAutoData]
@@ -1013,10 +1001,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
         var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
-        List<Action> toDo = new();
-        SerializationHelper.AddBlocksToWork(
+        await SerializationHelper.AddBlocksToWork(
             streamPackage,
             objs,
             "MyBlocks",
@@ -1027,38 +1014,34 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             subBlockNumberRetriever: b => b.BlockNumber,
             metaData: meta,
             kernel: MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
-            metaWriter: (w, o, k, m) =>
+            metaWriter: async (w, o, k, m) =>
             {
                 k.WriteInt32(w, nameof(TestBlockGroup.SomeValue), o.SomeValue, default);
             },
-            blockWriter: (w, o, k, m) =>
+            blockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(Block.SomeValue), o.SomeValue, default);
             },
-            subBlockWriter: (w, o, k, m) =>
+            subBlockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(SubBlock.SomeValue), o.SomeValue, default);
             },
-            majorWriter: (w, o, k, m) =>
+            majorWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
             },
-            withNumbering: true,
-            toDo: toDo);
-        toDo.ForEach(t => t());
+            withNumbering: true);
         
         await TestHelper.VerifyFileSystem(fileSystem);
-    
-        toDo.Clear();
         
         var g = new TestBlockGroup();
-        SerializationHelper.ReadFilePerRecordIntoBlocks<TReaderKernel, TReader, TestBlockGroup, Block, SubBlock, TestMajorRecord>(
+        await SerializationHelper.ReadFilePerRecordIntoBlocks<TReaderKernel, TReader, TestBlockGroup, Block, SubBlock, TestMajorRecord>(
             streamPackage,
             g, 
             "MyBlocks",
             meta, new TReaderKernel(),
-            groupReader: (r, o, k, m, n) =>
+            groupReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1073,7 +1056,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             {
                 b.Blocks.SetTo(blocks);
             },
-            blockReader: (r, o, k, m, n) =>
+            blockReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1089,7 +1072,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 b.BlockNumber = blockNum;
                 b.SubBlocks.SetTo(subBlocks);
             },
-            subBlockReader: (r, o, k, m, n) =>
+            subBlockReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1105,7 +1088,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 b.BlockNumber = blockNum;
                 b.Records.SetTo(recs);
             },
-            majorReader: (r, k, m) =>
+            majorReader: async (r, k, m) =>
             {
                 FormKey fk = default;
                 string s = string.Empty;
@@ -1125,9 +1108,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 }
     
                 return new TestMajorRecord(fk, s);
-            },
-            toDo: toDo);
-        toDo.ForEach(t => t());
+            });
 
         g.Equals(objs).Should().BeTrue();
     }
@@ -1184,10 +1165,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
         var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
-        List<Action> toDo = new();
-        SerializationHelper.AddXYBlocksToWork(
+        await SerializationHelper.AddXYBlocksToWork(
             streamPackage,
             group,
             "Worldspaces",
@@ -1199,44 +1179,40 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             subBlockNumberRetriever: b => new P2Int16(b.BlockNumberX, b.BlockNumberY),
             metaData: meta,
             kernel: MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance,
-            groupWriter: (w, o, k, m) =>
+            groupWriter: async (w, o, k, m) =>
             {
                 k.WriteInt32(w, nameof(TestXYBlockGroup.SomeValue), o.SomeValue, default);
             },
-            topRecordWriter: (w, o, k, m) =>
+            topRecordWriter: async (w, o, k, m) =>
             {
                 k.WriteInt32(w, nameof(TestXYRecord.SomeValue), o.SomeValue, default);
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
             },
-            blockWriter: (w, o, k, m) =>
+            blockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(XYBlock.SomeValue), o.SomeValue, default);
             },
-            subBlockWriter: (w, o, k, m) =>
+            subBlockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(XYSubBlock.SomeValue), o.SomeValue, default);
             },
-            majorWriter: (w, o, k, m) =>
+            majorWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), o.FormKey, default);
             },
-            withNumbering: true,
-            toDo: toDo);
-        toDo.ForEach(t => t());
+            withNumbering: true);
         
         await TestHelper.VerifyFileSystem(fileSystem);
-    
-        toDo.Clear();
 
         var outGroup = new TestXYBlockGroup();
-        SerializationHelper.ReadIntoXYBlocks<TReaderKernel, TReader, TestXYBlockGroup, TestXYRecord, XYBlock, XYSubBlock, TestMajorRecord>(
+        await SerializationHelper.ReadIntoXYBlocks<TReaderKernel, TReader, TestXYBlockGroup, TestXYRecord, XYBlock, XYSubBlock, TestMajorRecord>(
             streamPackage,
             outGroup,
             "Worldspaces",
             meta,
             new TReaderKernel(),
-            groupReader: (r, o, k, m, n) =>
+            groupReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1247,7 +1223,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         throw new NotImplementedException();
                 }
             },
-            objReader: (r, k, m) =>
+            objReader: async (r, k, m) =>
             {
                 FormKey fk = default;
                 string s = string.Empty;
@@ -1272,7 +1248,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     
                 return new TestXYRecord(fk, s) { SomeValue = i };
             },
-            blockReader: (r, o, k, m, n) =>
+            blockReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1283,13 +1259,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         throw new NotImplementedException();
                 }
             },
-            blockSet: (b, blockNum, subBlocks) =>
+            blockSet: async (b, blockNum, subBlocks) =>
             {
                 b.BlockNumberX = blockNum.X;
                 b.BlockNumberY = blockNum.Y;
                 b.SubBlocks.SetTo(subBlocks);
             },
-            subBlockReader: (r, o, k, m, n) =>
+            subBlockReader: async (r, o, k, m, n) =>
             {
                 switch (n)
                 {
@@ -1300,13 +1276,13 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         throw new NotImplementedException();
                 }
             },
-            subBlockSet: (b, blockNum, recs) =>
+            subBlockSet: async (b, blockNum, recs) =>
             {
                 b.BlockNumberX = blockNum.X;
                 b.BlockNumberY = blockNum.Y;
                 b.Records.SetTo(recs);
             },
-            majorReader: (r, k, m) =>
+            majorReader: async (r, k, m) =>
             {
                 FormKey fk = default;
                 string s = string.Empty;
@@ -1334,9 +1310,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             topRecordSetter: (b, blocks) =>
             {
                 b.Blocks.SetTo(blocks);
-            },
-            toDo: toDo);
-        toDo.ForEach(t => t());
+            });
 
         outGroup.Equals(group).Should().BeTrue();
     }

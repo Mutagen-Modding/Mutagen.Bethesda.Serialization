@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -10,6 +10,7 @@ using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.WorkEngine;
 using VerifyTests;
 using VerifyXunit;
 using Xunit;
@@ -40,20 +41,15 @@ public class GroupFolderParallelSerializationTests
         group.Add(npc1);
         group.Add(npc2);
 
-        var toDo = new List<Action>();
-        
-        SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
+        await SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE),
+            new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff()),
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            withNumbering: false,
-            toDo);
-
-        toDo.ForEach(x => x());
+            withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         var headerDataPath = Path.Combine(existingDir, "Npcs", "GroupRecordData.json");
@@ -90,20 +86,17 @@ public class GroupFolderParallelSerializationTests
         group.Add(npc1);
         group.Add(npc2);
 
-        var toDo = new List<Action>();
-        
-        SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
+        var metadata = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+
+        await SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE),
+            metadata,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            withNumbering: false,
-            toDo);
-        
-        toDo.ForEach(x => x());
+            withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         var headerDataPath = Path.Combine(existingDir, "Npcs", "GroupRecordData.json");
@@ -115,20 +108,16 @@ public class GroupFolderParallelSerializationTests
         
         // Remove one
         group.Remove(npc2);
-        toDo.Clear();
         
-        SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
+        await SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE),
+            metadata,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            withNumbering: false,
-            toDo);
-
-        toDo.ForEach(x => x());
+            withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         fileSystem.File.Exists(headerDataPath).Should().BeTrue();
@@ -137,20 +126,16 @@ public class GroupFolderParallelSerializationTests
         
         // Remove all
         group.Clear();
-        toDo.Clear();
-        
-        SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
+
+        await SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE),
+            metadata,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            withNumbering: false,
-            toDo);
-
-        toDo.ForEach(x => x());
+            withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         fileSystem.File.Exists(headerDataPath).Should().BeTrue();

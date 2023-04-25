@@ -12,8 +12,8 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 [UsesVerify]
 public abstract class ASerializationTests
 {
-    public abstract void Serialize(ISkyrimModGetter mod, Stream stream);
-    public abstract ISkyrimModGetter Deserialize(Stream stream);
+    public abstract Task Serialize(ISkyrimModGetter mod, Stream stream);
+    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
     
     [Theory]
@@ -22,7 +22,7 @@ public abstract class ASerializationTests
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        Serialize(mod, stream);
+        await Serialize(mod, stream);
         stream.Position = 0;
         StreamReader streamReader = new StreamReader(stream);
         var str = streamReader.ReadToEnd();
@@ -50,7 +50,7 @@ public abstract class ASerializationTests
             AttackEvent = "Event2"
         });
         var stream = new MemoryStream();
-        Serialize(mod, stream);
+        await Serialize(mod, stream);
         stream.Position = 0;
         StreamReader streamReader = new StreamReader(stream);
         var str = streamReader.ReadToEnd();
@@ -59,17 +59,17 @@ public abstract class ASerializationTests
     
     [Theory]
     [TestAutoData]
-    public void EmptySkyrimModPassthrough(
+    public async Task EmptySkyrimModPassthrough(
         IFileSystem fileSystem)
     {
-        PassThrough(
+        await PassThrough(
             fileSystem,
             new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE));
     }
     
     [Theory]
     [TestAutoData(ConfigureMembers: true)]
-    public void GroupPassthrough(
+    public async Task GroupPassthrough(
         IFileSystem fileSystem,
         Npc npc1,
         Npc npc2,
@@ -85,8 +85,8 @@ public abstract class ASerializationTests
         firstWeapon.DeepCopyIn(weapon1);
         var secondWeapon = mod.Weapons.AddNew();
         secondWeapon.DeepCopyIn(weapon2);
-        
-        PassThrough( 
+
+        await PassThrough( 
             fileSystem,
             mod);
     }
@@ -100,8 +100,8 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var newClass = mod.Classes.AddNew();
         newClass.StatWeights.SetTo(vals);
-        
-        PassThrough(
+
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -121,8 +121,8 @@ public abstract class ASerializationTests
                       | Race.Flag.AllowPcDialog
                       | Race.Flag.CanPickupItems
                       | Race.Flag.CanDualWield;
-        
-        PassThrough(
+
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -134,8 +134,8 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var added = mod.Keywords.AddNew();
         added.Color = Color.FromArgb(55, 66, 77, 88);
-        
-        PassThrough(
+
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -148,7 +148,7 @@ public abstract class ASerializationTests
         var added = mod.Factions.AddNew();
         added.VendorValues = new();
         
-        PassThrough(
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -160,8 +160,8 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var added = mod.TextureSets.AddNew();
         added.Flags = default(TextureSet.Flag);
-        
-        PassThrough(
+
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -175,8 +175,8 @@ public abstract class ASerializationTests
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var newFaction = mod.Factions.AddNew();
         newFaction.DeepCopyIn(f);
-        
-        PassThrough(
+
+        await PassThrough(
             fileSystem,
             mod);
     }
@@ -190,15 +190,15 @@ public abstract class ASerializationTests
         var newFloat = mod.Globals.AddNewFloat();
         newFloat.Data = 1.3f;
         
-        PassThrough(
+        await PassThrough(
             fileSystem,
             mod);
     }
 
-    private void PassThrough(IFileSystem fileSystem, SkyrimMod skyrimMod)
+    private async Task PassThrough(IFileSystem fileSystem, SkyrimMod skyrimMod)
     {
         using var tmp = TempFolder.FactoryByAddedPath(fileSystem: fileSystem, addedFolderPath: "Mutagen.Bethesda.Serialization.Tests");
-        PassthroughTest.PassThrough(
+        await PassthroughTest.PassThrough(
             fileSystem,
             tmp.Dir,
             skyrimMod,

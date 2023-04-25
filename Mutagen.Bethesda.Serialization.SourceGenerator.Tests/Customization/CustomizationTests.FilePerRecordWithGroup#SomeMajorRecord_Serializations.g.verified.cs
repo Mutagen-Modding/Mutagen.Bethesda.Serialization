@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,7 +14,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class SomeMajorRecord_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeMajorRecordGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -20,14 +22,14 @@ internal static class SomeMajorRecord_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        SerializeFields<TKernel, TWriteObject>(
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeMajorRecordGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -35,9 +37,9 @@ internal static class SomeMajorRecord_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        List<Action> parallelToDo = new List<Action>();
+        var tasks = new List<Task>();
         kernel.WriteInt32(writer, "SomeMember1", item.SomeMember1, default(int));
-        SerializationHelper.WriteFilePerRecord<TKernel, TWriteObject, IGroupGetter<ISomeMajorRecordGetter>, ISomeMajorRecordGetter>(
+        tasks.Add(SerializationHelper.WriteFilePerRecord<TKernel, TWriteObject, IGroupGetter<ISomeMajorRecordGetter>, ISomeMajorRecordGetter>(
             streamPackage: writer.StreamPackage,
             group: item.SomeGroup1,
             fieldName: "SomeGroup1",
@@ -45,10 +47,9 @@ internal static class SomeMajorRecord_Serialization
             kernel: kernel,
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ISomeMajorRecordGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            withNumbering: false,
-            toDo: parallelToDo);
+            withNumbering: false));
         kernel.WriteInt32(writer, "SomeMember2", item.SomeMember2, default(int));
-        Parallel.Invoke(parallelToDo.ToArray());
+        await Task.WhenAll(tasks.ToArray());
     }
 
     public static bool HasSerializationItems(
@@ -62,14 +63,14 @@ internal static class SomeMajorRecord_Serialization
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord();
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
             obj: obj,
@@ -77,13 +78,12 @@ internal static class SomeMajorRecord_Serialization
         return obj;
     }
 
-    public static void DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeMajorRecord obj,
         SerializationMetaData metaData,
-        string name,
-        List<Action> parallelToDo)
+        string name)
         where TReadObject : IContainStreamPackage
     {
         switch (name)
@@ -99,35 +99,33 @@ internal static class SomeMajorRecord_Serialization
         }
     }
     
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeMajorRecord obj,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
-        List<Action> parallelToDo = new List<Action>();
+        var tasks = new List<Task>();
         while (kernel.TryGetNextField(reader, out var name))
         {
-            DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,
                 metaData: metaData,
-                name: name,
-                parallelToDo: parallelToDo);
+                name: name);
         }
 
-        SerializationHelper.ReadFilePerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<SomeMajorRecord>, SomeMajorRecord>(
+        tasks.Add(SerializationHelper.ReadFilePerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<SomeMajorRecord>, SomeMajorRecord>(
             streamPackage: reader.StreamPackage,
             fieldName: "SomeGroup1",
             group: obj.SomeGroup1,
             metaData: metaData,
             kernel: kernel,
             groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeSingleFieldInto<TReadObject, SomeMajorRecord>(r, k, i, m, n),
-            itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>),
-            toDo: parallelToDo);
-        Parallel.Invoke(parallelToDo.ToArray());
+            itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>), "SomeGroup1")));
+        await Task.WhenAll(tasks.ToArray());
     }
 
 }

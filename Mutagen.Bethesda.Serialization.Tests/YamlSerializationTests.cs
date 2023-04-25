@@ -1,17 +1,17 @@
-﻿using Mutagen.Bethesda.Serialization.Yaml;
+using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 
 public class YamlSerializationTests : ASerializationTests
 {
-    public override void Serialize(ISkyrimModGetter mod, Stream stream)
+    public override async Task Serialize(ISkyrimModGetter mod, Stream stream)
     {
-        MutagenYamlConverter.Instance.Serialize(mod, stream);
+        await MutagenYamlConverter.Instance.Serialize(mod, stream);
     }
 
-    public override ISkyrimModGetter Deserialize(Stream stream)
+    public override async Task<ISkyrimModGetter> Deserialize(Stream stream)
     {
-        return MutagenYamlConverter.Instance.Deserialize(stream, ModKey, SkyrimRelease.SkyrimSE);
+        return await MutagenYamlConverter.Instance.Deserialize(stream, ModKey, SkyrimRelease.SkyrimSE);
     }
 }

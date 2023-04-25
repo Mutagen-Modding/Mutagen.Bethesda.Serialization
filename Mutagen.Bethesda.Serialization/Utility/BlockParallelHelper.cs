@@ -1,11 +1,12 @@
 ﻿using Mutagen.Bethesda.Plugins.Records;
 using Noggog;
+using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static partial class SerializationHelper
 {
-    public static void AddBlocksToWork<TKernel, TWriteObject, TGroup, TBlock, TSubBlock, TMajor>(
+    public static async Task AddBlocksToWork<TKernel, TWriteObject, TGroup, TBlock, TSubBlock, TMajor>(
         StreamPackage streamPackage,
         TGroup obj,
         string? fieldName,
@@ -16,68 +17,77 @@ public static partial class SerializationHelper
         Func<TSubBlock, int> subBlockNumberRetriever,
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        Write<TKernel, TWriteObject, TGroup> metaWriter,
-        Write<TKernel, TWriteObject, TBlock> blockWriter,
-        Write<TKernel, TWriteObject, TSubBlock> subBlockWriter,
-        Write<TKernel, TWriteObject, TMajor> majorWriter,
-        bool withNumbering,
-        List<Action> toDo)
+        WriteAsync<TKernel, TWriteObject, TGroup> metaWriter,
+        WriteAsync<TKernel, TWriteObject, TBlock> blockWriter,
+        WriteAsync<TKernel, TWriteObject, TSubBlock> subBlockWriter,
+        WriteAsync<TKernel, TWriteObject, TMajor> majorWriter,
+        bool withNumbering)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
         where TMajor : class, IMajorRecordGetter
     {
         if (fieldName == null) throw new ArgumentNullException(paramName: nameof(fieldName));
 
-        var groupDir = WriteGroupRecordData(streamPackage: streamPackage,
+        var groupDir = await WriteGroupRecordData(streamPackage: streamPackage,
             @group: obj,
             folderName: fieldName,
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: metaWriter,
-            toDo: toDo);
+            groupWriter: metaWriter);
 
-        int? blockNumber = withNumbering ? 1 : null;
-        foreach (var blockGetter in blockRetriever(obj))
-        {
-            var blockDir = WriteGroupRecordData(
-                streamPackage: streamPackage with { Stream = null!, Path = groupDir },
-                @group: blockGetter,
-                folderName: DecorateWithNumber(blockNumberRetriever(blockGetter).ToString(), blockNumber++),
-                fileName: TypicalGroupFileName(kernel.ExpectedExtension),
-                metaData: metaData,
-                kernel: kernel,
-                groupWriter: blockWriter,
-                toDo: toDo);
-
-            int? subBlockNumber = withNumbering ? 1 : null;
-            foreach (var subBlockGetter in subBlockRetriever(blockGetter))
+        await metaData.WorkDropoff.EnqueueAndWait(
+            blockRetriever(obj)
+                .WithIndex(),
+            async blockGetter =>
             {
-                var subBlockDir = WriteGroupRecordData(
-                    streamPackage: streamPackage with { Stream = null!, Path = blockDir },
-                    @group: subBlockGetter,
-                    folderName: DecorateWithNumber(subBlockNumberRetriever(subBlockGetter).ToString(), subBlockNumber++),
+                var blockDir = await WriteGroupRecordData(
+                    streamPackage: streamPackage with { Stream = null!, Path = groupDir },
+                    @group: blockGetter.Item,
+                    folderName: DecorateWithNumber(
+                        blockNumberRetriever(blockGetter.Item).ToString(), 
+                        withNumbering ? blockGetter.Index : null),
                     fileName: TypicalGroupFileName(kernel.ExpectedExtension),
                     metaData: metaData,
                     kernel: kernel,
-                    groupWriter: subBlockWriter,
-                    toDo: toDo);
+                    groupWriter: blockWriter);
 
-                int? recordI = withNumbering ? 1 : null;
-                foreach (var recordGetter in majorRetriever(subBlockGetter))
-                {
-                    int? recordNumber = recordI;
-                    toDo.Add(() =>
+                await metaData.WorkDropoff.EnqueueAndWait(
+                    subBlockRetriever(blockGetter.Item)
+                        .WithIndex(),
+                    async subBlockGetter =>
                     {
-                        WriteMajor(
-                            streamPackage with { Stream = null!, Path = subBlockDir },
-                            metaData, kernel, majorWriter, recordGetter,
-                            numbering: recordNumber);
+                        var subBlockDir = await WriteGroupRecordData(
+                            streamPackage: streamPackage with { Stream = null!, Path = blockDir },
+                            @group: subBlockGetter.Item,
+                            folderName: DecorateWithNumber(
+                                subBlockNumberRetriever(subBlockGetter.Item).ToString(),
+                                withNumbering ? subBlockGetter.Index : null),
+                            fileName: TypicalGroupFileName(kernel.ExpectedExtension),
+                            metaData: metaData,
+                            kernel: kernel,
+                            groupWriter: subBlockWriter);
+
+                        await metaData.WorkDropoff.EnqueueAndWait(
+                            majorRetriever(subBlockGetter.Item).WithIndex(),
+                            async recordGetter =>
+                            {
+                                var recordFolder = Path.Combine(subBlockDir, RecordNameProvider(
+                                    recordGetter.Item,
+                                    withNumbering ? recordGetter.Index : null));
+
+                                streamPackage.FileSystem.Directory.CreateDirectory(recordFolder);
+                                
+                                var fileName = RecordDataFileName(kernel.ExpectedExtension);
+                                var recordPath = Path.Combine(recordFolder, fileName);
+                                await using var stream = streamPackage.FileSystem.File.Create(recordPath);
+                                var recordStreamPackage = streamPackage with { Stream = stream, Path = recordFolder };
+                                var recordWriter = kernel.GetNewObject(recordStreamPackage);
+                                await majorWriter(recordWriter, recordGetter.Item, kernel, metaData);
+                                kernel.Finalize(recordStreamPackage, recordWriter);
+                            });
                     });
-                    recordI++;
-                }
-            }
-        }
+            });
     }
 
     private static ReadOnlySpan<char> TrimOrdering(ReadOnlySpan<char> str)
@@ -88,7 +98,7 @@ public static partial class SerializationHelper
         return str.Slice(index + delimeter.Length);
     }
 
-    public static void ReadFilePerRecordIntoBlocks<TKernel, TReadObject, TGroup, TBlock, TSubBlock, TMajor>(
+    public static async Task ReadFilePerRecordIntoBlocks<TKernel, TReadObject, TGroup, TBlock, TSubBlock, TMajor>(
         StreamPackage streamPackage,
         TGroup group,
         string fieldName,
@@ -99,9 +109,8 @@ public static partial class SerializationHelper
         Action<TBlock, int, IEnumerable<TSubBlock>> blockSet,
         ReadNamedInto<TKernel, TReadObject, TSubBlock> subBlockReader,
         Action<TSubBlock, int, IEnumerable<TMajor>> subBlockSet,
-        Read<TKernel, TReadObject, TMajor> majorReader,
-        Action<TGroup, IEnumerable<TBlock>> groupSetter,
-        List<Action> toDo)
+        ReadAsync<TKernel, TReadObject, TMajor> majorReader,
+        Action<TGroup, IEnumerable<TBlock>> groupSetter)
         where TKernel : ISerializationReaderKernel<TReadObject>
         where TMajor : class, IMajorRecordGetter
         where TGroup : class, IClearable
@@ -110,98 +119,108 @@ public static partial class SerializationHelper
     {
         streamPackage = streamPackage with { Path = Path.Combine(streamPackage.Path!, fieldName) };
         
-        ReadGroupHeaderPathToWork(streamPackage, group, metaData, kernel, groupReader, toDo);
+        await ReadGroupHeaderPathToWork(streamPackage, group, metaData, kernel, groupReader);
 
         var groupFileName = TypicalGroupFileName(kernel.ExpectedExtension);
 
-        toDo.Add(() =>
-        {
-            var blocks = streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!)
-                .AsParallel()
-                .Select(blockDir =>
+        var blocks = await metaData.WorkDropoff.EnqueueAndWait(
+            streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+            async blockDir =>
+            {
+                if (!int.TryParse(TrimOrdering(Path.GetFileName(blockDir.AsSpan())), out var blockNum))
                 {
-                    if (!int.TryParse(TrimOrdering(Path.GetFileName(blockDir.AsSpan())), out var blockNum))
-                    {
-                        return default;
-                    }
+                    return default;
+                }
 
-                    var blockDataPath = Path.Combine(blockDir, groupFileName);
-                    TBlock block = new TBlock();
-                    if (streamPackage.FileSystem.File.Exists(blockDataPath))
+                var blockStreamPackage = streamPackage with { Path = blockDir };
+
+                var blockDataPath = Path.Combine(blockDir, groupFileName);
+                TBlock block = new TBlock();
+                if (blockStreamPackage.FileSystem.File.Exists(blockDataPath))
+                {
+                    using (var blockStream = blockStreamPackage.FileSystem.File.OpenRead(blockDataPath))
                     {
-                        using (var blockStream = streamPackage.FileSystem.File.OpenRead(blockDataPath))
+                        var reader = kernel.GetNewObject(blockStreamPackage with { Stream = blockStream });
+
+                        while (kernel.TryGetNextField(reader, out var name))
                         {
-                            var reader = kernel.GetNewObject(streamPackage with { Stream = blockStream });
-
-                            while (kernel.TryGetNextField(reader, out var name))
-                            {
-                                blockReader(reader, block, kernel, metaData, name);
-                            }
+                            await blockReader(reader, block, kernel, metaData, name);
                         }
                     }
+                }
 
-                    var subBlocks = streamPackage.FileSystem.Directory.GetDirectories(blockDir)
-                        .AsParallel()
-                        .Select(subBlockDir =>
+                var subBlocks = await metaData.WorkDropoff.EnqueueAndWait(
+                    blockStreamPackage.FileSystem.Directory.GetDirectories(blockDir),
+                    async subBlockDir =>
+                    {
+                        if (!int.TryParse(TrimOrdering(Path.GetFileName(subBlockDir.AsSpan())), out var subBlockNum))
                         {
-                            if (!int.TryParse(TrimOrdering(Path.GetFileName(subBlockDir.AsSpan())), out var subBlockNum))
-                            {
-                                return default;
-                            }
+                            return default;
+                        }
 
-                            var subBlockDataPath = Path.Combine(subBlockDir, groupFileName);
-                            var subBlockDataFileName = Path.GetFileName(subBlockDataPath);
+                        var subBlockDataPath = Path.Combine(subBlockDir, groupFileName);
+                        var subBlockDataFileName = Path.GetFileName(subBlockDataPath);
+                        var subBlockStreamPackage = blockStreamPackage with { Path = subBlockDir };
 
-                            TSubBlock subBlock = new();
-                            if (streamPackage.FileSystem.File.Exists(subBlockDataPath))
+                        TSubBlock subBlock = new();
+                        if (subBlockStreamPackage.FileSystem.File.Exists(subBlockDataPath))
+                        {
+                            using (var subBlockStream = subBlockStreamPackage.FileSystem.File.OpenRead(subBlockDataPath))
                             {
-                                using (var subBlockStream = streamPackage.FileSystem.File.OpenRead(subBlockDataPath))
+                                var reader = kernel.GetNewObject(subBlockStreamPackage with { Stream = subBlockStream });
+
+                                while (kernel.TryGetNextField(reader, out var name))
                                 {
-                                    var reader = kernel.GetNewObject(streamPackage with { Stream = subBlockStream });
-
-                                    while (kernel.TryGetNextField(reader, out var name))
-                                    {
-                                        subBlockReader(reader, subBlock, kernel, metaData, name);
-                                    }
+                                    await subBlockReader(reader, subBlock, kernel, metaData, name);
                                 }
                             }
+                        }
 
-                            var records = streamPackage.FileSystem.Directory.GetFiles(subBlockDir)
-                                .Where(x => !subBlockDataFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase))
-                                .Where(x => !x.Equals(subBlockDataPath, StringComparison.OrdinalIgnoreCase))
-                                .AsParallel()
-                                .Select(recordFile =>
+                        var records = await metaData.WorkDropoff.EnqueueAndWait(
+                            subBlockStreamPackage.FileSystem.Directory.GetDirectories(subBlockDir),
+                            async recordDir =>
+                            {
+                                var recordFile = Path.Combine(recordDir, RecordDataFileName(kernel.ExpectedExtension));
+                                
+                                using (var recordStream = subBlockStreamPackage.FileSystem.File.OpenRead(recordFile))
                                 {
-                                    using (var recordStream = streamPackage.FileSystem.File.OpenRead(recordFile))
+                                    var reader = kernel.GetNewObject(subBlockStreamPackage with
                                     {
-                                        var reader = kernel.GetNewObject(streamPackage with { Stream = recordStream });
+                                        Stream = recordStream,
+                                        Path = recordDir
+                                    });
 
-                                        return (Path.GetFileName(recordFile), majorReader(reader, kernel, metaData));
-                                    }
-                                })
-                                .ToArray()
+                                    return (Path.GetFileName(recordDir), await majorReader(reader, kernel, metaData));
+                                }
+                            });
+
+                        subBlockSet(
+                            subBlock,
+                            subBlockNum, 
+                            records
                                 .OrderBy(x => TryGetNumber(x.Item1))
                                 .Select(x => x.Item2)
-                                .NotNull();
+                                .NotNull());
 
-                            subBlockSet(subBlock, subBlockNum, records);
+                        return (Path.GetFileName(subBlockDir), subBlock);
+                    });
 
-                            return (Path.GetFileName(subBlockDir), subBlock);
-                        })
-                        .ToArray()
+                blockSet(
+                    block,
+                    blockNum,
+                    subBlocks
                         .OrderBy(x => TryGetNumber(x.Item1))
                         .Select(x => x.subBlock)
-                        .NotNull();
+                        .NotNull());
 
-                    blockSet(block, blockNum, subBlocks);
+                return (Path.GetFileName(blockDir), block);
+            });
 
-                    return (Path.GetFileName(blockDir), block);
-                })
-                .ToArray()
+        groupSetter(
+            group, 
+            blocks
                 .OrderBy(x => TryGetNumber(x.Item1))
                 .Select(x => x.block)
-                .NotNull();
-            groupSetter(group, blocks);
-        });
+                .NotNull());
     }
 }

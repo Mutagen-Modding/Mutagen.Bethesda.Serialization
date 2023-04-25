@@ -5,35 +5,22 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
-public class LoquiFieldGenerator : ISerializationForFieldGenerator
+public class IsLoquiFieldTester
 {
     private readonly IsGroupTester _groupTester;
-    private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly IsLoquiObjectTester _isLoquiObjectTester;
-    public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
-
-    public LoquiFieldGenerator(
-        IsLoquiObjectTester isLoquiObjectTester,
-        LoquiSerializationNaming loquiSerializationNaming,
-        IsGroupTester groupTester)
-    {
-        _isLoquiObjectTester = isLoquiObjectTester;
-        _loquiSerializationNaming = loquiSerializationNaming;
-        _groupTester = groupTester;
-    }
 
     private static HashSet<string> _genericTestTypes = new()
     {
         "IMajorRecordInternal"
     };
 
-    public IEnumerable<string> RequiredNamespaces(
-        LoquiTypeSet obj,
-        CompilationUnit compilation,
-        ITypeSymbol typeSymbol) => Enumerable.Empty<string>();
-    
-    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
-    
+    public IsLoquiFieldTester(IsGroupTester groupTester, IsLoquiObjectTester isLoquiObjectTester)
+    {
+        _groupTester = groupTester;
+        _isLoquiObjectTester = isLoquiObjectTester;
+    }
+
     public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
@@ -51,6 +38,41 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         }
 
         return false;
+    }
+}
+
+public class LoquiFieldGenerator : ISerializationForFieldGenerator
+{
+    private readonly LoquiSerializationNaming _loquiSerializationNaming;
+    private readonly ObjRequiresFolderTester _objRequiresFolder;
+    private readonly IsLoquiFieldTester _isLoquiObjectTester;
+    public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
+
+    public LoquiFieldGenerator(
+        IsLoquiFieldTester isLoquiObjectTester,
+        LoquiSerializationNaming loquiSerializationNaming,
+        ObjRequiresFolderTester objRequiresFolder)
+    {
+        _isLoquiObjectTester = isLoquiObjectTester;
+        _loquiSerializationNaming = loquiSerializationNaming;
+        _objRequiresFolder = objRequiresFolder;
+    }
+
+    public IEnumerable<string> RequiredNamespaces(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol) => Enumerable.Empty<string>();
+    
+    public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
+    
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
+    {
+        return _isLoquiObjectTester.Applicable(obj, customization, typeSymbol, fieldName)
+               && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, customization);
     }
     
     public void GenerateForSerialize(
@@ -94,7 +116,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         }
         using (sb.CurlyBrace(doIt: fieldName != null))
         {
-            sb.AppendLine($"{kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, {metaAccessor}, static (w, i, k, m) => {call}<TKernel, TWriteObject>(w, i, k, m));");
+            sb.AppendLine($"await {kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, {metaAccessor}, static (w, i, k, m) => {call}<TKernel, TWriteObject>(w, i, k, m));");
         }
     }
 
@@ -145,11 +167,21 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
         if (canSet || insideCollection)
         {
-            sb.AppendLine($"{fieldAccessor}{(insideCollection ? null : " = ")}{kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
-        }
+            Utility.WrapStripNull(
+                field, 
+                fieldName,
+                fieldAccessor, 
+                readerAccessor, 
+                kernelAccessor,
+                insideCollection,
+                sb,
+                (sb, f, k, r, setAccessor) =>
+                {
+                    sb.AppendLine($"{setAccessor}await {k}.ReadLoqui({r}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+                });}
         else
         {
-            sb.AppendLine($"var tmp{fieldName} = {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+            sb.AppendLine($"var tmp{fieldName} = await {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
             sb.AppendLine($"{fieldAccessor}.DeepCopyIn(tmp{fieldName});");
         }
     }

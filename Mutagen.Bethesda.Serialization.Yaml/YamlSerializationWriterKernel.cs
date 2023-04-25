@@ -294,7 +294,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         string? fieldName,
         TObject item,
         SerializationMetaData serializationMetaData,
-        Write<TKernel, YamlWritingUnit, TObject> writeCall)
+        WriteAsync<TKernel, YamlWritingUnit, TObject> writeCall)
         where TKernel : ISerializationWriterKernel<YamlWritingUnit>, new()
     {
         writer.WriteName(fieldName);
@@ -313,6 +313,21 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         writer.WriteName(fieldName);
         writer.Emitter.Emit(new MappingStart());
         writeCall(writer, item, kernel, serializationMetaData);
+        writer.Emitter.Emit(new MappingEnd());
+    }
+
+    public async Task WriteLoqui<TKernel, TObject>(
+        MutagenSerializationWriterKernel<TKernel, YamlWritingUnit> kernel,
+        YamlWritingUnit writer, 
+        string? fieldName,
+        TObject item,
+        SerializationMetaData serializationMetaData,
+        WriteAsync<TKernel, YamlWritingUnit, TObject> writeCall)
+        where TKernel : ISerializationWriterKernel<YamlWritingUnit>, new()
+    {
+        writer.WriteName(fieldName);
+        writer.Emitter.Emit(new MappingStart());
+        await writeCall(writer, item, kernel, serializationMetaData);
         writer.Emitter.Emit(new MappingEnd());
     }
 

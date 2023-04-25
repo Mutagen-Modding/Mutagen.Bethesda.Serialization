@@ -86,7 +86,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         }
         
         using (var f = sb.Call(
-                   $"{kernelAccessor}.WriteLoqui"))
+                   $"await {kernelAccessor}.WriteLoqui"))
         {
             f.Add($"writer: {writerAccessor}");
             f.Add($"fieldName: \"{fieldName}\"");
@@ -94,7 +94,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             f.Add($"serializationMetaData: {metaAccessor}");
             f.Add(subSb =>
             {
-                subSb.AppendLine($"writeCall: static (w, o, k, m) =>");
+                subSb.AppendLine($"writeCall: static async (w, o, k, m) =>");
                 using (subSb.CurlyBrace())
                 {
                     _forFieldGenerator().Value.GenerateSerializeForField(
@@ -204,7 +204,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         fieldAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
 
         using (var f = sb.Call(
-                   $"{fieldAccessor}{kernelAccessor}.ReadLoqui"))
+                   $"{fieldAccessor}await {kernelAccessor}.ReadLoqui"))
         {
             f.Add($"reader: {readerAccessor}");
             f.Add($"serializationMetaData: {metaAccessor}");
@@ -213,7 +213,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                 subSb.AppendLine($"readCall: static (r, k, m) =>");
                 using (subSb.CurlyBrace())
                 {
-                    using (var c = subSb.Call("return SerializationHelper.ReadGenderedItem"))
+                    using (var c = subSb.Call($"return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>"))
                     {
                         c.Add($"reader: r");
                         c.Add($"kernel: k");
@@ -221,7 +221,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                         c.Add($"ret: new GenderedItem<{subType}>(default({subType}), default({subType}))");
                         c.Add(readerSb =>
                         {
-                            readerSb.AppendLine("itemReader: static (r2, k2, m2, n) =>");
+                            readerSb.AppendLine("itemReader: static async (r2, k2, m2, n) =>");
                             using (readerSb.CurlyBrace())
                             {
                                 _forFieldGenerator().Value.GenerateDeserializeForField(

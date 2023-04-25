@@ -5,6 +5,8 @@ using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
+using Noggog.WorkEngine;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -12,22 +14,23 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
 {
-    public static void Serialize<TKernel, TWriteObject>(
+    public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
-        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel)
+        MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
+        IWorkDropoff workDropoff)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(item.GameRelease);
-        SerializeFields<TKernel, TWriteObject>(
+        var metaData = new SerializationMetaData(item.GameRelease, workDropoff);
+        await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
             kernel: kernel,
             metaData: metaData);
     }
 
-    public static void SerializeFields<TKernel, TWriteObject>(
+    public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
@@ -40,32 +43,35 @@ internal static class TestMod_Serialization
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter? item)
     {
         if (item == null) return false;
-        var metaData = new SerializationMetaData(item.GameRelease);
+        var metaData = new SerializationMetaData(item.GameRelease, null!);
         return false;
     }
 
-    public static Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
-        Serialization.SourceGenerator.TestsRelease release)
+        Serialization.SourceGenerator.TestsRelease release,
+        IWorkDropoff workDropoff)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
-        DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
-            obj: obj);
+            obj: obj,
+            workDropoff: workDropoff);
         return obj;
     }
 
-    public static void DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj)
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
+        IWorkDropoff workDropoff)
         where TReadObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(obj.GameRelease);
+        var metaData = new SerializationMetaData(obj.GameRelease, workDropoff);
     }
 
 }

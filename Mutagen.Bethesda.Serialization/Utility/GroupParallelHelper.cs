@@ -5,15 +5,14 @@ namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static partial class SerializationHelper
 {
-    private static string WriteGroupRecordData<TKernel, TWriteObject, TGroup>(
+    private static async Task<string> WriteGroupRecordData<TKernel, TWriteObject, TGroup>(
         StreamPackage streamPackage,
         TGroup group, 
         string folderName,
         string fileName,
         SerializationMetaData metaData, 
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        Write<TKernel, TWriteObject, TGroup> groupWriter,
-        List<Action> toDo) 
+        WriteAsync<TKernel, TWriteObject, TGroup> groupWriter) 
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
@@ -26,7 +25,7 @@ public static partial class SerializationHelper
         streamPackage.FileSystem.Directory.DeleteEntireFolder(groupDir);
         streamPackage.FileSystem.Directory.CreateDirectory(groupDir);
 
-        toDo.Add(() =>
+        await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
             var dataPath = Path.Combine(groupDir, fileName);
             using var stream = streamPackage.FileSystem.File.Create(dataPath);
@@ -38,15 +37,14 @@ public static partial class SerializationHelper
         return groupDir;
     }
     
-    public static void ReadFilePerRecord<TKernel, TReadObject, TGroup, TObject>(
+    public static async Task ReadFilePerRecord<TKernel, TReadObject, TGroup, TObject>(
         StreamPackage streamPackage,
         TGroup group,
         string? fieldName,
         SerializationMetaData metaData,
         TKernel kernel,
         ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
-        Read<TKernel, TReadObject, TObject> itemReader,
-        List<Action> toDo)
+        ReadAsync<TKernel, TReadObject, TObject> itemReader)
         where TGroup : class, IGroup<TObject>
         where TObject : class, IMajorRecord
         where TKernel : ISerializationReaderKernel<TReadObject>
@@ -59,55 +57,54 @@ public static partial class SerializationHelper
         }
         if (!streamPackage.FileSystem.Directory.Exists(streamPackage.Path)) return;
         
-        var groupHeaderPath = ReadGroupHeaderPathToWork(
-            streamPackage, group, metaData, kernel, groupReader, toDo);
+        var groupHeaderPath = await ReadGroupHeaderPathToWork(
+            streamPackage, group, metaData, kernel, groupReader);
         var groupHeaderFileName = Path.GetFileName(groupHeaderPath);
 
-        toDo.Add(() =>
-        {
-            var records = streamPackage.FileSystem.Directory.GetFiles(streamPackage.Path!)
-                .Where(x => !groupHeaderFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase))
-                .AsParallel()
-                .Select(recordPath =>
-                {
-                    using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+        var files = streamPackage.FileSystem.Directory
+                .GetFiles(streamPackage.Path!)
+                .Where(x => !groupHeaderFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase));
 
-                    var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
+        var records = await metaData.WorkDropoff.EnqueueAndWait(
+            files,
+            async recordPath =>
+            {
+                using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
 
-                    return (Path.GetFileName(recordPath), itemReader(reader, kernel, metaData));
-                })
-                .ToArray()
+                var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
+
+                return (Path.GetFileName(recordPath), await itemReader(reader, kernel, metaData));
+            });
+        
+        group.RecordCache.SetTo(
+            x => x.FormKey, 
+            records
                 .OrderBy(x => TryGetNumber(x.Item1))
-                .Select(x => x.Item2);
-            group.RecordCache.SetTo(
-                x => x.FormKey, records);
-        });
+                .Select(x => x.Item2));
     }
     
-    private static string ReadGroupHeaderPathToWork<TKernel, TReadObject, TGroup>(
+    private static async Task<string> ReadGroupHeaderPathToWork<TKernel, TReadObject, TGroup>(
         StreamPackage streamPackage,
         TGroup group,
         SerializationMetaData metaData, 
         TKernel kernel, 
-        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader,
-        List<Action> toDo)
+        ReadNamedInto<TKernel, TReadObject, TGroup> groupReader)
         where TGroup : class, IClearable
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         group.Clear();
-        return ReadPathToWork(streamPackage, group, TypicalGroupFileName(kernel.ExpectedExtension), metaData, kernel, groupReader, toDo);
+        return await ReadPathToWork(streamPackage, group, TypicalGroupFileName(kernel.ExpectedExtension), metaData, kernel, groupReader);
     }
     
-    public static void WriteFilePerRecord<TKernel, TWriteObject, TGroup, TObject>(
+    public static async Task WriteFilePerRecord<TKernel, TWriteObject, TGroup, TObject>(
         StreamPackage streamPackage,
         TGroup group,
         string? fieldName,
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        Write<TKernel, TWriteObject, TGroup> groupWriter,
-        Write<TKernel, TWriteObject, TObject> itemWriter,
-        bool withNumbering,
-        List<Action> toDo)
+        WriteAsync<TKernel, TWriteObject, TGroup> groupWriter,
+        WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
+        bool withNumbering)
         where TGroup : class, IReadOnlyCollection<TObject>
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TObject : class, IMajorRecordGetter
@@ -115,30 +112,25 @@ public static partial class SerializationHelper
     {
         if (fieldName == null) throw new ArgumentNullException(paramName: nameof(fieldName));
         
-        var groupDir = WriteGroupRecordData(
+        var groupDir = await WriteGroupRecordData(
             streamPackage: streamPackage,
             @group: group,
             folderName: fieldName,
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: groupWriter,
-            toDo: toDo);
+            groupWriter: groupWriter);
 
         var subPackage = streamPackage with { Stream = null!, Path = groupDir };
 
-        int? i = withNumbering ? 1 : null;
-        foreach (var recordGetter in group)
-        {
-            int? number = i;
-            toDo.Add(() =>
+        await metaData.WorkDropoff.EnqueueAndWait(
+            group.WithIndex(),
+            async recordGetter =>
             {
-                WriteMajor(
+                await WriteMajor(
                     subPackage,
-                    metaData, kernel, itemWriter, recordGetter,
-                    numbering: number);
+                    metaData, kernel, itemWriter, recordGetter.Item,
+                    numbering: withNumbering ? recordGetter.Index : null);
             });
-            i++;
-        }
     }
 }

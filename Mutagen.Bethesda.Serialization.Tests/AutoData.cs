@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using AutoFixture.Xunit2;
 using Mutagen.Bethesda.Testing.AutoData;
 
@@ -18,7 +18,7 @@ public class TestAutoDataAttribute : AutoDataAttribute
                     configureMembers: ConfigureMembers,
                     release: Release))
                 .Customize(
-                    new MutagenConcreteModsCustomization(release: Release));
+                    new MutagenConcreteModsCustomization(release: Release, configureMembers: ConfigureMembers));
         })
     {
     }

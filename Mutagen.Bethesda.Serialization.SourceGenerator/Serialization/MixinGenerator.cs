@@ -71,11 +71,17 @@ public class MixinGenerator
         sb.AppendLine($"using {reader.ContainingNamespace};");
         sb.AppendLine("using System.IO.Abstractions;");
         sb.AppendLine("using Noggog;");
+        sb.AppendLine("using Noggog.WorkEngine;");
         
         if (!SymbolEqualityComparer.Default.Equals(writer.ContainingNamespace, reader.ContainingNamespace))
         {
             sb.AppendLine($"using {writer.ContainingNamespace};");
         }
+
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine();
+        
+        sb.AppendLine();
         
         using (sb.Namespace(bootstrap.Bootstrap.ContainingNamespace.ToString()))
         {
@@ -93,12 +99,13 @@ public class MixinGenerator
             sb.AppendLine($"private readonly static MutagenSerializationWriterKernel<{writerKernel}, {writer}> WriterKernel = new();");
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static void Serialize"))
+            using (var args = sb.Function($"public static async Task Serialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"{pathInput} path");
                 args.Add("IFileSystem? fileSystem = null");
+                args.Add("IWorkDropoff? workDropoff = null");
             }
             using (sb.CurlyBrace())
             {
@@ -108,30 +115,33 @@ public class MixinGenerator
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
                 var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path, fileSystem)" : "fileSystem.File.Create(path)";
-                using (var f = sb.Call("Serialize"))
+                using (var f = sb.Call("await Serialize"))
                 {
                     f.AddPassArg("converterBootstrap");
                     f.AddPassArg("item");
                     f.Add($"stream: {pathStreamPassAlong}");
+                    f.AddPassArg("workDropoff");
                 }
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static void Serialize"))
+            using (var args = sb.Function($"public static async Task Serialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"{streamInput} stream");
+                args.Add("IWorkDropoff? workDropoff = null");
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject({streamPassAlong});");
-                sb.AppendLine($"{modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel);");
+                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff);");
                 sb.AppendLine($"WriterKernel.Finalize({streamPassAlong}, writer);");
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static {bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter} Deserialize"))
+            using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{streamInput} stream");
@@ -139,6 +149,7 @@ public class MixinGenerator
                 {
                     args.Add($"ModKey modKey");
                     args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                    args.Add("IWorkDropoff? workDropoff = null");
                 }
                 else
                 {
@@ -147,7 +158,8 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
-                using (var c = sb.Call($"return {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
+                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
+                using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
                 {
                     c.Add($"ReaderKernel.GetNewObject({streamPassAlong})");
                     c.Add("ReaderKernel");
@@ -155,6 +167,7 @@ public class MixinGenerator
                     {
                         c.AddPassArg("modKey");
                         c.AddPassArg("release");
+                        c.AddPassArg("workDropoff");
                     }
                     else
                     {
@@ -164,12 +177,16 @@ public class MixinGenerator
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static void DeserializeInto"))
+            using (var args = sb.Function($"public static async Task DeserializeInto"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{pathInput} path");
                 args.Add($"{names.Setter} obj");
-                if (!isMod)
+                if (isMod)
+                {
+                    args.Add("IWorkDropoff? workDropoff = null");
+                }
+                else
                 {
                     args.Add("SerializationMetaData metaData");
                 }
@@ -177,13 +194,18 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path, fileSystem)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
-                using (var c = sb.Call($"DeserializeInto"))
+                using (var c = sb.Call($"await DeserializeInto"))
                 {
                     c.AddPassArg("converterBootstrap");
                     c.Add($"stream: {pathStreamPassAlong}");
                     c.AddPassArg("obj");
-                    if (!isMod)
+                    if (isMod)
+                    {
+                        c.AddPassArg("workDropoff");
+                    }
+                    else
                     {
                         c.AddPassArg("metaData");
                     }
@@ -191,24 +213,33 @@ public class MixinGenerator
             }
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static void DeserializeInto"))
+            using (var args = sb.Function($"public static async Task DeserializeInto"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{streamInput} stream");
                 args.Add($"{names.Setter} obj");
-                if (!isMod)
+                if (isMod)
+                {
+                    args.Add("IWorkDropoff? workDropoff = null");
+                }
+                else
                 {
                     args.Add("SerializationMetaData metaData");
                 }
             }
             using (sb.CurlyBrace())
             {
-                using (var c = sb.Call($"{modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
+                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
+                using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
                 {
                     c.Add($"ReaderKernel.GetNewObject({streamPassAlong})");
                     c.Add("ReaderKernel");
                     c.AddPassArg("obj");
-                    if (!isMod)
+                    if (isMod)
+                    {
+                        c.AddPassArg("workDropoff");
+                    }
+                    else
                     {
                         c.AddPassArg("metaData");
                     }

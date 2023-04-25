@@ -7,16 +7,16 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerator
 {
-    private readonly MajorRecordListFieldGenerator _majorRecordListFieldGenerator;
+    private readonly ObjRequiresFolderTester _objRequiresFolder;
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly LoquiSerializationNaming _serializationNaming;
 
     public FolderPerRecordGroupFieldGenerator(
-        MajorRecordListFieldGenerator majorRecordListFieldGenerator,
+        ObjRequiresFolderTester objRequiresFolder,
         LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming)
     {
-        _majorRecordListFieldGenerator = majorRecordListFieldGenerator;
+        _objRequiresFolder = objRequiresFolder;
         _nameRetriever = nameRetriever;
         _serializationNaming = serializationNaming;
     }
@@ -42,13 +42,7 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
 
             var subObj = namedTypeSymbol.TypeArguments[0];
 
-            foreach (var prop in subObj.GetMembers().OfType<IPropertySymbol>())
-            {
-                if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name))
-                {
-                    return true;
-                }
-            }
+            if (_objRequiresFolder.ObjRequiresFolder(obj, subObj, customization)) return true;
         }
 
         return false;
@@ -72,7 +66,8 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         
-        using (var f = sb.Call($"SerializationHelper.WriteFolderPerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>"))
+        using (var f = sb.Call($"tasks.Add(SerializationHelper.WriteFolderPerRecord<TKernel, TWriteObject, {groupNames.Getter}<{subNames.Getter}>, {subNames.Getter}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: {writerAccessor}.StreamPackage");
             f.Add($"group: {fieldAccessor}");
@@ -82,7 +77,6 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
             f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
             f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
-            f.Add($"toDo: parallelToDo");
         }
     }
 
@@ -116,7 +110,8 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
         
         using (var f = sb.Call(
-                   $"SerializationHelper.ReadFolderPerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>"))
+                   $"tasks.Add(SerializationHelper.ReadFolderPerRecord<ISerializationReaderKernel<TReadObject>, TReadObject, {groupNames.Setter}<{subNames.Direct}>, {subNames.Direct}>",
+                   suffixLine: ")"))
         {
             f.Add($"streamPackage: {readerAccessor}.StreamPackage");
             f.Add($"fieldName: \"{fieldName}\"");
@@ -126,8 +121,7 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
             f.Add(
                 $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
             f.Add(
-                $"itemReader: static (r, k, m) => k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
-            f.Add($"toDo: parallelToDo");
+                $"itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
         }
     }
 }
