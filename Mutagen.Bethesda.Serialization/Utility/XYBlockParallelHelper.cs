@@ -180,7 +180,7 @@ public static partial class SerializationHelper
                                 
                 var fileName = RecordDataFileName(kernel.ExpectedExtension);
                 var recordPath = Path.Combine(recordFolder, fileName);
-                await using var stream = metaData.FileSystem.File.Create(recordPath);
+                await using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, recordPath);
                 var recordStreamPackage = streamPackage with { Stream = stream, Path = recordFolder };
                 var recordWriter = kernel.GetNewObject(recordStreamPackage);
                 await majorWriter(recordWriter, recordGetter.Item, kernel, metaData);

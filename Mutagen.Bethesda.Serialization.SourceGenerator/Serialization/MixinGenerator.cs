@@ -106,6 +106,7 @@ public class MixinGenerator
                 args.Add($"{pathInput} path");
                 args.Add("IWorkDropoff? workDropoff = null");
                 args.Add("IFileSystem? fileSystem = null");
+                args.Add("ICreateStream? streamCreator = null");
             }
             using (sb.CurlyBrace())
             {
@@ -122,6 +123,7 @@ public class MixinGenerator
                     f.Add($"stream: {pathStreamPassAlong}");
                     f.AddPassArg("workDropoff");
                     f.AddPassArg("fileSystem");
+                    f.AddPassArg("streamCreator");
                 }
             }
             sb.AppendLine();
@@ -133,12 +135,13 @@ public class MixinGenerator
                 args.Add($"{streamInput} stream");
                 args.Add("IWorkDropoff? workDropoff = null");
                 args.Add("IFileSystem? fileSystem = null");
+                args.Add("ICreateStream? streamCreator = null");
             }
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject({streamPassAlong});");
-                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem);");
+                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
                 sb.AppendLine($"WriterKernel.Finalize({streamPassAlong}, writer);");
             }
             sb.AppendLine();
@@ -153,6 +156,7 @@ public class MixinGenerator
                     args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
                 }
                 else
                 {
@@ -172,6 +176,7 @@ public class MixinGenerator
                         c.AddPassArg("release");
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
                     }
                     else
                     {
@@ -190,6 +195,7 @@ public class MixinGenerator
                 {
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
                 }
                 else
                 {
@@ -208,6 +214,8 @@ public class MixinGenerator
                     if (isMod)
                     {
                         c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
                     }
                     else
                     {
@@ -226,6 +234,7 @@ public class MixinGenerator
                 {
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
                 }
                 else
                 {
@@ -244,6 +253,7 @@ public class MixinGenerator
                     {
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
                     }
                     else
                     {

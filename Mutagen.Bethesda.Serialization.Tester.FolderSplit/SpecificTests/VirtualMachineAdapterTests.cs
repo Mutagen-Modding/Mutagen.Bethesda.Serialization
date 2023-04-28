@@ -13,7 +13,8 @@ public class VirtualMachineAdapterTests
         var groupRecStreamPackage = new StreamPackage(File.OpenRead("Files/VirtualMachineAdapterTestData.json"), null!);
         var kernel = new NewtonsoftJsonSerializationReaderKernel();
         var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
-        var a = Activator_Serialization.Deserialize(dataWriter, kernel, new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), IFileSystemExt.DefaultFilesystem));
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), IFileSystemExt.DefaultFilesystem, NormalFileStreamCreator.Instance);
+        var a = Activator_Serialization.Deserialize(dataWriter, kernel, metaData);
         // ToDo
         // Maybe add specific property checks
         // Was just added as there was an exception

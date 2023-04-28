@@ -20,11 +20,12 @@ internal static class TestMod_Serialization
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         IWorkDropoff workDropoff,
-        IFileSystem? fileSystem)
+        IFileSystem? fileSystem,
+        ICreateStream? streamCreator)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem);
+        var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem, streamCreator);
         await SerializeFields<TKernel, TWriteObject>(
             writer: writer,
             item: item,
@@ -95,7 +96,7 @@ internal static class TestMod_Serialization
     public static bool HasSerializationItems(Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter? item)
     {
         if (item == null) return false;
-        var metaData = new SerializationMetaData(item.GameRelease, null!, null!);
+        var metaData = new SerializationMetaData(item.GameRelease, null!, null!, null!);
         if (item.SomeGroup.Count > 0) return true;
         if (item.SomeGroup2.Count > 0) return true;
         if (item.SomeGroup3.Count > 0) return true;
@@ -108,7 +109,8 @@ internal static class TestMod_Serialization
         ModKey modKey,
         Serialization.SourceGenerator.TestsRelease release,
         IWorkDropoff workDropoff,
-        IFileSystem? fileSystem)
+        IFileSystem? fileSystem,
+        ICreateStream? streamCreator)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
@@ -117,7 +119,8 @@ internal static class TestMod_Serialization
             kernel: kernel,
             obj: obj,
             workDropoff: workDropoff,
-            fileSystem: fileSystem);
+            fileSystem: fileSystem,
+            streamCreator: streamCreator);
         return obj;
     }
 
@@ -126,10 +129,11 @@ internal static class TestMod_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
         IWorkDropoff workDropoff,
-        IFileSystem? fileSystem)
+        IFileSystem? fileSystem,
+        ICreateStream? streamCreator)
         where TReadObject : IContainStreamPackage
     {
-        var metaData = new SerializationMetaData(obj.GameRelease, workDropoff, fileSystem);
+        var metaData = new SerializationMetaData(obj.GameRelease, workDropoff, fileSystem, streamCreator);
         var tasks = new List<Task>();
         tasks.Add(SerializationHelper.ReadFilePerRecordIntoBlocks<ISerializationReaderKernel<TReadObject>, TReadObject, IListGroup<CellBlock>, CellBlock, CellSubBlock, TestMajorRecord>(
             streamPackage: reader.StreamPackage,

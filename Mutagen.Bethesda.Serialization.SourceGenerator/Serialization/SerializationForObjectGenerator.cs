@@ -137,6 +137,7 @@ public class SerializationForObjectGenerator
                 args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release release");
                 args.Add($"IWorkDropoff workDropoff");
                 args.Add($"IFileSystem? fileSystem");
+                args.Add($"ICreateStream? streamCreator");
             }
             else
             {
@@ -173,6 +174,7 @@ public class SerializationForObjectGenerator
                 {
                     c.AddPassArg("workDropoff");
                     c.AddPassArg("fileSystem");
+                    c.AddPassArg("streamCreator");
                 }
                 else
                 {
@@ -206,6 +208,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add("IWorkDropoff workDropoff");
                 args.Add("IFileSystem? fileSystem");
+                args.Add($"ICreateStream? streamCreator");
             }
             else
             {
@@ -218,7 +221,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "obj", "workDropoff", "fileSystem");
+                GenerateMetaConstruction(sb, "obj", "workDropoff", "fileSystem", "streamCreator");
             }
 
             _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
@@ -414,6 +417,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add("IWorkDropoff workDropoff");
                 args.Add("IFileSystem? fileSystem");
+                args.Add($"ICreateStream? streamCreator");
             }
             else
             {
@@ -426,7 +430,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem);");
+                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem, streamCreator);");
             }
 
             using (var args = sb.Call($"await SerializeFields{genString}"))
@@ -518,7 +522,7 @@ public class SerializationForObjectGenerator
             sb.AppendLine("if (item == null) return false;");
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!");
+                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!");
             }
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
@@ -657,7 +661,7 @@ public class SerializationForObjectGenerator
         {
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!");
+                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!");
             }
             sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
             sb.AppendLine("switch (item)");
@@ -821,8 +825,8 @@ public class SerializationForObjectGenerator
         return ret ?? SerializationGenerics.Instance;
     }
 
-    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor, string workDropoffAccessor, string fileSystemAccessor)
+    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor, string workDropoffAccessor, string fileSystemAccessor, string streamCreatorAccessor)
     {
-        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease, {workDropoffAccessor}, {fileSystemAccessor});");
+        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease, {workDropoffAccessor}, {fileSystemAccessor}, {streamCreatorAccessor});");
     }
 }

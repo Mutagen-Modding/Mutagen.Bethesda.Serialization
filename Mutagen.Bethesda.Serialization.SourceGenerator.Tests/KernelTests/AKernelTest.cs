@@ -589,7 +589,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             k.StartListSection(w, "MyList");
             await k.WriteLoqui(w, null, item1, meta, async (subW, obj, subKernel, meta) =>
             {
@@ -611,7 +611,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 "MyList",
                 async (kernel, reader) =>
                 {
-                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
+                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE);
                     var ret = new List<SomeClass>();
                     kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
@@ -808,7 +808,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         
         var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE);
             await SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
                 async (w, g, k, m) =>
                 {
@@ -829,7 +829,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 async (kernel, reader) =>
                 {
                     var g = new TestGroup();
-                    var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
+                    var meta = new SerializationMetaData(GameRelease.SkyrimSE);
                     await SerializationHelper.ReadIntoGroup(reader, g, meta, kernel,
                         groupReader: async (r, o, k, m, n) =>
                         {
@@ -890,7 +890,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         
         var streamPackage = new StreamPackage(null!, existingDir);
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
         await SerializationHelper.WriteFilePerRecord(
             streamPackage,
             objs,
@@ -1001,7 +1001,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
         var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddBlocksToWork(
             streamPackage,
@@ -1165,7 +1165,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
         var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddXYBlocksToWork(
             streamPackage,

@@ -9,23 +9,23 @@ namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit;
 
 public class Test : IPassthroughTest
 {
-    public async Task JsonSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff)
+    public async Task JsonSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff, ICreateStream streamCreator)
     {
-        await MutagenJsonConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff);
+        await MutagenJsonConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff, streamCreator: streamCreator);
     }
 
-    public async Task<ISkyrimModGetter> JsonDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff)
+    public async Task<ISkyrimModGetter> JsonDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff, ICreateStream streamCreator)
     {
-        return await MutagenJsonConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff);
+        return await MutagenJsonConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff, streamCreator: streamCreator);
     }
 
-    public async Task YamlSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff)
+    public async Task YamlSerialize(ISkyrimModGetter modGetter, StreamPackage stream, IWorkDropoff workDropoff, ICreateStream streamCreator)
     {
-        await MutagenYamlConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff);
+        await MutagenYamlConverter.Instance.Serialize(modGetter, stream, workDropoff: workDropoff, streamCreator: streamCreator);
     }
 
-    public async Task<ISkyrimModGetter> YamlDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff)
+    public async Task<ISkyrimModGetter> YamlDeserialize(StreamPackage stream, ModKey modKey, SkyrimRelease release, IWorkDropoff workDropoff, ICreateStream streamCreator)
     {
-        return await MutagenYamlConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff);
+        return await MutagenYamlConverter.Instance.Deserialize(stream, modKey, release, workDropoff: workDropoff, streamCreator: streamCreator);
     }
 }

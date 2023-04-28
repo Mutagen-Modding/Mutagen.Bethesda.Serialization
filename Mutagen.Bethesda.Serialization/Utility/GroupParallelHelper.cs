@@ -28,7 +28,7 @@ public static partial class SerializationHelper
         await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
             var dataPath = Path.Combine(groupDir, fileName);
-            using var stream = metaData.FileSystem.File.Create(dataPath);
+            using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, dataPath);
             var groupRecStreamPackage = new StreamPackage(stream, groupDir);
             var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
             groupWriter(dataWriter, group, kernel, metaData);

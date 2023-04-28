@@ -51,13 +51,15 @@ public static class RunPassthrough
         //    : new WorkConsumer(new NumWorkThreadsUnopinionated(), workQueue);
         //workConsumer?.Start();
 
+        var streamCreator = NormalFileStreamCreator.Instance;
+
         Console.WriteLine("Testing JSON");
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
             fileSystem,
             Path.Combine(dir, "Json"),
             mod,
-            (m, s) => test.JsonSerialize(m, s, workDropoff),
-            s => test.JsonDeserialize(s, modKey, rel, workDropoff)
+            (m, s) => test.JsonSerialize(m, s, workDropoff, streamCreator),
+            s => test.JsonDeserialize(s, modKey, rel, workDropoff, streamCreator)
         );
 
         Console.WriteLine("Testing YAML");
@@ -65,8 +67,8 @@ public static class RunPassthrough
             fileSystem,
             Path.Combine(dir, "Yaml"),
             mod,
-            (m, s) => test.YamlSerialize(m, s, workDropoff),
-            s => test.YamlDeserialize(s, modKey, rel, workDropoff)
+            (m, s) => test.YamlSerialize(m, s, workDropoff, streamCreator),
+            s => test.YamlDeserialize(s, modKey, rel, workDropoff, streamCreator)
         );
     }
 }
