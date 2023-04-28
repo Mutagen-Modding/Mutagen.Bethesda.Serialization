@@ -40,10 +40,10 @@ public static partial class SerializationHelper
             streamPackage = streamPackage with { Path = subDir };
         }
         
-        if (!streamPackage.FileSystem.Directory.Exists(streamPackage.Path)) return default;
+        if (!metaData.FileSystem.Directory.Exists(streamPackage.Path)) return default;
         var recordPath = Path.Combine(streamPackage.Path!, RecordDataFileName(kernel.ExpectedExtension));
 
-        using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+        using var stream = metaData.FileSystem.File.OpenRead(recordPath);
 
         var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
 

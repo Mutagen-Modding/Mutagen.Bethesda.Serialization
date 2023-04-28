@@ -22,7 +22,7 @@ public static partial class SerializationHelper
         if (list.Count == 0) return;
         
         var dir = Path.Combine(streamPackage.Path!, fieldName);
-        streamPackage.FileSystem.Directory.CreateDirectory(dir);
+        metaData.FileSystem.Directory.CreateDirectory(dir);
         streamPackage = streamPackage with { Stream = null!, Path = dir };
 
         await metaData.WorkDropoff.EnqueueAndWait(
@@ -53,7 +53,7 @@ public static partial class SerializationHelper
         
         var dir = Path.Combine(streamPackage.Path!, fieldName);
         
-        if (!streamPackage.FileSystem.Directory.Exists(dir))
+        if (!metaData.FileSystem.Directory.Exists(dir))
         {
             list.Clear();
             return;
@@ -64,11 +64,11 @@ public static partial class SerializationHelper
         var groupHeaderFileName = TypicalGroupFileName(kernel.ExpectedExtension);
         
         var records = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetFiles(streamPackage.Path!)
+            metaData.FileSystem.Directory.GetFiles(streamPackage.Path!)
                 .Where(x => !groupHeaderFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase)),
             async x =>
             {
-                using var stream = streamPackage.FileSystem.File.OpenRead(x);
+                using var stream = metaData.FileSystem.File.OpenRead(x);
 
                 var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
 

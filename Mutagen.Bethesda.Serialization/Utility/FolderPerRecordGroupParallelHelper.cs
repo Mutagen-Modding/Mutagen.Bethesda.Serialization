@@ -39,10 +39,10 @@ public static partial class SerializationHelper
                 var recordDirName = RecordFileNameProvider(recordGetter.Item, string.Empty, withNumbering ? recordGetter.Index : null);
 
                 var dir = Path.Combine(groupDir, recordDirName);
-                streamPackage.FileSystem.Directory.CreateDirectory(dir);
+                metaData.FileSystem.Directory.CreateDirectory(dir);
 
                 var recordPath = Path.Combine(dir, fileName);
-                using var stream = streamPackage.FileSystem.File.Create(recordPath);
+                using var stream = metaData.FileSystem.File.Create(recordPath);
                 var recordStreamPackage = streamPackage with { Stream = stream, Path = dir };
                 var recordWriter = kernel.GetNewObject(recordStreamPackage);
                 await itemWriter(recordWriter, recordGetter.Item, kernel, metaData);
@@ -68,7 +68,7 @@ public static partial class SerializationHelper
             var subDir = Path.Combine(streamPackage.Path, fieldName);
             streamPackage = streamPackage with { Path = subDir };
         }
-        if (!streamPackage.FileSystem.Directory.Exists(streamPackage.Path)) return;
+        if (!metaData.FileSystem.Directory.Exists(streamPackage.Path)) return;
         
         await ReadGroupHeaderPathToWork(
             streamPackage, group, metaData, kernel, groupReader);
@@ -76,12 +76,12 @@ public static partial class SerializationHelper
         var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
         var records = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+            metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
             async recordDir =>
             {
                 var recordPath = Path.Combine(recordDir, fileName);
 
-                using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+                using var stream = metaData.FileSystem.File.OpenRead(recordPath);
 
                 var reader = kernel.GetNewObject(streamPackage with
                 {

@@ -22,14 +22,14 @@ public static partial class SerializationHelper
         }
 
         var groupDir = Path.Combine(streamPackage.Path, folderName);
-        streamPackage.FileSystem.Directory.DeleteEntireFolder(groupDir);
-        streamPackage.FileSystem.Directory.CreateDirectory(groupDir);
+        metaData.FileSystem.Directory.DeleteEntireFolder(groupDir);
+        metaData.FileSystem.Directory.CreateDirectory(groupDir);
 
         await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
             var dataPath = Path.Combine(groupDir, fileName);
-            using var stream = streamPackage.FileSystem.File.Create(dataPath);
-            var groupRecStreamPackage = new StreamPackage(stream, groupDir, streamPackage.FileSystem);
+            using var stream = metaData.FileSystem.File.Create(dataPath);
+            var groupRecStreamPackage = new StreamPackage(stream, groupDir);
             var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
             groupWriter(dataWriter, group, kernel, metaData);
             kernel.Finalize(groupRecStreamPackage, dataWriter);
@@ -55,13 +55,13 @@ public static partial class SerializationHelper
             var subDir = Path.Combine(streamPackage.Path, fieldName);
             streamPackage = streamPackage with { Path = subDir };
         }
-        if (!streamPackage.FileSystem.Directory.Exists(streamPackage.Path)) return;
+        if (!metaData.FileSystem.Directory.Exists(streamPackage.Path)) return;
         
         var groupHeaderPath = await ReadGroupHeaderPathToWork(
             streamPackage, group, metaData, kernel, groupReader);
         var groupHeaderFileName = Path.GetFileName(groupHeaderPath);
 
-        var files = streamPackage.FileSystem.Directory
+        var files = metaData.FileSystem.Directory
                 .GetFiles(streamPackage.Path!)
                 .Where(x => !groupHeaderFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase));
 
@@ -69,7 +69,7 @@ public static partial class SerializationHelper
             files,
             async recordPath =>
             {
-                using var stream = streamPackage.FileSystem.File.OpenRead(recordPath);
+                using var stream = metaData.FileSystem.File.OpenRead(recordPath);
 
                 var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
 

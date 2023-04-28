@@ -22,7 +22,7 @@ public static class PassthroughTest
         using (var stream = fileSystem.File.Open(filePath, FileMode.Create, FileAccess.Write))
         {
             sw.Start();
-            await serialize(mod, new StreamPackage(stream, filePath.Directory, fileSystem));
+            await serialize(mod, new StreamPackage(stream, filePath.Directory));
             sw.Stop();
             Console.WriteLine($"Serialization took {sw.ElapsedMilliseconds / 1000d}s");
         }
@@ -31,7 +31,7 @@ public static class PassthroughTest
         using (var stream = fileSystem.File.OpenRead(filePath))
         {
             sw.Restart();
-            mod2 = await deserialize(new StreamPackage(stream, filePath.Directory, fileSystem));
+            mod2 = await deserialize(new StreamPackage(stream, filePath.Directory));
             sw.Stop();
             Console.WriteLine($"Deserialization took {sw.ElapsedMilliseconds / 1000d}s");
         }

@@ -64,7 +64,7 @@ public class MixinGenerator
 
         var pathInput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
         var streamInput = customization.FilePerRecord ? "StreamPackage" : "Stream";
-        var streamPassAlong = customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem)";
+        var streamPassAlong = customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null)";
 
         sb.AppendLine($"using Mutagen.Bethesda.Plugins;");
         sb.AppendLine($"using {bootstrap.ObjectRegistration.ContainingNamespace};");
@@ -104,8 +104,8 @@ public class MixinGenerator
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"{pathInput} path");
-                args.Add("IFileSystem? fileSystem = null");
                 args.Add("IWorkDropoff? workDropoff = null");
+                args.Add("IFileSystem? fileSystem = null");
             }
             using (sb.CurlyBrace())
             {
@@ -114,13 +114,14 @@ public class MixinGenerator
                 {
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
-                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path, fileSystem)" : "fileSystem.File.Create(path)";
+                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" : "fileSystem.File.Create(path)";
                 using (var f = sb.Call("await Serialize"))
                 {
                     f.AddPassArg("converterBootstrap");
                     f.AddPassArg("item");
                     f.Add($"stream: {pathStreamPassAlong}");
                     f.AddPassArg("workDropoff");
+                    f.AddPassArg("fileSystem");
                 }
             }
             sb.AppendLine();
@@ -131,12 +132,13 @@ public class MixinGenerator
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"{streamInput} stream");
                 args.Add("IWorkDropoff? workDropoff = null");
+                args.Add("IFileSystem? fileSystem = null");
             }
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject({streamPassAlong});");
-                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff);");
+                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem);");
                 sb.AppendLine($"WriterKernel.Finalize({streamPassAlong}, writer);");
             }
             sb.AppendLine();
@@ -150,6 +152,7 @@ public class MixinGenerator
                     args.Add($"ModKey modKey");
                     args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
                     args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
                 }
                 else
                 {
@@ -168,6 +171,7 @@ public class MixinGenerator
                         c.AddPassArg("modKey");
                         c.AddPassArg("release");
                         c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
                     }
                     else
                     {
@@ -185,17 +189,17 @@ public class MixinGenerator
                 if (isMod)
                 {
                     args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
                 }
                 else
                 {
                     args.Add("SerializationMetaData metaData");
                 }
-                args.Add("IFileSystem? fileSystem = null");
             }
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path, fileSystem)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
+                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
                 using (var c = sb.Call($"await DeserializeInto"))
                 {
                     c.AddPassArg("converterBootstrap");
@@ -221,6 +225,7 @@ public class MixinGenerator
                 if (isMod)
                 {
                     args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
                 }
                 else
                 {
@@ -238,6 +243,7 @@ public class MixinGenerator
                     if (isMod)
                     {
                         c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
                     }
                     else
                     {

@@ -26,7 +26,7 @@ public class GroupFolderParallelSerializationTests
         FilePath someFile,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         var npc1 = new Npc(FormKey.Factory("123456:Skyrim.esm"), SkyrimRelease.SkyrimSE);
         var npc2 = new Npc(FormKey.Factory("123457:Skyrim.esm"), SkyrimRelease.SkyrimSE);
@@ -45,7 +45,7 @@ public class GroupFolderParallelSerializationTests
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff()),
+            new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem),
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
@@ -73,7 +73,7 @@ public class GroupFolderParallelSerializationTests
         FilePath someFile,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         var npc1 = new Npc(FormKey.Factory("123456:Skyrim.esm"), SkyrimRelease.SkyrimSE);
         var npc2 = new Npc(FormKey.Factory("123457:Skyrim.esm"), SkyrimRelease.SkyrimSE);
@@ -86,7 +86,7 @@ public class GroupFolderParallelSerializationTests
         group.Add(npc1);
         group.Add(npc2);
 
-        var metadata = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metadata = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.WriteFolderPerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,

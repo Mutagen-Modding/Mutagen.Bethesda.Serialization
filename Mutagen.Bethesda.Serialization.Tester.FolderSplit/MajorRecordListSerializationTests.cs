@@ -19,7 +19,7 @@ public class MajorRecordListSerializationTests
         FilePath someFile,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         var npc1 = new Npc(FormKey.Factory("123456:Skyrim.esm"), SkyrimRelease.SkyrimSE);
         var npc2 = new Npc(FormKey.Factory("123457:Skyrim.esm"), SkyrimRelease.SkyrimSE);
@@ -33,7 +33,7 @@ public class MajorRecordListSerializationTests
             npc2
         };
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.WriteMajorRecordList<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Npc>(
             streamPackage,

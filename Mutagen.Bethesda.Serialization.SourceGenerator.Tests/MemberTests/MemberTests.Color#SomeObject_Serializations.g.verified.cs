@@ -7,6 +7,7 @@ using Mutagen.Bethesda.Serialization.Utility;
 using Noggog;
 using Noggog.WorkEngine;
 using System.Drawing;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 #nullable enable

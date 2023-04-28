@@ -88,9 +88,9 @@ public static partial class SerializationHelper
         var path = Path.Combine(streamPackage.Path!, fileName);
         await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
-            if (streamPackage.FileSystem.File.Exists(path))
+            if (metaData.FileSystem.File.Exists(path))
             {
-                using var groupStream = streamPackage.FileSystem.File.OpenRead(path);
+                using var groupStream = metaData.FileSystem.File.OpenRead(path);
 
                 var reader = kernel.GetNewObject(streamPackage with { Stream = groupStream });
                 while (kernel.TryGetNextField(reader, out var name))

@@ -19,7 +19,7 @@ public class XYBlockSerializationTests
         IFileSystem fileSystem,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        var streamPackage = new StreamPackage(null!, existingDir);
 
         var group = new SkyrimGroup<Worldspace>(null!)
         {
@@ -87,7 +87,7 @@ public class XYBlockSerializationTests
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,
@@ -172,7 +172,7 @@ public class XYBlockSerializationTests
         IFileSystem fileSystem,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        var streamPackage = new StreamPackage(null!, existingDir);
 
         var group = new SkyrimGroup<Worldspace>(null!)
         {
@@ -207,7 +207,7 @@ public class XYBlockSerializationTests
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,
@@ -264,7 +264,7 @@ public class XYBlockSerializationTests
         IFileSystem fileSystem,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        var streamPackage = new StreamPackage(null!, existingDir);
         
         var mod = new SkyrimMod(ModKey.Null, SkyrimRelease.SkyrimSE);
         
@@ -317,7 +317,7 @@ public class XYBlockSerializationTests
         };
         group.RecordCache.Set(ws);
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,

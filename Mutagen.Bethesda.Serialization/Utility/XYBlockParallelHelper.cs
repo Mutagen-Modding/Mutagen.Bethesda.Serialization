@@ -176,11 +176,11 @@ public static partial class SerializationHelper
                     recordGetter.Item,
                     withNumbering ? recordGetter.Index : null));
 
-                streamPackage.FileSystem.Directory.CreateDirectory(recordFolder);
+                metaData.FileSystem.Directory.CreateDirectory(recordFolder);
                                 
                 var fileName = RecordDataFileName(kernel.ExpectedExtension);
                 var recordPath = Path.Combine(recordFolder, fileName);
-                await using var stream = streamPackage.FileSystem.File.Create(recordPath);
+                await using var stream = metaData.FileSystem.File.Create(recordPath);
                 var recordStreamPackage = streamPackage with { Stream = stream, Path = recordFolder };
                 var recordWriter = kernel.GetNewObject(recordStreamPackage);
                 await majorWriter(recordWriter, recordGetter.Item, kernel, metaData);
@@ -218,7 +218,7 @@ public static partial class SerializationHelper
         var recordFileName = RecordDataFileName(kernel.ExpectedExtension);
 
         var topRecords = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+            metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
             async topRecordDir =>
             {
                 var topRecord = await ReadTopRecord(
@@ -268,9 +268,9 @@ public static partial class SerializationHelper
     {
         var topRecordPath = Path.Combine(topRecordDir, recordFileName);
         TObject topRecord;
-        if (streamPackage.FileSystem.File.Exists(topRecordPath))
+        if (metaData.FileSystem.File.Exists(topRecordPath))
         {
-            using (var recordStream = streamPackage.FileSystem.File.OpenRead(topRecordPath))
+            using (var recordStream = metaData.FileSystem.File.OpenRead(topRecordPath))
             {
                 var reader = kernel.GetNewObject(streamPackage with
                 {
@@ -294,7 +294,7 @@ public static partial class SerializationHelper
         streamPackage = streamPackage with { Path = Path.Combine(streamPackage.Path!, topRecordDir) };
 
         var blocks = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+            metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
             async blockDir =>
             {
                 var block = await ReadBlock(
@@ -344,9 +344,9 @@ public static partial class SerializationHelper
 
         var blockDataPath = Path.Combine(blockDir, groupFileName);
         TBlock block = new TBlock();
-        if (streamPackage.FileSystem.File.Exists(blockDataPath))
+        if (metaData.FileSystem.File.Exists(blockDataPath))
         {
-            using (var blockStream = streamPackage.FileSystem.File.OpenRead(blockDataPath))
+            using (var blockStream = metaData.FileSystem.File.OpenRead(blockDataPath))
             {
                 var reader = kernel.GetNewObject(streamPackage with { Stream = blockStream });
 
@@ -358,7 +358,7 @@ public static partial class SerializationHelper
         }
 
         var subBlocks = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetDirectories(blockDir),
+            metaData.FileSystem.Directory.GetDirectories(blockDir),
             async subBlockDir =>
             {
                 var subBlock = await ReadSubBlock(
@@ -405,9 +405,9 @@ public static partial class SerializationHelper
         var subBlockDataPath = Path.Combine(subBlockDir, groupFileName);
 
         TSubBlock subBlock = new();
-        if (streamPackage.FileSystem.File.Exists(subBlockDataPath))
+        if (metaData.FileSystem.File.Exists(subBlockDataPath))
         {
-            using (var subBlockStream = streamPackage.FileSystem.File.OpenRead(subBlockDataPath))
+            using (var subBlockStream = metaData.FileSystem.File.OpenRead(subBlockDataPath))
             {
                 var reader = kernel.GetNewObject(streamPackage with { Stream = subBlockStream });
 
@@ -419,12 +419,12 @@ public static partial class SerializationHelper
         }
 
         var records = await metaData.WorkDropoff.EnqueueAndWait(
-            streamPackage.FileSystem.Directory.GetDirectories(subBlockDir),
+            metaData.FileSystem.Directory.GetDirectories(subBlockDir),
             async recordDir =>
             {
                 var recordFile = Path.Combine(recordDir, RecordDataFileName(kernel.ExpectedExtension));
 
-                using (var recordStream = streamPackage.FileSystem.File.OpenRead(recordFile))
+                using (var recordStream = metaData.FileSystem.File.OpenRead(recordFile))
                 {
                     var reader = kernel.GetNewObject(streamPackage with
                     {

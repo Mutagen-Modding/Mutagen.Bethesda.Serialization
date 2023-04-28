@@ -19,7 +19,7 @@ public class GroupParallelSerializationTests
         FilePath someFile,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         var npc1 = new Npc(FormKey.Factory("123456:Skyrim.esm"), SkyrimRelease.SkyrimSE);
         var npc2 = new Npc(FormKey.Factory("123457:Skyrim.esm"), SkyrimRelease.SkyrimSE);
@@ -34,7 +34,7 @@ public class GroupParallelSerializationTests
         group.Add(npc1);
         group.Add(npc2);
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
         
         await SerializationHelper.WriteFilePerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,
@@ -68,7 +68,7 @@ public class GroupParallelSerializationTests
         FilePath someFile,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         var npc1 = new Npc(FormKey.Factory("123456:Skyrim.esm"), SkyrimRelease.SkyrimSE);
         var npc2 = new Npc(FormKey.Factory("123457:Skyrim.esm"), SkyrimRelease.SkyrimSE);
@@ -81,7 +81,7 @@ public class GroupParallelSerializationTests
         group.Add(npc1);
         group.Add(npc2);
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
         
         await SerializationHelper.WriteFilePerRecord<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Npc>, Npc>(
             streamPackage,

@@ -19,7 +19,7 @@ public class BlockSerializationTests
         SkyrimMod mod,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         mod.Cells.LastModified = 789;
         mod.Cells.Records.SetTo(
@@ -73,7 +73,7 @@ public class BlockSerializationTests
                 }
             });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.AddBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimListGroup<CellBlock>, CellBlock, CellSubBlock, Cell>(
             streamPackage,
@@ -156,7 +156,7 @@ public class BlockSerializationTests
         SkyrimMod mod,
         DirectoryPath existingDir)
     {
-        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir, fileSystem);
+        var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
         mod.Cells.LastModified = 789;
         mod.Cells.Records.SetTo(
@@ -194,7 +194,7 @@ public class BlockSerializationTests
                 }
             });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
 
         await SerializationHelper.AddBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimListGroup<CellBlock>, CellBlock, CellSubBlock, Cell>(
             streamPackage,

@@ -18,7 +18,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     where TReaderKernel : ISerializationReaderKernel<TReader>, new()
     where TWriter : IContainStreamPackage
 {
-    protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null, IFileSystemExt.DefaultFilesystem);
+    protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null);
     
     private async Task<string> GetResults(
         Func<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, Task> toDo)
@@ -589,7 +589,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!);
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
             k.StartListSection(w, "MyList");
             await k.WriteLoqui(w, null, item1, meta, async (subW, obj, subKernel, meta) =>
             {
@@ -611,7 +611,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 "MyList",
                 async (kernel, reader) =>
                 {
-                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE, null);
+                    var metaData = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
                     var ret = new List<SomeClass>();
                     kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
@@ -808,7 +808,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         
         var str = await GetResults(async (k, w) =>
         {
-            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null);
+            var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
             await SerializationHelper.WriteGroup(w, objs, "MyGroup", meta, k,
                 async (w, g, k, m) =>
                 {
@@ -829,7 +829,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 async (kernel, reader) =>
                 {
                     var g = new TestGroup();
-                    var meta = new SerializationMetaData(GameRelease.SkyrimSE, null);
+                    var meta = new SerializationMetaData(GameRelease.SkyrimSE, null!, null!);
                     await SerializationHelper.ReadIntoGroup(reader, g, meta, kernel,
                         groupReader: async (r, o, k, m, n) =>
                         {
@@ -889,8 +889,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             },
         });
         
-        var streamPackage = new StreamPackage(null, existingDir, fileSystem);
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
+        var streamPackage = new StreamPackage(null!, existingDir);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
         await SerializationHelper.WriteFilePerRecord(
             streamPackage,
             objs,
@@ -913,7 +913,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var g = new TestGroup();
         await SerializationHelper.ReadFilePerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
-            new StreamPackage(null, existingDir, fileSystem),
+            new StreamPackage(null, existingDir),
             g,
             "MyGroup",
             meta,
@@ -1001,8 +1001,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
-        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
+        var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddBlocksToWork(
             streamPackage,
             objs,
@@ -1165,8 +1165,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff());
-        var streamPackage = new StreamPackage(null!, existingDir, fileSystem);
+        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem);
+        var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddXYBlocksToWork(
             streamPackage,
             group,
