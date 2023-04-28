@@ -130,7 +130,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
 
             if (nullable)
             {
-                sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadFormKey({readerAccessor}).AsNullableLink<{named.TypeArguments[0]}>();");
+                sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadFormKey({readerAccessor}).ToNullableLink<{named.TypeArguments[0]}>();");
             }
             else
             {
