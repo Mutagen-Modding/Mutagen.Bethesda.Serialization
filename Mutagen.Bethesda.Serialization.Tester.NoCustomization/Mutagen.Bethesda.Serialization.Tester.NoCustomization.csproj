@@ -14,6 +14,9 @@
         <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" />
         <PackageReference Include="Mutagen.Bethesda.Skyrim" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
+        <PackageReference Include="Verify.DiffPlex" />
+        <PackageReference Include="Verify.SourceGenerators" />
+        <PackageReference Include="Verify.Xunit" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.console" />
         <PackageReference Include="xunit.runner.visualstudio" />
@@ -21,6 +24,51 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Testing\Mutagen.Bethesda.Serialization.Testing.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="ASerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="NewtonsoftSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="YamlSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="NewtonsoftSerializationTests.EmptySkyrimModExport.verified.txt">
+        <DefaultPackFolder>none</DefaultPackFolder>
+        <BuildAction>None</BuildAction>
+        <ParentFile>NewtonsoftSerializationTests</ParentFile>
+        <DependentUpon>NewtonsoftSerializationTests.cs</DependentUpon>
+      </None>
+      <None Update="NewtonsoftSerializationTests.SingleGroupSkyrimModExport.verified.txt">
+        <DefaultPackFolder>none</DefaultPackFolder>
+        <BuildAction>None</BuildAction>
+        <ParentFile>NewtonsoftSerializationTests</ParentFile>
+        <DependentUpon>NewtonsoftSerializationTests.cs</DependentUpon>
+      </None>
+      <None Update="YamlSerializationTests.EmptySkyrimModExport.verified.txt">
+        <DefaultPackFolder>none</DefaultPackFolder>
+        <BuildAction>None</BuildAction>
+        <ParentFile>YamlSerializationTests</ParentFile>
+        <DependentUpon>YamlSerializationTests.cs</DependentUpon>
+      </None>
+      <None Update="YamlSerializationTests.SingleGroupSkyrimModExport.verified.txt">
+        <DefaultPackFolder>none</DefaultPackFolder>
+        <BuildAction>None</BuildAction>
+        <ParentFile>YamlSerializationTests</ParentFile>
+        <DependentUpon>YamlSerializationTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
 </Project>

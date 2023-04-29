@@ -2,7 +2,7 @@ using AutoFixture;
 using AutoFixture.Xunit2;
 using Mutagen.Bethesda.Testing.AutoData;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.Testing;
 
 public class TestAutoDataAttribute : AutoDataAttribute
 {

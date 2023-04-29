@@ -16,4 +16,12 @@
 		<PackageReference Include="Mutagen.Bethesda.Serialization" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="AutoData.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+    </ItemGroup>
+
 </Project>

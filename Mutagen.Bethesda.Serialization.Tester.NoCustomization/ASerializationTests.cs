@@ -6,6 +6,7 @@ using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.IO;
+using Xunit;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 

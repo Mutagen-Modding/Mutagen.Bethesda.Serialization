@@ -24,7 +24,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Testing\Mutagen.Bethesda.Serialization.Testing.csproj" />
-        <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Tests\Mutagen.Bethesda.Serialization.Tests.csproj" />
         <ProjectReference Include="..\Noggog.Verify.FileAbstractions\Noggog.Verify.FileAbstractions.csproj" />
     </ItemGroup>
 
