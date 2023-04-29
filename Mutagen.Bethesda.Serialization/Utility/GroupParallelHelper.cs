@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Utility;

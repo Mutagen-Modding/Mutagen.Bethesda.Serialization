@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using FluentAssertions;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;

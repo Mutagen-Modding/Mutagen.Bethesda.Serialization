@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
 using Noggog;

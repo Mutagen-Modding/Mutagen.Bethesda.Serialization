@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -66,21 +67,28 @@ public class MixinGenerator
         var streamInput = customization.FilePerRecord ? "StreamPackage" : "Stream";
         var streamPassAlong = customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null)";
 
-        sb.AppendLine($"using Mutagen.Bethesda.Plugins;");
-        sb.AppendLine($"using {bootstrap.ObjectRegistration.ContainingNamespace};");
-        sb.AppendLine($"using {reader.ContainingNamespace};");
-        sb.AppendLine("using System.IO.Abstractions;");
-        sb.AppendLine("using Noggog;");
-        sb.AppendLine("using Noggog.WorkEngine;");
+        sb.AppendLines(
+            new string[]
+                {
+                    $"Noggog",
+                    $"Noggog.WorkEngine",
+                    $"Mutagen.Bethesda.Plugins",
+                    $"Mutagen.Bethesda.Serialization.Streams",
+                    $"{bootstrap.ObjectRegistration.ContainingNamespace}",
+                    $"{reader.ContainingNamespace}",
+                    $"System.IO.Abstractions",
+                }
+                .Distinct()
+                .OrderBy(x => x)
+                .Select(x => $"using {x};"));
         
         if (!SymbolEqualityComparer.Default.Equals(writer.ContainingNamespace, reader.ContainingNamespace))
         {
             sb.AppendLine($"using {writer.ContainingNamespace};");
         }
+        sb.AppendLine();
 
         sb.AppendLine("#nullable enable");
-        sb.AppendLine();
-        
         sb.AppendLine();
         
         using (sb.Namespace(bootstrap.Bootstrap.ContainingNamespace.ToString()))

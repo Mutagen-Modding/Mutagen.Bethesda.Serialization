@@ -1,4 +1,6 @@
-﻿namespace Mutagen.Bethesda.Serialization.Utility;
+﻿using Mutagen.Bethesda.Serialization.Streams;
+
+namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static partial class SerializationHelper
 {

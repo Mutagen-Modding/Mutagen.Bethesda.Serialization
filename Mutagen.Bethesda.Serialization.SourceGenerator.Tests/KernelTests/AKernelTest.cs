@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using System.Text;
 using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;

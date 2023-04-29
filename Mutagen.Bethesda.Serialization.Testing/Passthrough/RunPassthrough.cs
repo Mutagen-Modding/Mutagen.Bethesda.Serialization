@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using System.Reactive.Disposables;
 using CommandLine;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.IO;

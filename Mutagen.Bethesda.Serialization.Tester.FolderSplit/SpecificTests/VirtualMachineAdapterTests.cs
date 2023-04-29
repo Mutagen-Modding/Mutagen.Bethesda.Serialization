@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Serialization.Newtonsoft;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.WorkEngine;

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 using YamlDotNet.Core;

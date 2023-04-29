@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Noggog;
 
-namespace Mutagen.Bethesda.Serialization;
+namespace Mutagen.Bethesda.Serialization.Streams;
 
 public interface ICreateStream
 {

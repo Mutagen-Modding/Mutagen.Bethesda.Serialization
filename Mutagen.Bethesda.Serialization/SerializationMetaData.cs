@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 using Noggog.WorkEngine;
 

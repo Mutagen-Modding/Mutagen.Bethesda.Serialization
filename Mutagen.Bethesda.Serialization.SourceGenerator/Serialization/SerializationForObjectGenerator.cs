@@ -783,6 +783,7 @@ public class SerializationForObjectGenerator
                 x.Generator?.RequiredNamespaces(obj, compilation, x.Property.Type) ?? Enumerable.Empty<string>())
             .And("Mutagen.Bethesda.Plugins")
             .And("Mutagen.Bethesda.Serialization")
+            .And("Mutagen.Bethesda.Serialization.Streams")
             .And("Mutagen.Bethesda.Serialization.Utility")
             .And("System.Threading.Tasks")
             .And("System.IO.Abstractions")

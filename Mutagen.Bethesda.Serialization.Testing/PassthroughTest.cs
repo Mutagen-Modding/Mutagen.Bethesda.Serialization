@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing.Exceptions;
 using Noggog;
 

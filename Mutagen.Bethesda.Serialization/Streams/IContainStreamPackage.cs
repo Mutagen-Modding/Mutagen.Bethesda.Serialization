@@ -1,4 +1,4 @@
-﻿namespace Mutagen.Bethesda.Serialization;
+﻿namespace Mutagen.Bethesda.Serialization.Streams;
 
 public interface IContainStreamPackage
 {
