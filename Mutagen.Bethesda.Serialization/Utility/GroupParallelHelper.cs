@@ -64,7 +64,13 @@ public static partial class SerializationHelper
 
         var files = metaData.FileSystem.Directory
                 .GetFiles(streamPackage.Path!)
-                .Where(x => !groupHeaderFileName.AsSpan().Equals(Path.GetFileName(x.AsSpan()), StringComparison.OrdinalIgnoreCase));
+                .Where(x =>
+                {
+                    var fileName = Path.GetFileName(x.AsSpan());
+                    var ext = Path.GetExtension(fileName);
+                    return ext.Equals(kernel.ExpectedExtension.AsSpan(), StringComparison.OrdinalIgnoreCase)
+                        && !fileName.Equals(groupHeaderFileName.AsSpan(), StringComparison.OrdinalIgnoreCase);
+                });
 
         var records = await metaData.WorkDropoff.EnqueueAndWait(
             files,
