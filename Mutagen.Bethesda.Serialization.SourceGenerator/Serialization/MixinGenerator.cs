@@ -123,7 +123,9 @@ public class MixinGenerator
                 {
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
-                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Create(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" : "fileSystem.File.Create(path)";
+                var pathStreamPassAlong = customization.FilePerRecord 
+                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" 
+                    : "streamCreator.GetStreamFor(fileSystem, path)";
                 using (var f = sb.Call("await Serialize"))
                 {
                     f.AddPassArg("converterBootstrap");
