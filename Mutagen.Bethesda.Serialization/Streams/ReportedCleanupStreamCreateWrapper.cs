@@ -19,13 +19,18 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
         _baseDir = baseDir;
         _wrapped = wrapped;
     }
-    
-    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path)
+
+    public void MarkPathWrittenTo(FilePath path)
     {
         lock (_writtenPaths)
         {
             _writtenPaths.Add(path.Path);
         }
+    }
+    
+    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path)
+    {
+        MarkPathWrittenTo(path);
         return _wrapped.GetStreamFor(fileSystem, path);
     }
 

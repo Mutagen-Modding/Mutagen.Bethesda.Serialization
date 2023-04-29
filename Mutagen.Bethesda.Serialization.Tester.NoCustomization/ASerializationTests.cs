@@ -2,6 +2,7 @@ using System.Drawing;
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
@@ -13,8 +14,8 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 [UsesVerify]
 public abstract class ASerializationTests
 {
-    public abstract Task Serialize(ISkyrimModGetter mod, Stream stream);
-    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream);
+    public abstract Task Serialize(ISkyrimModGetter mod, Stream stream, ICreateStream createStream);
+    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream, ICreateStream createStream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
     
     [Theory]
@@ -23,7 +24,7 @@ public abstract class ASerializationTests
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
         var stream = new MemoryStream();
-        await Serialize(mod, stream);
+        await Serialize(mod, stream, NormalFileStreamCreator.Instance);
         stream.Position = 0;
         StreamReader streamReader = new StreamReader(stream);
         var str = streamReader.ReadToEnd();
@@ -51,7 +52,7 @@ public abstract class ASerializationTests
             AttackEvent = "Event2"
         });
         var stream = new MemoryStream();
-        await Serialize(mod, stream);
+        await Serialize(mod, stream, NormalFileStreamCreator.Instance);
         stream.Position = 0;
         StreamReader streamReader = new StreamReader(stream);
         var str = streamReader.ReadToEnd();
@@ -203,7 +204,7 @@ public abstract class ASerializationTests
             fileSystem,
             tmp.Dir,
             skyrimMod,
-            (m, s) => Serialize(m, s.Stream),
-            (s) => Deserialize(s.Stream));
+            (m, s, c) => Serialize(m, s.Stream, c),
+            (s, c) => Deserialize(s.Stream, c));
     }
 }

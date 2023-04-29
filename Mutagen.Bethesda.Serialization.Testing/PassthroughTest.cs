@@ -13,17 +13,22 @@ public static class PassthroughTest
         IFileSystem fileSystem,
         DirectoryPath dir,
         TModGetter mod,
-        Func<TModGetter, StreamPackage, Task> serialize,
-        Func<StreamPackage, Task<TModGetter>> deserialize)
+        Func<TModGetter, StreamPackage, ICreateStream, Task> serialize,
+        Func<StreamPackage, ICreateStream, Task<TModGetter>> deserialize)
         where TModGetter : IModGetter
     {
+        var streamCreator = NormalFileStreamCreator.Instance;
         var filePath = new FilePath(Path.Combine(dir, "Serialized", "SerializedResult"));
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(filePath));
         Stopwatch sw = new();
-        using (var stream = fileSystem.File.Open(filePath, FileMode.Create, FileAccess.Write))
+        using (var stream = fileSystem.File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
         {
             sw.Start();
-            await serialize(mod, new StreamPackage(stream, filePath.Directory));
+            using (var streamCreateWrapper = new ReportedCleanupStreamCreateWrapper(fileSystem, dir, streamCreator))
+            {
+                streamCreateWrapper.MarkPathWrittenTo(filePath);
+                await serialize(mod, new StreamPackage(stream, filePath.Directory), streamCreateWrapper);
+            }
             sw.Stop();
             Console.WriteLine($"Serialization took {sw.ElapsedMilliseconds / 1000d}s");
         }
@@ -32,10 +37,11 @@ public static class PassthroughTest
         using (var stream = fileSystem.File.OpenRead(filePath))
         {
             sw.Restart();
-            mod2 = await deserialize(new StreamPackage(stream, filePath.Directory));
+            mod2 = await deserialize(new StreamPackage(stream, filePath.Directory), streamCreator);
             sw.Stop();
             Console.WriteLine($"Deserialization took {sw.ElapsedMilliseconds / 1000d}s");
         }
+        
         CheckEquality(fileSystem, dir, mod, mod2);
     }
 
