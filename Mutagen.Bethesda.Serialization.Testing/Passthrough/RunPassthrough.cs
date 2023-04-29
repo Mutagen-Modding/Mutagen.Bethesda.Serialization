@@ -59,8 +59,8 @@ public static class RunPassthrough
             fileSystem,
             Path.Combine(dir, "Json"),
             mod,
-            (m, s) => test.JsonSerialize(m, s, workDropoff, streamCreator),
-            s => test.JsonDeserialize(s, modKey, rel, workDropoff, streamCreator)
+            (m, s) => test.JsonSerialize(m, s, workDropoff, fileSystem, streamCreator),
+            s => test.JsonDeserialize(s, modKey, rel, workDropoff, fileSystem, streamCreator)
         );
 
         Console.WriteLine("Testing YAML");
@@ -68,8 +68,8 @@ public static class RunPassthrough
             fileSystem,
             Path.Combine(dir, "Yaml"),
             mod,
-            (m, s) => test.YamlSerialize(m, s, workDropoff, streamCreator),
-            s => test.YamlDeserialize(s, modKey, rel, workDropoff, streamCreator)
+            (m, s) => test.YamlSerialize(m, s, workDropoff, fileSystem, streamCreator),
+            s => test.YamlDeserialize(s, modKey, rel, workDropoff, fileSystem, streamCreator)
         );
     }
 }
