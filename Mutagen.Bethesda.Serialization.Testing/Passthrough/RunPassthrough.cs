@@ -52,24 +52,29 @@ public static class RunPassthrough
         //    : new WorkConsumer(new NumWorkThreadsUnopinionated(), workQueue);
         //workConsumer?.Start();
 
-        var streamCreator = new InterceptionStreamCreator(new XxHashShortCircuitExporter());
+        // var streamCreator = new InterceptionStreamCreator(new XxHashShortCircuitExporter());
+        var streamCreator = NormalFileStreamCreator.Instance;
 
         Console.WriteLine("Testing JSON");
+        var jsonDir = Path.Combine(dir, "Json");
+        var jsonWrapper = new ReportedCleanupStreamCreateWrapper(fileSystem, jsonDir, streamCreator);
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
             fileSystem,
             Path.Combine(dir, "Json"),
             mod,
-            (m, s) => test.JsonSerialize(m, s, workDropoff, fileSystem, streamCreator),
-            s => test.JsonDeserialize(s, modKey, rel, workDropoff, fileSystem, streamCreator)
+            (m, s) => test.JsonSerialize(m, s, workDropoff, fileSystem, jsonWrapper),
+            s => test.JsonDeserialize(s, modKey, rel, workDropoff, fileSystem, jsonWrapper)
         );
 
         Console.WriteLine("Testing YAML");
+        var yamlDir = Path.Combine(dir, "Yaml");
+        var yamlWrapper = new ReportedCleanupStreamCreateWrapper(fileSystem, yamlDir, streamCreator);
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
             fileSystem,
             Path.Combine(dir, "Yaml"),
             mod,
-            (m, s) => test.YamlSerialize(m, s, workDropoff, fileSystem, streamCreator),
-            s => test.YamlDeserialize(s, modKey, rel, workDropoff, fileSystem, streamCreator)
+            (m, s) => test.YamlSerialize(m, s, workDropoff, fileSystem, yamlWrapper),
+            s => test.YamlDeserialize(s, modKey, rel, workDropoff, fileSystem, yamlWrapper)
         );
     }
 }

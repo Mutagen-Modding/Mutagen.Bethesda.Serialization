@@ -23,7 +23,6 @@ public static partial class SerializationHelper
         }
 
         var groupDir = Path.Combine(streamPackage.Path, folderName);
-        metaData.FileSystem.Directory.DeleteEntireFolder(groupDir);
         metaData.FileSystem.Directory.CreateDirectory(groupDir);
 
         await metaData.WorkDropoff.EnqueueAndWait(() =>
