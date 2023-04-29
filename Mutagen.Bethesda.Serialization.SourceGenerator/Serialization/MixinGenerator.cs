@@ -39,6 +39,11 @@ public class MixinGenerator
                 .Combine(customization),
             (c, i) => Generate(c, i.Left, i.Right));
     }
+
+    private string StreamPassAlong(CustomizationSpecifications customization, string streamAccessor)
+    {
+        return customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null)";
+    }
     
     public void Generate(SourceProductionContext context, BootstrapInvocation bootstrap, CustomizationSpecifications customization)
     {
@@ -65,7 +70,6 @@ public class MixinGenerator
 
         var pathInput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
         var streamInput = customization.FilePerRecord ? "StreamPackage" : "Stream";
-        var streamPassAlong = customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null)";
 
         sb.AppendLines(
             new string[]
@@ -152,9 +156,10 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                sb.AppendLine($"var writer = WriterKernel.GetNewObject({streamPassAlong});");
+                sb.AppendLine($"var streamPassIn = {StreamPassAlong(customization, "stream")};");
+                sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
                 sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
-                sb.AppendLine($"WriterKernel.Finalize({streamPassAlong}, writer);");
+                sb.AppendLine($"WriterKernel.Finalize(streamPassIn, writer);");
             }
             sb.AppendLine();
             
@@ -181,9 +186,10 @@ public class MixinGenerator
                 var pathStreamPassAlong = customization.FilePerRecord 
                     ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))), path)" 
                     : "streamCreator.GetStreamFor(fileSystem, path)";
-                using (var c = sb.Call($"return await converterBootstrap.Deserialize"))
+                using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
                 {
-                    c.Add(pathStreamPassAlong);
+                    c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
+                    c.Add("ReaderKernel");
                     if (isMod)
                     {
                         c.AddPassArg("modKey");
@@ -222,7 +228,7 @@ public class MixinGenerator
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
                 {
-                    c.Add($"ReaderKernel.GetNewObject({streamPassAlong})");
+                    c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
                     c.Add("ReaderKernel");
                     if (isMod)
                     {
@@ -259,11 +265,15 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                var pathStreamPassAlong = customization.FilePerRecord ? "new StreamPackage(fileSystem.File.Open(Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), FileMode.Create, FileAccess.ReadWrite), path)" : "fileSystem.File.Open(path, FileMode.Create, FileAccess.ReadWrite)";
-                using (var c = sb.Call($"await DeserializeInto"))
+                sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
+                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                var pathStreamPassAlong = customization.FilePerRecord 
+                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" 
+                    : "new StreamPackage(streamCreator.GetStreamFor(fileSystem, path), Path.GetDirectoryName(path)!)";
+                using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
                 {
-                    c.AddPassArg("converterBootstrap");
-                    c.Add($"stream: {pathStreamPassAlong}");
+                    c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
+                    c.Add("ReaderKernel");
                     c.AddPassArg("obj");
                     if (isMod)
                     {
@@ -297,10 +307,11 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
                 {
-                    c.Add($"ReaderKernel.GetNewObject({streamPassAlong})");
+                    c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
                     c.Add("ReaderKernel");
                     c.AddPassArg("obj");
                     if (isMod)
