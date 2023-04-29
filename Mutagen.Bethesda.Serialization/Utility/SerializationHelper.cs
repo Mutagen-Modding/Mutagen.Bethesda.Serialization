@@ -28,12 +28,12 @@ public static partial class SerializationHelper
         }
     }
     
-    private static string RecordDataFileName(string expectedExtension)
+    public static string RecordDataFileName(string expectedExtension)
     {
         return $"RecordData{expectedExtension}";
     }
 
-    private static string TypicalGroupFileName(string expectedExtension)
+    public static string TypicalGroupFileName(string expectedExtension)
     {
         return $"GroupRecordData{expectedExtension}";
     }

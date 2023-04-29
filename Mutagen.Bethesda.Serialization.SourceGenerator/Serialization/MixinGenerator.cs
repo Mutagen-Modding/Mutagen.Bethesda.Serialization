@@ -74,6 +74,7 @@ public class MixinGenerator
                     $"Noggog.WorkEngine",
                     $"Mutagen.Bethesda.Plugins",
                     $"Mutagen.Bethesda.Serialization.Streams",
+                    "Mutagen.Bethesda.Serialization.Utility",
                     $"{bootstrap.ObjectRegistration.ContainingNamespace}",
                     $"{reader.ContainingNamespace}",
                     $"System.IO.Abstractions",
@@ -123,8 +124,9 @@ public class MixinGenerator
                 {
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
+                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
                 var pathStreamPassAlong = customization.FilePerRecord 
-                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" 
+                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))), path)" 
                     : "streamCreator.GetStreamFor(fileSystem, path)";
                 using (var f = sb.Call("await Serialize"))
                 {
@@ -153,6 +155,48 @@ public class MixinGenerator
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject({streamPassAlong});");
                 sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
                 sb.AppendLine($"WriterKernel.Finalize({streamPassAlong}, writer);");
+            }
+            sb.AppendLine();
+            
+            using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
+            {
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                args.Add($"{pathInput} path");
+                if (isMod)
+                {
+                    args.Add($"ModKey modKey");
+                    args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                    args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
+                }
+                else
+                {
+                    args.Add("SerializationMetaData metaData");
+                }
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                var pathStreamPassAlong = customization.FilePerRecord 
+                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))), path)" 
+                    : "streamCreator.GetStreamFor(fileSystem, path)";
+                using (var c = sb.Call($"return await converterBootstrap.Deserialize"))
+                {
+                    c.Add(pathStreamPassAlong);
+                    if (isMod)
+                    {
+                        c.AddPassArg("modKey");
+                        c.AddPassArg("release");
+                        c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
+                    }
+                    else
+                    {
+                        c.AddPassArg("metaData");
+                    }
+                }
             }
             sb.AppendLine();
             
