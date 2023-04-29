@@ -29,34 +29,178 @@
 
     <ItemGroup>
         <None Include="$(SolutionDir)Mutagen.Bethesda.Serialization.Tester.FolderSplit\Files\**" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="UtilityTests\AddBlocksToWork_1_3_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_3_GroupRecordData</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_3_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_1_6_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_6_GroupRecordData</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_6_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_1_6_TestEdid.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_6_TestEdid</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_6_TestEdid.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_1_6_TestEdid_Persistent_Placed2.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_6_TestEdid_Persistent_Placed2</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_6_TestEdid_Persistent_Placed2.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_1_6_TestEdid_Temporary_Placed1.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_6_TestEdid_Temporary_Placed1</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_6_TestEdid_Temporary_Placed1.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_1_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_1_GroupRecordData</ParentFile>
+          <DependentUpon>AddBlocksToWork_1_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_4_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_4_GroupRecordData</ParentFile>
+          <DependentUpon>AddBlocksToWork_4_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddBlocksToWork_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddBlocksToWork_GroupRecordData</ParentFile>
+          <DependentUpon>AddBlocksToWork_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_3_9_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_3_9_GroupRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_3_9_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_6_4_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_6_4_GroupRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_6_4_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_6_4_TestCell_Persistent_Placed2.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_6_4_TestCell_Persistent_Placed2</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_6_4_TestCell_Persistent_Placed2.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_6_4_TestCell_Temporary_Placed1.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_6_4_TestCell_Temporary_Placed1</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_6_4_TestCell_Temporary_Placed1.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_6_4_TestCellRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_6_4_TestCellRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_6_4_TestCellRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_5_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_5_GroupRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_5_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_4_6_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_4_6_GroupRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_4_6_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\AddXYBlocksToWork_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>AddXYBlocksToWork_GroupRecordData</ParentFile>
+          <DependentUpon>AddXYBlocksToWork_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TopLevelRecord_4_5_6_4_TestCell_Persistent_Placed2.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TopLevelRecord_4_5_6_4_TestCell_Persistent_Placed2</ParentFile>
+          <DependentUpon>TopLevelRecord_4_5_6_4_TestCell_Persistent_Placed2.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TopLevelRecord_4_5_6_4_TestCell_Temporary_Placed1.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TopLevelRecord_4_5_6_4_TestCell_Temporary_Placed1</ParentFile>
+          <DependentUpon>TopLevelRecord_4_5_6_4_TestCell_Temporary_Placed1.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TopLevelRecord_4_5_6_4_TestCellRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TopLevelRecord_4_5_6_4_TestCellRecordData</ParentFile>
+          <DependentUpon>TopLevelRecord_4_5_6_4_TestCellRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TopLevelRecord_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TopLevelRecord_GroupRecordData</ParentFile>
+          <DependentUpon>TopLevelRecord_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TypicalWrite_123457_Skyrim.esm.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TypicalWrite_123457_Skyrim</ParentFile>
+          <DependentUpon>TypicalWrite_123457_Skyrim.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\TypicalWrite_TestEdid.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>TypicalWrite_TestEdid</ParentFile>
+          <DependentUpon>TypicalWrite_TestEdid.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFilePerRecord_123457_Skyrim.esm.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFilePerRecord_123457_Skyrim</ParentFile>
+          <DependentUpon>WriteFilePerRecord_123457_Skyrim.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFilePerRecord_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFilePerRecord_GroupRecordData</ParentFile>
+          <DependentUpon>WriteFilePerRecord_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFilePerRecord_TestEdid.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFilePerRecord_TestEdid</ParentFile>
+          <DependentUpon>WriteFilePerRecord_TestEdid.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFolderPerRecord_123457_Skyrim.esm.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFolderPerRecord_123457_Skyrim</ParentFile>
+          <DependentUpon>WriteFolderPerRecord_123457_Skyrim.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFolderPerRecord_GroupRecordData.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFolderPerRecord_GroupRecordData</ParentFile>
+          <DependentUpon>WriteFolderPerRecord_GroupRecordData.cs</DependentUpon>
+        </None>
+        <None Update="UtilityTests\WriteFolderPerRecord_TestEdid.json.verified.txt">
+          <DefaultPackFolder>none</DefaultPackFolder>
+          <BuildAction>None</BuildAction>
+          <ParentFile>WriteFolderPerRecord_TestEdid</ParentFile>
+          <DependentUpon>WriteFolderPerRecord_TestEdid.cs</DependentUpon>
+        </None>
     </ItemGroup>
     
     <ItemGroup>
-        <None Update="AddBlocksToWork_1_3_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_1_3_GroupRecordData</ParentFile>
-            <DependentUpon>AddBlocksToWork_1_3_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddBlocksToWork_1_6_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_1_6_GroupRecordData</ParentFile>
-            <DependentUpon>AddBlocksToWork_1_6_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddBlocksToWork_1_6_TestEdid.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_1_6_TestEdid</ParentFile>
-            <DependentUpon>AddBlocksToWork_1_6_TestEdid.cs</DependentUpon>
-        </None>
         <None Update="AddBlocksToWork_1_GroupRecordData.json.received.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_1_GroupRecordData</ParentFile>
-            <DependentUpon>AddBlocksToWork_1_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddBlocksToWork_1_GroupRecordData.json.verified.txt">
             <DefaultPackFolder>none</DefaultPackFolder>
             <BuildAction>None</BuildAction>
             <ParentFile>AddBlocksToWork_1_GroupRecordData</ParentFile>
@@ -67,18 +211,6 @@
             <BuildAction>None</BuildAction>
             <ParentFile>AddBlocksToWork_4_5_6_4_TestCell</ParentFile>
             <DependentUpon>AddBlocksToWork_4_5_6_4_TestCell.cs</DependentUpon>
-        </None>
-        <None Update="AddBlocksToWork_4_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_4_GroupRecordData</ParentFile>
-            <DependentUpon>AddBlocksToWork_4_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddBlocksToWork_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddBlocksToWork_GroupRecordData</ParentFile>
-            <DependentUpon>AddBlocksToWork_GroupRecordData.cs</DependentUpon>
         </None>
         <None Update="AddGroupToWork_123457_Skyrim.esm.json.verified.txt">
             <DefaultPackFolder>none</DefaultPackFolder>
@@ -97,30 +229,6 @@
             <BuildAction>None</BuildAction>
             <ParentFile>AddGroupToWork_TestEdid</ParentFile>
             <DependentUpon>AddGroupToWork_TestEdid.cs</DependentUpon>
-        </None>
-        <None Update="AddXYBlocksToWork_4_5_3_9_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddXYBlocksToWork_4_5_3_9_GroupRecordData</ParentFile>
-            <DependentUpon>AddXYBlocksToWork_4_5_3_9_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddXYBlocksToWork_4_5_6_4_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddXYBlocksToWork_4_5_6_4_GroupRecordData</ParentFile>
-            <DependentUpon>AddXYBlocksToWork_4_5_6_4_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddXYBlocksToWork_4_5_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddXYBlocksToWork_4_5_GroupRecordData</ParentFile>
-            <DependentUpon>AddXYBlocksToWork_4_5_GroupRecordData.cs</DependentUpon>
-        </None>
-        <None Update="AddXYBlocksToWork_4_6_GroupRecordData.json.verified.txt">
-            <DefaultPackFolder>none</DefaultPackFolder>
-            <BuildAction>None</BuildAction>
-            <ParentFile>AddXYBlocksToWork_4_6_GroupRecordData</ParentFile>
-            <DependentUpon>AddXYBlocksToWork_4_6_GroupRecordData.cs</DependentUpon>
         </None>
         <None Update="AddXYBlocksToWork_RecordData.json.received.txt">
             <DefaultPackFolder>none</DefaultPackFolder>
@@ -145,6 +253,34 @@
         <DefaultPackFolder>content</DefaultPackFolder>
         <BuildAction>Resource</BuildAction>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="UtilityTests\BlockSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="UtilityTests\GroupFolderParallelSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="UtilityTests\GroupParallelSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="UtilityTests\MajorRecordListSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
+      <Compile Update="UtilityTests\XYBlockSerializationTests.cs">
+        <CodeLanguage>cs</CodeLanguage>
+        <DefaultPackFolder>content</DefaultPackFolder>
+        <BuildAction>Compile</BuildAction>
+      </Compile>
     </ItemGroup>
 
 </Project>
