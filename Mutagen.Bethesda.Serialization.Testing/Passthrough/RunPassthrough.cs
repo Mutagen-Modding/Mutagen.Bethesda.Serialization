@@ -52,7 +52,7 @@ public static class RunPassthrough
         //    : new WorkConsumer(new NumWorkThreadsUnopinionated(), workQueue);
         //workConsumer?.Start();
 
-        var streamCreator = NormalFileStreamCreator.Instance;
+        var streamCreator = new InterceptionStreamCreator(new XxHashShortCircuitExporter());
 
         Console.WriteLine("Testing JSON");
         await PassthroughTest.PassThrough<ISkyrimModGetter>(

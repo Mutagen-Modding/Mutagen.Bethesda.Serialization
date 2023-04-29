@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noggog.Verify.FileAbstractions", "Noggog.Verify.FileAbstractions\Noggog.Verify.FileAbstractions.csproj", "{43565439-C30C-4E84-86F7-15398ADCD130}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutagen.Bethesda.Serialization.Tests", "Mutagen.Bethesda.Serialization.Tests\Mutagen.Bethesda.Serialization.Tests.csproj", "{434A6AB5-4202-4436-B6BE-34B642FDD26F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Release|Any CPU.Build.0 = Release|Any CPU
+		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

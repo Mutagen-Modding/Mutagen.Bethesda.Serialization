@@ -25,6 +25,7 @@
     <ItemGroup>
 		<PackageReference Include="Mutagen.Bethesda.Core" />
 		<PackageReference Include="Noggog.CSharpExt" />
+        <PackageReference Include="System.Data.HashFunction.xxHash" />
     </ItemGroup>
 
     <ItemGroup>
