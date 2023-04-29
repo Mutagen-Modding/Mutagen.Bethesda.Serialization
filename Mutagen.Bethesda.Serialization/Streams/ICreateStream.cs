@@ -14,6 +14,6 @@ public class NormalFileStreamCreator : ICreateStream
     
     public Stream GetStreamFor(IFileSystem fileSystem, FilePath path)
     {
-        return fileSystem.File.Create(path);
+        return fileSystem.File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
     }
 }
