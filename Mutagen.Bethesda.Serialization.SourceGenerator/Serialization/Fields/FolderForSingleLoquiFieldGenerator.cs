@@ -58,6 +58,7 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add($"itemWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"hasSerializationItems: static (i, m) => {fieldSerializationNames.HasSerializationCall()}(i, m)");
         }
     }
 

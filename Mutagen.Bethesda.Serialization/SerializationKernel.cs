@@ -131,6 +131,8 @@ public delegate Task WriteAsync<TKernel, TWriterObject, TObject>(
     SerializationMetaData metaData)
     where TKernel : ISerializationWriterKernel<TWriterObject>, new();
 
+public delegate bool HasSerializationItems<TObject>(TObject? obj, SerializationMetaData metaData);
+
 public interface ISerializationWriterKernel<TWriterObject>
 {
     public string ExpectedExtension { get; }

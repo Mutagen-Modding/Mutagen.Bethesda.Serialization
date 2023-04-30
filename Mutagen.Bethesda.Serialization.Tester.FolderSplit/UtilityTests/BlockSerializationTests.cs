@@ -88,8 +88,11 @@ public class BlockSerializationTests
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimListGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, ICellBlockGetter>(w, i, k, m),
+            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.CellBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.CellBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.CellSubBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.CellSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         

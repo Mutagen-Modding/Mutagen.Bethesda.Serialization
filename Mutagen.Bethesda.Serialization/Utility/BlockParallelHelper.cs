@@ -11,16 +11,19 @@ public static partial class SerializationHelper
         StreamPackage streamPackage,
         TGroup obj,
         string? fieldName,
-        Func<TGroup, IEnumerable<TBlock>> blockRetriever,
-        Func<TBlock, IEnumerable<TSubBlock>> subBlockRetriever,
-        Func<TSubBlock, IEnumerable<TMajor>> majorRetriever,
+        Func<TGroup, IReadOnlyCollection<TBlock>> blockRetriever,
+        Func<TBlock, IReadOnlyCollection<TSubBlock>> subBlockRetriever,
+        Func<TSubBlock, IReadOnlyCollection<TMajor>> majorRetriever,
         Func<TBlock, int> blockNumberRetriever,
         Func<TSubBlock, int> subBlockNumberRetriever,
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         WriteAsync<TKernel, TWriteObject, TGroup> metaWriter,
+        HasSerializationItems<TGroup> metaHasSerialization,
         WriteAsync<TKernel, TWriteObject, TBlock> blockWriter,
+        HasSerializationItems<TBlock> blockHasSerialization,
         WriteAsync<TKernel, TWriteObject, TSubBlock> subBlockWriter,
+        HasSerializationItems<TSubBlock> subBlockHasSerialization,
         WriteAsync<TKernel, TWriteObject, TMajor> majorWriter,
         bool withNumbering)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -35,7 +38,8 @@ public static partial class SerializationHelper
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: metaWriter);
+            writer: metaWriter,
+            hasSerializationItems: metaHasSerialization);
 
         await metaData.WorkDropoff.EnqueueAndWait(
             blockRetriever(obj)
@@ -51,7 +55,8 @@ public static partial class SerializationHelper
                     fileName: TypicalGroupFileName(kernel.ExpectedExtension),
                     metaData: metaData,
                     kernel: kernel,
-                    groupWriter: blockWriter);
+                    writer: blockWriter,
+                    hasSerializationItems: blockHasSerialization);
 
                 await metaData.WorkDropoff.EnqueueAndWait(
                     subBlockRetriever(blockGetter.Item)
@@ -67,7 +72,8 @@ public static partial class SerializationHelper
                             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
                             metaData: metaData,
                             kernel: kernel,
-                            groupWriter: subBlockWriter);
+                            writer: subBlockWriter,
+                            hasSerializationItems: subBlockHasSerialization);
 
                         await metaData.WorkDropoff.EnqueueAndWait(
                             majorRetriever(subBlockGetter.Item).WithIndex(),
@@ -124,6 +130,8 @@ public static partial class SerializationHelper
 
         var groupFileName = TypicalGroupFileName(kernel.ExpectedExtension);
 
+        if (!metaData.FileSystem.Directory.Exists(streamPackage.Path)) return;
+        
         var blocks = await metaData.WorkDropoff.EnqueueAndWait(
             metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
             async blockDir =>
@@ -150,69 +158,75 @@ public static partial class SerializationHelper
                     }
                 }
 
-                var subBlocks = await metaData.WorkDropoff.EnqueueAndWait(
-                    metaData.FileSystem.Directory.GetDirectories(blockDir),
-                    async subBlockDir =>
-                    {
-                        if (!int.TryParse(TrimOrdering(Path.GetFileName(subBlockDir.AsSpan())), out var subBlockNum))
+                if (metaData.FileSystem.Directory.Exists(blockDir))
+                {
+                    var subBlocks = await metaData.WorkDropoff.EnqueueAndWait(
+                        metaData.FileSystem.Directory.GetDirectories(blockDir),
+                        async subBlockDir =>
                         {
-                            return default;
-                        }
-
-                        var subBlockDataPath = Path.Combine(subBlockDir, groupFileName);
-                        var subBlockDataFileName = Path.GetFileName(subBlockDataPath);
-                        var subBlockStreamPackage = blockStreamPackage with { Path = subBlockDir };
-
-                        TSubBlock subBlock = new();
-                        if (metaData.FileSystem.File.Exists(subBlockDataPath))
-                        {
-                            using (var subBlockStream = metaData.FileSystem.File.OpenRead(subBlockDataPath))
+                            if (!int.TryParse(TrimOrdering(Path.GetFileName(subBlockDir.AsSpan())), out var subBlockNum))
                             {
-                                var reader = kernel.GetNewObject(subBlockStreamPackage with { Stream = subBlockStream });
+                                return default;
+                            }
 
-                                while (kernel.TryGetNextField(reader, out var name))
+                            var subBlockDataPath = Path.Combine(subBlockDir, groupFileName);
+                            var subBlockDataFileName = Path.GetFileName(subBlockDataPath);
+                            var subBlockStreamPackage = blockStreamPackage with { Path = subBlockDir };
+
+                            TSubBlock subBlock = new();
+                            if (metaData.FileSystem.File.Exists(subBlockDataPath))
+                            {
+                                using (var subBlockStream = metaData.FileSystem.File.OpenRead(subBlockDataPath))
                                 {
-                                    await subBlockReader(reader, subBlock, kernel, metaData, name);
+                                    var reader = kernel.GetNewObject(subBlockStreamPackage with { Stream = subBlockStream });
+
+                                    while (kernel.TryGetNextField(reader, out var name))
+                                    {
+                                        await subBlockReader(reader, subBlock, kernel, metaData, name);
+                                    }
                                 }
                             }
-                        }
 
-                        var records = await metaData.WorkDropoff.EnqueueAndWait(
-                            metaData.FileSystem.Directory.GetDirectories(subBlockDir),
-                            async recordDir =>
+                            if (metaData.FileSystem.Directory.Exists(subBlockDir))
                             {
-                                var recordFile = Path.Combine(recordDir, RecordDataFileName(kernel.ExpectedExtension));
-                                
-                                using (var recordStream = metaData.FileSystem.File.OpenRead(recordFile))
-                                {
-                                    var reader = kernel.GetNewObject(subBlockStreamPackage with
+                                var records = await metaData.WorkDropoff.EnqueueAndWait(
+                                    metaData.FileSystem.Directory.GetDirectories(subBlockDir),
+                                    async recordDir =>
                                     {
-                                        Stream = recordStream,
-                                        Path = recordDir
+                                        var recordFile = Path.Combine(recordDir, RecordDataFileName(kernel.ExpectedExtension));
+                                    
+                                        using (var recordStream = metaData.FileSystem.File.OpenRead(recordFile))
+                                        {
+                                            var reader = kernel.GetNewObject(subBlockStreamPackage with
+                                            {
+                                                Stream = recordStream,
+                                                Path = recordDir
+                                            });
+
+                                            return (Path.GetFileName(recordDir), await majorReader(reader, kernel, metaData));
+                                        }
                                     });
 
-                                    return (Path.GetFileName(recordDir), await majorReader(reader, kernel, metaData));
-                                }
-                            });
+                                subBlockSet(
+                                    subBlock,
+                                    subBlockNum, 
+                                    records
+                                        .OrderBy(x => TryGetNumber(x.Item1))
+                                        .Select(x => x.Item2)
+                                        .NotNull());
+                            }
 
-                        subBlockSet(
-                            subBlock,
-                            subBlockNum, 
-                            records
-                                .OrderBy(x => TryGetNumber(x.Item1))
-                                .Select(x => x.Item2)
-                                .NotNull());
+                            return (Path.GetFileName(subBlockDir), subBlock);
+                        });
 
-                        return (Path.GetFileName(subBlockDir), subBlock);
-                    });
-
-                blockSet(
-                    block,
-                    blockNum,
-                    subBlocks
-                        .OrderBy(x => TryGetNumber(x.Item1))
-                        .Select(x => x.subBlock)
-                        .NotNull());
+                    blockSet(
+                        block,
+                        blockNum,
+                        subBlocks
+                            .OrderBy(x => TryGetNumber(x.Item1))
+                            .Select(x => x.subBlock)
+                            .NotNull());
+                }
 
                 return (Path.GetFileName(blockDir), block);
             });

@@ -247,9 +247,13 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
             f.AddPassArg($"metaData");
             f.AddPassArg($"kernel");
             f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
+            f.Add($"groupHasSerialization: static (i, m) => {fieldSerializationNames.HasSerializationCall()}<{subNames.Getter}>(i, m)");
             f.Add($"topRecordWriter: static (w, i, k, m) => {naming.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"topRecordHasSerialization: static (i, m) => {naming.HasSerializationCall()}(i, m)");
             f.Add($"blockWriter: static (w, i, k, m) => {blockInfo.Block.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"blockHasSerialization: static (i, m) => {blockInfo.Block.SerializationItems.HasSerializationCall()}(i, m)");
             f.Add($"subBlockWriter: static (w, i, k, m) => {blockInfo.SubBlock.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"subBlockHasSerialization: static (i, m) => {blockInfo.SubBlock.SerializationItems.HasSerializationCall()}(i, m)");
             f.Add($"majorWriter: static (w, i, k, m) => {blockInfo.Record.SerializationItems.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
         }

@@ -902,6 +902,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             {
                 k.WriteBool(w, nameof(TestGroup.SomeGroupField), true, default);
             },
+            (g, m) => true,
             new WriteAsync<TWriterKernel, TWriter, TestMajorRecord>(async (w, i, k, m) =>
             {
                 k.WriteFormKey(w, nameof(TestMajorRecord.FormKey), i.FormKey, default);
@@ -1019,14 +1020,17 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             {
                 k.WriteInt32(w, nameof(TestBlockGroup.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             blockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(Block.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             subBlockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(SubBlock.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             majorWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
@@ -1184,19 +1188,23 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             {
                 k.WriteInt32(w, nameof(TestXYBlockGroup.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             topRecordWriter: async (w, o, k, m) =>
             {
                 k.WriteInt32(w, nameof(TestXYRecord.SomeValue), o.SomeValue, default);
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);
             },
+            (g, m) => true,
             blockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(XYBlock.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             subBlockWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(XYSubBlock.SomeValue), o.SomeValue, default);
             },
+            (g, m) => true,
             majorWriter: async (w, o, k, m) =>
             {
                 k.WriteString(w, nameof(TestMajorRecord.String), o.String, default);

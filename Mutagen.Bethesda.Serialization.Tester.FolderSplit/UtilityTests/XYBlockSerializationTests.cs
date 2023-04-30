@@ -102,9 +102,13 @@ public class XYBlockSerializationTests
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
+            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.HasSerializationItems<Worldspace>(i, m),
             topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.HasSerializationItems(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
@@ -222,9 +226,13 @@ public class XYBlockSerializationTests
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
+            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.HasSerializationItems<Worldspace>(i, m),
             topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.HasSerializationItems(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         

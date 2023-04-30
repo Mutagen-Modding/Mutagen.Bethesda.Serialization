@@ -13,7 +13,8 @@ public static partial class SerializationHelper
         string fileName,
         SerializationMetaData metaData, 
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        WriteAsync<TKernel, TWriteObject, TGroup> groupWriter) 
+        WriteAsync<TKernel, TWriteObject, TGroup> writer,
+        HasSerializationItems<TGroup> hasSerializationItems) 
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
@@ -21,8 +22,11 @@ public static partial class SerializationHelper
         {
             throw new ArgumentException("Stream had no anchor path");
         }
-
+        
         var groupDir = Path.Combine(streamPackage.Path, folderName);
+
+        if (!hasSerializationItems(group, metaData)) return groupDir;
+
         metaData.FileSystem.Directory.CreateDirectory(groupDir);
 
         await metaData.WorkDropoff.EnqueueAndWait(() =>
@@ -31,7 +35,7 @@ public static partial class SerializationHelper
             using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, dataPath, write: true);
             var groupRecStreamPackage = new StreamPackage(stream, groupDir);
             var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
-            groupWriter(dataWriter, group, kernel, metaData);
+            writer(dataWriter, group, kernel, metaData);
             kernel.Finalize(groupRecStreamPackage, dataWriter);
         });
         return groupDir;
@@ -109,6 +113,7 @@ public static partial class SerializationHelper
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         WriteAsync<TKernel, TWriteObject, TGroup> groupWriter,
+        HasSerializationItems<TGroup> groupHasSerializationItems,
         WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
         bool withNumbering)
         where TGroup : class, IReadOnlyCollection<TObject>
@@ -125,7 +130,8 @@ public static partial class SerializationHelper
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: groupWriter);
+            writer: groupWriter,
+            hasSerializationItems: groupHasSerializationItems);
 
         var subPackage = streamPackage with { Stream = null!, Path = groupDir };
 

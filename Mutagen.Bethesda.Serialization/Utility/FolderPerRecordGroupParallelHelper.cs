@@ -13,6 +13,7 @@ public static partial class SerializationHelper
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         WriteAsync<TKernel, TWriteObject, TGroup> groupWriter,
+        HasSerializationItems<TGroup> groupHasSerializationItems,
         WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
         bool withNumbering)
         where TGroup : class, IReadOnlyCollection<TObject>
@@ -29,7 +30,8 @@ public static partial class SerializationHelper
             fileName: TypicalGroupFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: groupWriter);
+            writer: groupWriter,
+            hasSerializationItems: groupHasSerializationItems);
         
         var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
@@ -73,30 +75,33 @@ public static partial class SerializationHelper
         
         await ReadGroupHeaderPathToWork(
             streamPackage, group, metaData, kernel, groupReader);
-        
-        var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
-        var records = await metaData.WorkDropoff.EnqueueAndWait(
-            metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
-            async recordDir =>
-            {
-                var recordPath = Path.Combine(recordDir, fileName);
+        if (metaData.FileSystem.Directory.Exists(streamPackage.Path))
+        {
+            var fileName = RecordDataFileName(kernel.ExpectedExtension);
 
-                using var stream = metaData.FileSystem.File.OpenRead(recordPath);
-
-                var reader = kernel.GetNewObject(streamPackage with
+            var records = await metaData.WorkDropoff.EnqueueAndWait(
+                metaData.FileSystem.Directory.GetDirectories(streamPackage.Path!),
+                async recordDir =>
                 {
-                    Stream = stream,
-                    Path = recordDir
-                });
+                    var recordPath = Path.Combine(recordDir, fileName);
 
-                return (Path.GetFileName(recordDir), await itemReader(reader, kernel, metaData));
-            });
+                    using var stream = metaData.FileSystem.File.OpenRead(recordPath);
+
+                    var reader = kernel.GetNewObject(streamPackage with
+                    {
+                        Stream = stream,
+                        Path = recordDir
+                    });
+
+                    return (Path.GetFileName(recordDir), await itemReader(reader, kernel, metaData));
+                });
         
-        group.RecordCache.SetTo(
-            x => x.FormKey,
-            records
-                .OrderBy(x => TryGetNumber(x.Item1))
-                .Select(x => x.Item2));
+            group.RecordCache.SetTo(
+                x => x.FormKey,
+                records
+                    .OrderBy(x => TryGetNumber(x.Item1))
+                    .Select(x => x.Item2));
+        }
     }
 }

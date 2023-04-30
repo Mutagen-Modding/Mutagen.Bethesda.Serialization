@@ -102,6 +102,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
                 f.Add($"metaData: {metaAccessor}");
                 f.Add($"kernel: {kernelAccessor}");
                 f.Add($"groupWriter: static (w, i, k, m) => {fieldSerializationNames.SerializationCall()}<TKernel, TWriteObject, {subNames.Getter}>(w, i, k, m)");
+                f.Add($"groupHasSerializationItems: static (i, m) => {fieldSerializationNames.HasSerializationCall()}<{subNames.Getter}>(i, m)");
                 f.Add($"itemWriter: static (w, i, k, m) => {subSerializationNames.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
                 f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
             }

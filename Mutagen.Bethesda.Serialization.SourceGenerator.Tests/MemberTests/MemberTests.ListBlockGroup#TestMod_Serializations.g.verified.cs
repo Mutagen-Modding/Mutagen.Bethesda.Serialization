@@ -55,8 +55,11 @@ internal static class TestMod_Serialization
             blockNumberRetriever: static x => x.BlockNumber,
             subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
+            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             withNumbering: false));
         tasks.Add(SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
@@ -71,8 +74,11 @@ internal static class TestMod_Serialization
             blockNumberRetriever: static x => x.BlockNumber,
             subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
+            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             withNumbering: false));
         tasks.Add(SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
@@ -87,8 +93,11 @@ internal static class TestMod_Serialization
             blockNumberRetriever: static x => x.BlockNumber,
             subBlockNumberRetriever: static x => x.BlockNumber,
             metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.Serialize<TKernel, TWriteObject, ICellBlockGetter>(w, i, k, m),
+            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
             blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.HasSerializationItems(i, m),
             subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.HasSerializationItems(i, m),
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             withNumbering: false));
         await Task.WhenAll(tasks.ToArray());

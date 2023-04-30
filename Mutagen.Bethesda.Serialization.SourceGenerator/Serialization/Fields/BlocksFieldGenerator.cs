@@ -21,8 +21,7 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
     public bool HasVariableHasSerialize => true;
-
-
+    
     public BlocksFieldGenerator(
         LoquiSerializationNaming serializationNaming,
         LoquiNameRetriever nameRetriever)
@@ -164,8 +163,11 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
             f.Add($"blockNumberRetriever: static x => x.BlockNumber");
             f.Add($"subBlockNumberRetriever: static x => x.BlockNumber");
             f.Add($"metaWriter: static (w, i, k, m) => {blockInfo.Group.SerializationItems.SerializationCall()}<TKernel, TWriteObject, {blockInfo.Block.Names.Getter}>(w, i, k, m)");
+            f.Add($"metaHasSerialization: static (i, m) => {blockInfo.Group.SerializationItems.HasSerializationCall()}<{blockInfo.Block.Names.Getter}>(i, m)");
             f.Add($"blockWriter: static (w, i, k, m) => {blockInfo.Block.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"blockHasSerialization: static (i, m) => {blockInfo.Block.SerializationItems.HasSerializationCall()}(i, m)");
             f.Add($"subBlockWriter: static (w, i, k, m) => {blockInfo.SubBlock.SerializationItems.SerializationCall()}<TKernel, TWriteObject>(w, i, k, m)");
+            f.Add($"subBlockHasSerialization: static (i, m) => {blockInfo.SubBlock.SerializationItems.HasSerializationCall()}(i, m)");
             f.Add($"majorWriter: static (w, i, k, m) => {blockInfo.Record.SerializationItems.SerializationCall(withCheck: hasInheriting)}<TKernel, TWriteObject>(w, i, k, m)");
             f.Add($"withNumbering: {compilation.Customization.Overall.EnforceRecordOrder.ToString().ToLower()}");
         }

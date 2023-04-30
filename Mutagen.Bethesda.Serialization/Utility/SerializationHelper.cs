@@ -87,9 +87,9 @@ public static partial class SerializationHelper
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
         var path = Path.Combine(streamPackage.Path!, fileName);
-        await metaData.WorkDropoff.EnqueueAndWait(() =>
+        if (metaData.FileSystem.File.Exists(path))
         {
-            if (metaData.FileSystem.File.Exists(path))
+            await metaData.WorkDropoff.EnqueueAndWait(() =>
             {
                 using var groupStream = metaData.FileSystem.File.OpenRead(path);
 
@@ -98,8 +98,8 @@ public static partial class SerializationHelper
                 {
                     groupReader(reader, group, kernel, metaData, name);
                 }
-            }
-        });
+            });
+        }
         return path;
     }
     

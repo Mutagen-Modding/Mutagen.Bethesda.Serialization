@@ -59,30 +59,33 @@ public static partial class SerializationHelper
             list.Clear();
             return;
         }
+
+        if (metaData.FileSystem.Directory.Exists(dir))
+        {
+            streamPackage = streamPackage with { Stream = null!, Path = dir };
         
-        streamPackage = streamPackage with { Stream = null!, Path = dir };
+            var groupHeaderFileName = TypicalGroupFileName(kernel.ExpectedExtension);
         
-        var groupHeaderFileName = TypicalGroupFileName(kernel.ExpectedExtension);
-        
-        var records = await metaData.WorkDropoff.EnqueueAndWait(
-            metaData.FileSystem.Directory.GetFiles(streamPackage.Path!)
-                .Where(x =>
+            var records = await metaData.WorkDropoff.EnqueueAndWait(
+                metaData.FileSystem.Directory.GetFiles(streamPackage.Path!)
+                    .Where(x =>
+                    {
+                        var fileName = Path.GetFileName(x.AsSpan());
+                        var ext = Path.GetExtension(fileName);
+                        return ext.Equals(kernel.ExpectedExtension.AsSpan(), StringComparison.OrdinalIgnoreCase)
+                               && !fileName.Equals(groupHeaderFileName.AsSpan(), StringComparison.OrdinalIgnoreCase);
+                    }),
+                async x =>
                 {
-                    var fileName = Path.GetFileName(x.AsSpan());
-                    var ext = Path.GetExtension(fileName);
-                    return ext.Equals(kernel.ExpectedExtension.AsSpan(), StringComparison.OrdinalIgnoreCase)
-                           && !fileName.Equals(groupHeaderFileName.AsSpan(), StringComparison.OrdinalIgnoreCase);
-                }),
-            async x =>
-            {
-                using var stream = metaData.FileSystem.File.OpenRead(x);
+                    using var stream = metaData.FileSystem.File.OpenRead(x);
 
-                var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
+                    var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
 
-                return (Path.GetFileName(x), await itemReader(reader, kernel, metaData));
-            });
-        list.SetTo(records
-            .OrderBy(x => TryGetNumber(x.Item1))
-            .Select(x => x.Item2));
+                    return (Path.GetFileName(x), await itemReader(reader, kernel, metaData));
+                });
+            list.SetTo(records
+                .OrderBy(x => TryGetNumber(x.Item1))
+                .Select(x => x.Item2));
+        }
     }
 }

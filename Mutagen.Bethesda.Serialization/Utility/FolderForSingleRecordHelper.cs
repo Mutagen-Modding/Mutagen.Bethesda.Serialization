@@ -10,7 +10,8 @@ public static partial class SerializationHelper
         string? fieldName,
         SerializationMetaData metaData,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        WriteAsync<TKernel, TWriteObject, TObject> itemWriter)
+        WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
+        HasSerializationItems<TObject> hasSerializationItems)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
@@ -24,7 +25,8 @@ public static partial class SerializationHelper
             fileName: RecordDataFileName(kernel.ExpectedExtension),
             metaData: metaData,
             kernel: kernel,
-            groupWriter: itemWriter);
+            writer: itemWriter,
+            hasSerializationItems: hasSerializationItems);
     }
     
     public static async Task<TObject?> ReadRecordAsFolder<TKernel, TReadObject, TObject>(

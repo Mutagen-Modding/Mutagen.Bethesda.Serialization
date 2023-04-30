@@ -48,6 +48,7 @@ internal static class SomeMajorRecord_Serialization
             metaData: metaData,
             kernel: kernel,
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.Serialize<TKernel, TWriteObject, ISomeMajorRecordGetter>(w, i, k, m),
+            groupHasSerializationItems: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.HasSerializationItems<ISomeMajorRecordGetter>(i, m),
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
             withNumbering: false));
         kernel.WriteInt32(writer, "SomeMember2", item.SomeMember2, default(int));
