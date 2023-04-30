@@ -69,7 +69,6 @@ public class MixinGenerator
         var sb = new StructuredStringBuilder();
 
         var pathInput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
-        var streamInput = customization.FilePerRecord ? "StreamPackage" : "Stream";
 
         sb.AppendLines(
             new string[]
@@ -143,26 +142,29 @@ public class MixinGenerator
                 }
             }
             sb.AppendLine();
-            
-            using (var args = sb.Function($"public static async Task Serialize"))
+
+            if (!customization.FilePerRecord)
             {
-                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
-                args.Add($"{streamInput} stream");
-                args.Add("IWorkDropoff? workDropoff = null");
-                args.Add("IFileSystem? fileSystem = null");
-                args.Add("ICreateStream? streamCreator = null");
+                using (var args = sb.Function($"public static async Task Serialize"))
+                {
+                    args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                    args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
+                    args.Add($"Stream stream");
+                    args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
+                }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
+                    sb.AppendLine($"var streamPassIn = {StreamPassAlong(customization, "stream")};");
+                    sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
+                    sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
+                    sb.AppendLine($"WriterKernel.Finalize(streamPassIn, writer);");
+                }
+                sb.AppendLine();
             }
-            using (sb.CurlyBrace())
-            {
-                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                sb.AppendLine($"var streamPassIn = {StreamPassAlong(customization, "stream")};");
-                sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
-                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
-                sb.AppendLine($"WriterKernel.Finalize(streamPassIn, writer);");
-            }
-            sb.AppendLine();
-            
+
             using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
@@ -205,47 +207,54 @@ public class MixinGenerator
                 }
             }
             sb.AppendLine();
-            
-            using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
+
+            if (!customization.FilePerRecord)
             {
-                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"{streamInput} stream");
-                if (isMod)
+                using (var args = sb.Function(
+                           $"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
                 {
-                    args.Add($"ModKey modKey");
-                    args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
-                    args.Add("IWorkDropoff? workDropoff = null");
-                    args.Add("IFileSystem? fileSystem = null");
-                    args.Add("ICreateStream? streamCreator = null");
-                }
-                else
-                {
-                    args.Add("SerializationMetaData metaData");
-                }
-            }
-            using (sb.CurlyBrace())
-            {
-                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
-                {
-                    c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
-                    c.Add("ReaderKernel");
+                    args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                    args.Add($"Stream stream");
                     if (isMod)
                     {
-                        c.AddPassArg("modKey");
-                        c.AddPassArg("release");
-                        c.AddPassArg("workDropoff");
-                        c.AddPassArg("fileSystem");
-                        c.AddPassArg("streamCreator");
+                        args.Add($"ModKey modKey");
+                        args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                        args.Add("IWorkDropoff? workDropoff = null");
+                        args.Add("IFileSystem? fileSystem = null");
+                        args.Add("ICreateStream? streamCreator = null");
                     }
                     else
                     {
-                        c.AddPassArg("metaData");
+                        args.Add("SerializationMetaData metaData");
                     }
                 }
+
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
+                    using (var c = sb.Call(
+                               $"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
+                    {
+                        c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
+                        c.Add("ReaderKernel");
+                        if (isMod)
+                        {
+                            c.AddPassArg("modKey");
+                            c.AddPassArg("release");
+                            c.AddPassArg("workDropoff");
+                            c.AddPassArg("fileSystem");
+                            c.AddPassArg("streamCreator");
+                        }
+                        else
+                        {
+                            c.AddPassArg("metaData");
+                        }
+                    }
+                }
+
+                sb.AppendLine();
             }
-            sb.AppendLine();
-            
+
             using (var args = sb.Function($"public static async Task DeserializeInto"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
@@ -288,45 +297,48 @@ public class MixinGenerator
                 }
             }
             sb.AppendLine();
-            
-            using (var args = sb.Function($"public static async Task DeserializeInto"))
+
+            if (!customization.FilePerRecord)
             {
-                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"{streamInput} stream");
-                args.Add($"{names.Setter} obj");
-                if (isMod)
+                using (var args = sb.Function($"public static async Task DeserializeInto"))
                 {
-                    args.Add("IWorkDropoff? workDropoff = null");
-                    args.Add("IFileSystem? fileSystem = null");
-                    args.Add("ICreateStream? streamCreator = null");
-                }
-                else
-                {
-                    args.Add("SerializationMetaData metaData");
-                }
-            }
-            using (sb.CurlyBrace())
-            {
-                sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
-                using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
-                {
-                    c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
-                    c.Add("ReaderKernel");
-                    c.AddPassArg("obj");
+                    args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                    args.Add($"Stream stream");
+                    args.Add($"{names.Setter} obj");
                     if (isMod)
                     {
-                        c.AddPassArg("workDropoff");
-                        c.AddPassArg("fileSystem");
-                        c.AddPassArg("streamCreator");
+                        args.Add("IWorkDropoff? workDropoff = null");
+                        args.Add("IFileSystem? fileSystem = null");
+                        args.Add("ICreateStream? streamCreator = null");
                     }
                     else
                     {
-                        c.AddPassArg("metaData");
+                        args.Add("SerializationMetaData metaData");
                     }
                 }
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
+                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
+                    using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
+                    {
+                        c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
+                        c.Add("ReaderKernel");
+                        c.AddPassArg("obj");
+                        if (isMod)
+                        {
+                            c.AddPassArg("workDropoff");
+                            c.AddPassArg("fileSystem");
+                            c.AddPassArg("streamCreator");
+                        }
+                        else
+                        {
+                            c.AddPassArg("metaData");
+                        }
+                    }
+                }
+                sb.AppendLine();
             }
-            sb.AppendLine();
         }
         sb.AppendLine();
 
