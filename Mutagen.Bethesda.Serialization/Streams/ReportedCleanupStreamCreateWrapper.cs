@@ -28,10 +28,10 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
         }
     }
     
-    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path)
+    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path, bool write)
     {
         MarkPathWrittenTo(path);
-        return _wrapped.GetStreamFor(fileSystem, path);
+        return _wrapped.GetStreamFor(fileSystem, path, write);
     }
 
     public void Dispose()

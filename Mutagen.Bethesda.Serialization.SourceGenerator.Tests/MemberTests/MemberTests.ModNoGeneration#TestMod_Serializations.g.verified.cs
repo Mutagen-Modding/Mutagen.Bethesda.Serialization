@@ -20,7 +20,7 @@ internal static class TestMod_Serialization
         TWriteObject writer,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
-        IWorkDropoff workDropoff,
+        IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
         ICreateStream? streamCreator)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -56,7 +56,7 @@ internal static class TestMod_Serialization
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
         Serialization.SourceGenerator.TestsRelease release,
-        IWorkDropoff workDropoff,
+        IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
         ICreateStream? streamCreator)
         where TReadObject : IContainStreamPackage
@@ -76,7 +76,7 @@ internal static class TestMod_Serialization
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
-        IWorkDropoff workDropoff,
+        IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
         ICreateStream? streamCreator)
         where TReadObject : IContainStreamPackage

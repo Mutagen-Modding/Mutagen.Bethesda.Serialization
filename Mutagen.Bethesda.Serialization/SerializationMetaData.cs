@@ -14,12 +14,12 @@ public class SerializationMetaData
 
     public SerializationMetaData(
         GameRelease release, 
-        IWorkDropoff workDropoff,
+        IWorkDropoff? workDropoff,
         IFileSystem? fileSystem, 
         ICreateStream? streamCreator)
     {
         Release = release;
-        WorkDropoff = workDropoff;
+        WorkDropoff = workDropoff ?? InlineWorkDropoff.Instance;
         StreamCreator = streamCreator ?? NormalFileStreamCreator.Instance;
         FileSystem = fileSystem ?? IFileSystemExt.DefaultFilesystem;
     }

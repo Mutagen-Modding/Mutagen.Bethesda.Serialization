@@ -30,8 +30,8 @@ public class ReportedCleanupStreamCreateWrapperTests
         fileSystem.Directory.CreateDirectory(subDir3);
 
         var sut = new ReportedCleanupStreamCreateWrapper(fileSystem, existingDir, createStream);
-        sut.GetStreamFor(fileSystem, file2);
-        sut.GetStreamFor(fileSystem, file3);
+        sut.GetStreamFor(fileSystem, file2, write: true);
+        sut.GetStreamFor(fileSystem, file3, write: true);
         sut.Dispose();
 
         fileSystem.File.Exists(file1).Should().BeFalse();

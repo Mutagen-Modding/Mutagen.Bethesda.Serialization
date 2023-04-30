@@ -73,8 +73,15 @@ public class InterceptionStreamCreator : ICreateStream
         _exporter = exporter;
     }
     
-    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path)
+    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path, bool write)
     {
-        return new InterceptionStream(fileSystem, path, _exporter);
+        if (write)
+        {
+            return new InterceptionStream(fileSystem, path, _exporter);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 }

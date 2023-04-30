@@ -128,18 +128,21 @@ public class MixinGenerator
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
                 sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
-                var pathStreamPassAlong = customization.FilePerRecord 
-                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))), path)" 
-                    : "streamCreator.GetStreamFor(fileSystem, path)";
-                using (var f = sb.Call("await Serialize"))
+                if (customization.FilePerRecord)
                 {
-                    f.AddPassArg("converterBootstrap");
-                    f.AddPassArg("item");
-                    f.Add($"stream: {pathStreamPassAlong}");
-                    f.AddPassArg("workDropoff");
-                    f.AddPassArg("fileSystem");
-                    f.AddPassArg("streamCreator");
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension)), write: true);");
                 }
+                else
+                {
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, path, write: true);");
+                }
+                var pathStreamPassAlong = customization.FilePerRecord 
+                    ? "new StreamPackage(streamPassIn, path)" 
+                    : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path))";
+                sb.AppendLine($"var streamPackage = {pathStreamPassAlong};");
+                sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPackage);");
+                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
+                sb.AppendLine($"WriterKernel.Finalize(streamPackage, writer);");
             }
             sb.AppendLine();
 
@@ -156,7 +159,6 @@ public class MixinGenerator
                 }
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                     sb.AppendLine($"var streamPassIn = {StreamPassAlong(customization, "stream")};");
                     sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
                     sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
@@ -184,10 +186,19 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                if (customization.FilePerRecord)
+                {
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension)), write: false);");
+                }
+                else
+                {
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, path, write: false);");
+                }
                 var pathStreamPassAlong = customization.FilePerRecord 
-                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))), path)" 
-                    : "streamCreator.GetStreamFor(fileSystem, path)";
+                    ? "new StreamPackage(streamPassIn, path)" 
+                    : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path))";
                 using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
                 {
                     c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
@@ -231,7 +242,6 @@ public class MixinGenerator
 
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                     using (var c = sb.Call(
                                $"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
                     {
@@ -273,12 +283,19 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                if (customization.FilePerRecord)
+                {
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), write: false);");
+                }
+                else
+                {
+                    sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, path, write: false);");
+                }
                 var pathStreamPassAlong = customization.FilePerRecord 
-                    ? "new StreamPackage(streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\")), path)" 
-                    : "new StreamPackage(streamCreator.GetStreamFor(fileSystem, path), Path.GetDirectoryName(path)!)";
+                    ? "new StreamPackage(streamPassIn, path)" 
+                    : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path)!)";
                 using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
                 {
                     c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
@@ -319,7 +336,6 @@ public class MixinGenerator
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                    sb.AppendLine($"workDropoff ??= InlineWorkDropoff.Instance;");
                     using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
                     {
                         c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");

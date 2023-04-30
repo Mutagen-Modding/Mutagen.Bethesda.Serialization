@@ -43,7 +43,7 @@ public static partial class SerializationHelper
                 metaData.FileSystem.Directory.CreateDirectory(dir);
 
                 var recordPath = Path.Combine(dir, fileName);
-                using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, recordPath);
+                using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, recordPath, write: true);
                 var recordStreamPackage = streamPackage with { Stream = stream, Path = dir };
                 var recordWriter = kernel.GetNewObject(recordStreamPackage);
                 await itemWriter(recordWriter, recordGetter.Item, kernel, metaData);

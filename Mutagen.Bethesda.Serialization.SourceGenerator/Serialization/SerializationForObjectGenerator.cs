@@ -135,7 +135,7 @@ public class SerializationForObjectGenerator
             {
                 args.Add($"ModKey modKey");
                 args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release release");
-                args.Add($"IWorkDropoff workDropoff");
+                args.Add($"IWorkDropoff? workDropoff");
                 args.Add($"IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
             }
@@ -206,7 +206,7 @@ public class SerializationForObjectGenerator
             args.Add($"{obj.Setter} obj");
             if (isMod)
             {
-                args.Add("IWorkDropoff workDropoff");
+                args.Add("IWorkDropoff? workDropoff");
                 args.Add("IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
             }
@@ -415,7 +415,7 @@ public class SerializationForObjectGenerator
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
             if (isMod)
             {
-                args.Add("IWorkDropoff workDropoff");
+                args.Add("IWorkDropoff? workDropoff");
                 args.Add("IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
             }

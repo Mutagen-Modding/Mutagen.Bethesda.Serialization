@@ -204,7 +204,15 @@ public abstract class ASerializationTests
             fileSystem,
             tmp.Dir,
             skyrimMod,
-            (m, s, c) => Serialize(m, s.Stream, c),
-            (s, c) => Deserialize(s.Stream, c));
+            async (m, d, c) =>
+            {
+                using var s = File.Create(Path.Combine(d, "Mod.esp"));
+                await Serialize(m, s, c);
+            },
+            async (d, c) =>
+            {
+                using var s = File.OpenRead(Path.Combine(d, "Mod.esp"));
+                return await Deserialize(s, c);
+            });
     }
 }
