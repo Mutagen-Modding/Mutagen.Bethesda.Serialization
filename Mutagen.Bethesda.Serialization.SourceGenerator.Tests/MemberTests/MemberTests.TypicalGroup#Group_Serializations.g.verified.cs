@@ -51,7 +51,9 @@ internal static class Group_Serialization
         where T : class, IMajorRecordInternal
     {
         if (item == null) return false;
-        return true;
+        if (!EqualityComparer<int>.Default.Equals(item.SomeInt, default(int))) return true;
+        if (!EqualityComparer<int>.Default.Equals(item.SomeInt2, default(int))) return true;
+        return false;
     }
 
     public static async Task DeserializeSingleFieldInto<TReadObject, T>(

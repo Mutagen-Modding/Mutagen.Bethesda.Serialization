@@ -53,7 +53,7 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
     {
     }
 
-    public bool HasVariableHasSerialize => false;
+    public bool HasVariableHasSerialize => true;
 
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
@@ -66,7 +66,6 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
     }
 
     public void GenerateForDeserializeSingleFieldInto(
