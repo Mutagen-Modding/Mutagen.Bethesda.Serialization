@@ -76,6 +76,11 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        return $"default({field})";
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,

@@ -7,7 +7,7 @@ public class XYSubBlock
 {
     public short BlockNumberX { get; set; }
     public short BlockNumberY { get; set; }
-    public string SomeValue { get; set; }
+    public string SomeValue { get; set; } = string.Empty;
     public List<TestMajorRecord> Records { get; set; } = new();
     
     protected bool Equals(XYSubBlock other)
@@ -31,7 +31,7 @@ public class XYBlock
 {
     public short BlockNumberX { get; set; }
     public short BlockNumberY { get; set; }
-    public string SomeValue { get; set; }
+    public string SomeValue { get; set; } = string.Empty;
     public List<XYSubBlock> SubBlocks { get; set; } = new();
     
     protected bool Equals(XYBlock other)

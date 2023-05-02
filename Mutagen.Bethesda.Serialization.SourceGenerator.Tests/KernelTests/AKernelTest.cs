@@ -37,7 +37,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         return ret;
     }
 
-    private T GetReadResults<T>(
+    private T? GetReadResults<T>(
         string str,
         string nickname,
         Func<TReaderKernel, TReader, T> toDo)
@@ -45,7 +45,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var kernel = new TReaderKernel();
         var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
         var readerObj = kernel.GetNewObject(stream);
-        T obj = default;
+        T? obj = default;
         bool found = false;
         while (kernel.TryGetNextField(readerObj, out var name))
         {
@@ -76,14 +76,14 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         Task Check(TReaderKernel kernel, TReader reader);
     }
 
-    record ReadResults<T>(string Name, Func<TReaderKernel, TReader, Task<T>> Reader, T Expected) : IReadResults
+    record ReadResults<T>(string Name, Func<TReaderKernel, TReader, Task<T?>> Reader, T? Expected) : IReadResults
     {
         public async Task Check(TReaderKernel kernel, TReader reader)
         {
             var val = await Reader(kernel, reader);
             if (Expected is IReadOnlyList<object> e)
             {
-                var list = (IReadOnlyList<object>)val;
+                var list = (IReadOnlyList<object>)val!;
                 list.Should().Equal(e);
             }
             else if (Expected is ReadOnlyMemorySlice<byte> bytes)
@@ -161,7 +161,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     private async Task DoPrimitiveTest<T>(
         string nickName,
         Action<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, string?, T?, T?> writeCallback,
-        Func<TReaderKernel, TReader, T> readCallback,
+        Func<TReaderKernel, TReader, T?> readCallback,
         Func<T?, T?, bool> equality,
         T nonDefaultToTest,
         params T[] items)
@@ -529,7 +529,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     {
         var str = await GetResults(async (k, w) =>
         {
-            await k.WriteLoqui<int>(w, "Loqui", 4, null, async (w, o, k, m) =>
+            await k.WriteLoqui<int>(w, "Loqui", 4, null!, async (w, o, k, m) =>
             {
                 k.WriteType(w, typeof(NpcLevel));
             });
@@ -569,7 +569,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                     kernel.StartListSection(reader);
                     while (kernel.TryHasNextItem(reader))
                     {
-                        var item = kernel.ReadString(reader);
+                        var item = kernel.ReadString(reader).StripNull(string.Empty);
                         ret.Add(item);
                     }
 
@@ -629,7 +629,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                                         i = k.ReadInt32(r);
                                         break;
                                     case "String":
-                                        s = k.ReadString(r);
+                                        s = k.ReadString(r).StripNull(nameof(String));
                                         break;
                                     default:
                                         throw new DataMisalignedException();
@@ -638,7 +638,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
                             return new SomeClass(i, s);
                         });
-                        ret.Add(item);
+                        if (item != null)
+                        {
+                            ret.Add(item);
+                        }
                     }
 
                     kernel.EndListSection(reader);
@@ -691,7 +694,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                         int? k = kernel.ReadInt32(reader);
                         kernel.EndDictionaryKey(reader);
                         kernel.StartDictionaryValue(reader);
-                        string val = kernel.ReadString(reader);
+                        string val = kernel.ReadString(reader).StripNull(string.Empty);
                         kernel.EndDictionaryValue(reader);
                         kernel.EndDictionaryItem(reader);
                         ret.Add(new SomeClass(k, val));
@@ -837,7 +840,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                             switch (n)
                             {
                                 case nameof(TestGroup.SomeGroupField):
-                                    o.SomeGroupField = (bool)k.ReadBool(r);
+                                    o.SomeGroupField = k.ReadBool(r).StripNull(nameof(TestGroup.SomeGroupField));
                                     break;
                                 default:
                                     throw new NotImplementedException();
@@ -855,7 +858,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                                         fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
                                         break;
                                     case "String":
-                                        s = k.ReadString(r);
+                                        s = k.ReadString(r).StripNull(nameof(String));
                                         break;
                                     default:
                                         throw new DataMisalignedException();
@@ -915,7 +918,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var g = new TestGroup();
         await SerializationHelper.ReadFilePerRecord<TReaderKernel, TReader, TestGroup, TestMajorRecord>(
-            new StreamPackage(null, existingDir),
+            new StreamPackage(null!, existingDir),
             g,
             "MyGroup",
             meta,
@@ -925,7 +928,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(TestGroup.SomeGroupField):
-                        o.SomeGroupField = (bool)k.ReadBool(r);
+                        o.SomeGroupField = k.ReadBool(r).StripNull(nameof(TestGroup.SomeGroupField));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -944,7 +947,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                             fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
                             break;
                         case "String":
-                            s = k.ReadString(r);
+                            s = k.ReadString(r).StripNull(nameof(String));
                             break;
                         case "EditorID":
                             edid = k.ReadString(r);
@@ -1051,7 +1054,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(TestBlockGroup.SomeValue):
-                        o.SomeValue = (int)k.ReadInt32(r);
+                        o.SomeValue = k.ReadInt32(r).StripNull(nameof(TestBlockGroup.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1066,7 +1069,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(Block.SomeValue):
-                        o.SomeValue = (string)k.ReadString(r);
+                        o.SomeValue = k.ReadString(r).StripNull(nameof(Block.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1082,7 +1085,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(SubBlock.SomeValue):
-                        o.SomeValue = (string)k.ReadString(r);
+                        o.SomeValue = k.ReadString(r).StripNull(nameof(SubBlock.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1105,7 +1108,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                             fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
                             break;
                         case "String":
-                            s = k.ReadString(r);
+                            s = k.ReadString(r).StripNull(nameof(String));
                             break;
                         default:
                             throw new DataMisalignedException();
@@ -1226,7 +1229,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(TestXYBlockGroup.SomeValue):
-                        o.SomeValue = (int)k.ReadInt32(r);
+                        o.SomeValue = k.ReadInt32(r).StripNull(nameof(TestXYBlockGroup.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1245,7 +1248,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                             fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
                             break;
                         case nameof(TestXYRecord.String):
-                            s = k.ReadString(r);
+                            s = k.ReadString(r).StripNull(nameof(TestXYRecord.String));
                             break;
                         case nameof(TestXYRecord.SomeValue):
                             i = k.ReadInt32(r) ?? 0;
@@ -1262,7 +1265,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(XYBlock.SomeValue):
-                        o.SomeValue = (string)k.ReadString(r);
+                        o.SomeValue = k.ReadString(r).StripNull(nameof(XYBlock.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1279,7 +1282,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 switch (n)
                 {
                     case nameof(XYSubBlock.SomeValue):
-                        o.SomeValue = (string)k.ReadString(r);
+                        o.SomeValue = k.ReadString(r).StripNull(nameof(XYSubBlock.SomeValue));
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1303,7 +1306,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                             fk = k.ReadFormKey(r) ?? throw new NullReferenceException();
                             break;
                         case "String":
-                            s = k.ReadString(r);
+                            s =  SerializationHelper.StripNull(k.ReadString(r), nameof(String));
                             break;
                         default:
                             throw new DataMisalignedException();

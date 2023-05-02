@@ -80,6 +80,11 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        return $"default({field})";
+    }
+
     public virtual void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,

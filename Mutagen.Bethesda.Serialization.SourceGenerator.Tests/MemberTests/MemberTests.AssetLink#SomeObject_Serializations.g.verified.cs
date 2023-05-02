@@ -118,67 +118,67 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeAssetLink":
-                obj.SomeAssetLink = kernel.ReadString(reader);
+                obj.SomeAssetLink = kernel.ReadString(reader).StripNull(name: "SomeAssetLink");
                 break;
             case "SomeAssetLink2":
-                obj.SomeAssetLink2 = kernel.ReadString(reader);
+                obj.SomeAssetLink2 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink2");
                 break;
             case "SomeAssetLink3":
-                obj.SomeAssetLink3 = kernel.ReadString(reader);
+                obj.SomeAssetLink3 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink3");
                 break;
             case "SomeAssetLink4":
-                obj.SomeAssetLink4 = kernel.ReadString(reader);
+                obj.SomeAssetLink4 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink4");
                 break;
             case "SomeAssetLink5":
-                obj.SomeAssetLink5 = kernel.ReadString(reader);
+                obj.SomeAssetLink5 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink5");
                 break;
             case "SomeAssetLink6":
-                obj.SomeAssetLink6 = kernel.ReadString(reader);
+                obj.SomeAssetLink6 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink6");
                 break;
             case "SomeAssetLink7":
-                obj.SomeAssetLink7 = kernel.ReadString(reader);
+                obj.SomeAssetLink7 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink7");
                 break;
             case "SomeAssetLink8":
-                obj.SomeAssetLink8 = kernel.ReadString(reader);
+                obj.SomeAssetLink8 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink8");
                 break;
             case "SomeAssetLink9":
-                obj.SomeAssetLink9 = kernel.ReadString(reader);
+                obj.SomeAssetLink9 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink9");
                 break;
             case "SomeAssetLink10":
-                obj.SomeAssetLink10 = kernel.ReadString(reader);
+                obj.SomeAssetLink10 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink10");
                 break;
             case "SomeAssetLink11":
-                obj.SomeAssetLink11 = kernel.ReadString(reader);
+                obj.SomeAssetLink11 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink11");
                 break;
             case "SomeAssetLink12":
-                obj.SomeAssetLink12 = kernel.ReadString(reader);
+                obj.SomeAssetLink12 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink12");
                 break;
             case "SomeAssetLink13":
-                obj.SomeAssetLink13 = kernel.ReadString(reader);
+                obj.SomeAssetLink13 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink13");
                 break;
             case "SomeAssetLink14":
-                obj.SomeAssetLink14 = kernel.ReadString(reader);
+                obj.SomeAssetLink14 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink14");
                 break;
             case "SomeAssetLink15":
-                obj.SomeAssetLink15 = kernel.ReadString(reader);
+                obj.SomeAssetLink15 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink15");
                 break;
             case "SomeAssetLink16":
-                obj.SomeAssetLink16 = kernel.ReadString(reader);
+                obj.SomeAssetLink16 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink16");
                 break;
             case "SomeAssetLink17":
-                obj.SomeAssetLink17 = kernel.ReadString(reader);
+                obj.SomeAssetLink17 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink17");
                 break;
             case "SomeAssetLink18":
-                obj.SomeAssetLink18 = kernel.ReadString(reader);
+                obj.SomeAssetLink18 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink18");
                 break;
             case "SomeAssetLink19":
-                obj.SomeAssetLink19 = kernel.ReadString(reader);
+                obj.SomeAssetLink19 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink19");
                 break;
             case "SomeAssetLink20":
-                obj.SomeAssetLink20 = kernel.ReadString(reader);
+                obj.SomeAssetLink20 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink20");
                 break;
             case "SomeAssetLink21":
-                obj.SomeAssetLink21 = kernel.ReadString(reader);
+                obj.SomeAssetLink21 = kernel.ReadString(reader).StripNull(name: "SomeAssetLink21");
                 break;
             default:
                 break;

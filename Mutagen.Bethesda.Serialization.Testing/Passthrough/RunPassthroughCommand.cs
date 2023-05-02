@@ -5,8 +5,8 @@ namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
 [Verb("run-passthrough")]
 public class RunPassthroughCommand
 {
-    [Option('p', "Path", Required = true)]
-    public string Path { get; set; }
+    [Option('p', "Path", Required = true)] 
+    public string Path { get; set; } = string.Empty;
 
     [Option('g', "GameRelease", Required = true)]
     public GameRelease GameRelease { get; set; }

@@ -90,19 +90,19 @@ internal static class SomeObject_Serialization
                 obj.SomeFormKey.SetTo(kernel.ReadFormKey(reader));
                 break;
             case "SomeFormKey2":
-                obj.SomeFormKey2.SetTo(SerializationHelper.StripNull(kernel.ReadFormKey(reader), "SomeFormKey2"));
+                obj.SomeFormKey2.SetTo(kernel.ReadFormKey(reader).StripNull("SomeFormKey2"));
                 break;
             case "SomeFormKey3":
                 obj.SomeFormKey3.SetTo(kernel.ReadFormKey(reader));
                 break;
             case "SomeFormKey4":
-                obj.SomeFormKey4.SetTo(SerializationHelper.StripNull(kernel.ReadFormKey(reader), "SomeFormKey4"));
+                obj.SomeFormKey4.SetTo(kernel.ReadFormKey(reader).StripNull("SomeFormKey4"));
                 break;
             case "SomeFormKey5":
                 obj.SomeFormKey5.SetTo(kernel.ReadFormKey(reader));
                 break;
             case "SomeFormKey6":
-                obj.SomeFormKey6.SetTo(SerializationHelper.StripNull(kernel.ReadFormKey(reader), "SomeFormKey6"));
+                obj.SomeFormKey6.SetTo(kernel.ReadFormKey(reader).StripNull("SomeFormKey6"));
                 break;
             default:
                 break;

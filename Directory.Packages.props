@@ -38,10 +38,10 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>2.56.0.1-dev</Version>
+      <Version>2.57.0.1-dev</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>2.56.0.1-dev</Version>
+      <Version>2.57.0.1-dev</Version>
     </PackageVersion>
     <PackageVersion Include="NuGetizer" Version="0.9.5">
       <PrivateAssets>all</PrivateAssets>

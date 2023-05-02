@@ -2,12 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPackable>true</IsPackable>
-        <WarningsAsErrors>nullable</WarningsAsErrors>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Authors>Noggog</Authors>
         <Company>Mutagen</Company>
         <Product>Mutagen</Product>

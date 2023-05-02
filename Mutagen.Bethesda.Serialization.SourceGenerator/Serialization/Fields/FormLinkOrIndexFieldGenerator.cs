@@ -63,7 +63,12 @@ public class FormLinkOrIndexFieldGenerator : ISerializationForFieldGenerator
             c.Add(kernelAccessor);
         }
     }
-    
+
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,

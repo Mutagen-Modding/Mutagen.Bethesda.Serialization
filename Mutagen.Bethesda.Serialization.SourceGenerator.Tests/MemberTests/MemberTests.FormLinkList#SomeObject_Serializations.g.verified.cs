@@ -100,7 +100,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = SerializationHelper.StripNull(kernel.ReadFormKey(reader), "SomeFormKeys").ToLink<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>();
+                    var item = kernel.ReadFormKey(reader).StripNull("SomeFormKeys").ToLink<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>();
                     obj.SomeFormKeys.Add(item);
                 }
                 kernel.EndListSection(reader);
@@ -109,7 +109,7 @@ internal static class SomeObject_Serialization
                 kernel.StartListSection(reader);
                 while (kernel.TryHasNextItem(reader))
                 {
-                    var item = SerializationHelper.StripNull(kernel.ReadFormKey(reader), "SomeFormKeys2").ToLink<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>();
+                    var item = kernel.ReadFormKey(reader).StripNull("SomeFormKeys2").ToLink<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter>();
                     obj.SomeFormKeys2.Add(item);
                 }
                 kernel.EndListSection(reader);

@@ -114,6 +114,11 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public abstract void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,

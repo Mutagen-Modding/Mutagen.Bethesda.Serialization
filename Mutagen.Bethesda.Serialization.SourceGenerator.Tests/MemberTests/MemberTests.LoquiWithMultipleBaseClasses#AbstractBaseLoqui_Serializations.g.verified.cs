@@ -64,7 +64,7 @@ internal static class AbstractBaseLoqui_Serialization
     }
 
     public static bool HasSerializationItemsWithCheck(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.IAbstractBaseLoquiGetter? item,
         SerializationMetaData metaData)
     {
         return true;

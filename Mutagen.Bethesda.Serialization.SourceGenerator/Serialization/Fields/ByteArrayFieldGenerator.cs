@@ -101,6 +101,11 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
 
     public string DefaultString(ITypeSymbol? field) => $"default(byte[]{(field != null && field.IsNullable() ? "?" : null)})";
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,

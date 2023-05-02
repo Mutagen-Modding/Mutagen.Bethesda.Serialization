@@ -154,7 +154,7 @@ internal static class TestMod_Serialization
             groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
             blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
             subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-            majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeGroup"),
+            majorReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeGroup"),
             groupSetter: static (b, sub) =>
             {
                 b.Items.SetTo(sub);
@@ -178,7 +178,7 @@ internal static class TestMod_Serialization
             groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
             blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
             subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-            majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeGroup2"),
+            majorReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeGroup2"),
             groupSetter: static (b, sub) =>
             {
                 b.Items.SetTo(sub);
@@ -202,7 +202,7 @@ internal static class TestMod_Serialization
             groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ListGroup_Serialization.DeserializeSingleFieldInto<TReadObject, CellBlock>(r, k, i, m, n),
             blockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
             subBlockReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.CellSubBlock_Serialization.DeserializeSingleFieldInto<TReadObject>(r, k, i, m, n),
-            majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeGroup3"),
+            majorReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeGroup3"),
             groupSetter: static (b, sub) =>
             {
                 b.Items.SetTo(sub);

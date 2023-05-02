@@ -109,7 +109,7 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
     public override GameRelease GameRelease { get; }
     public override bool CanUseLocalization { get; }
     public override bool UsingLocalization { get; set; }
-    public ILoquiRegistration Registration { get; }
+    public ILoquiRegistration Registration => throw new NotImplementedException();
     public void Print(StructuredStringBuilder sb, string? name = null)
     {
         throw new NotImplementedException();

@@ -155,21 +155,21 @@ internal static class SomeObject_Serialization
             list: obj.SomeList,
             metaData: metaData,
             kernel: kernel,
-            itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeList")));
+            itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeList")));
         tasks.Add(SerializationHelper.ReadMajorRecordList<ISerializationReaderKernel<TReadObject>, TReadObject, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord>(
             streamPackage: reader.StreamPackage,
             fieldName: "SomeList2",
             list: obj.SomeList2,
             metaData: metaData,
             kernel: kernel,
-            itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeList2")));
+            itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeList2")));
         tasks.Add(SerializationHelper.ReadMajorRecordList<ISerializationReaderKernel<TReadObject>, TReadObject, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord>(
             streamPackage: reader.StreamPackage,
             fieldName: "SomeList3",
             list: obj.SomeList3,
             metaData: metaData,
             kernel: kernel,
-            itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>), "SomeList3")));
+            itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeList3")));
         await Task.WhenAll(tasks.ToArray());
     }
 

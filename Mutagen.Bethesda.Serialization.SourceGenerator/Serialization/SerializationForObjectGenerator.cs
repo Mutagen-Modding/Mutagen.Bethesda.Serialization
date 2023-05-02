@@ -577,7 +577,7 @@ public class SerializationForObjectGenerator
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Setter);
         using (var args = sb.Function($"public static bool HasSerializationItemsWithCheck{generics.WriterGenericsString(forHas: true)}"))
         {
-            args.Add($"{typeSet.Getter} item");
+            args.Add($"{typeSet.Getter}? item");
             if (!isMod)
             {
                 args.Add("SerializationMetaData metaData");

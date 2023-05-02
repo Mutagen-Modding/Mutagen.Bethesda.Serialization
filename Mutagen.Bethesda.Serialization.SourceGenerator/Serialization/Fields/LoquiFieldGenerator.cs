@@ -122,6 +122,11 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        return $"default({field})";
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
@@ -182,6 +187,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         else
         {
             sb.AppendLine($"var tmp{fieldName} = await {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+            sb.AppendLine($"if (tmp{fieldName} == null) return;");
             sb.AppendLine($"{fieldAccessor}.DeepCopyIn(tmp{fieldName});");
         }
     }

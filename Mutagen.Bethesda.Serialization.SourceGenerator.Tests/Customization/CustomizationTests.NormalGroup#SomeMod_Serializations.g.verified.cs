@@ -90,7 +90,7 @@ internal static class SomeMod_Serialization
                     metaData: metaData,
                     kernel: kernel,
                     groupReader: static (r, i, k, m, n) => <global namespace>.Group_Serialization.DeserializeSingleFieldInto<TReadObject, SomeMajorRecord>(r, k, i, m, n),
-                    itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>));
+                    itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("Group"));
                 break;
             default:
                 break;

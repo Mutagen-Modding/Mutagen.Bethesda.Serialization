@@ -314,13 +314,13 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
             f.Add(
                 $"groupReader: static (r, i, k, m, n) => {fieldSerializationNames.DeserializationSingleFieldIntoCall()}<TReadObject, {subNames.Direct}>(r, k, i, m, n)");
             f.Add(
-                $"objReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {naming.DeserializationCall()}<TReadObject>), \"{fieldName}\")");
+                $"objReader: static async (r, k, m) => (await k.ReadLoqui(r, m, {naming.DeserializationCall()}<TReadObject>)).StripNull(\"{fieldName}\")");
             f.Add(
                 $"blockReader: static (r, i, k, m, n) => {blockInfo.Block.SerializationItems.DeserializationSingleFieldIntoCall()}<TReadObject>(r, k, i, m, n)");
             f.Add(
                 $"subBlockReader: static (r, i, k, m, n) => {blockInfo.SubBlock.SerializationItems.DeserializationSingleFieldIntoCall()}<TReadObject>(r, k, i, m, n)");
             f.Add(
-                $"majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
+                $"majorReader: static async (r, k, m) => (await k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>)).StripNull(\"{fieldName}\")");
             f.Add(subSb =>
             {
                 subSb.AppendLine("groupSetter: static (b, items) =>");

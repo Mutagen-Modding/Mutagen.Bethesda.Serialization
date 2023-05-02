@@ -80,6 +80,11 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
@@ -114,12 +119,12 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         var named = (INamedTypeSymbol)field;
         if (insideCollection)
         {
-            sb.AppendLine($"var s = {kernelAccessor}.ReadString({readerAccessor});");
-            sb.AppendLine($"{fieldAccessor}s == null ? null : new AssetLink<{named.TypeArguments[0]}>(s);");
+            sb.AppendLine($"{fieldAccessor} new AssetLink<{named.TypeArguments[0]}>({kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\"));");
         }
         else
         {
-            using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadString", linePerArgument: false))
+            using (var c = sb.Call($"{fieldAccessor} = {kernelAccessor}.ReadString", linePerArgument: false,
+                       suffixLine: $".StripNull(name: \"{fieldName}\")"))
             {
                 c.Add(readerAccessor);
             }

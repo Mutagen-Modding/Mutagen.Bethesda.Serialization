@@ -5,7 +5,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 public class SubBlock
 {
     public int BlockNumber { get; set; }
-    public string SomeValue { get; set; }
+    public string SomeValue { get; set; } = string.Empty;
     public List<TestMajorRecord> Records { get; set; } = new();
     
     protected bool Equals(SubBlock other)
@@ -25,7 +25,7 @@ public class SubBlock
 public class Block
 {
     public int BlockNumber { get; set; }
-    public string SomeValue { get; set; }
+    public string SomeValue { get; set; }= string.Empty;
     public List<SubBlock> SubBlocks { get; set; } = new();
     
     protected bool Equals(Block other)

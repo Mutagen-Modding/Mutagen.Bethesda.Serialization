@@ -81,6 +81,14 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         }
     }
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        if (field is not INamedTypeSymbol namedTypeSymbol) return null;
+        var arg = namedTypeSymbol.TypeArguments[0];
+        var n = field.Name.Contains("Nullable");
+        return $"FormLink{(n ? "Nullable" : null)}<{arg}>.Null";
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
@@ -134,14 +142,14 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
             }
             else
             {
-                sb.AppendLine($"{fieldAccessor}SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\").ToLink<{named.TypeArguments[0]}>();");
+                sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadFormKey({readerAccessor}).StripNull(\"{fieldName}\").ToLink<{named.TypeArguments[0]}>();");
             }
         }
         else
         {
             if (nullable)
             {
-                sb.AppendLine($"{fieldAccessor}.SetTo(SerializationHelper.StripNull({kernelAccessor}.ReadFormKey({readerAccessor}), \"{fieldName}\"));");
+                sb.AppendLine($"{fieldAccessor}.SetTo({kernelAccessor}.ReadFormKey({readerAccessor}).StripNull(\"{fieldName}\"));");
             }
             else
             {

@@ -31,6 +31,7 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
     public Stream GetStreamFor(IFileSystem fileSystem, FilePath path, bool write)
     {
         MarkPathWrittenTo(path);
+        path.Directory?.Create(fileSystem);
         return _wrapped.GetStreamFor(fileSystem, path, write);
     }
 

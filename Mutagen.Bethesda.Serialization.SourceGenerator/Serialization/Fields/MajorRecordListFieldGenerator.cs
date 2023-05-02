@@ -101,7 +101,7 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add(
-                $"itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
+                $"itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, {subSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)).StripNull(\"{fieldName}\")");
         }
     }
 }

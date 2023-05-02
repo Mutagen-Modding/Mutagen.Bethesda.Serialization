@@ -11,7 +11,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
     private readonly Func<IOwned<SerializationFieldGenerator>> _forFieldGenerator;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
     
-    public GenderedTypeFieldGenerator(Func<IOwned<SerializationFieldGenerator>> forFieldGenerator)
+    public GenderedTypeFieldGenerator(
+        Func<IOwned<SerializationFieldGenerator>> forFieldGenerator)
     {
         _forFieldGenerator = forFieldGenerator;
     }
@@ -128,6 +129,11 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => true;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(
         CompilationUnit compilation,
         LoquiTypeSet obj,
@@ -153,24 +159,35 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             return;
         }
 
-        _forFieldGenerator().Value.GenerateHasSerializeForField(
-            compilation: compilation,
-            obj: obj, 
-            fieldType: subType,
-            fieldName: "Male",
-            fieldAccessor: $"{fieldAccessor}.Male",
-            defaultValueAccessor: null,
-            sb: sb,
-            cancel: cancel);
-        _forFieldGenerator().Value.GenerateHasSerializeForField(
-            compilation: compilation,
-            obj: obj, 
-            fieldType: subType,
-            fieldName: "Female", 
-            fieldAccessor: $"{fieldAccessor}.Female",
-            defaultValueAccessor: null,
-            sb: sb,
-            cancel: cancel);
+        var nullable = field.IsNullable();
+
+        if (nullable)
+        {
+            sb.AppendLine($"if ({fieldAccessor} is {{ }} {fieldName}Item)");
+            fieldAccessor = $"{fieldName}Item";
+        }
+
+        using (sb.CurlyBrace(doIt: nullable))
+        {
+            _forFieldGenerator().Value.GenerateHasSerializeForField(
+                compilation: compilation,
+                obj: obj, 
+                fieldType: subType,
+                fieldName: "Male",
+                fieldAccessor: $"{fieldAccessor}.Male",
+                defaultValueAccessor: null,
+                sb: sb,
+                cancel: cancel);
+            _forFieldGenerator().Value.GenerateHasSerializeForField(
+                compilation: compilation,
+                obj: obj, 
+                fieldType: subType,
+                fieldName: "Female", 
+                fieldAccessor: $"{fieldAccessor}.Female",
+                defaultValueAccessor: null,
+                sb: sb,
+                cancel: cancel);
+        }
     }
 
     public void GenerateForDeserializeSingleFieldInto(
@@ -201,45 +218,57 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             return;
         }
         
-        fieldAccessor = $"{fieldAccessor}{(insideCollection ? null : " = ")}";
-
-        using (var f = sb.Call(
-                   $"{fieldAccessor}await {kernelAccessor}.ReadLoqui"))
-        {
-            f.Add($"reader: {readerAccessor}");
-            f.Add($"serializationMetaData: {metaAccessor}");
-            f.Add(subSb =>
+        var subGen = _forFieldGenerator().Value.GetGenerator(obj, compilation, subType, null);
+        var def = subGen?.GetDefault(subType) ?? $"default({subType})";
+        
+        Utility.WrapStripNull(
+            field,
+            fieldName,
+            fieldAccessor,
+            readerAccessor,
+            kernelAccessor,
+            insideCollection,
+            sb,
+            (s, t, k, r, setAccessor) =>
             {
-                subSb.AppendLine($"readCall: static (r, k, m) =>");
-                using (subSb.CurlyBrace())
+                using (var f = s.Call(
+                           $"{setAccessor}await {k}.ReadLoqui"))
                 {
-                    using (var c = subSb.Call($"return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>"))
+                    f.Add($"reader: {r}");
+                    f.Add($"serializationMetaData: {metaAccessor}");
+                    f.Add(subSb =>
                     {
-                        c.Add($"reader: r");
-                        c.Add($"kernel: k");
-                        c.Add($"metaData: m");
-                        c.Add($"ret: new GenderedItem<{subType}>(default({subType}), default({subType}))");
-                        c.Add(readerSb =>
+                        subSb.AppendLine($"readCall: static (r, k, m) =>");
+                        using (subSb.CurlyBrace())
                         {
-                            readerSb.AppendLine("itemReader: static async (r2, k2, m2, n) =>");
-                            using (readerSb.CurlyBrace())
+                            using (var c = subSb.Call($"return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, {subType}>"))
                             {
-                                _forFieldGenerator().Value.GenerateDeserializeForField(
-                                    compilation: compilation,
-                                    obj: obj, fieldType: subType,
-                                    readerAccessor: "r2",
-                                    kernelAccessor: "k2",
-                                    metaDataAccessor: "m2",
-                                    fieldName: "n",
-                                    fieldAccessor: $"return ",
-                                    sb: readerSb,
-                                    cancel: cancel);
+                                c.Add($"reader: r");
+                                c.Add($"kernel: k");
+                                c.Add($"metaData: m");
+                                c.Add($"ret: new GenderedItem<{subType}>({def}, {def})");
+                                c.Add(readerSb =>
+                                {
+                                    readerSb.AppendLine("itemReader: static async (r2, k2, m2, n) =>");
+                                    using (readerSb.CurlyBrace())
+                                    {
+                                        _forFieldGenerator().Value.GenerateDeserializeForField(
+                                            compilation: compilation,
+                                            obj: obj, fieldType: subType,
+                                            readerAccessor: "r2",
+                                            kernelAccessor: "k2",
+                                            metaDataAccessor: "m2",
+                                            fieldName: "n",
+                                            fieldAccessor: $"return ",
+                                            sb: readerSb,
+                                            cancel: cancel);
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             });
-        }
     }
 
     public void GenerateForDeserializeSection(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,

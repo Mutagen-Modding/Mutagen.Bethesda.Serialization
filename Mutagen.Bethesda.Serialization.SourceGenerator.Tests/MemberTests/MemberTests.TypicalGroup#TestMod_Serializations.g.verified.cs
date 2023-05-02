@@ -116,7 +116,7 @@ internal static class TestMod_Serialization
                     metaData: metaData,
                     kernel: kernel,
                     groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeSingleFieldInto<TReadObject, TestMajorRecord>(r, k, i, m, n),
-                    itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>));
+                    itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("Group"));
                 break;
             case "SomeGroup2":
                 await SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
@@ -125,7 +125,7 @@ internal static class TestMod_Serialization
                     metaData: metaData,
                     kernel: kernel,
                     groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeSingleFieldInto<TReadObject, TestMajorRecord>(r, k, i, m, n),
-                    itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>));
+                    itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("Group"));
                 break;
             case "SomeGroup3":
                 await SerializationHelper.ReadIntoGroup<ISerializationReaderKernel<TReadObject>, TReadObject, IGroup<TestMajorRecord>, TestMajorRecord>(
@@ -134,7 +134,7 @@ internal static class TestMod_Serialization
                     metaData: metaData,
                     kernel: kernel,
                     groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeSingleFieldInto<TReadObject, TestMajorRecord>(r, k, i, m, n),
-                    itemReader: static (r, k, m) => k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>));
+                    itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("Group"));
                 break;
             default:
                 break;

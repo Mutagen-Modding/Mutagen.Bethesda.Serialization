@@ -112,55 +112,13 @@ internal static class SomeObject_Serialization
         switch (name)
         {
             case "SomeGenderedInt":
-                obj.SomeGenderedInt = await kernel.ReadLoqui(
-                    reader: reader,
-                    serializationMetaData: metaData,
-                    readCall: static (r, k, m) =>
-                    {
-                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
-                            reader: r,
-                            kernel: k,
-                            metaData: m,
-                            ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static async (r2, k2, m2, n) =>
-                            {
-                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
-                            });
-                    });
+                obj.SomeGenderedInt = SerializationHelper.StripNull(await kernel.ReadLoqui(     reader: reader,     serializationMetaData: metaData,     readCall: static (r, k, m) =>     {         return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(             reader: r,             kernel: k,             metaData: m,             ret: new GenderedItem<string>(default(string), default(string)),             itemReader: static async (r2, k2, m2, n) =>             {                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");             });     }), name: "SomeGenderedInt");
                 break;
             case "SomeGenderedInt2":
-                obj.SomeGenderedInt2 = await kernel.ReadLoqui(
-                    reader: reader,
-                    serializationMetaData: metaData,
-                    readCall: static (r, k, m) =>
-                    {
-                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
-                            reader: r,
-                            kernel: k,
-                            metaData: m,
-                            ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static async (r2, k2, m2, n) =>
-                            {
-                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
-                            });
-                    });
+                obj.SomeGenderedInt2 = SerializationHelper.StripNull(await kernel.ReadLoqui(     reader: reader,     serializationMetaData: metaData,     readCall: static (r, k, m) =>     {         return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(             reader: r,             kernel: k,             metaData: m,             ret: new GenderedItem<string>(default(string), default(string)),             itemReader: static async (r2, k2, m2, n) =>             {                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");             });     }), name: "SomeGenderedInt2");
                 break;
             case "SomeGenderedInt3":
-                obj.SomeGenderedInt3 = await kernel.ReadLoqui(
-                    reader: reader,
-                    serializationMetaData: metaData,
-                    readCall: static (r, k, m) =>
-                    {
-                        return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(
-                            reader: r,
-                            kernel: k,
-                            metaData: m,
-                            ret: new GenderedItem<string>(default(string), default(string)),
-                            itemReader: static async (r2, k2, m2, n) =>
-                            {
-                                return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");
-                            });
-                    });
+                obj.SomeGenderedInt3 = SerializationHelper.StripNull(await kernel.ReadLoqui(     reader: reader,     serializationMetaData: metaData,     readCall: static (r, k, m) =>     {         return SerializationHelper.ReadGenderedItem<ISerializationReaderKernel<TReadObject>, TReadObject, string>(             reader: r,             kernel: k,             metaData: m,             ret: new GenderedItem<string>(default(string), default(string)),             itemReader: static async (r2, k2, m2, n) =>             {                 return SerializationHelper.StripNull(k2.ReadString(r2), name: "n");             });     }), name: "SomeGenderedInt3");
                 break;
             default:
                 break;

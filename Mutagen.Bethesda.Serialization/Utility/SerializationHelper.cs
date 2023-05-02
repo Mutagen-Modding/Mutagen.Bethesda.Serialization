@@ -103,7 +103,7 @@ public static partial class SerializationHelper
         return path;
     }
     
-    public static T StripNull<T>(T? item, string name)
+    public static T StripNull<T>(this T? item, string name)
         where T : class
     {
         if (item == null)
@@ -114,7 +114,7 @@ public static partial class SerializationHelper
         return item;
     }
 
-    public static T StripNull<T>(T? item, string name)
+    public static T StripNull<T>(this T? item, string name)
         where T : struct
     {
         if (item == null)

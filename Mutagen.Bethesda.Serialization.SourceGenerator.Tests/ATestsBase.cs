@@ -7,7 +7,7 @@ public abstract class ATestsBase
 {
     protected string GetModWithMember(
         Action<StructuredStringBuilder> memberBuilder,
-        Action<StructuredStringBuilder> outsideBuilder = null)
+        Action<StructuredStringBuilder>? outsideBuilder = null)
     {
         var sb = new StructuredStringBuilder();
         

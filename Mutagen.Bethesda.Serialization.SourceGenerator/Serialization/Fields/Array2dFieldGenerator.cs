@@ -109,6 +109,11 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public bool HasVariableHasSerialize => false;
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(CompilationUnit compilation,
         LoquiTypeSet obj,
         ITypeSymbol field,

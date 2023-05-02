@@ -36,6 +36,8 @@ public interface ISerializationForFieldGenerator
         CancellationToken cancel);
     
     bool HasVariableHasSerialize { get; }
+
+    string? GetDefault(ITypeSymbol field);
     
     void GenerateForHasSerialize(
         CompilationUnit compilation,

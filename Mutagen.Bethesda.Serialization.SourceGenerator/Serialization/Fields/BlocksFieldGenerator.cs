@@ -173,6 +173,11 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
         }
     }
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,
         string fieldAccessor, string? defaultValueAccessor, string metaAccessor, StructuredStringBuilder sb,
         CancellationToken cancel)
@@ -212,7 +217,7 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
             f.Add(
                 $"subBlockReader: static (r, i, k, m, n) => {blockInfo.SubBlock.SerializationItems.DeserializationSingleFieldIntoCall()}<TReadObject>(r, k, i, m, n)");
             f.Add(
-                $"majorReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>), \"{fieldName}\")");
+                $"majorReader: static async (r, k, m) => (await k.ReadLoqui(r, m, {blockInfo.Record.SerializationItems.DeserializationCall(hasInheriting)}<TReadObject>)).StripNull(\"{fieldName}\")");
             f.Add(subSb =>
             {
                 subSb.AppendLine("groupSetter: static (b, sub) =>");

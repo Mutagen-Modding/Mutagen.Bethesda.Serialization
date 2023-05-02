@@ -127,7 +127,7 @@ internal static class SomeMajorRecord_Serialization
             metaData: metaData,
             kernel: kernel,
             groupReader: static (r, i, k, m, n) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Group_Serialization.DeserializeSingleFieldInto<TReadObject, SomeMajorRecord>(r, k, i, m, n),
-            itemReader: static async (r, k, m) => SerializationHelper.StripNull(await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>), "SomeGroup1")));
+            itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeGroup1")));
         await Task.WhenAll(tasks.ToArray());
     }
 

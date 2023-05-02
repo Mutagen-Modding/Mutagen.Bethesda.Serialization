@@ -62,6 +62,11 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
         }
     }
 
+    public string? GetDefault(ITypeSymbol field)
+    {
+        throw new NotImplementedException();
+    }
+
     public void GenerateForHasSerialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field,
         string? fieldName,
         string fieldAccessor, string? defaultValueAccessor, string metaAccessor, StructuredStringBuilder sb,
@@ -96,7 +101,7 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
             f.Add(
-                $"itemReader: static async (r, k, m) => await k.ReadLoqui(r, m, {fieldSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)");
+                $"itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, {fieldSerializationNames.DeserializationCall(hasInheriting)}<TReadObject>)).StripNull(\"{fieldName}\")");
         }
     }
 }
