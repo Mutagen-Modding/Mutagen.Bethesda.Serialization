@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Bootstrapping;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;

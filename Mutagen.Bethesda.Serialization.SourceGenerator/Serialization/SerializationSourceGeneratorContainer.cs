@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Bootstrapping;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using StrongInject;
 

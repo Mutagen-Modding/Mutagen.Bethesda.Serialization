@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Bootstrapping;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 

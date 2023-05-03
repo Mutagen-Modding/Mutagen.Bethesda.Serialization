@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Bootstrapping;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
