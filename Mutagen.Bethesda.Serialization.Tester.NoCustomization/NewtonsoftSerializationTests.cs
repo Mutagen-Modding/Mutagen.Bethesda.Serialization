@@ -1,3 +1,4 @@
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Skyrim;
@@ -11,8 +12,8 @@ public class NewtonsoftSerializationTests : ASerializationTests
         await MutagenJsonConverter.Instance.Serialize(mod, stream, streamCreator: streamCreator);
     }
 
-    public override async Task<ISkyrimModGetter> Deserialize(Stream stream, ICreateStream streamCreator)
+    public override async Task<ISkyrimModGetter> Deserialize(Stream stream, ModKey modKey, GameRelease release, ICreateStream streamCreator)
     {
-        return await MutagenJsonConverter.Instance.Deserialize(stream, ModKey, SkyrimRelease.SkyrimSE, streamCreator: streamCreator);
+        return await MutagenJsonConverter.Instance.Deserialize(stream, modKey, release.ToSkyrimRelease(), streamCreator: streamCreator);
     }
 }

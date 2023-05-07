@@ -1,4 +1,5 @@
 ﻿{
+  "GameRelease": "SkyrimSE",
   "ModHeader": {
     "Stats": {
       "NextFormID": 2050

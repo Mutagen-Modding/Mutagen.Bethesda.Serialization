@@ -1,6 +1,8 @@
+using System.IO.Abstractions;
+using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Streams;
-using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
@@ -123,5 +125,64 @@ public static partial class SerializationHelper
         }
 
         return item.Value;
+    }
+
+    public static void ExtractMeta<TReadUnit>(
+        IFileSystem fileSystem,
+        string modKeyPath,
+        string path,
+        ICreateStream streamCreator,
+        ISerializationReaderKernel<TReadUnit> kernel,
+        out ModKey modKey,
+        out GameRelease release)
+    {
+        if (!fileSystem.File.Exists(path))
+        {
+            throw new FileNotFoundException("Could not find file to parse", path);
+        }
+        
+        ModKey? potentialModKey = null;
+        GameRelease? potentialRelease = null;
+
+        if (ModKey.TryFromFileName(Path.GetFileName(modKeyPath), out var mk))
+        {
+            potentialModKey = mk;
+        }
+
+        using (var stream = streamCreator.GetStreamFor(fileSystem, path, write: false))
+        {
+            var reader = kernel.GetNewObject(new StreamPackage(stream, Path.GetDirectoryName(path)));
+
+            bool keepLooking = true;
+            while (keepLooking && kernel.TryGetNextField(reader, out var name))
+            {
+                switch (name)
+                {
+                    case "ModKey" when potentialModKey != null:
+                        potentialModKey = kernel.ReadModKey(reader);
+                        break;
+                    case "GameRelease":
+                        potentialRelease = kernel.ReadEnum<GameRelease>(reader);
+                        if (potentialModKey != null)
+                        {
+                            keepLooking = false;
+                        }
+                        break;
+                }
+            }
+        }
+
+        if (potentialModKey == null)
+        {
+            throw new MalformedDataException($"Could not locate a {nameof(ModKey)} to use from path: {modKeyPath}");
+        }
+
+        if (potentialRelease == null)
+        {
+            throw new MalformedDataException($"Could not locate a {nameof(GameRelease)} to use from path: {path}");
+        }
+
+        modKey = potentialModKey.Value;
+        release = potentialRelease.Value;
     }
 }

@@ -61,6 +61,8 @@ public class SerializationForObjectGenerator
         
         GenerateUsings(compilation, typeSet, sb, properties);
 
+        GenerateWarningSuppressions(sb);
+
         using (sb.Namespace(typeSet.Setter.ContainingNamespace.ToString()))
         {
         }
@@ -111,6 +113,13 @@ public class SerializationForObjectGenerator
         sb.AppendLine();
         
         compilation.Context.AddSource(objSerializationItems.SerializationHousingFileName, SourceText.From(sb.ToString(), Encoding.UTF8));
+    }
+
+    private void GenerateWarningSuppressions(StructuredStringBuilder sb)
+    {
+        sb.AppendLine("#pragma warning disable CA1998 // No awaits used");
+        sb.AppendLine("#pragma warning disable CS0618 // Obsolete");
+        sb.AppendLine();
     }
 
     private void GenerateDeserialize(
@@ -462,9 +471,16 @@ public class SerializationForObjectGenerator
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
             args.Wheres.Add("where TWriteObject : IContainStreamPackage");
         }
+        
+        var isMod = _modObjectTypeTester.IsModObject(obj.Setter);
 
         using (sb.CurlyBrace())
         {
+            if (isMod)
+            {
+                sb.AppendLine($"kernel.WriteEnum<GameRelease>(writer, \"GameRelease\", item.GameRelease, default, checkDefaults: false);");
+            }
+            
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {

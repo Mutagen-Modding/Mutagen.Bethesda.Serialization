@@ -15,7 +15,7 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 public abstract class ASerializationTests
 {
     public abstract Task Serialize(ISkyrimModGetter mod, Stream stream, ICreateStream createStream);
-    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream, ICreateStream createStream);
+    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream, ModKey modKey, GameRelease release, ICreateStream createStream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
     
     [Theory]
@@ -206,13 +206,13 @@ public abstract class ASerializationTests
             skyrimMod,
             async (m, d, c) =>
             {
-                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, "Mod.esp"), write: true);
+                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, skyrimMod.ModKey.ToString()), write: true);
                 await Serialize(m, s, c);
             },
-            async (d, c) =>
+            async (d, m, c) =>
             {
-                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, "Mod.esp"), write: false);
-                return await Deserialize(s, c);
+                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, m.ToString()), write: false);
+                return await Deserialize(s, skyrimMod.ModKey, skyrimMod.GameRelease, c);
             });
     }
 }

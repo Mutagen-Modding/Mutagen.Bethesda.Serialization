@@ -69,6 +69,7 @@ public class MixinGenerator
         
         var sb = new StructuredStringBuilder();
 
+        var pathOutput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
         var pathInput = customization.FilePerRecord ? "DirectoryPath" : "FilePath";
 
         sb.AppendLines(
@@ -116,7 +117,7 @@ public class MixinGenerator
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
-                args.Add($"{pathInput} path");
+                args.Add($"{pathOutput} path");
                 args.Add("IWorkDropoff? workDropoff = null");
                 args.Add("IFileSystem? fileSystem = null");
                 args.Add("ICreateStream? streamCreator = null");
@@ -126,6 +127,7 @@ public class MixinGenerator
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 if (customization.FilePerRecord)
                 {
+                    sb.AppendLine("path = Path.Combine(path, item.ModKey.ToString());");
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
                 sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
@@ -174,8 +176,6 @@ public class MixinGenerator
                 args.Add($"{pathInput} path");
                 if (isMod)
                 {
-                    args.Add($"ModKey modKey");
-                    args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
@@ -189,6 +189,21 @@ public class MixinGenerator
             {
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                
+                if (isMod)
+                {
+                    using (var c = sb.Call("SerializationHelper.ExtractMeta"))
+                    {
+                        c.AddPassArg("fileSystem");
+                        c.Add($"modKeyPath: path");
+                        c.Add($"path: {(customization.FilePerRecord ? $"Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))" : "path")}");
+                        c.AddPassArg("streamCreator");
+                        c.Add("kernel: ReaderKernel");
+                        c.Add("modKey: out var modKey");
+                        c.Add("release: out var release");
+                    }
+                }
+
                 if (customization.FilePerRecord)
                 {
                     sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension)), write: false);");
@@ -207,7 +222,7 @@ public class MixinGenerator
                     if (isMod)
                     {
                         c.AddPassArg("modKey");
-                        c.AddPassArg("release");
+                        c.Add($"release: release.To{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release()");
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
                         c.AddPassArg("streamCreator");
@@ -269,7 +284,7 @@ public class MixinGenerator
             using (var args = sb.Function($"public static async Task DeserializeInto"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
-                args.Add($"{pathInput} path");
+                args.Add($"{pathOutput} path");
                 args.Add($"{names.Setter} obj");
                 if (isMod)
                 {

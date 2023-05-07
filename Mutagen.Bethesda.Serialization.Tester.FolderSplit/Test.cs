@@ -30,15 +30,12 @@ public class Test : IPassthroughTest
     public async Task<ISkyrimModGetter> JsonDeserialize(
         DirectoryPath dir,
         ModKey modKey,
-        SkyrimRelease release, 
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator)
     {
         return await MutagenJsonConverter.Instance.Deserialize(
-            dir,
-            modKey,
-            release,
+            Path.Combine(dir, modKey.ToString()),
             workDropoff: workDropoff,
             fileSystem: fileSystem,
             streamCreator: streamCreator);
@@ -61,16 +58,13 @@ public class Test : IPassthroughTest
 
     public async Task<ISkyrimModGetter> YamlDeserialize(
         DirectoryPath dir,
-        ModKey modKey, 
-        SkyrimRelease release,
+        ModKey modKey,
         IWorkDropoff workDropoff, 
         IFileSystem fileSystem, 
         ICreateStream streamCreator)
     {
         return await MutagenYamlConverter.Instance.Deserialize(
-            dir,
-            modKey,
-            release,
+            Path.Combine(dir, modKey.ToString()),
             workDropoff: workDropoff,
             fileSystem: fileSystem,
             streamCreator: streamCreator);

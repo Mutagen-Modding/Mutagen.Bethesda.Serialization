@@ -37,13 +37,9 @@ public static class RunPassthrough
         {
             dir = command.TestFolder;
         }
-        
-        var rel = command.GameRelease.ToSkyrimRelease();
 
         Console.WriteLine($"Testing passthrough of {command.Path}");
-        using var mod = SkyrimMod.CreateFromBinaryOverlay(command.Path, rel, fileSystem: fileSystem);
-        
-        var modKey = mod.ModKey;
+        using var mod = SkyrimMod.CreateFromBinaryOverlay(command.Path, command.GameRelease.ToSkyrimRelease(), fileSystem: fileSystem);
 
         IWorkDropoff workDropoff = command.Parallel ? new ParallelWorkDropoff() : new InlineWorkDropoff();
         //IWorkQueue? workQueue = workDropoff as IWorkQueue;
@@ -58,7 +54,7 @@ public static class RunPassthrough
             Path.Combine(dir, "Json"),
             mod,
             (m, s, c) => test.JsonSerialize(m, s, workDropoff, fileSystem, c),
-            (s, c) => test.JsonDeserialize(s, modKey, rel, workDropoff, fileSystem, c));
+            (d, m, c) => test.JsonDeserialize(d, m, workDropoff, fileSystem, c));
 
         Console.WriteLine("Testing YAML");
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
@@ -66,7 +62,7 @@ public static class RunPassthrough
             Path.Combine(dir, "Yaml"),
             mod,
             (m, s, c) => test.YamlSerialize(m, s, workDropoff, fileSystem, c),
-            (s, c) => test.YamlDeserialize(s, modKey, rel, workDropoff, fileSystem, c)
+            (d, m, c) => test.YamlDeserialize(d, m, workDropoff, fileSystem, c)
         );
     }
 }

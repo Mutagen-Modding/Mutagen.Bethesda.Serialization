@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 #nullable enable
 
+#pragma warning disable CA1998 // No awaits used
+#pragma warning disable CS0618 // Obsolete
+
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 internal static class TestMod_Serialization
@@ -42,6 +45,7 @@ internal static class TestMod_Serialization
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
+        kernel.WriteEnum<GameRelease>(writer, "GameRelease", item.GameRelease, default, checkDefaults: false);
         var tasks = new List<Task>();
         tasks.Add(SerializationHelper.AddBlocksToWork<TKernel, TWriteObject, IListGroupGetter<ICellBlockGetter>, ICellBlockGetter, ICellSubBlockGetter, ITestMajorRecordGetter>(
             streamPackage: writer.StreamPackage,

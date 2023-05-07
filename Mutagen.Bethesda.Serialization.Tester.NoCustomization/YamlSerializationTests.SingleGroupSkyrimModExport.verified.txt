@@ -1,4 +1,5 @@
-﻿ModHeader:
+﻿GameRelease: SkyrimSE
+ModHeader:
   Stats:
     NextFormID: 2050
 Npcs:

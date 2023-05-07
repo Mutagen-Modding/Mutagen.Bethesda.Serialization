@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO.Abstractions;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing.Exceptions;
@@ -14,7 +15,7 @@ public static class PassthroughTest
         DirectoryPath dir,
         TModGetter mod,
         Func<TModGetter, DirectoryPath, ICreateStream, Task> serialize,
-        Func<DirectoryPath, ICreateStream, Task<TModGetter>> deserialize)
+        Func<DirectoryPath, ModKey, ICreateStream, Task<TModGetter>> deserialize)
         where TModGetter : IModGetter
     {
         var streamCreator = NormalFileStreamCreator.Instance;
@@ -31,7 +32,7 @@ public static class PassthroughTest
         Console.WriteLine($"Serialization took {sw.ElapsedMilliseconds / 1000d}s");
 
         sw.Restart();
-        TModGetter mod2 = await deserialize(serializedFolder, streamCreator);
+        TModGetter mod2 = await deserialize(serializedFolder, mod.ModKey, streamCreator);
         Console.WriteLine($"Deserialization took {sw.ElapsedMilliseconds / 1000d}s");
         sw.Stop();
         

@@ -17,8 +17,7 @@ public interface IPassthroughTest
         ICreateStream streamCreator);
     Task<ISkyrimModGetter> JsonDeserialize(
         DirectoryPath dir,
-        ModKey modKey, 
-        SkyrimRelease release, 
+        ModKey modKey,
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
@@ -30,8 +29,7 @@ public interface IPassthroughTest
         ICreateStream streamCreator);
     Task<ISkyrimModGetter> YamlDeserialize(
         DirectoryPath dir,
-        ModKey modKey, 
-        SkyrimRelease release, 
+        ModKey modKey,
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
