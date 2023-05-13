@@ -119,7 +119,14 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         var named = (INamedTypeSymbol)field;
         if (insideCollection)
         {
-            sb.AppendLine($"{fieldAccessor} new AssetLink<{named.TypeArguments[0]}>({kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\"));");
+            if (field.IsNullable())
+            {
+                sb.AppendLine($"{fieldAccessor} (AssetLink<{named.TypeArguments[0]}>?){kernelAccessor}.ReadString({readerAccessor});");
+            }
+            else
+            {
+                sb.AppendLine($"{fieldAccessor} (AssetLink<{named.TypeArguments[0]}>){kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\");");
+            }
         }
         else
         {
