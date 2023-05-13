@@ -121,6 +121,7 @@ public class MixinGenerator
                 args.Add("IWorkDropoff? workDropoff = null");
                 args.Add("IFileSystem? fileSystem = null");
                 args.Add("ICreateStream? streamCreator = null");
+                args.Add("object? extraMeta = null");
             }
             using (sb.CurlyBrace())
             {
@@ -159,6 +160,7 @@ public class MixinGenerator
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("object? extraMeta = null");
                 }
                 using (sb.CurlyBrace())
                 {
@@ -179,6 +181,7 @@ public class MixinGenerator
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("object? extraMeta = null");
                 }
                 else
                 {
@@ -249,6 +252,7 @@ public class MixinGenerator
                         args.Add("IWorkDropoff? workDropoff = null");
                         args.Add("IFileSystem? fileSystem = null");
                         args.Add("ICreateStream? streamCreator = null");
+                        args.Add("object? extraMeta = null");
                     }
                     else
                     {
