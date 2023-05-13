@@ -34,6 +34,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register<ReleaseRetriever>]
 [Register<ObjRequiresFolderTester>]
 [Register<IsLoquiFieldTester>]
+[Register<ArgumentRetriever>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]

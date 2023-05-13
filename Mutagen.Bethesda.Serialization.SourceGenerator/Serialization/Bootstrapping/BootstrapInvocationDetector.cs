@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
 using Noggog;
@@ -8,11 +8,14 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Bootstrap
 public class BootstrapInvocationDetector
 {
     private readonly IsLoquiObjectTester _loquiObjectTester;
+    private readonly ArgumentRetriever _argumentRetriever;
 
     public BootstrapInvocationDetector(
-        IsLoquiObjectTester loquiObjectTester)
+        IsLoquiObjectTester loquiObjectTester,
+        ArgumentRetriever argumentRetriever)
     {
         _loquiObjectTester = loquiObjectTester;
+        _argumentRetriever = argumentRetriever;
     }
     
     public IncrementalValuesProvider<BootstrapInvocation> GetBootstrapInvocations(IncrementalGeneratorInitializationContext context)
@@ -39,10 +42,10 @@ public class BootstrapInvocationDetector
         if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
         if (invocationExpressionSyntax.ArgumentList.Arguments.Count == 0) return ret;
         
-        var symb = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax.ArgumentList.Arguments[0].Expression).Symbol;
-        if (symb == null) return ret;
+        var loquiSymb = _argumentRetriever.Get(context, invocationExpressionSyntax.ArgumentList.Arguments, 0, "item");
+        if (loquiSymb == null) return ret;
         
-        var type = symb.TryGetTypeSymbol();
+        var type = loquiSymb.TryGetTypeSymbol();
         if (type == null) return ret;
 
         if (!_loquiObjectTester.IsLoqui(type)) return ret;
