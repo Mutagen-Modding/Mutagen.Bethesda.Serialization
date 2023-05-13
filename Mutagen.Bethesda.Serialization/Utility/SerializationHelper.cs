@@ -29,10 +29,12 @@ public static partial class SerializationHelper
             deserializeInto(reader, kernel, obj, metaData, name);
         }
     }
+
+    public static string RecordDataFileNameWithoutExtension => "RecordData";
     
     public static string RecordDataFileName(string expectedExtension)
     {
-        return $"RecordData{expectedExtension}";
+        return $"{RecordDataFileNameWithoutExtension}{expectedExtension}";
     }
 
     public static string TypicalGroupFileName(string expectedExtension)
