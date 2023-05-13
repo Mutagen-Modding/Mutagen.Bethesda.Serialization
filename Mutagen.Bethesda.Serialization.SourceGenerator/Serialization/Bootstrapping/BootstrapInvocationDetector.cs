@@ -38,10 +38,10 @@ public class BootstrapInvocationDetector
         if (expressionSymbol is not INamedTypeSymbol namedTypeSymbol) return default;
         if (!namedTypeSymbol.AllInterfaces.Any(x => x.Name == "IMutagenSerializationBootstrap")) return default;
         
-        var ret = new BootstrapInvocation(namedTypeSymbol, default);
+        var ret = new BootstrapInvocation(namedTypeSymbol, default, default);
         if (memberAccessSyntax.Parent is not InvocationExpressionSyntax invocationExpressionSyntax) return ret;
         if (invocationExpressionSyntax.ArgumentList.Arguments.Count == 0) return ret;
-        
+
         var loquiSymb = _argumentRetriever.Get(context, invocationExpressionSyntax.ArgumentList.Arguments, 0, "item");
         if (loquiSymb == null) return ret;
         
@@ -57,6 +57,20 @@ public class BootstrapInvocationDetector
                         SymbolEqualityComparer.Default.Equals(x.ContainingNamespace, type.ContainingNamespace));
         if (getterInterface == null) return ret;
 
-        return ret with { ObjectRegistration = getterInterface };
+        var metaSymb = _argumentRetriever
+            .Get(context, invocationExpressionSyntax.ArgumentList.Arguments, 5, "extraMeta")
+            .TryGetTypeSymbol();
+        if (metaSymb is INamedTypeSymbol metaNamed)
+        {
+            ret = ret with
+            {
+                MetaDataObjectType = metaNamed
+            };
+        }
+
+        return ret with
+        {
+            ObjectRegistration = getterInterface
+        };
     }
 }
