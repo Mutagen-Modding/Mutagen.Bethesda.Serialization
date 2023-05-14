@@ -35,8 +35,18 @@ public class SerializationForObjectsGenerator
                     .NotNull()
                     .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
             });
+        var distinctMetas = bootstrapInvocations.Collect()
+            .Select((allSymbols, cancel) =>
+            {
+                cancel.ThrowIfCancellationRequested();
+                return allSymbols
+                    .Select(x => x.MetaDataObjectType)
+                    .NotNull()
+                    .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+            });
         var allClassesToGenerate = distinctBootstraps
-            .SelectMany((items, _) => items)
+            .Combine(distinctMetas)
+            .SelectMany((items, _) => items.Left.And(items.Right))
             .Combine(mappings)
             .Combine(customization)
             .SelectMany((item, cancel) =>

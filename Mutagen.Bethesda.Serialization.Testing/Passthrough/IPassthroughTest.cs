@@ -15,18 +15,21 @@ public interface IPassthroughTest
         IWorkDropoff workDropoff, 
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
+    
     Task<ISkyrimModGetter> JsonDeserialize(
         DirectoryPath dir,
         ModKey modKey,
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
+    
     Task YamlSerialize(
         ISkyrimModGetter modGetter,
         DirectoryPath dir,
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
+    
     Task<ISkyrimModGetter> YamlDeserialize(
         DirectoryPath dir,
         ModKey modKey,

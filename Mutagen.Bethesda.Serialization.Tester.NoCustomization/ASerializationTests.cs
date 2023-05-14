@@ -7,7 +7,6 @@ using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Noggog.IO;
-using Xunit;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 
@@ -17,9 +16,8 @@ public abstract class ASerializationTests
     public abstract Task Serialize(ISkyrimModGetter mod, Stream stream, ICreateStream createStream);
     public abstract Task<ISkyrimModGetter> Deserialize(Stream stream, ModKey modKey, GameRelease release, ICreateStream createStream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
-    
-    [Theory]
-    [TestAutoData]
+
+    [Fact]
     public async Task EmptySkyrimModExport()
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -31,8 +29,7 @@ public abstract class ASerializationTests
         await Verifier.Verify(str);
     }
     
-    [Theory]
-    [TestAutoData]
+    [Fact]
     public async Task SingleGroupSkyrimModExport()
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -59,8 +56,7 @@ public abstract class ASerializationTests
         await Verifier.Verify(str);
     }
     
-    [Theory]
-    [TestAutoData]
+    [Theory, TestAutoData]
     public async Task EmptySkyrimModPassthrough(
         IFileSystem fileSystem)
     {
@@ -69,8 +65,7 @@ public abstract class ASerializationTests
             new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE));
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task GroupPassthrough(
         IFileSystem fileSystem,
         Npc npc1,
@@ -93,8 +88,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task EnumDictionary(
         IFileSystem fileSystem,
         IEnumerable<KeyValuePair<BasicStat, Byte>> vals)
@@ -108,8 +102,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task FlagEnum(IFileSystem fileSystem)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -129,8 +122,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task ColorWithAlpha(IFileSystem fileSystem)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -142,8 +134,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task NullableButDefaultLoqui(IFileSystem fileSystem)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -155,8 +146,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task NullableButDefaultEnum(IFileSystem fileSystem)
     {
         var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
@@ -168,8 +158,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task GenderedItem(
         IFileSystem fileSystem,
         Faction f)
@@ -183,8 +172,7 @@ public abstract class ASerializationTests
             mod);
     }
     
-    [Theory]
-    [TestAutoData(ConfigureMembers: true)]
+    [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task Subclassed(
         IFileSystem fileSystem)
     {

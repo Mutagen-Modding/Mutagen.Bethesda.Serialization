@@ -35,18 +35,32 @@ public class MixinGenerator
         IncrementalValueProvider<CustomizationSpecifications> customization,
         IncrementalValueProvider<ImmutableDictionary<LoquiTypeSet, RecordCustomizationSpecifications>> recordCustomizationDriver)
     {
+        var distinctMetas = modBootstrapInvocations.Collect()
+            .Select((allSymbols, cancel) =>
+            {
+                cancel.ThrowIfCancellationRequested();
+                return allSymbols
+                    .Select(x => x.MetaDataObjectType)
+                    .NotNull()
+                    .ToImmutableHashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+            });
         context.RegisterSourceOutput(
             modBootstrapInvocations
-                .Combine(customization),
-            (c, i) => Generate(c, i.Left, i.Right));
+                .Combine(customization)
+                .Combine(distinctMetas),
+            (c, i) => Generate(c, i.Left.Left, i.Left.Right, i.Right));
     }
 
     private string StreamPassAlong(CustomizationSpecifications customization, string streamAccessor)
     {
-        return customization.FilePerRecord ? "stream" : "new StreamPackage(stream, null)";
+        return customization.FilePerRecord ? streamAccessor : $"new StreamPackage({streamAccessor}, null)";
     }
     
-    public void Generate(SourceProductionContext context, BootstrapInvocation bootstrap, CustomizationSpecifications customization)
+    public void Generate(
+        SourceProductionContext context,
+        BootstrapInvocation bootstrap,
+        CustomizationSpecifications customization,
+        ImmutableHashSet<INamedTypeSymbol>? metaObjs)
     {
         if (bootstrap.ObjectRegistration == null) return;
         if (!_serializationNaming.TryGetSerializationItems(bootstrap.ObjectRegistration, out var modSerializationItems)) return;
@@ -113,15 +127,16 @@ public class MixinGenerator
             sb.AppendLine($"private readonly static MutagenSerializationWriterKernel<{writerKernel}, {writer}> WriterKernel = new();");
             sb.AppendLine();
             
-            using (var args = sb.Function($"public static async Task Serialize"))
+            using (var args = sb.Function($"private static async Task SerializeInternal<TMeta>"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                 args.Add($"{pathOutput} path");
-                args.Add("IWorkDropoff? workDropoff = null");
-                args.Add("IFileSystem? fileSystem = null");
-                args.Add("ICreateStream? streamCreator = null");
-                args.Add("object? extraMeta = null");
+                args.Add("IWorkDropoff? workDropoff");
+                args.Add("IFileSystem? fileSystem");
+                args.Add("ICreateStream? streamCreator");
+                args.Add("TMeta? extraMeta = default");
+                args.Add($"Action<{writer.Name}, TMeta, MutagenSerializationWriterKernel<{writerKernel}, {writer}>, SerializationMetaData>? metaWriter = null");
             }
             using (sb.CurlyBrace())
             {
@@ -145,22 +160,76 @@ public class MixinGenerator
                     : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path))";
                 sb.AppendLine($"var streamPackage = {pathStreamPassAlong};");
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPackage);");
+                sb.AppendLine($"if (extraMeta != null && metaWriter != null)");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("metaWriter(writer, extraMeta, WriterKernel, null!);");
+                }
                 sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
                 sb.AppendLine($"WriterKernel.Finalize(streamPackage, writer);");
             }
             sb.AppendLine();
+            
+            using (var args = sb.Function($"public static async Task Serialize"))
+            {
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
+                args.Add($"{pathOutput} path");
+                args.Add("object? extraMeta = null");
+                args.Add("IWorkDropoff? workDropoff = null");
+                args.Add("IFileSystem? fileSystem = null");
+                args.Add("ICreateStream? streamCreator = null");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("throw new NotImplementedException();");
+            }
+            sb.AppendLine();
+
+            if (metaObjs != null)
+            {
+                foreach (var metaObj in metaObjs)
+                {
+                    if (!_serializationNaming.TryGetSerializationItems(metaObj, out var metaSerializationObj)) return;
+                    using (var args = sb.Function($"public static async Task Serialize"))
+                    {
+                        args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                        args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
+                        args.Add($"{pathOutput} path");
+                        args.Add($"{metaObj} extraMeta");
+                        args.Add("IWorkDropoff? workDropoff = null");
+                        args.Add("IFileSystem? fileSystem = null");
+                        args.Add("ICreateStream? streamCreator = null");
+                    }
+                    using (sb.CurlyBrace())
+                    {
+                        using (var c = sb.Call("SerializeInternal"))
+                        {
+                            c.AddPassArg("converterBootstrap");
+                            c.AddPassArg("item");
+                            c.AddPassArg("path");
+                            c.AddPassArg("workDropoff");
+                            c.AddPassArg("fileSystem");
+                            c.AddPassArg("streamCreator");
+                            c.AddPassArg("extraMeta");
+                            c.Add($"metaWriter: static (w, m, k, s) => {metaSerializationObj.SerializationCall()}(w, m, k, s)");
+                        }
+                    }
+                    sb.AppendLine();
+                }
+            }
 
             if (!customization.FilePerRecord)
             {
-                using (var args = sb.Function($"public static async Task Serialize"))
+                using (var args = sb.Function($"private static async Task SerializeInternal"))
                 {
                     args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                     args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
                     args.Add($"Stream stream");
+                    args.Add("object? extraMeta = null");
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
-                    args.Add("object? extraMeta = null");
                 }
                 using (sb.CurlyBrace())
                 {
@@ -168,6 +237,30 @@ public class MixinGenerator
                     sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
                     sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
                     sb.AppendLine($"WriterKernel.Finalize(streamPassIn, writer);");
+                }
+                sb.AppendLine();
+                
+                using (var args = sb.Function($"public static async Task Serialize"))
+                {
+                    args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                    args.Add($"{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Getter} item");
+                    args.Add($"Stream stream");
+                    args.Add("object? extraMeta = null");
+                    args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
+                }
+                using (sb.CurlyBrace())
+                {
+                    using (var c = sb.Call("SerializeInternal"))
+                    {
+                        c.AddPassArg("converterBootstrap");
+                        c.AddPassArg("item");
+                        c.AddPassArg("stream");
+                        c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
+                    }
                 }
                 sb.AppendLine();
             }
@@ -178,10 +271,10 @@ public class MixinGenerator
                 args.Add($"{pathInput} path");
                 if (isMod)
                 {
+                    args.Add("object? extraMeta = null");
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
-                    args.Add("object? extraMeta = null");
                 }
                 else
                 {
@@ -249,10 +342,10 @@ public class MixinGenerator
                     {
                         args.Add($"ModKey modKey");
                         args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                        args.Add("object? extraMeta = null");
                         args.Add("IWorkDropoff? workDropoff = null");
                         args.Add("IFileSystem? fileSystem = null");
                         args.Add("ICreateStream? streamCreator = null");
-                        args.Add("object? extraMeta = null");
                     }
                     else
                     {

@@ -1,11 +1,6 @@
 ﻿using System.IO.Abstractions;
-using FluentAssertions;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Serialization.Testing.Exceptions;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Testing.AutoData;
-using Noggog;
-using Noggog.Testing.AutoFixture;
 using Xunit;
 
 namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
