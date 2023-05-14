@@ -182,7 +182,17 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
-                sb.AppendLine("throw new NotImplementedException();");
+                using (var c = sb.Call("await SerializeInternal<object>"))
+                {
+                    c.AddPassArg("converterBootstrap");
+                    c.AddPassArg("item");
+                    c.AddPassArg("path");
+                    c.AddPassArg("workDropoff");
+                    c.AddPassArg("fileSystem");
+                    c.AddPassArg("streamCreator");
+                    c.Add("extraMeta: null");
+                    c.Add($"metaWriter: null");
+                }
             }
             sb.AppendLine();
 
@@ -203,7 +213,7 @@ public class MixinGenerator
                     }
                     using (sb.CurlyBrace())
                     {
-                        using (var c = sb.Call("SerializeInternal"))
+                        using (var c = sb.Call("await SerializeInternal"))
                         {
                             c.AddPassArg("converterBootstrap");
                             c.AddPassArg("item");
@@ -252,7 +262,7 @@ public class MixinGenerator
                 }
                 using (sb.CurlyBrace())
                 {
-                    using (var c = sb.Call("SerializeInternal"))
+                    using (var c = sb.Call("await SerializeInternal"))
                     {
                         c.AddPassArg("converterBootstrap");
                         c.AddPassArg("item");

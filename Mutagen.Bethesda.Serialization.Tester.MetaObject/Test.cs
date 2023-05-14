@@ -25,7 +25,11 @@ public class Test : IPassthroughTest
             workDropoff: workDropoff,
             fileSystem: fileSystem,
             streamCreator: streamCreator,
-            extraMeta: new Meta("Hello", 23));
+            extraMeta: new Meta()
+            {
+                String = "Hello",
+                Number = 23,
+            });
     }
 
     public async Task<ISkyrimModGetter> JsonDeserialize(

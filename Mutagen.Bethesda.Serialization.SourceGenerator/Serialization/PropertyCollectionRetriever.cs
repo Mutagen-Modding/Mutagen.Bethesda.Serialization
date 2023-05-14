@@ -59,7 +59,8 @@ public class PropertyCollectionRetriever
         LoquiTypeSet obj,
         PropertyCollection collection)
     {
-        foreach (var prop in obj.Setter.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
+        var objTarget = obj.Setter ?? obj.Direct ?? throw new NullReferenceException();
+        foreach (var prop in objTarget.GetMembers().WhereCastable<ISymbol, IPropertySymbol>())
         {
             compilation.Context.CancellationToken.ThrowIfCancellationRequested();
             var gen = _forFieldGenerator.GetGenerator(obj, compilation, prop.Type, prop.Name);

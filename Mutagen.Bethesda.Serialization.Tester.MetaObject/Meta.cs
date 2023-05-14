@@ -1,3 +1,7 @@
-﻿namespace Mutagen.Bethesda.Serialization.Tester.MetaObject;
+namespace Mutagen.Bethesda.Serialization.Tester.MetaObject;
 
-public record Meta(string String, int Number);
+public class Meta
+{
+    public string String { get; set; } = string.Empty;
+    public int Number { get; set; }
+}

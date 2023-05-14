@@ -34,10 +34,14 @@ public class RelatedObjectAccumulator
         CustomizationSpecifications customization,
         CancellationToken cancel)
     {
-        if (!mapper.TryGetTypeSet(details, out var typeSet)) return ImmutableHashSet<LoquiTypeSet>.Empty;
+        if (!mapper.TryGetTypeSet(details, out var typeSet))
+        {
+            typeSet = new LoquiTypeSet(Direct: details, null, null);
+        }
         
         var objs = new HashSet<LoquiTypeSet>();
         GetRelatedObjects(mapper, typeSet, objs, customization, cancel);
+        objs.Add(typeSet);
         return objs.ToImmutableHashSet<LoquiTypeSet>();
     }
 
@@ -49,8 +53,7 @@ public class RelatedObjectAccumulator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var details = obj.Getter;
-        if (!_loquiObjectTester.IsLoqui(details)) return;
+        if (!_loquiObjectTester.IsLoqui(obj.Getter)) return;
         if (!processedDetails.Add(obj)) return;
         var baseType = mapper.TryGetBaseClass(obj);
         if (baseType != null
@@ -65,7 +68,7 @@ public class RelatedObjectAccumulator
             cancel.ThrowIfCancellationRequested();
             GetRelatedObjects(mapper, inherit, processedDetails, customization, cancel);
         }
-        foreach (var memb in details.GetMembers())
+        foreach (var memb in obj.GetAny().GetMembers())
         {
             cancel.ThrowIfCancellationRequested();
             if (memb is not IPropertySymbol prop) continue;

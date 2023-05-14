@@ -27,7 +27,7 @@ public class PropertyFilter
             case "BinaryWriteTranslator":
                 return true;
             case "FormVersion":
-                return obj.Getter.Name == "IMajorRecordGetter";
+                return obj.Getter?.Name == "IMajorRecordGetter";
             default:
                 break;
         }

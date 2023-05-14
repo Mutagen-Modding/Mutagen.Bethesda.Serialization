@@ -10,6 +10,11 @@ public record Names(
 
 public class LoquiNameRetriever
 {
+    public Names GetNames(LoquiTypeSet typeSet)
+    {
+        return GetNames(typeSet.GetAny());
+    }
+    
     public Names GetNames(ITypeSymbol typeSymbol)
     {
         return GetNames(typeSymbol.Name);

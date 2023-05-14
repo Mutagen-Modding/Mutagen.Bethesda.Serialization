@@ -63,11 +63,11 @@ public class SerializationForObjectGenerator
 
         GenerateWarningSuppressions(sb);
 
-        using (sb.Namespace(typeSet.Setter.ContainingNamespace.ToString()))
+        using (sb.Namespace(typeSet.GetAny().ContainingNamespace.ToString()))
         {
         }
         
-        if (!_loquiSerializationNaming.TryGetSerializationItems(typeSet.Setter, out var objSerializationItems)) return;
+        if (!_loquiSerializationNaming.TryGetSerializationItems(typeSet.GetAny(), out var objSerializationItems)) return;
         
         var gens = GetGenerics(typeSet);
 
@@ -143,7 +143,7 @@ public class SerializationForObjectGenerator
             if (isMod)
             {
                 args.Add($"ModKey modKey");
-                args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release release");
+                args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release release");
                 args.Add($"IWorkDropoff? workDropoff");
                 args.Add($"IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
@@ -159,7 +159,7 @@ public class SerializationForObjectGenerator
         {
             if (isMajorRecord)
             {
-                sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter)}Release());");
+                sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release());");
             }
             else if (isMod)
             {
@@ -212,7 +212,7 @@ public class SerializationForObjectGenerator
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            args.Add($"{obj.Setter} obj");
+            args.Add($"{obj.DeserializeSymbol} obj");
             if (isMod)
             {
                 args.Add("IWorkDropoff? workDropoff");
@@ -263,7 +263,7 @@ public class SerializationForObjectGenerator
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");
-            args.Add($"{obj.Setter} obj");
+            args.Add($"{obj.DeserializeSymbol} obj");
             args.Add("SerializationMetaData metaData");
             args.Add("string name");
 
@@ -420,7 +420,7 @@ public class SerializationForObjectGenerator
         using (var args = sb.Function($"public static async Task Serialize{genString}"))
         {
             args.Add($"TWriteObject writer");
-            args.Add($"{typeSet.Getter} item");
+            args.Add($"{typeSet.SerializeSymbol} item");
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
             if (isMod)
             {
@@ -465,7 +465,7 @@ public class SerializationForObjectGenerator
         using (var args = sb.Function($"public static async Task SerializeFields{genString}"))
         {
             args.Add($"TWriteObject writer");
-            args.Add($"{obj.Getter} item");
+            args.Add($"{obj.SerializeSymbol} item");
             args.Add($"MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel");
             args.Add("SerializationMetaData metaData");
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
@@ -525,7 +525,7 @@ public class SerializationForObjectGenerator
         var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
         using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
         {
-            args.Add($"{obj.Getter}? item");
+            args.Add($"{obj.SerializeSymbol}? item");
             if (!isMod)
             {
                 args.Add("SerializationMetaData metaData");
@@ -660,6 +660,7 @@ public class SerializationForObjectGenerator
         SerializationGenerics generics,
         IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
+        if (typeSet.Getter == null) return;
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static async Task SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
         {
@@ -685,6 +686,7 @@ public class SerializationForObjectGenerator
             {
                 foreach (var inherit in inheriting
                              .Select(x => x.Getter)
+                             .NotNull()
                              .OrderBy(x => x.Name))
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
@@ -732,6 +734,7 @@ public class SerializationForObjectGenerator
         SerializationGenerics generics,
         IReadOnlyCollection<LoquiTypeSet> inheriting)
     {
+        if (typeSet.Getter == null) return;
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
         using (var args = sb.Function($"public static async Task<{typeSet.Direct ?? typeSet.Setter}> DeserializeWithCheck{generics.ReaderGenericsString()}"))
         {
@@ -746,12 +749,13 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
-            sb.AppendLine($"var type = kernel.GetNextType(reader, \"{typeSet.Getter.ContainingNamespace}\");");
+            sb.AppendLine($"var type = kernel.GetNextType(reader, \"{typeSet.GetAny().ContainingNamespace}\");");
             sb.AppendLine($"switch (type.Name)");
             using (sb.CurlyBrace())
             {
                 foreach (var inherit in inheriting
                              .Select(x => x.Getter)
+                             .NotNull()
                              .OrderBy(x => x.Name))
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
@@ -806,7 +810,7 @@ public class SerializationForObjectGenerator
             .And("Noggog.WorkEngine")
             .And("Loqui")
             .And("Noggog")
-            .And(obj.Setter.ContainingNamespace.ToString())
+            .And(obj.GetAny().ContainingNamespace.ToString())
             .Distinct()
             .OrderBy(x => x)
             .Select(x => $"using {x};"));

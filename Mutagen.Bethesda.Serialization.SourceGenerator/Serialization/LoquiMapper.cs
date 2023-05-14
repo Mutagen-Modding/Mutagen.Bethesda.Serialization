@@ -6,19 +6,34 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 public record LoquiTypeSet(
     ITypeSymbol? Direct,
-    ITypeSymbol Getter,
-    ITypeSymbol Setter)
+    ITypeSymbol? Getter,
+    ITypeSymbol? Setter)
 {
+    public ITypeSymbol GetAny() => Getter ?? Setter ?? Direct ?? throw new NullReferenceException();
+    public IEnumerable<ITypeSymbol> GetAll() => Getter.AsEnumerable().And(Setter).And(Direct).NotNull();
+    
+    public ITypeSymbol SerializeSymbol => Getter ?? Setter ?? Direct ?? throw new NullReferenceException();
+    
+    public ITypeSymbol DeserializeSymbol => Setter ?? Direct ?? throw new NullReferenceException();
+
     public virtual bool Equals(LoquiTypeSet? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return SymbolEqualityComparer.Default.Equals(Setter, other.Setter);
+        return SymbolEqualityComparer.IncludeNullability.Equals(Direct, other.Direct)
+               && SymbolEqualityComparer.IncludeNullability.Equals(Getter, other.Getter)
+               && SymbolEqualityComparer.IncludeNullability.Equals(Setter, other.Setter);
     }
-
+    
     public override int GetHashCode()
     {
-        return SymbolEqualityComparer.Default.GetHashCode(Setter);
+        unchecked
+        {
+            var hashCode = SymbolEqualityComparer.IncludeNullability.GetHashCode(Direct);
+            hashCode = (hashCode * 397) ^ SymbolEqualityComparer.IncludeNullability.GetHashCode(Getter);
+            hashCode = (hashCode * 397) ^ SymbolEqualityComparer.IncludeNullability.GetHashCode(Setter);
+            return hashCode;
+        }
     }
 }
 
@@ -103,8 +118,8 @@ public class LoquiMapper
         var inheritingClassMapping = GetInheritanceSets(mutagenSymbols, typeSets, cancel);
 
         var inheritors = inheritingClassMapping
-            .Where(kv => kv.Value.Count > 1)
-            .Select(kv => (Key: typeSets[kv.Key.Getter], Value: kv.Value))
+            .Where(kv => kv.Value.Count > 1 && kv.Key.Getter != null)
+            .Select(kv => (Key: typeSets[kv.Key.Getter!], Value: kv.Value))
             .Where(kv => kv.Key.Direct != null)
             .Where(kv => !kv.Key.Direct!.Name.EndsWith("MajorRecord"))
             .SelectMany(x => x.Value)
@@ -203,13 +218,16 @@ public class LoquiMapper
         Dictionary<LoquiTypeSet, HashSet<LoquiTypeSet>> mapping)
     {
         ProcessBaseTypeInheritance(type, typeSets, mapping);
+        if (type.Getter == null || type.Setter == null) return;
         if (!typeSets.TryGetValue(type.Getter, out var typeSet)) return;
         HashSet<ITypeSymbol> passed = new(SymbolEqualityComparer.Default);
+        if (typeSet.Getter == null || typeSet.Setter == null) return;
         passed.Add(typeSet.Getter);
         passed.Add(typeSet.Setter);
         foreach (var interf in type.Setter.AllInterfaces)
         {
             if (!typeSets.TryGetValue(interf, out var otherTypeSet)) continue;
+            if (otherTypeSet.Setter == null) continue;
             ProcessInterfaceTypeInheritance(type, otherTypeSet.Setter, passed, typeSets, mapping);
         }
     }
@@ -240,8 +258,9 @@ public class LoquiMapper
     {
         if (_isLoquiObjectTester.IsLoqui(interf)
             && typeSets.TryGetValue(interf, out var interfTypeSet)
-            && passed.Add(interfTypeSet.Getter)
-            && passed.Add(interfTypeSet.Setter))
+            && (interfTypeSet.Getter == null || passed.Add(interfTypeSet.Getter))
+            && (interfTypeSet.Setter == null || passed.Add(interfTypeSet.Setter))
+            && (interfTypeSet.Direct == null || passed.Add(interfTypeSet.Direct)))
         {
             mapping
                 .GetOrAdd(interfTypeSet)

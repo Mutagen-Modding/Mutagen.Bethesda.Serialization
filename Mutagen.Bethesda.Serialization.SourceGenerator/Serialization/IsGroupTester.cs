@@ -4,8 +4,9 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 public class IsGroupTester
 {
-    public bool IsGroup(ITypeSymbol typeSymbol)
+    public bool IsGroup(ITypeSymbol? typeSymbol)
     {
+        if (typeSymbol == null) return false;
         return typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.IsGenericType
             && namedTypeSymbol.TypeArguments.Length == 1
