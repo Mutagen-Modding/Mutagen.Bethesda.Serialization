@@ -55,34 +55,40 @@ internal static class TestMod_Serialization
         return false;
     }
 
-    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject, TMeta>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
         Serialization.SourceGenerator.TestsRelease release,
         IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
-        ICreateStream? streamCreator)
+        ICreateStream? streamCreator,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
-        await DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject, TMeta>(
             reader: reader,
             kernel: kernel,
             obj: obj,
             workDropoff: workDropoff,
             fileSystem: fileSystem,
-            streamCreator: streamCreator);
+            streamCreator: streamCreator,
+            extraMeta: extraMeta,
+            metaReader: metaReader);
         return obj;
     }
 
-    public static async Task DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject, TMeta>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
         IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
-        ICreateStream? streamCreator)
+        ICreateStream? streamCreator,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader)
         where TReadObject : IContainStreamPackage
     {
         var metaData = new SerializationMetaData(obj.GameRelease, workDropoff, fileSystem, streamCreator);

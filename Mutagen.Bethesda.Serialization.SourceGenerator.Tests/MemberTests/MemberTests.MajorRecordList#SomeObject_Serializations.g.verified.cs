@@ -144,7 +144,7 @@ internal static class SomeObject_Serialization
         var tasks = new List<Task>();
         while (kernel.TryGetNextField(reader, out var name))
         {
-            await DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto<TReadObject>(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

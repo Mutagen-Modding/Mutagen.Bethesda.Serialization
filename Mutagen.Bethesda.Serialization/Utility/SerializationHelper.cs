@@ -129,12 +129,14 @@ public static partial class SerializationHelper
         return item.Value;
     }
 
-    public static void ExtractMeta<TReadUnit>(
+    public static void ExtractMeta<TReadUnit, TMeta>(
         IFileSystem fileSystem,
         string modKeyPath,
         string path,
         ICreateStream streamCreator,
         ISerializationReaderKernel<TReadUnit> kernel,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadUnit>, TReadUnit, TMeta>? metaReader,
         out ModKey modKey,
         out GameRelease release)
     {
@@ -168,6 +170,12 @@ public static partial class SerializationHelper
                         if (potentialModKey != null)
                         {
                             keepLooking = false;
+                        }
+                        break;
+                    default:
+                        if (extraMeta != null && metaReader != null && name.Equals(extraMeta.GetType().Name))
+                        {
+                            metaReader(reader, extraMeta, kernel, null!);
                         }
                         break;
                 }

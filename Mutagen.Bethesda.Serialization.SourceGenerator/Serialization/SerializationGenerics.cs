@@ -11,9 +11,13 @@ public class SerializationGenerics
     public List<string>? ExtraReaderWheres;
     public List<string>? ExtraWriterWheres;
 
-    public string ReaderGenericsString()
+    public string ReaderGenericsString(bool isMod)
     {
-        IEnumerable<string> join = new string[] { "TReadObject"};
+        IEnumerable<string> join = new string[] { "TReadObject" };
+        if (isMod)
+        {
+            join = join.And("TMeta");
+        }
         if (ExtraReaderGenerics != null)
         {
             join = join.And(ExtraReaderGenerics);

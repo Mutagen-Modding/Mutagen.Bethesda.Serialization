@@ -73,6 +73,8 @@ public class MixinGenerator
         var writer = interf.TypeArguments[3];
         var isMod = _modObjectTypeTester.IsModObject(bootstrap.ObjectRegistration);
 
+        var readerGen = isMod ? $"<{reader.Name}, TMeta>" : reader.Name;
+
         if (!isMod && customization.FilePerRecord)
         {
             // Don't generate mixins if we're doing FilePerRecord
@@ -135,8 +137,11 @@ public class MixinGenerator
                 args.Add("IWorkDropoff? workDropoff");
                 args.Add("IFileSystem? fileSystem");
                 args.Add("ICreateStream? streamCreator");
-                args.Add("TMeta? extraMeta = default");
-                args.Add($"Action<{writer.Name}, TMeta, MutagenSerializationWriterKernel<{writerKernel}, {writer}>, SerializationMetaData>? metaWriter = null");
+                if (isMod)
+                {
+                    args.Add("TMeta? extraMeta = default");
+                    args.Add($"WriteAsync<{writerKernel}, {writer.Name}, TMeta>? metaWriter = null");
+                }
             }
             using (sb.CurlyBrace())
             {
@@ -160,10 +165,13 @@ public class MixinGenerator
                     : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path))";
                 sb.AppendLine($"var streamPackage = {pathStreamPassAlong};");
                 sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPackage);");
-                sb.AppendLine($"if (extraMeta != null && metaWriter != null)");
-                using (sb.CurlyBrace())
+                if (isMod)
                 {
-                    sb.AppendLine("metaWriter(writer, extraMeta, WriterKernel, null!);");
+                    sb.AppendLine($"if (extraMeta != null && metaWriter != null)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("await WriterKernel.WriteLoqui(writer, extraMeta.GetType().Name, extraMeta, null!, metaWriter);");
+                    }
                 }
                 sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
                 sb.AppendLine($"WriterKernel.Finalize(streamPackage, writer);");
@@ -190,13 +198,16 @@ public class MixinGenerator
                     c.AddPassArg("workDropoff");
                     c.AddPassArg("fileSystem");
                     c.AddPassArg("streamCreator");
-                    c.Add("extraMeta: null");
-                    c.Add($"metaWriter: null");
+                    if (isMod)
+                    {
+                        c.Add("extraMeta: null");
+                        c.Add($"metaWriter: null");
+                    }
                 }
             }
             sb.AppendLine();
 
-            if (metaObjs != null)
+            if (isMod && metaObjs != null)
             {
                 foreach (var metaObj in metaObjs)
                 {
@@ -275,16 +286,17 @@ public class MixinGenerator
                 sb.AppendLine();
             }
 
-            using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
+            using (var args = sb.Function($"private static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> DeserializeInternal<TMeta>"))
             {
                 args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
                 args.Add($"{pathInput} path");
                 if (isMod)
                 {
-                    args.Add("object? extraMeta = null");
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("TMeta? extraMeta = default");
+                    args.Add($"ReadInto<ISerializationReaderKernel<{reader.Name}>, {reader.Name}, TMeta>? metaReader = null");
                 }
                 else
                 {
@@ -305,6 +317,8 @@ public class MixinGenerator
                         c.Add($"path: {(customization.FilePerRecord ? $"Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension))" : "path")}");
                         c.AddPassArg("streamCreator");
                         c.Add("kernel: ReaderKernel");
+                        c.AddPassArg("extraMeta");
+                        c.AddPassArg("metaReader");
                         c.Add("modKey: out var modKey");
                         c.Add("release: out var release");
                     }
@@ -321,9 +335,12 @@ public class MixinGenerator
                 var pathStreamPassAlong = customization.FilePerRecord 
                     ? "new StreamPackage(streamPassIn, path)" 
                     : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path))";
-                using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
+                
+                sb.AppendLine($"var reader = ReaderKernel.GetNewObject({pathStreamPassAlong});");
+
+                using (var c = sb.Call($"return await {modSerializationItems.DeserializationCall()}{readerGen}"))
                 {
-                    c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
+                    c.Add($"reader");
                     c.Add("ReaderKernel");
                     if (isMod)
                     {
@@ -332,6 +349,8 @@ public class MixinGenerator
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
                         c.AddPassArg("streamCreator");
+                        c.AddPassArg("extraMeta");
+                        c.AddPassArg("metaReader");
                     }
                     else
                     {
@@ -340,6 +359,89 @@ public class MixinGenerator
                 }
             }
             sb.AppendLine();
+
+            using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
+            {
+                args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                args.Add($"{pathInput} path");
+                if (isMod)
+                {
+                    args.Add("object? extraMeta = null");
+                    args.Add("IWorkDropoff? workDropoff = null");
+                    args.Add("IFileSystem? fileSystem = null");
+                    args.Add("ICreateStream? streamCreator = null");
+                }
+                else
+                {
+                    args.Add("SerializationMetaData metaData");
+                }
+            }
+            using (sb.CurlyBrace())
+            {
+                using (var c = sb.Call("return await DeserializeInternal<object>"))
+                {
+                    c.AddPassArg("converterBootstrap");
+                    c.AddPassArg("path");
+                    if (isMod)
+                    {
+                        c.AddPassArg("workDropoff");
+                        c.AddPassArg("fileSystem");
+                        c.AddPassArg("streamCreator");
+                        c.Add("extraMeta: null");
+                        c.Add($"metaReader: null");
+                    }
+                    else
+                    {
+                        c.AddPassArg("metaData");
+                    }
+                }
+            }
+            sb.AppendLine();
+
+            if (isMod && metaObjs != null)
+            {
+                foreach (var metaObj in metaObjs)
+                {
+                    if (!_serializationNaming.TryGetSerializationItems(metaObj, out var metaSerializationObj)) return;
+                    using (var args = sb.Function($"public static async Task<{bootstrap.ObjectRegistration.ContainingNamespace}.{names.Setter}> Deserialize"))
+                    {
+                        args.Add($"this {bootstrap.Bootstrap} converterBootstrap");
+                        args.Add($"{pathInput} path");
+                        if (isMod)
+                        {
+                            args.Add($"{metaObj} extraMeta");
+                            args.Add("IWorkDropoff? workDropoff = null");
+                            args.Add("IFileSystem? fileSystem = null");
+                            args.Add("ICreateStream? streamCreator = null");
+                        }
+                        else
+                        {
+                            args.Add("SerializationMetaData metaData");
+                        }
+                    }
+                    using (sb.CurlyBrace())
+                    {
+                        using (var c = sb.Call("return await DeserializeInternal"))
+                        {
+                            c.AddPassArg("converterBootstrap");
+                            c.AddPassArg("path");
+                            if (isMod)
+                            {
+                                c.AddPassArg("workDropoff");
+                                c.AddPassArg("fileSystem");
+                                c.AddPassArg("streamCreator");
+                                c.Add("extraMeta: extraMeta");
+                                c.Add($"metaReader: static (r, m, k, s) => {metaSerializationObj.DeserializationIntoCall()}(r, k, m, s)");
+                            }
+                            else
+                            {
+                                c.AddPassArg("metaData");
+                            }
+                        }
+                    }
+                    sb.AppendLine();
+                }
+            }
 
             if (!customization.FilePerRecord)
             {
@@ -366,7 +468,7 @@ public class MixinGenerator
                 using (sb.CurlyBrace())
                 {
                     using (var c = sb.Call(
-                               $"return await {modSerializationItems.DeserializationCall()}<{reader.Name}>"))
+                               $"return await {modSerializationItems.DeserializationCall()}<{reader.Name}, object>"))
                     {
                         c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
                         c.Add("ReaderKernel");
@@ -377,6 +479,8 @@ public class MixinGenerator
                             c.AddPassArg("workDropoff");
                             c.AddPassArg("fileSystem");
                             c.AddPassArg("streamCreator");
+                            c.Add("extraMeta: null");
+                            c.Add($"metaReader: null");
                         }
                         else
                         {
@@ -419,7 +523,7 @@ public class MixinGenerator
                 var pathStreamPassAlong = customization.FilePerRecord 
                     ? "new StreamPackage(streamPassIn, path)" 
                     : "new StreamPackage(streamPassIn, Path.GetDirectoryName(path)!)";
-                using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
+                using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}, object>"))
                 {
                     c.Add($"ReaderKernel.GetNewObject({pathStreamPassAlong})");
                     c.Add("ReaderKernel");
@@ -429,6 +533,8 @@ public class MixinGenerator
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
                         c.AddPassArg("streamCreator");
+                        c.Add("extraMeta: null");
+                        c.Add($"metaReader: null");
                     }
                     else
                     {
@@ -459,7 +565,7 @@ public class MixinGenerator
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                    using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}>"))
+                    using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}, object>"))
                     {
                         c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
                         c.Add("ReaderKernel");
@@ -469,6 +575,8 @@ public class MixinGenerator
                             c.AddPassArg("workDropoff");
                             c.AddPassArg("fileSystem");
                             c.AddPassArg("streamCreator");
+                            c.Add("extraMeta: null");
+                            c.Add($"metaReader: null");
                         }
                         else
                         {

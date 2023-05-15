@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -39,15 +40,17 @@ public class Test : IPassthroughTest
         IFileSystem fileSystem,
         ICreateStream streamCreator)
     {
+        var meta = new Meta();
         var ret = await MutagenJsonConverter.Instance.Deserialize(
             Path.Combine(dir, modKey.ToString()),
             workDropoff: workDropoff,
             fileSystem: fileSystem,
-            streamCreator: streamCreator);
+            streamCreator: streamCreator,
+            extraMeta: meta);
 
-        // ToDo
-        // Check Meta
-        
+        meta.String.Should().Be("Hello");
+        meta.Number.Should().Be(23);
+
         return ret;
     }
 
@@ -63,7 +66,12 @@ public class Test : IPassthroughTest
             Path.Combine(dir, modGetter.ModKey.ToString()),
             workDropoff: workDropoff,
             fileSystem: fileSystem,
-            streamCreator: streamCreator);
+            streamCreator: streamCreator,
+            extraMeta: new Meta()
+            {
+                String = "Hello",
+                Number = 23,
+            });
     }
 
     public async Task<ISkyrimModGetter> YamlDeserialize(
@@ -73,14 +81,16 @@ public class Test : IPassthroughTest
         IFileSystem fileSystem,
         ICreateStream streamCreator)
     {
+        var meta = new Meta();
         var ret = await MutagenYamlConverter.Instance.Deserialize(
             Path.Combine(dir, modKey.ToString()),
             workDropoff: workDropoff,
             fileSystem: fileSystem,
-            streamCreator: streamCreator);
-        
-        // ToDo
-        // Check Meta
+            streamCreator: streamCreator,
+            extraMeta: meta);
+
+        meta.String.Should().Be("Hello");
+        meta.Number.Should().Be(23);
 
         return ret;
     }

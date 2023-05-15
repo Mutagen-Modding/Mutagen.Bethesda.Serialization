@@ -135,7 +135,7 @@ public class SerializationForObjectGenerator
         var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(typeSet.Getter);
         var isModHeader = _modObjectTypeTester.IsModHeader(typeSet.Getter);
         
-        var genString = generics.ReaderGenericsString();
+        var genString = generics.ReaderGenericsString(isMod);
         using (var args = sb.Function($"public static async Task<{typeSet.Direct}> Deserialize{genString}"))
         {
             args.Add($"TReadObject reader");
@@ -147,6 +147,8 @@ public class SerializationForObjectGenerator
                 args.Add($"IWorkDropoff? workDropoff");
                 args.Add($"IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
+                args.Add("TMeta? extraMeta");
+                args.Add("ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader");
             }
             else
             {
@@ -184,6 +186,8 @@ public class SerializationForObjectGenerator
                     c.AddPassArg("workDropoff");
                     c.AddPassArg("fileSystem");
                     c.AddPassArg("streamCreator");
+                    c.AddPassArg("extraMeta");
+                    c.AddPassArg("metaReader");
                 }
                 else
                 {
@@ -203,8 +207,8 @@ public class SerializationForObjectGenerator
         PropertyCollection properties,
         SerializationGenerics generics)
     {
-        var genString = generics.ReaderGenericsString();
         var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
+        var genString = generics.ReaderGenericsString(isMod);
         
         var hadIntoFields = GenerateDeserializeSingleFieldInto(compilation, obj, sb, baseType, properties, generics, genString);
 
@@ -218,6 +222,8 @@ public class SerializationForObjectGenerator
                 args.Add("IWorkDropoff? workDropoff");
                 args.Add("IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
+                args.Add("TMeta? extraMeta");
+                args.Add("ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader");
             }
             else
             {
@@ -256,6 +262,7 @@ public class SerializationForObjectGenerator
         var hasBaseClass = compilation.Mapping.TryGetBaseClass(obj) != null;
 
         var alwaysGenerate = hasInheritingClasses || hasBaseClass;
+        var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
 
         var orig = sb;
         sb = new StructuredStringBuilder();
@@ -266,6 +273,12 @@ public class SerializationForObjectGenerator
             args.Add($"{obj.DeserializeSymbol} obj");
             args.Add("SerializationMetaData metaData");
             args.Add("string name");
+
+            if (isMod)
+            {
+                args.Add("TMeta? extraMeta");
+                args.Add("ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader");
+            }
 
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
@@ -321,6 +334,15 @@ public class SerializationForObjectGenerator
                             $"await {baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
                     }
 
+                    if (isMod)
+                    {
+                        sb.AppendLine("if (extraMeta != null && metaReader != null && name.Equals(extraMeta.GetType().Name))");
+                        using (sb.CurlyBrace())
+                        {
+                            sb.AppendLine("await metaReader(reader, extraMeta, kernel, metaData);");
+                        }
+                    }
+
                     sb.AppendLine("break;");
                 }
             }
@@ -354,19 +376,27 @@ public class SerializationForObjectGenerator
                 return;
             }
         }
+        
+        var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
+        var genString = generics.ReaderGenericsString(isMod);
 
         if (generateLoop)
         {
             sb.AppendLine($"while (kernel.TryGetNextField(reader, out var name))");
             using (sb.CurlyBrace())
             {
-                using (var c = sb.Call("await DeserializeSingleFieldInto"))
+                using (var c = sb.Call($"await DeserializeSingleFieldInto{genString}"))
                 {
                     c.AddPassArg("reader");
                     c.AddPassArg("kernel");
                     c.AddPassArg("obj");
                     c.AddPassArg("metaData");
                     c.AddPassArg("name");
+                    if (isMod)
+                    {
+                        c.AddPassArg("extraMeta");
+                        c.AddPassArg("metaReader");
+                    }
                 }
             }            
             sb.AppendLine();
@@ -736,7 +766,7 @@ public class SerializationForObjectGenerator
     {
         if (typeSet.Getter == null) return;
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
-        using (var args = sb.Function($"public static async Task<{typeSet.Direct ?? typeSet.Setter}> DeserializeWithCheck{generics.ReaderGenericsString()}"))
+        using (var args = sb.Function($"public static async Task<{typeSet.Direct ?? typeSet.Setter}> DeserializeWithCheck{generics.ReaderGenericsString(isMod)}"))
         {
             args.Add($"TReadObject reader");
             args.Add($"ISerializationReaderKernel<TReadObject> kernel");

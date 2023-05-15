@@ -91,7 +91,7 @@ internal static class Group_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            await DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto<TReadObject, T>(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

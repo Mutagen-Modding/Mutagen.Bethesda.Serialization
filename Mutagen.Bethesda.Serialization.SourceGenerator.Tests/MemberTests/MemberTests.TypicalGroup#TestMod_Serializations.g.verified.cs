@@ -82,33 +82,39 @@ internal static class TestMod_Serialization
         return false;
     }
 
-    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod> Deserialize<TReadObject, TMeta>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         ModKey modKey,
         Serialization.SourceGenerator.TestsRelease release,
         IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
-        ICreateStream? streamCreator)
+        ICreateStream? streamCreator,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader)
         where TReadObject : IContainStreamPackage
     {
         var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMod(modKey, release);
-        await DeserializeInto<TReadObject>(
+        await DeserializeInto<TReadObject, TMeta>(
             reader: reader,
             kernel: kernel,
             obj: obj,
             workDropoff: workDropoff,
             fileSystem: fileSystem,
-            streamCreator: streamCreator);
+            streamCreator: streamCreator,
+            extraMeta: extraMeta,
+            metaReader: metaReader);
         return obj;
     }
 
-    public static async Task DeserializeSingleFieldInto<TReadObject>(
+    public static async Task DeserializeSingleFieldInto<TReadObject, TMeta>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
         SerializationMetaData metaData,
-        string name)
+        string name,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader)
         where TReadObject : IContainStreamPackage
     {
         switch (name)
@@ -141,28 +147,36 @@ internal static class TestMod_Serialization
                     itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>)).StripNull("Group"));
                 break;
             default:
+                if (extraMeta != null && metaReader != null && name.Equals(extraMeta.GetType().Name))
+                {
+                    await metaReader(reader, extraMeta, kernel, metaData);
+                }
                 break;
         }
     }
     
-    public static async Task DeserializeInto<TReadObject>(
+    public static async Task DeserializeInto<TReadObject, TMeta>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMod obj,
         IWorkDropoff? workDropoff,
         IFileSystem? fileSystem,
-        ICreateStream? streamCreator)
+        ICreateStream? streamCreator,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader)
         where TReadObject : IContainStreamPackage
     {
         var metaData = new SerializationMetaData(obj.GameRelease, workDropoff, fileSystem, streamCreator);
         while (kernel.TryGetNextField(reader, out var name))
         {
-            await DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto<TReadObject, TMeta>(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,
                 metaData: metaData,
-                name: name);
+                name: name,
+                extraMeta: extraMeta,
+                metaReader: metaReader);
         }
 
     }

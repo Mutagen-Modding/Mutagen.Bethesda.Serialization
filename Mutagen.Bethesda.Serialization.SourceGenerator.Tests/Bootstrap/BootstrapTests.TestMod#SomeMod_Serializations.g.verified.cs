@@ -21,7 +21,7 @@ internal static class SomeMod_Serialization
 {
     public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
-         item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -36,7 +36,7 @@ internal static class SomeMod_Serialization
 
     public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
-         item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -61,7 +61,7 @@ internal static class SomeMod_Serialization
     }
 
     public static bool HasSerializationItems(
-        ? item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter? item,
         SerializationMetaData metaData)
     {
         if (item == null) return false;
@@ -74,7 +74,7 @@ internal static class SomeMod_Serialization
     public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-         obj,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter obj,
         SerializationMetaData metaData,
         string name)
         where TReadObject : IContainStreamPackage
@@ -104,13 +104,13 @@ internal static class SomeMod_Serialization
     public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-         obj,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeModGetter obj,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            await DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto<TReadObject>(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,

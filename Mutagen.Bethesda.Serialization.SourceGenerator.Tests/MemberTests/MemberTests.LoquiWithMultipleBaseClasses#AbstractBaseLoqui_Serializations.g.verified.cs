@@ -123,7 +123,7 @@ internal static class AbstractBaseLoqui_Serialization
     {
         while (kernel.TryGetNextField(reader, out var name))
         {
-            await DeserializeSingleFieldInto(
+            await DeserializeSingleFieldInto<TReadObject>(
                 reader: reader,
                 kernel: kernel,
                 obj: obj,
