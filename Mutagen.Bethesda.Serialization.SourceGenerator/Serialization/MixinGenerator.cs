@@ -151,7 +151,15 @@ public class MixinGenerator
                     sb.AppendLine("path = Path.Combine(path, item.ModKey.ToString());");
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
-                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+
+                if (customization.FilePerRecord)
+                {
+                    sb.AppendLine("using var streamCreatorDispose = SerializationHelper.GetStreamCreator(streamCreator, fileSystem, path, out streamCreator);");
+                }
+                else
+                {
+                    sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                }
                 if (customization.FilePerRecord)
                 {
                     sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, SerializationHelper.RecordDataFileName(ReaderKernel.ExpectedExtension)), write: true);");

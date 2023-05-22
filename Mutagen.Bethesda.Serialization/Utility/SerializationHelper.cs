@@ -1,8 +1,10 @@
 using System.IO.Abstractions;
+using System.Reactive.Disposables;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Streams;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
@@ -194,5 +196,22 @@ public static partial class SerializationHelper
 
         modKey = potentialModKey.Value;
         release = potentialRelease.Value;
+    }
+
+    public static IDisposable GetStreamCreator(
+        ICreateStream? inputCreateStream,
+        IFileSystem fileSystem,
+        DirectoryPath path,
+        out ICreateStream createStream)
+    {
+        if (inputCreateStream != null)
+        {
+            createStream = inputCreateStream;
+            return Disposable.Empty;
+        }
+
+        var reported = new ReportedCleanupStreamCreateWrapper(fileSystem, path, NormalFileStreamCreator.Instance);
+        createStream = reported;
+        return reported;
     }
 }
