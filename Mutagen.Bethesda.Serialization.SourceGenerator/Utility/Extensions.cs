@@ -9,6 +9,7 @@ public static class Extensions
         if (symbol is ILocalSymbol local) return local.Type;
         if (symbol is IParameterSymbol param) return param.Type;
         if (symbol is IMethodSymbol methodSymbol) return methodSymbol.ContainingType;
+        if (symbol is ITypeSymbol typeSymbol) return typeSymbol;
         return default;
     }
 

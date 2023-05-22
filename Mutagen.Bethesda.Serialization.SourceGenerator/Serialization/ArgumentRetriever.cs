@@ -21,7 +21,17 @@ public class ArgumentRetriever
 
         if (args.Count > number)
         {
-            return context.SemanticModel.GetSymbolInfo(args[number].Expression).Symbol;
+            var arg = args[number];
+            if (arg.Expression is CastExpressionSyntax cast)
+            {
+                var symbInfo = context.SemanticModel.GetSymbolInfo(cast.Type);
+                return symbInfo.Symbol;
+            }
+            else
+            {
+                var symbInfo = context.SemanticModel.GetSymbolInfo(arg.Expression);
+                return symbInfo.Symbol;
+            }
         }
 
         return null;
