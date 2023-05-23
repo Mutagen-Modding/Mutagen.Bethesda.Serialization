@@ -117,7 +117,7 @@ public class SerializationForObjectGenerator
 
     private void GenerateWarningSuppressions(StructuredStringBuilder sb)
     {
-        sb.AppendLine("#pragma warning disable CA1998 // No awaits used");
+        sb.AppendLine("#pragma warning disable CS1998 // No awaits used");
         sb.AppendLine("#pragma warning disable CS0618 // Obsolete");
         sb.AppendLine();
     }

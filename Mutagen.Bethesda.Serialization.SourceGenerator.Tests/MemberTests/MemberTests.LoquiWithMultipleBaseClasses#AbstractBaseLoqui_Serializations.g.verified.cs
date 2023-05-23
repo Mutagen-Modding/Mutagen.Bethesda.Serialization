@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 #nullable enable
 
-#pragma warning disable CA1998 // No awaits used
+#pragma warning disable CS1998 // No awaits used
 #pragma warning disable CS0618 // Obsolete
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
