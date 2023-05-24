@@ -14,6 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Newtonsoft\Mutagen.Bethesda.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\Mutagen.Bethesda.Serialization.Yaml\Mutagen.Bethesda.Serialization.Yaml.csproj" />
       <ProjectReference Include="..\Mutagen.Bethesda.Serialization\Mutagen.Bethesda.Serialization.csproj" />
     </ItemGroup>
 

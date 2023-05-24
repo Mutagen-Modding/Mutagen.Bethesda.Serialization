@@ -164,7 +164,7 @@ public static partial class SerializationHelper
             {
                 switch (name)
                 {
-                    case "ModKey" when potentialModKey != null:
+                    case "ModKey" when potentialModKey == null:
                         potentialModKey = kernel.ReadModKey(reader);
                         break;
                     case "GameRelease":
