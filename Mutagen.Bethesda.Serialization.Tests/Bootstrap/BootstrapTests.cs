@@ -13,7 +13,7 @@ public class BootstrapTests
     public Task NoGeneration()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 
 public class BasicPassthroughs
 {
@@ -30,7 +30,7 @@ public class BasicPassthroughs
     public Task GeneratesStubForPeriod()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 
 public class BasicPassthroughs
 {
@@ -48,7 +48,7 @@ public class BasicPassthroughs
     public Task GeneratesStubForUnknownFunction()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 
 public class BasicPassthroughs
 {
@@ -66,7 +66,7 @@ public class BasicPassthroughs
     public Task GeneratesStubForUnknownParameter()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 
 public class BasicPassthroughs
 {
@@ -85,7 +85,7 @@ public class BasicPassthroughs
     public Task GeneratesMultipleStubs()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 
 public class BasicPassthroughs
@@ -110,7 +110,7 @@ public class BasicPassthroughs
     public async Task SkyrimModGenerationBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -142,7 +142,7 @@ public class SerializationTests
     public async Task CastBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -173,7 +173,7 @@ public class SerializationTests
     public async Task SkyrimModFilePerRecordGenerationBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -213,7 +213,7 @@ public class Customization : ICustomize
     public async Task SkyrimModWithMetaFileGenerationBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -247,7 +247,7 @@ public class SerializationTests
     public async Task SkyrimModInterfaceGenerationBootstrapper()
     {
         var source = @"
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Serialization.Tests;
 using Mutagen.Bethesda.Skyrim;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
@@ -288,9 +288,9 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Tests;");
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         using (var c = sb.Class("SerializationTests"))
         {
@@ -315,9 +315,9 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Tests;");
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         using (var c = sb.Class("SerializationTests"))
         {
@@ -343,9 +343,9 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Tests;");
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         sb.AppendLine("public partial interface ITestModGetter : IModGetter, ILoquiObject");
         using (sb.CurlyBrace())
@@ -388,9 +388,9 @@ public class SerializationTests
     {
         var sb = new StructuredStringBuilder();
         
-        sb.AppendLine("using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;");
+        sb.AppendLine("using Mutagen.Bethesda.Serialization.Tests;");
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         using (var c = sb.Class("ISomeModGetter"))
         {

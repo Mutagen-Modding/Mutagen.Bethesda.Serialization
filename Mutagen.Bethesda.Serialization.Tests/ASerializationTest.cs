@@ -3,7 +3,7 @@ using System.Reactive.Disposables;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public abstract class ASerializationTest<TWriterKernal, TWriterObj, TReaderKernel, TReaderObj>
     where TWriterKernal : ISerializationWriterKernel<TWriterObj>, new()

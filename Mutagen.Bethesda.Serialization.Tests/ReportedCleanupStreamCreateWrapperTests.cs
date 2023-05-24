@@ -4,7 +4,7 @@ using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 using Noggog.Testing.AutoFixture;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public class ReportedCleanupStreamCreateWrapperTests
 {

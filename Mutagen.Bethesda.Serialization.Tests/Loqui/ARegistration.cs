@@ -37,7 +37,7 @@ public abstract class ARegistration : ILoquiRegistration
     public Type? InternalSetterType => null;
     public string FullName => $"{Namespace}.{Name}";
     public abstract string Name { get; }
-    public string Namespace => "Mutagen.Bethesda.Serialization.SourceGenerator.Tests";
+    public string Namespace => "Mutagen.Bethesda.Serialization.Tests";
     public byte GenericCount => throw new NotImplementedException();
     public Type? GenericRegistrationType => null;
 }

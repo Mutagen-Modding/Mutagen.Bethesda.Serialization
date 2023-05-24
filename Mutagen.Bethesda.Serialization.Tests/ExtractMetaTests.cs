@@ -9,7 +9,7 @@ using Mutagen.Bethesda.Serialization.Yaml;
 using Noggog;
 using Noggog.Testing.AutoFixture;
 
-namespace Mutagen.Bethesda.Serialization.Tests;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel, TReaderObj>
     : ASerializationTest<TWriterKernal, TWriterObj, TReaderKernel, TReaderObj>

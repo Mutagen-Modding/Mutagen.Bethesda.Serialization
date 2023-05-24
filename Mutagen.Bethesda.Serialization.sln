@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serializat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serialization.Yaml", "Mutagen.Bethesda.Serialization.Yaml\Mutagen.Bethesda.Serialization.Yaml.csproj", "{4978B0B9-2671-4488-ACD3-401F86647844}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serialization.SourceGenerator.Tests", "Mutagen.Bethesda.Serialization.SourceGenerator.Tests\Mutagen.Bethesda.Serialization.SourceGenerator.Tests.csproj", "{FE66D4D2-0196-4949-9BFE-196174207999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mutagen.Bethesda.Serialization.Tests", "Mutagen.Bethesda.Serialization.Tests\Mutagen.Bethesda.Serialization.Tests.csproj", "{FE66D4D2-0196-4949-9BFE-196174207999}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutagen.Bethesda.Serialization.SourceGenerator", "Mutagen.Bethesda.Serialization.SourceGenerator\Mutagen.Bethesda.Serialization.SourceGenerator.csproj", "{7BB9DFCB-A9E4-432D-9967-EE34B900B6BC}"
 EndProject
@@ -23,8 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noggog.Verify.FileAbstractions", "Noggog.Verify.FileAbstractions\Noggog.Verify.FileAbstractions.csproj", "{43565439-C30C-4E84-86F7-15398ADCD130}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutagen.Bethesda.Serialization.Tests", "Mutagen.Bethesda.Serialization.Tests\Mutagen.Bethesda.Serialization.Tests.csproj", "{434A6AB5-4202-4436-B6BE-34B642FDD26F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,10 +54,6 @@ Global
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43565439-C30C-4E84-86F7-15398ADCD130}.Release|Any CPU.Build.0 = Release|Any CPU
-		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{434A6AB5-4202-4436-B6BE-34B642FDD26F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

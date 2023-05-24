@@ -19,7 +19,7 @@ public abstract class ATestsBase
         sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
         sb.AppendLine();
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         outsideBuilder?.Invoke(sb);
         
@@ -83,7 +83,7 @@ public abstract class ATestsBase
         namespaceBuilder?.Invoke(sb);
         sb.AppendLine();
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
         
         outsideBuilder?.Invoke(sb);
         
