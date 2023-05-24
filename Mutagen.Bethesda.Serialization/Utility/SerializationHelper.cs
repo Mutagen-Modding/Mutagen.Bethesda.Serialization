@@ -179,6 +179,10 @@ public static partial class SerializationHelper
                         {
                             metaReader(reader, extraMeta, kernel, null!);
                         }
+                        else
+                        {
+                            kernel.Skip(reader);
+                        }
                         break;
                 }
             }
