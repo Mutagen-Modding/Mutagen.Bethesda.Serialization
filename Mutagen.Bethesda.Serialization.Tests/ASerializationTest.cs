@@ -9,7 +9,9 @@ public abstract class ASerializationTest<TWriterKernal, TWriterObj, TReaderKerne
     where TWriterKernal : ISerializationWriterKernel<TWriterObj>, new()
     where TReaderKernel : ISerializationReaderKernel<TReaderObj>, new()
 {
-    protected ISerializationReaderKernel<TReaderObj> ReaderKernel { get; } = new TReaderKernel();
+    protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null);
+
+    protected TReaderKernel ReaderKernel { get; } = new TReaderKernel();
     protected MutagenSerializationWriterKernel<TWriterKernal, TWriterObj> WriterKernel { get; } = MutagenSerializationWriterKernel<TWriterKernal, TWriterObj>.Instance;
 
     public IDisposable GetReaderObj(

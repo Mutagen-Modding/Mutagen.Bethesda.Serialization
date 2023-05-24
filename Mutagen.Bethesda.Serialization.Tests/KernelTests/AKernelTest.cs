@@ -14,22 +14,19 @@ using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 
-public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader>
+public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader> : ASerializationTest<TWriterKernel, TWriter, TReaderKernel, TReader>
     where TWriterKernel : ISerializationWriterKernel<TWriter>, new()
     where TReaderKernel : ISerializationReaderKernel<TReader>, new()
     where TWriter : IContainStreamPackage
 {
-    protected StreamPackage GetStreamPackage(Stream stream) => new StreamPackage(stream, null);
-    
     private async Task<string> GetResults(
         Func<MutagenSerializationWriterKernel<TWriterKernel, TWriter>, TWriter, Task> toDo)
     {
-        var kernel = MutagenSerializationWriterKernel<TWriterKernel, TWriter>.Instance;
         using var memStream = new MemoryStream();
         var stream = GetStreamPackage(memStream);
-        var writerObj = kernel.GetNewObject(stream);
-        await toDo(kernel, writerObj);
-        kernel.Finalize(stream, writerObj);
+        var writerObj = WriterKernel.GetNewObject(stream);
+        await toDo(WriterKernel, writerObj);
+        WriterKernel.Finalize(stream, writerObj);
         if (writerObj is IDisposable disp) disp.Dispose();
         memStream.Position = 0;
         StreamReader reader = new StreamReader(memStream);
@@ -42,22 +39,21 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         string nickname,
         Func<TReaderKernel, TReader, T> toDo)
     {
-        var kernel = new TReaderKernel();
         var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
-        var readerObj = kernel.GetNewObject(stream);
+        var readerObj = ReaderKernel.GetNewObject(stream);
         T? obj = default;
         bool found = false;
-        while (kernel.TryGetNextField(readerObj, out var name))
+        while (ReaderKernel.TryGetNextField(readerObj, out var name))
         {
             if (name == nickname)
             {
-                obj = toDo(kernel, readerObj);
+                obj = toDo(ReaderKernel, readerObj);
                 found = true;
                 break;
             }
             else
             {
-                kernel.Skip(readerObj);
+                ReaderKernel.Skip(readerObj);
             }
         }
 
