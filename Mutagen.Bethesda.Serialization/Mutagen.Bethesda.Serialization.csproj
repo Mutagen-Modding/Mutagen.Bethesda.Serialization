@@ -49,8 +49,4 @@
       </Compile>
     </ItemGroup>
 
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.serialization&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
-	</Target>
-
 </Project>

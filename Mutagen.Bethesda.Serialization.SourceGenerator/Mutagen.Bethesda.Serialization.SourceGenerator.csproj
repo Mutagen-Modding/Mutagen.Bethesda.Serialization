@@ -35,7 +35,4 @@
 		<None Include="$(PkgStrongInject)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
-    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-        <Exec Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\mutagen.bethesda.serialization.sourcegenerator&quot;" Condition="!$([MSBuild]::IsOSUnixLike())" />
-    </Target>
 </Project>
