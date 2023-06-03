@@ -208,7 +208,7 @@ public static partial class SerializationHelper
         DirectoryPath path,
         out ICreateStream createStream)
     {
-        if (inputCreateStream != null)
+        if (inputCreateStream != null && inputCreateStream is not NoPreferenceStreamCreator)
         {
             createStream = inputCreateStream;
             return Disposable.Empty;

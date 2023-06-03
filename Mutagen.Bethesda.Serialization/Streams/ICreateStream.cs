@@ -17,3 +17,24 @@ public class NormalFileStreamCreator : ICreateStream
         return fileSystem.File.Open(path, write ? FileMode.Create : FileMode.Open, write ? FileAccess.Write : FileAccess.Read, FileShare.Read);
     }
 }
+
+public class NoPreferenceStreamCreator : ICreateStream
+{
+    public Stream GetStreamFor(IFileSystem fileSystem, FilePath path, bool write)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public static class ICreateStreamExt
+{
+    public static ICreateStream GetOrFallback(this ICreateStream? createStream, Func<ICreateStream> fallback)
+    {
+        if (createStream == null || createStream is NoPreferenceStreamCreator)
+        {
+            return fallback();
+        }
+
+        return createStream;
+    }
+}

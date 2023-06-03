@@ -19,8 +19,8 @@ public class SerializationMetaData
         ICreateStream? streamCreator)
     {
         Release = release;
-        WorkDropoff = workDropoff ?? InlineWorkDropoff.Instance;
-        StreamCreator = streamCreator ?? NormalFileStreamCreator.Instance;
+        WorkDropoff = workDropoff.GetOrFallback(() => InlineWorkDropoff.Instance);
+        StreamCreator = streamCreator.GetOrFallback(() => NormalFileStreamCreator.Instance);
         FileSystem = fileSystem ?? IFileSystemExt.DefaultFilesystem;
     }
 

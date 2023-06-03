@@ -158,7 +158,7 @@ public class MixinGenerator
                 }
                 else
                 {
-                    sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                    sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
                 }
                 if (customization.FilePerRecord)
                 {
@@ -314,7 +314,7 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
                 
                 if (isMod)
                 {
@@ -519,7 +519,7 @@ public class MixinGenerator
             using (sb.CurlyBrace())
             {
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
-                sb.AppendLine("streamCreator ??= NormalFileStreamCreator.Instance;");
+                sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
                 if (customization.FilePerRecord)
                 {
                     sb.AppendLine("using var streamPassIn = streamCreator.GetStreamFor(fileSystem, Path.Combine(path, $\"Data{ReaderKernel.ExpectedExtension}\"), write: false);");
