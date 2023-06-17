@@ -22,20 +22,17 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        sln:
-          - Mutagen.Bethesda.Serialization.sln
-          - Mutagen.Bethesda.Serialization.Tests.sln
           
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        dotnet clean ${{ matrix.sln }} -c Release && dotnet nuget locals all --clear
-        dotnet restore ${{ matrix.sln }}
-    - name: Build
-      run: dotnet build ${{ matrix.sln }} -c Release --no-restore /p:GeneratePackageOnBuild=false
-    - name: Test
-      run: dotnet test ${{ matrix.sln }} -c Release --no-build
+        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release && dotnet nuget locals all --clear
+        dotnet restore Mutagen.Bethesda.Serialization.sln
+    - name: Build Sln
+      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore
+    - name: Test Sln
+      run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
 
   build-test-push:
     needs: build-test
