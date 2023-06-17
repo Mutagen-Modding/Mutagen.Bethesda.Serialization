@@ -123,7 +123,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
     }
     
     [Theory, DefaultAutoData]
-    public void DataBeforeMeta(
+    public void DataBeforeFileName(
         IFileSystem fileSystem,
         FilePath filePath,
         ModKey modKey)

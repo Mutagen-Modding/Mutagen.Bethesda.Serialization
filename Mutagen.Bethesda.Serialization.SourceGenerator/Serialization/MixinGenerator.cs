@@ -148,7 +148,6 @@ public class MixinGenerator
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 if (customization.FilePerRecord)
                 {
-                    sb.AppendLine("path = Path.Combine(path, item.ModKey.ToString());");
                     sb.AppendLine("fileSystem.Directory.CreateDirectory(path);");
                 }
 
