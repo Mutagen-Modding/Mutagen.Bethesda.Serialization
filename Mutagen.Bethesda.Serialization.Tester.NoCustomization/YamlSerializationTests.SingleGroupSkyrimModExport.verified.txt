@@ -1,4 +1,5 @@
-﻿GameRelease: SkyrimSE
+ModKey: InputMod.esp
+GameRelease: SkyrimSE
 ModHeader:
   Stats:
     NextFormID: 2050

@@ -87,7 +87,7 @@ public class XYBlockSerializationTests
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
         await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,
@@ -211,7 +211,7 @@ public class XYBlockSerializationTests
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
         await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,

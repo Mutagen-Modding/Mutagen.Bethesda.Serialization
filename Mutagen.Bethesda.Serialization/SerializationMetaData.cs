@@ -11,14 +11,17 @@ public class SerializationMetaData
     public IWorkDropoff WorkDropoff { get; }
     public IFileSystem FileSystem { get; }
     public ICreateStream StreamCreator { get; }
+    public CancellationToken Cancel { get; }
 
     public SerializationMetaData(
         GameRelease release, 
         IWorkDropoff? workDropoff,
         IFileSystem? fileSystem, 
-        ICreateStream? streamCreator)
+        ICreateStream? streamCreator,
+        CancellationToken cancel)
     {
         Release = release;
+        Cancel = cancel;
         WorkDropoff = workDropoff.GetOrFallback(() => InlineWorkDropoff.Instance);
         StreamCreator = streamCreator.GetOrFallback(() => NormalFileStreamCreator.Instance);
         FileSystem = fileSystem ?? IFileSystemExt.DefaultFilesystem;
@@ -31,5 +34,15 @@ public class SerializationMetaData
         WorkDropoff = null!;
         StreamCreator = null!;
         FileSystem = null!;
+        Cancel = CancellationToken.None;
+    }
+
+    public SerializationMetaData(CancellationToken cancel)
+    {
+        Release = default;
+        WorkDropoff = null!;
+        StreamCreator = null!;
+        FileSystem = null!;
+        Cancel = cancel;
     }
 }

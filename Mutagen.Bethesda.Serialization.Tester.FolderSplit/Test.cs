@@ -35,7 +35,7 @@ public class Test : IPassthroughTest
         ICreateStream streamCreator)
     {
         return await MutagenJsonConverter.Instance.Deserialize(
-            Path.Combine(dir, modKey.ToString()),
+            dir,
             workDropoff: workDropoff,
             fileSystem: fileSystem,
             streamCreator: streamCreator);
@@ -64,7 +64,7 @@ public class Test : IPassthroughTest
         ICreateStream streamCreator)
     {
         return await MutagenYamlConverter.Instance.Deserialize(
-            Path.Combine(dir, modKey.ToString()),
+            dir,
             workDropoff: workDropoff,
             fileSystem: fileSystem,
             streamCreator: streamCreator);

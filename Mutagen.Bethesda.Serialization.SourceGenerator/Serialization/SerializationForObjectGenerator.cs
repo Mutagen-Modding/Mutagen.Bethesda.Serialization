@@ -121,6 +121,8 @@ public class SerializationForObjectGenerator
         sb.AppendLine("#pragma warning disable CS0618 // Obsolete");
         sb.AppendLine();
     }
+    
+    private string CancelAccessor(bool isMod) => isMod ? "cancel" : "metaData.Cancel";
 
     private void GenerateDeserialize(
         CompilationUnit compilation,
@@ -149,6 +151,7 @@ public class SerializationForObjectGenerator
                 args.Add($"ICreateStream? streamCreator");
                 args.Add("TMeta? extraMeta");
                 args.Add("ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader");
+                args.Add("CancellationToken cancel");
             }
             else
             {
@@ -159,6 +162,7 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             if (isMajorRecord)
             {
                 sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release());");
@@ -188,6 +192,7 @@ public class SerializationForObjectGenerator
                     c.AddPassArg("streamCreator");
                     c.AddPassArg("extraMeta");
                     c.AddPassArg("metaReader");
+                    c.AddPassArg("cancel");
                 }
                 else
                 {
@@ -224,6 +229,7 @@ public class SerializationForObjectGenerator
                 args.Add($"ICreateStream? streamCreator");
                 args.Add("TMeta? extraMeta");
                 args.Add("ReadInto<ISerializationReaderKernel<TReadObject>, TReadObject, TMeta>? metaReader");
+                args.Add("CancellationToken cancel");
             }
             else
             {
@@ -234,9 +240,10 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "obj", "workDropoff", "fileSystem", "streamCreator");
+                GenerateMetaConstruction(sb, "obj", "workDropoff", "fileSystem", "streamCreator", CancelAccessor(isMod));
             }
 
             _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
@@ -283,9 +290,9 @@ public class SerializationForObjectGenerator
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
-
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"metaData.Cancel.ThrowIfCancellationRequested();");
             sb.AppendLine("switch (name)");
             using (sb.CurlyBrace())
             {
@@ -457,6 +464,7 @@ public class SerializationForObjectGenerator
                 args.Add("IWorkDropoff? workDropoff");
                 args.Add("IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
+                args.Add("CancellationToken cancel");
             }
             else
             {
@@ -467,9 +475,10 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             if (isMod)
             {
-                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem, streamCreator);");
+                sb.AppendLine("var metaData = new SerializationMetaData(item.GameRelease, workDropoff, fileSystem, streamCreator, cancel);");
             }
 
             using (var args = sb.Call($"await SerializeFields{genString}"))
@@ -506,8 +515,10 @@ public class SerializationForObjectGenerator
 
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"metaData.Cancel.ThrowIfCancellationRequested();");
             if (isMod)
             {
+                sb.AppendLine($"kernel.WriteModKey(writer, \"ModKey\", item.ModKey, default, checkDefaults: false);");
                 sb.AppendLine($"kernel.WriteEnum<GameRelease>(writer, \"GameRelease\", item.GameRelease, default, checkDefaults: false);");
             }
             
@@ -560,15 +571,20 @@ public class SerializationForObjectGenerator
             {
                 args.Add("SerializationMetaData metaData");
             }
+            else
+            {
+                args.Add("CancellationToken cancel");
+            }
             args.Wheres.AddRange(generics.WriterWheres(forHas: true));
         }
 
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             sb.AppendLine("if (item == null) return false;");
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!");
+                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
             }
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
@@ -701,14 +717,19 @@ public class SerializationForObjectGenerator
             {
                 args.Add("SerializationMetaData metaData");
             }
+            else
+            {
+                args.Add("CancellationToken cancel");
+            }
             args.Wheres.AddRange(generics.WriterWheres(forHas: false));
             args.Wheres.Add("where TWriteObject : IContainStreamPackage");
         }
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!");
+                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
             }
             sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
             sb.AppendLine("switch (item)");
@@ -774,11 +795,16 @@ public class SerializationForObjectGenerator
             {
                 args.Add("SerializationMetaData metaData");
             }
+            else
+            {
+                args.Add("CancellationToken cancel");
+            }
             args.Wheres.Add("where TReadObject : IContainStreamPackage");
             args.Wheres.AddRange(generics.ReaderWheres());
         }
         using (sb.CurlyBrace())
         {
+            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             sb.AppendLine($"var type = kernel.GetNextType(reader, \"{typeSet.GetAny().ContainingNamespace}\");");
             sb.AppendLine($"switch (type.Name)");
             using (sb.CurlyBrace())
@@ -876,8 +902,10 @@ public class SerializationForObjectGenerator
         return ret ?? SerializationGenerics.Instance;
     }
 
-    private void GenerateMetaConstruction(StructuredStringBuilder sb, string accessor, string workDropoffAccessor, string fileSystemAccessor, string streamCreatorAccessor)
+    private void GenerateMetaConstruction(
+        StructuredStringBuilder sb, string accessor, string workDropoffAccessor,
+        string fileSystemAccessor, string streamCreatorAccessor, string cancelAccessor)
     {
-        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease, {workDropoffAccessor}, {fileSystemAccessor}, {streamCreatorAccessor});");
+        sb.AppendLine($"var metaData = new SerializationMetaData({accessor}.GameRelease, {workDropoffAccessor}, {fileSystemAccessor}, {streamCreatorAccessor}, {cancelAccessor});");
     }
 }

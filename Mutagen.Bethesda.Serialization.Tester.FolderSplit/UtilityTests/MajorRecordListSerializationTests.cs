@@ -34,7 +34,7 @@ public class MajorRecordListSerializationTests
             npc2
         };
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
         await SerializationHelper.WriteMajorRecordList<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Npc>(
             streamPackage,

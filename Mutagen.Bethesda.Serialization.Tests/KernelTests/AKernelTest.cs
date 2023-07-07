@@ -890,7 +890,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         });
         
         var streamPackage = new StreamPackage(null!, existingDir);
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var meta = new SerializationMetaData(
+            GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem,
+            NormalFileStreamCreator.Instance, CancellationToken.None);
         await SerializationHelper.WriteFilePerRecord(
             streamPackage,
             objs,
@@ -1002,7 +1004,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var meta = new SerializationMetaData(
+            GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, 
+            NormalFileStreamCreator.Instance, CancellationToken.None);
         var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddBlocksToWork(
             streamPackage,
@@ -1169,7 +1173,9 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             }
         };
         
-        var meta = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance);
+        var meta = new SerializationMetaData(
+            GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem,
+            NormalFileStreamCreator.Instance, CancellationToken.None);
         var streamPackage = new StreamPackage(null!, existingDir);
         await SerializationHelper.AddXYBlocksToWork(
             streamPackage,

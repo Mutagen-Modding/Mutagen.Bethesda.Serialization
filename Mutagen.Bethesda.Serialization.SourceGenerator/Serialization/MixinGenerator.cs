@@ -142,9 +142,11 @@ public class MixinGenerator
                     args.Add("TMeta? extraMeta = default");
                     args.Add($"WriteAsync<{writerKernel}, {writer.Name}, TMeta>? metaWriter = null");
                 }
+                args.Add("CancellationToken? cancel = null");
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("cancel ??= CancellationToken.None;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 if (customization.FilePerRecord)
                 {
@@ -177,10 +179,10 @@ public class MixinGenerator
                     sb.AppendLine($"if (extraMeta != null && metaWriter != null)");
                     using (sb.CurlyBrace())
                     {
-                        sb.AppendLine("await WriterKernel.WriteLoqui(writer, extraMeta.GetType().Name, extraMeta, null!, metaWriter);");
+                        sb.AppendLine("await WriterKernel.WriteLoqui(writer, extraMeta.GetType().Name, extraMeta, new SerializationMetaData(cancel.Value), metaWriter);");
                     }
                 }
-                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
+                sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator, cancel.Value);");
                 sb.AppendLine($"WriterKernel.Finalize(streamPackage, writer);");
             }
             sb.AppendLine();
@@ -194,6 +196,7 @@ public class MixinGenerator
                 args.Add("IWorkDropoff? workDropoff = null");
                 args.Add("IFileSystem? fileSystem = null");
                 args.Add("ICreateStream? streamCreator = null");
+                args.Add("CancellationToken? cancel = null");
             }
             using (sb.CurlyBrace())
             {
@@ -210,6 +213,7 @@ public class MixinGenerator
                         c.Add("extraMeta: null");
                         c.Add($"metaWriter: null");
                     }
+                    c.AddPassArg("cancel");
                 }
             }
             sb.AppendLine();
@@ -228,6 +232,7 @@ public class MixinGenerator
                         args.Add("IWorkDropoff? workDropoff = null");
                         args.Add("IFileSystem? fileSystem = null");
                         args.Add("ICreateStream? streamCreator = null");
+                        args.Add("CancellationToken? cancel = null");
                     }
                     using (sb.CurlyBrace())
                     {
@@ -241,6 +246,7 @@ public class MixinGenerator
                             c.AddPassArg("streamCreator");
                             c.AddPassArg("extraMeta");
                             c.Add($"metaWriter: static (w, m, k, s) => {metaSerializationObj.SerializationCall()}(w, m, k, s)");
+                            c.AddPassArg("cancel");
                         }
                     }
                     sb.AppendLine();
@@ -258,12 +264,14 @@ public class MixinGenerator
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("CancellationToken? cancel = null");
                 }
                 using (sb.CurlyBrace())
                 {
+                    sb.AppendLine("cancel ??= CancellationToken.None;");
                     sb.AppendLine($"var streamPassIn = {StreamPassAlong(customization, "stream")};");
                     sb.AppendLine($"var writer = WriterKernel.GetNewObject(streamPassIn);");
-                    sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator);");
+                    sb.AppendLine($"await {modSerializationItems.SerializationCall()}<{writerKernel}, {writer.Name}>(writer, item, WriterKernel, workDropoff, fileSystem, streamCreator, cancel.Value);");
                     sb.AppendLine($"WriterKernel.Finalize(streamPassIn, writer);");
                 }
                 sb.AppendLine();
@@ -277,6 +285,7 @@ public class MixinGenerator
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("CancellationToken? cancel = null");
                 }
                 using (sb.CurlyBrace())
                 {
@@ -288,6 +297,7 @@ public class MixinGenerator
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
                         c.AddPassArg("streamCreator");
+                        c.AddPassArg("cancel");
                     }
                 }
                 sb.AppendLine();
@@ -309,9 +319,11 @@ public class MixinGenerator
                 {
                     args.Add("SerializationMetaData metaData");
                 }
+                args.Add("CancellationToken? cancel = null");
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("cancel ??= CancellationToken.None;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
                 
@@ -328,6 +340,7 @@ public class MixinGenerator
                         c.AddPassArg("metaReader");
                         c.Add("modKey: out var modKey");
                         c.Add("release: out var release");
+                        c.Add("cancel: cancel.Value");
                     }
                 }
 
@@ -358,6 +371,7 @@ public class MixinGenerator
                         c.AddPassArg("streamCreator");
                         c.AddPassArg("extraMeta");
                         c.AddPassArg("metaReader");
+                        c.Add("cancel: cancel.Value");
                     }
                     else
                     {
@@ -382,9 +396,11 @@ public class MixinGenerator
                 {
                     args.Add("SerializationMetaData metaData");
                 }
+                args.Add("CancellationToken? cancel = null");
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("cancel ??= CancellationToken.None;");
                 using (var c = sb.Call("return await DeserializeInternal<object>"))
                 {
                     c.AddPassArg("converterBootstrap");
@@ -396,6 +412,7 @@ public class MixinGenerator
                         c.AddPassArg("streamCreator");
                         c.Add("extraMeta: null");
                         c.Add($"metaReader: null");
+                        c.Add("cancel: cancel.Value");
                     }
                     else
                     {
@@ -425,6 +442,7 @@ public class MixinGenerator
                         {
                             args.Add("SerializationMetaData metaData");
                         }
+                        args.Add("CancellationToken? cancel = null");
                     }
                     using (sb.CurlyBrace())
                     {
@@ -444,6 +462,7 @@ public class MixinGenerator
                             {
                                 c.AddPassArg("metaData");
                             }
+                            c.AddPassArg("cancel");
                         }
                     }
                     sb.AppendLine();
@@ -470,10 +489,12 @@ public class MixinGenerator
                     {
                         args.Add("SerializationMetaData metaData");
                     }
+                    args.Add("CancellationToken? cancel = null");
                 }
 
                 using (sb.CurlyBrace())
                 {
+                    sb.AppendLine("cancel ??= CancellationToken.None;");
                     using (var c = sb.Call(
                                $"return await {modSerializationItems.DeserializationCall()}<{reader.Name}, object>"))
                     {
@@ -488,6 +509,7 @@ public class MixinGenerator
                             c.AddPassArg("streamCreator");
                             c.Add("extraMeta: null");
                             c.Add($"metaReader: null");
+                            c.Add("cancel: cancel.Value");
                         }
                         else
                         {
@@ -509,6 +531,7 @@ public class MixinGenerator
                     args.Add("IWorkDropoff? workDropoff = null");
                     args.Add("IFileSystem? fileSystem = null");
                     args.Add("ICreateStream? streamCreator = null");
+                    args.Add("CancellationToken? cancel = null");
                 }
                 else
                 {
@@ -517,6 +540,7 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("cancel ??= CancellationToken.None;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
                 if (customization.FilePerRecord)
@@ -542,6 +566,7 @@ public class MixinGenerator
                         c.AddPassArg("streamCreator");
                         c.Add("extraMeta: null");
                         c.Add($"metaReader: null");
+                        c.Add("cancel: cancel.Value");
                     }
                     else
                     {
@@ -563,6 +588,7 @@ public class MixinGenerator
                         args.Add("IWorkDropoff? workDropoff = null");
                         args.Add("IFileSystem? fileSystem = null");
                         args.Add("ICreateStream? streamCreator = null");
+                        args.Add("CancellationToken? cancel = null");
                     }
                     else
                     {
@@ -572,6 +598,7 @@ public class MixinGenerator
                 using (sb.CurlyBrace())
                 {
                     sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
+                    sb.AppendLine("cancel ??= CancellationToken.None;");
                     using (var c = sb.Call($"await {modSerializationItems.DeserializationIntoCall()}<{reader.Name}, object>"))
                     {
                         c.Add($"ReaderKernel.GetNewObject({StreamPassAlong(customization, "stream")})");
@@ -584,6 +611,7 @@ public class MixinGenerator
                             c.AddPassArg("streamCreator");
                             c.Add("extraMeta: null");
                             c.Add($"metaReader: null");
+                            c.Add("cancel: cancel.Value");
                         }
                         else
                         {

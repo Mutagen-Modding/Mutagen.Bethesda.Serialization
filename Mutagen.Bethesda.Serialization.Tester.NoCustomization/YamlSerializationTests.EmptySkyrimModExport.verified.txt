@@ -1,1 +1,2 @@
-﻿GameRelease: SkyrimSE
+﻿ModKey: InputMod.esp
+GameRelease: SkyrimSE

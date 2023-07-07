@@ -1,4 +1,5 @@
-﻿{
+{
+  "ModKey": "InputMod.esp",
   "GameRelease": "SkyrimSE",
   "ModHeader": {
     "Stats": {

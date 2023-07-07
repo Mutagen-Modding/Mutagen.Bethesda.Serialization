@@ -39,7 +39,7 @@ public class GroupFolderParallelSerializationTests
             streamPackage,
             group,
             "Npcs",
-            new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance),
+            new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None),
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
             groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, INpcGetter>(w, i, k, m),
             groupHasSerializationItems: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.HasSerializationItems<INpcGetter>(i, m),

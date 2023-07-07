@@ -1,3 +1,4 @@
 ﻿{
+  "ModKey": "InputMod.esp",
   "GameRelease": "SkyrimSE"
 }

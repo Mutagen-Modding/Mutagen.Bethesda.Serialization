@@ -44,6 +44,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             filePath.Path,
             new NormalFileStreamCreator(),
             ReaderKernel, null, null, 
+            CancellationToken.None,
             out var readModKey, out var readGameRelease);
         readModKey.Should().Be(modKey);
         readGameRelease.Should().Be(Release);
@@ -69,6 +70,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
                 filePath.Path,
                 new NormalFileStreamCreator(),
                 ReaderKernel, null, null, 
+                CancellationToken.None,
                 out var readModKey, out var readGameRelease);
         });
     }
@@ -93,6 +95,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             filePath,
             new NormalFileStreamCreator(),
             ReaderKernel, null, null, 
+            CancellationToken.None,
             out var readModKey, out var readGameRelease);
         readModKey.Should().Be(modKey);
         readGameRelease.Should().Be(Release);
@@ -118,7 +121,9 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
                 filePath,
                 new NormalFileStreamCreator(),
                 ReaderKernel, null, null, 
-                out var readModKey, out var readGameRelease);
+                CancellationToken.None,
+                out var readModKey, 
+                out var readGameRelease);
         });
     }
     
@@ -141,6 +146,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             filePath.Path,
             new NormalFileStreamCreator(),
             ReaderKernel, null, null, 
+            CancellationToken.None,
             out var readModKey, out var readGameRelease);
         readModKey.Should().Be(modKey);
         readGameRelease.Should().Be(Release);
@@ -174,6 +180,7 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             filePath.Path,
             new NormalFileStreamCreator(),
             ReaderKernel, null, null, 
+            CancellationToken.None,
             out var readModKey, out var readGameRelease);
         readModKey.Should().Be(modKey);
         readGameRelease.Should().Be(Release);

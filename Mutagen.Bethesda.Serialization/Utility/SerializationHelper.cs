@@ -139,9 +139,11 @@ public static partial class SerializationHelper
         ISerializationReaderKernel<TReadUnit> kernel,
         TMeta? extraMeta,
         ReadInto<ISerializationReaderKernel<TReadUnit>, TReadUnit, TMeta>? metaReader,
+        CancellationToken cancel,
         out ModKey modKey,
         out GameRelease release)
     {
+        cancel.ThrowIfCancellationRequested();
         if (!fileSystem.File.Exists(path))
         {
             throw new FileNotFoundException("Could not find file to parse", path);
@@ -155,6 +157,7 @@ public static partial class SerializationHelper
             potentialModKey = mk;
         }
 
+        cancel.ThrowIfCancellationRequested();
         using (var stream = streamCreator.GetStreamFor(fileSystem, path, write: false))
         {
             var reader = kernel.GetNewObject(new StreamPackage(stream, Path.GetDirectoryName(path)));
@@ -162,6 +165,7 @@ public static partial class SerializationHelper
             bool keepLooking = true;
             while (keepLooking && kernel.TryGetNextField(reader, out var name))
             {
+                cancel.ThrowIfCancellationRequested();
                 switch (name)
                 {
                     case "ModKey" when potentialModKey == null:
@@ -177,7 +181,7 @@ public static partial class SerializationHelper
                     default:
                         if (extraMeta != null && metaReader != null && name.Equals(extraMeta.GetType().Name))
                         {
-                            metaReader(reader, extraMeta, kernel, null!);
+                            metaReader(reader, extraMeta, kernel, new SerializationMetaData(cancel));
                         }
                         else
                         {
