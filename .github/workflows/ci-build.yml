@@ -5,14 +5,12 @@ on:
     branches:
       - dev
       - release
+      - prerelease
   pull_request:
-  release:
-    types: [published]
-    inputs:
-      is_release_event:
-        description: Should this be a release or a preview package
-        required: true
-        default: 'false'
+    branches:
+      - dev
+      - release
+      - prerelease
 
 jobs:
   build-test:
@@ -28,46 +26,13 @@ jobs:
     - name: Install dependencies
       run: |
         dotnet clean Mutagen.Bethesda.Serialization.sln -c Release && dotnet nuget locals all --clear
+        dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release && dotnet nuget locals all --clear
         dotnet restore Mutagen.Bethesda.Serialization.sln
-    - name: Build Sln
-      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore
-    - name: Test Sln
-      run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
-
-  build-test-push:
-    needs: build-test
-    runs-on: windows-latest
-    steps:
-    - name: Get timestamp
-      uses: 1466587594/get-current-time@v1
-      id: current-time
-      with:
-        format: YYYYMMDD-HHmmSS
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Install dependencies
-      run: |
-        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release && dotnet nuget locals all --clear
-        dotnet restore Mutagen.Bethesda.Serialization.sln
-    - name: Build
+    - name: Build Main Solution
       run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
-    - name: Pack Preview
-      if: ${{ success() && (github.event.inputs.is_release_event != 'true' || github.ref != 'refs/heads/release') }}
-      run: |
-        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --version-suffix "CI-${{ steps.current-time.outputs.formattedTime }}"
-    - name: Pack Release
-      if: ${{ success() && github.event.inputs.is_release_event == 'true' && github.ref == 'refs/heads/release' }}
-      run: | 
-        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out
-    - name: Publish to Github
-      uses: svenstaro/upload-release-action@v2
-      if: ${{ success() && github.event.inputs.is_release_event == 'true' && github.ref == 'refs/heads/release' }}
-      with:
-        file: "**/*.nupkg"
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.event.release.tag_name }}
-        file_glob: "true"
-    - name: Publish to Nuget.org
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --no-symbols
-
+    - name: Test Main Solution
+      run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
+    - name: Build Test Solution
+      run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+    - name: Test Test Solution
+      run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
