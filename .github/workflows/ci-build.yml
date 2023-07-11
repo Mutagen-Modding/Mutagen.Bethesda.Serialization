@@ -23,18 +23,19 @@ jobs:
           
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies for Main Solution
+    - name: Clean dependencies
       run: |
-        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release && dotnet nuget locals all --clear
-        dotnet restore Mutagen.Bethesda.Serialization.sln
+        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
+        dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
+        dotnet nuget locals all --clear
+    - name: Install dependencies for Main Solution
+      run: dotnet restore Mutagen.Bethesda.Serialization.sln
     - name: Build Main Solution
       run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
     - name: Test Main Solution
       run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
     - name: Install dependencies for Test Solution
-      run: |
-        dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release && dotnet nuget locals all --clear
-        dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
+      run: dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
     - name: Build Test Solution
       run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
     - name: Test Test Solution
