@@ -866,6 +866,7 @@ public class SerializationForObjectGenerator
             .And("Noggog.WorkEngine")
             .And("Loqui")
             .And("Noggog")
+            .And("Noggog.IO")
             .And(obj.GetAny().ContainingNamespace.ToString())
             .Distinct()
             .OrderBy(x => x)

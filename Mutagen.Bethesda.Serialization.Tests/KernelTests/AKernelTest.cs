@@ -9,6 +9,7 @@ using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
 using Noggog;
+using Noggog.IO;
 using Noggog.Testing.AutoFixture;
 using Noggog.WorkEngine;
 

@@ -7,10 +7,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Loqui">
-      <Version>2.56.0.1-CI-20230616-201200</Version>
+      <Version>[2.59.0.1-nightly-20230704-193765]</Version>
     </PackageVersion>
     <PackageVersion Include="Loqui.Generation">
-      <Version>2.56.0.1-CI-20230616-201200</Version>
+      <Version>[2.59.0.1-nightly-20230704-193765]</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>3.3.4</Version>
@@ -22,13 +22,13 @@
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>0.41.1.1-CI-20230616-234637</Version>
+      <Version>[0.41.1.1-nightly-20230712-102825]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>0.41.1.1-CI-20230616-234637</Version>
+      <Version>[0.41.1.1-nightly-20230712-102825]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>0.41.1.1-CI-20230616-234637</Version>
+      <Version>[0.41.1.1-nightly-20230712-102825]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="0.0.0.1-zdev" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="0.0.0.1-zdev" />
@@ -38,10 +38,10 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>2.58.0.1-CI-20230615-044789</Version>
+      <Version>[2.59.0.1-zdev]</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>2.58.0.1-CI-20230615-044789</Version>
+      <Version>[2.59.0.1-zdev]</Version>
     </PackageVersion>
     <PackageVersion Include="NuGetizer" Version="0.9.5">
       <PrivateAssets>all</PrivateAssets>

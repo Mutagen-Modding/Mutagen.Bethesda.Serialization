@@ -2,6 +2,7 @@ using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.IO;
 using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit.SpecificTests;

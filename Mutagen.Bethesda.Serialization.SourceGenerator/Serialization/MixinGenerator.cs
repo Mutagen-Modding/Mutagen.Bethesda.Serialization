@@ -92,6 +92,7 @@ public class MixinGenerator
             new string[]
                 {
                     $"Noggog",
+                    $"Noggog.IO",
                     $"Noggog.WorkEngine",
                     $"Mutagen.Bethesda.Plugins",
                     $"Mutagen.Bethesda.Serialization.Streams",

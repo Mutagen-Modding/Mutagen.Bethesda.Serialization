@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
+using Noggog.IO;
 using Noggog.Testing.AutoFixture;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;

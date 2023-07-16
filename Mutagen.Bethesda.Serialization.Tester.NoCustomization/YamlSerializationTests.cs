@@ -1,7 +1,7 @@
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
+using Noggog.IO;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 

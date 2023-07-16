@@ -5,6 +5,7 @@ using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
+using Noggog.IO;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 

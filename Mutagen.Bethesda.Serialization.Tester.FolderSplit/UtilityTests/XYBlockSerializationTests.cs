@@ -6,6 +6,7 @@ using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Noggog.IO;
 using Noggog.Testing.AutoFixture;
 using Noggog.WorkEngine;
 
