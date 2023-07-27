@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Testing.AutoData;
+using Noggog;
 using Xunit;
 
 namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
@@ -11,9 +12,9 @@ public abstract class PassthroughTestBattery
 
     private async Task RunTestFor(
         IFileSystem fileSystem,
-        ISkyrimModGetter mod)
+        ISkyrimModGetter mod,
+        DirectoryPath testFolder)
     {
-        var testFolder = "C:/TestDirectory";
         var path = Path.Combine(testFolder, mod.ModKey.ToString());
 
         // fileSystem = new FileSystem();
@@ -47,16 +48,19 @@ public abstract class PassthroughTestBattery
     [Theory, MutagenModAutoData]
     public async Task EmptyMod(
         IFileSystem fileSystem,
+        DirectoryPath testDir,
         SkyrimMod skyrimMod)
     {
         await RunTestFor(
             fileSystem,
-            skyrimMod);
+            skyrimMod,
+            testDir);
     }
     
     [Theory, MutagenModAutoData(ConfigureMembers: true)]
     public async Task TypicalRecords(
         IFileSystem fileSystem,
+        DirectoryPath testDir,
         SkyrimMod mod,
         Npc npc1,
         Npc npc2,
@@ -69,35 +73,41 @@ public abstract class PassthroughTestBattery
 
         await RunTestFor(
             fileSystem,
-            mod);
+            mod,
+            testDir);
     }
 
     [Theory, MutagenModAutoData(ConfigureMembers: true)]
     public async Task Cell(
         IFileSystem fileSystem,
+        DirectoryPath testDir,
         SkyrimMod mod,
         CellBlock cellBlock)
     {
         mod.Cells.Add(cellBlock);
         await RunTestFor(
             fileSystem,
-            mod);
+            mod,
+            testDir);
     }
     
     [Theory, MutagenModAutoData(ConfigureMembers: true)]
     public async Task Worldspace(
         IFileSystem fileSystem,
+        DirectoryPath testDir,
         SkyrimMod skyrimMod,
         Worldspace worldspace)
     {
         await RunTestFor(
             fileSystem,
-            skyrimMod);
+            skyrimMod,
+            testDir);
     }
     
     [Theory, MutagenModAutoData(ConfigureMembers: true)]
     public async Task DialogTopic(
         IFileSystem fileSystem,
+        DirectoryPath testDir,
         SkyrimMod skyrimMod,
         DialogTopic topic)
     {
@@ -112,6 +122,7 @@ public abstract class PassthroughTestBattery
         });
         await RunTestFor(
             fileSystem,
-            skyrimMod);
+            skyrimMod,
+            testDir);
     }
 }

@@ -14,29 +14,36 @@ on:
 
 jobs:
   build-test:
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
           
     steps:
-    - uses: actions/checkout@v2
-    - name: Clean dependencies
-      run: |
-        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
-        dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
-        dotnet nuget locals all --clear
-    - name: Install dependencies for Main Solution
-      run: dotnet restore Mutagen.Bethesda.Serialization.sln
-    - name: Build Main Solution
-      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
-    - name: Test Main Solution
-      run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
-    - name: Install dependencies for Test Solution
-      run: dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
-    - name: Build Test Solution
-      run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
-    - name: Test Test Solution
-      run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
+      - uses: actions/checkout@v2
+      - name: Clean dependencies
+        run: |
+          dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
+          dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
+          dotnet nuget locals all --clear
+      - name: Install dependencies for Main Solution
+        run: dotnet restore Mutagen.Bethesda.Serialization.sln
+      - name: Build Main Solution
+        run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore
+      - name: Test Main Solution
+        run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
+      - name: Add results to local nuget cache
+        run: |
+          workingDir="$(cd "$(dirname "./")"; pwd)/$(basename "./")"
+          echo "workingDir=$workingDir"
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization/bin/Release" --name CISerialization
+          dotnet nuget enable source CISerialization
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Newtonsoft/bin/Release" --name CINewtonsoft
+          dotnet nuget enable source CINewtonsoft
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.SourceGenerator/bin/Release" --name CISourceGenerator
+          dotnet nuget enable source CISourceGenerator
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Yaml/bin/Release" --name CIYaml
+          dotnet nuget enable source CIYaml
+      - name: Install dependencies for Test Solution
+        run: dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
+      - name: Build Test Solution
+        run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+      - name: Test Test Solution
+        run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
