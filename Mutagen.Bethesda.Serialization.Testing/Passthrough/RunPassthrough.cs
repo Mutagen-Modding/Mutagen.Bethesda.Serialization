@@ -48,7 +48,6 @@ public static class RunPassthrough
         //    : new WorkConsumer(new NumWorkThreadsUnopinionated(), workQueue);
         //workConsumer?.Start();
 
-        Console.WriteLine("Testing JSON");
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
             fileSystem,
             Path.Combine(dir, "Json"),
@@ -56,7 +55,6 @@ public static class RunPassthrough
             (m, s, c) => test.JsonSerialize(m, s, workDropoff, fileSystem, c),
             (d, m, c) => test.JsonDeserialize(d, m, workDropoff, fileSystem, c));
 
-        Console.WriteLine("Testing YAML");
         await PassthroughTest.PassThrough<ISkyrimModGetter>(
             fileSystem,
             Path.Combine(dir, "Yaml"),

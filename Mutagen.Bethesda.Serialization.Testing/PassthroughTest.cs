@@ -30,11 +30,8 @@ public static class PassthroughTest
             await serialize(mod, serializedFolder, streamCreateWrapper);
         }
         sw.Stop();
-        Console.WriteLine($"Serialization took {sw.ElapsedMilliseconds / 1000d}s");
-
         sw.Restart();
         TModGetter mod2 = await deserialize(serializedFolder, mod.ModKey, streamCreator);
-        Console.WriteLine($"Deserialization took {sw.ElapsedMilliseconds / 1000d}s");
         sw.Stop();
         
         CheckEquality(fileSystem, dir, mod, mod2);
@@ -68,7 +65,6 @@ public static class PassthroughTest
             stream1,
             mod2OutFile,
             stream2);
-        Console.WriteLine($"Files equal");
     }
 
     public static void AssertFilesEqual(

@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using FluentAssertions;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing;
@@ -18,10 +19,11 @@ public class BlockSerializationTests
     public async Task AddBlocksToWork(
         IFileSystem fileSystem,
         FilePath someFile,
-        SkyrimMod mod,
         DirectoryPath existingDir)
     {
         var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
+
+        var mod = new SkyrimMod(ModKey.FromNameAndExtension("Mod0.esp"), SkyrimRelease.SkyrimSE);
 
         mod.Cells.LastModified = 789;
         mod.Cells.Records.SetTo(
