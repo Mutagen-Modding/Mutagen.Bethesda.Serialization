@@ -1,0 +1,124 @@
+name: Publish
+
+on:
+  schedule:
+    - cron: '40 9 * * *'
+  workflow_dispatch:
+  release:
+    types: [published]
+    inputs:
+      is_release_event:
+        description: Should this be a release or a preview package
+        required: true
+        default: 'false'
+
+jobs:
+  activity-short-circuit:
+    runs-on: ubuntu-latest
+    outputs:
+      same_sha: ${{ steps.check.outputs.same_sha }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Get Activity Short Circuit
+        id: check
+        run: |
+          git branch -a
+          git fetch origin nightly:nightly
+          head_sha=$(git rev-parse --verify HEAD)
+          nightly_sha=$(git rev-parse --verify nightly)
+          if [[ "$head_sha" == "$nightly_sha" ]]; then
+              same_sha=true;
+          else
+              same_sha=false;
+          fi
+          echo "head_sha=$head_sha"
+          echo "nightly_sha=$nightly_sha"
+          echo "same_sha=${same_sha}"
+          echo "same_sha=${same_sha}" >> $GITHUB_OUTPUT
+        
+  build-test:
+    needs: activity-short-circuit
+    if: needs.activity-short-circuit.outputs.same_sha == 'false'
+    runs-on: ubuntu-latest
+          
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clean dependencies
+        run: |
+          dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
+          dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
+          dotnet nuget locals all --clear
+      - name: Install dependencies for Main Solution
+        run: dotnet restore Mutagen.Bethesda.Serialization.sln
+      - name: Build Main Solution
+        run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore
+      - name: Test Main Solution
+        run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
+      - name: Add results to local nuget cache
+        run: |
+          workingDir="$(cd "$(dirname "./")"; pwd)/$(basename "./")"
+          echo "workingDir=$workingDir"
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization/bin/Release" --name CISerialization
+          dotnet nuget enable source CISerialization
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Newtonsoft/bin/Release" --name CINewtonsoft
+          dotnet nuget enable source CINewtonsoft
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.SourceGenerator/bin/Release" --name CISourceGenerator
+          dotnet nuget enable source CISourceGenerator
+          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Yaml/bin/Release" --name CIYaml
+          dotnet nuget enable source CIYaml
+      - name: Install dependencies for Test Solution
+        run: dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
+      - name: Build Test Solution
+        run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+      - name: Test Test Solution
+        run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
+
+
+  build-test-push:
+    needs: [build-test, activity-short-circuit]
+    if: needs.activity-short-circuit.outputs.same_sha == 'false'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get timestamp
+      uses: 1466587594/get-current-time@v1
+      id: current-time
+      with:
+        format: YYYYMMDD-HHmmSS
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Clean dependencies
+      run: |
+        dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
+        dotnet nuget locals all --clear
+    - name: Install dependencies for Main Solution
+      run: dotnet restore Mutagen.Bethesda.Serialization.sln
+    - name: Build Main Solution
+      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+    - name: Pack Preview
+      if: ${{ success() && (github.event.inputs.is_release_event != 'true' || github.ref != 'refs/heads/release') }}
+      run: |
+        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --version-suffix "nightly-${{ steps.current-time.outputs.formattedTime }}"
+    - name: Pack Release
+      if: ${{ success() && github.event.inputs.is_release_event == 'true' && github.ref == 'refs/heads/release' }}
+      run: | 
+        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out
+  
+  update-nightly:
+    needs: [build-test-push, activity-short-circuit]
+    if: needs.activity-short-circuit.outputs.same_sha == 'false'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Reset nightly to master
+      run: |
+        head_sha=$(git rev-parse --verify HEAD)
+        echo "head_sha=$head_sha"
+        git checkout nightly
+        git reset --hard $head_sha
+        git push

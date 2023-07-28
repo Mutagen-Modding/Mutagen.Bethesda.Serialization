@@ -38,7 +38,6 @@ public static class RunPassthrough
             dir = command.TestFolder;
         }
 
-        Console.WriteLine($"Testing passthrough of {command.Path}");
         using var mod = SkyrimMod.CreateFromBinaryOverlay(command.Path, command.GameRelease.ToSkyrimRelease(), fileSystem: fileSystem);
 
         IWorkDropoff workDropoff = command.Parallel ? new ParallelWorkDropoff() : new InlineWorkDropoff();
