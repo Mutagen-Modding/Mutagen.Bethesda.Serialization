@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
@@ -111,6 +111,7 @@ public class BasicPassthroughs
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -143,6 +144,7 @@ public class SerializationTests
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -174,6 +176,7 @@ public class SerializationTests
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -214,6 +217,7 @@ public class Customization : ICustomize
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 using Noggog.WorkEngine;
 
@@ -248,6 +252,7 @@ public class SerializationTests
     {
         var source = @"
 using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Skyrim;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
