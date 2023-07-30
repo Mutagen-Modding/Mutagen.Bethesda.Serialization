@@ -13,22 +13,40 @@ public class RelatedObjectAccumulator
     private readonly ArrayFieldGenerator _arrayFieldGenerator;
     private readonly ListFieldGenerator _listFieldGenerator;
     private readonly IsLoquiObjectTester _loquiObjectTester;
+    private readonly NamespaceSuffixRetriever _namespaceSuffixRetriever;
 
     public RelatedObjectAccumulator(
         IsGroupTester isGroupTester,
         GenderedTypeFieldGenerator genderedTypeFieldGenerator,
         ListFieldGenerator listFieldGenerator,
         IsLoquiObjectTester loquiObjectTester,
-        ArrayFieldGenerator arrayFieldGenerator)
+        ArrayFieldGenerator arrayFieldGenerator, 
+        NamespaceSuffixRetriever namespaceSuffixRetriever)
     {
         _isGroupTester = isGroupTester;
         _genderedTypeFieldGenerator = genderedTypeFieldGenerator;
         _listFieldGenerator = listFieldGenerator;
         _loquiObjectTester = loquiObjectTester;
         _arrayFieldGenerator = arrayFieldGenerator;
+        _namespaceSuffixRetriever = namespaceSuffixRetriever;
     }
     
     public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
+        LoquiMapping mapper,
+        ITypeSymbol details, 
+        CustomizationSpecifications customization,
+        CancellationToken cancel)
+    {
+        return GetRelatedObjects(
+            gameName: _namespaceSuffixRetriever.Get(details),
+            mapper: mapper,
+            details: details,
+            customization: customization,
+            cancel: cancel);
+    }
+    
+    public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
+        string gameName,
         LoquiMapping mapper,
         ITypeSymbol details, 
         CustomizationSpecifications customization,
@@ -40,12 +58,13 @@ public class RelatedObjectAccumulator
         }
         
         var objs = new HashSet<LoquiTypeSet>();
-        GetRelatedObjects(mapper, typeSet, objs, customization, cancel);
+        GetRelatedObjects(gameName, mapper, typeSet, objs, customization, cancel);
         objs.Add(typeSet);
         return objs.ToImmutableHashSet<LoquiTypeSet>();
     }
 
     private void GetRelatedObjects(
+        string gameName,
         LoquiMapping mapper,
         LoquiTypeSet obj, 
         HashSet<LoquiTypeSet> processedDetails,
@@ -59,14 +78,15 @@ public class RelatedObjectAccumulator
         if (baseType != null
             && mapper.TryGetTypeSet(baseType, out var baseSet))
         {
-            GetRelatedObjects(mapper, baseSet, processedDetails, customization, cancel);
+            GetRelatedObjects(gameName, mapper, baseSet, processedDetails, customization, cancel);
         }
 
         var inheriting = mapper.TryGetInheritingClasses(obj);
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
-            GetRelatedObjects(mapper, inherit, processedDetails, customization, cancel);
+            if (_namespaceSuffixRetriever.Get(inherit.GetAny()) != gameName) continue;
+            GetRelatedObjects(gameName, mapper, inherit, processedDetails, customization, cancel);
         }
         foreach (var memb in obj.GetAny().GetMembers())
         {
@@ -77,7 +97,7 @@ public class RelatedObjectAccumulator
             foreach (var type in TransformSymbol(obj, customization, prop.Type, prop.Name))
             {
                 if (!mapper.TryGetTypeSet(type, out var transformedTypeSet)) continue;
-                GetRelatedObjects(mapper, transformedTypeSet, processedDetails, customization, cancel);
+                GetRelatedObjects(gameName, mapper, transformedTypeSet, processedDetails, customization, cancel);
             }
         }
     }

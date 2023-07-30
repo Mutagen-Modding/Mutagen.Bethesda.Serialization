@@ -4,14 +4,15 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 public class ReleaseRetriever
 {
+    private readonly NamespaceSuffixRetriever _namespaceSuffixRetriever;
+
+    public ReleaseRetriever(NamespaceSuffixRetriever namespaceSuffixRetriever)
+    {
+        _namespaceSuffixRetriever = namespaceSuffixRetriever;
+    }
+    
     public string GetReleaseName(ITypeSymbol typeSymbol)
     {
-        var str = typeSymbol.ContainingNamespace.ToString();
-        if (str.StartsWith("Mutagen.Bethesda."))
-        {
-            return str.Substring("Mutagen.Bethesda.".Length);
-        }
-
-        throw new NotImplementedException();
+        return _namespaceSuffixRetriever.Get(typeSymbol);
     }
 }

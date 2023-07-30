@@ -52,7 +52,11 @@ public class SerializationForObjectsGenerator
             .SelectMany((item, cancel) =>
             {
                 cancel.ThrowIfCancellationRequested();
-                return _accumulator.GetRelatedObjects(item.Left.Right, item.Left.Left!, item.Right, cancel);
+                return _accumulator.GetRelatedObjects(
+                    mapper: item.Left.Right,
+                    details: item.Left.Left!,
+                    customization: item.Right,
+                    cancel: cancel);
             })
             .Collect()
             .SelectMany((objs, cancel) =>
