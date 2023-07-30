@@ -58,6 +58,8 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(P2IntFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P2Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(PercentFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(TimeOnlyFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(DateOnlyFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(ListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(ListFieldGenerator))]
 [Register(typeof(MajorRecordListFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(MajorRecordListFieldGenerator))]
 [Register(typeof(ModKeyFieldGenerator), typeof(ISerializationForFieldGenerator))]
@@ -80,6 +82,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FolderPerRecordGroupFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(FolderPerRecordGroupFieldGenerator))]
 [Register(typeof(CacheFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(EdidLinkGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FolderForSingleLoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SerializationSourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
