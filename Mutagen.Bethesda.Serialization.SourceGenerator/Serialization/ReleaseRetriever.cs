@@ -15,4 +15,15 @@ public class ReleaseRetriever
     {
         return _namespaceSuffixRetriever.Get(typeSymbol);
     }
+
+    public bool HasRelease(ITypeSymbol typeSymbol)
+    {
+        // ToDo
+        // Upgrade to something with reflection perhaps
+        return GetReleaseName(typeSymbol) switch
+        {
+            "Skyrim" => true,
+            _ => false
+        };
+    }
 }

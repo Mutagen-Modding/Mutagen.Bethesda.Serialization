@@ -340,7 +340,10 @@ public class MixinGenerator
                         c.AddPassArg("extraMeta");
                         c.AddPassArg("metaReader");
                         c.Add("modKey: out var modKey");
-                        c.Add("release: out var release");
+                        if (_releaseRetriever.HasRelease(bootstrap.ObjectRegistration))
+                        {
+                            c.Add("release: out var release");
+                        }
                         c.Add("cancel: cancel.Value");
                     }
                 }
@@ -366,7 +369,10 @@ public class MixinGenerator
                     if (isMod)
                     {
                         c.AddPassArg("modKey");
-                        c.Add($"release: release.To{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release()");
+                        if (_releaseRetriever.HasRelease(bootstrap.ObjectRegistration))
+                        {
+                            c.Add($"release: release.To{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release()");
+                        }
                         c.AddPassArg("workDropoff");
                         c.AddPassArg("fileSystem");
                         c.AddPassArg("streamCreator");
@@ -480,7 +486,11 @@ public class MixinGenerator
                     if (isMod)
                     {
                         args.Add($"ModKey modKey");
-                        args.Add($"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                        if (_releaseRetriever.HasRelease(bootstrap.ObjectRegistration))
+                        {
+                            args.Add(
+                                $"{_releaseRetriever.GetReleaseName(bootstrap.ObjectRegistration)}Release release");
+                        }
                         args.Add("object? extraMeta = null");
                         args.Add("IWorkDropoff? workDropoff = null");
                         args.Add("IFileSystem? fileSystem = null");

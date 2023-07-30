@@ -132,7 +132,7 @@ public static partial class SerializationHelper
         return item.Value;
     }
 
-    public static void ExtractMeta<TReadUnit, TMeta>(
+    private static void ExtractMetaInternal<TReadUnit, TMeta>(
         IFileSystem fileSystem,
         string modKeyPath,
         string path,
@@ -142,7 +142,7 @@ public static partial class SerializationHelper
         ReadInto<ISerializationReaderKernel<TReadUnit>, TReadUnit, TMeta>? metaReader,
         CancellationToken cancel,
         out ModKey modKey,
-        out GameRelease release)
+        out GameRelease? release)
     {
         cancel.ThrowIfCancellationRequested();
         if (!fileSystem.File.Exists(path))
@@ -198,13 +198,58 @@ public static partial class SerializationHelper
             throw new MalformedDataException($"Could not locate a {nameof(ModKey)} to use from path: {modKeyPath}");
         }
 
-        if (potentialRelease == null)
-        {
-            throw new MalformedDataException($"Could not locate a {nameof(GameRelease)} to use from path: {path}");
-        }
-
         modKey = potentialModKey.Value;
-        release = potentialRelease.Value;
+        release = potentialRelease;
+    }
+    
+    public static void ExtractMeta<TReadUnit, TMeta>(
+        IFileSystem fileSystem,
+        string modKeyPath,
+        string path,
+        ICreateStream streamCreator,
+        ISerializationReaderKernel<TReadUnit> kernel,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadUnit>, TReadUnit, TMeta>? metaReader,
+        CancellationToken cancel,
+        out ModKey modKey,
+        out GameRelease release)
+    {
+        ExtractMetaInternal<TReadUnit, TMeta>(
+            fileSystem: fileSystem,
+            modKeyPath: modKeyPath,
+            path: path,
+            streamCreator: streamCreator,
+            kernel: kernel,
+            extraMeta: extraMeta,
+            metaReader: metaReader,
+            cancel: cancel,
+            modKey: out modKey,
+            release: out var releaseNullable);
+        release = releaseNullable ?? throw new MalformedDataException($"Could not locate a {nameof(GameRelease)} to use from path: {path}");
+    }
+    
+    public static void ExtractMeta<TReadUnit, TMeta>(
+        IFileSystem fileSystem,
+        string modKeyPath,
+        string path,
+        ICreateStream streamCreator,
+        ISerializationReaderKernel<TReadUnit> kernel,
+        TMeta? extraMeta,
+        ReadInto<ISerializationReaderKernel<TReadUnit>, TReadUnit, TMeta>? metaReader,
+        CancellationToken cancel,
+        out ModKey modKey)
+    {
+        ExtractMetaInternal(
+            fileSystem: fileSystem,
+            modKeyPath: modKeyPath,
+            path: path,
+            streamCreator: streamCreator,
+            kernel: kernel,
+            extraMeta: extraMeta,
+            metaReader: metaReader,
+            cancel: cancel,
+            modKey: out modKey,
+            release: out _);
     }
 
     public static IDisposable GetStreamCreator(
