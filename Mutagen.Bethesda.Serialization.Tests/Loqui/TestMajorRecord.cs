@@ -47,6 +47,11 @@ public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>
         throw new NotImplementedException();
     }
 
+    public void RemapAssetLinks(IReadOnlyDictionary<IAssetLinkGetter, string> mapping, AssetLinkQuery query, IAssetLinkCache? linkCache)
+    {
+        throw new NotImplementedException();
+    }
+
     public void RemapListedAssetLinks(IReadOnlyDictionary<IAssetLinkGetter, string> mapping)
     {
         throw new NotImplementedException();

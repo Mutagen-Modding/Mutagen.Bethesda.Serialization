@@ -104,6 +104,11 @@ public class TestGroup : IGroup<TestMajorRecord>, IEquatable<TestGroup>
 
     int IReadOnlyCollection<TestMajorRecord>.Count => Records.Count;
 
+    public void RemapAssetLinks(IReadOnlyDictionary<IAssetLinkGetter, string> mapping, AssetLinkQuery query, IAssetLinkCache? linkCache)
+    {
+        throw new NotImplementedException();
+    }
+
     public void RemapListedAssetLinks(IReadOnlyDictionary<IAssetLinkGetter, string> mapping)
     {
         throw new NotImplementedException();
