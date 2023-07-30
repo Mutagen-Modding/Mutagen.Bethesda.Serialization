@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
@@ -122,6 +122,39 @@ public class SerializationTests
     public void EmptySkyrimMod()
     { 
         var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var stream = new MemoryStream();
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+    }
+}";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
+    
+    [Fact]
+    public async Task OblivionModGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Oblivion;
+using Noggog.WorkEngine;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptyOblivionMod()
+    { 
+        var mod = new OblivionMod(ModKey.Null);
         var stream = new MemoryStream();
         var workEngine = new InlineWorkDropoff();
 
