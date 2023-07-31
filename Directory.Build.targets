@@ -4,6 +4,7 @@
 	  <PackageReference Include="NuGetizer" />
   </ItemGroup>
 
+	<!-- ToDo Source generator not cleared -->
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Condition="'$(IsWindows)'=='true' And $(PackageId) != ''" Command="RD /S /Q &quot;%25USERPROFILE%25\.nuget\packages\$(PackageId)&quot;" />
 		<Exec Condition="'$(IsLinux)'=='true' And $(PackageId) != ''" Command="rm -rf &quot;%25USERPROFILE%25\.nuget\packages\$(PackageId)&quot;" />

@@ -2,6 +2,7 @@
 using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
+using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 using YamlDotNet.Core;
@@ -210,6 +211,16 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
     public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)
     {
         WriteString(writer, fieldName, item == null ? null : item.Value.ToHexString());
+    }
+
+    public void WriteTimeOnly(YamlWritingUnit writer, string? fieldName, TimeOnly? item)
+    {
+        WriteString(writer, fieldName, item == null ? null : TimeOnlyHelper.TimeOnlyPrinter(item.Value));
+    }
+
+    public void WriteDateOnly(YamlWritingUnit writer, string? fieldName, DateOnly? item)
+    {
+        WriteString(writer, fieldName, item == null ? null : item.Value.ToString());
     }
 
     public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)

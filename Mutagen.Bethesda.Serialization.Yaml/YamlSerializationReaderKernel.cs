@@ -408,6 +408,30 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         throw new ArgumentException($"Could not parse string into {nameof(Percent)}: {str}");
     }
 
+    public TimeOnly? ReadTimeOnly(YamlReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (TimeOnly.TryParse(str, out var d))
+        {
+            return d;
+        }
+
+        throw new ArgumentException($"Could not parse string into {nameof(TimeOnly)}: {str}");
+    }
+
+    public DateOnly? ReadDateOnly(YamlReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (DateOnly.TryParse(str, out var d))
+        {
+            return d;
+        }
+
+        throw new ArgumentException($"Could not parse string into {nameof(DateOnly)}: {str}");
+    }
+
     public TranslatedString? ReadTranslatedString(YamlReadingUnit reader)
     {
         Language? targetLanguage = null;

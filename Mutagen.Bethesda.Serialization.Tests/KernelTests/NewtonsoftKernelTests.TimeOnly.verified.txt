@@ -1,0 +1,8 @@
+﻿{
+  "TimeOnly1": "",
+  "TimeOnly2": "4:14:00 AM",
+  "TimeOnly3": "4:14:14 AM",
+  "TimeOnly4": "17:14:14.0340120",
+  "TimeOnly5": "12:00:00 AM",
+  "TimeOnly6": "23:59:59.9999999"
+}

@@ -1,6 +1,7 @@
 using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
+using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
 using Noggog;
@@ -399,6 +400,34 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         else
         {
             writer.Writer.WriteValue(item.Value.ToHexString());
+        }
+    }
+
+    public void WriteTimeOnly(JsonWritingUnit writer, string? fieldName, TimeOnly? item)
+    {
+        writer.WriteName(fieldName);
+
+        if (item == null)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue(TimeOnlyHelper.TimeOnlyPrinter(item.Value));
+        }
+    }
+
+    public void WriteDateOnly(JsonWritingUnit writer, string? fieldName, DateOnly? item)
+    {
+        writer.WriteName(fieldName);
+
+        if (item == null)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue(item.Value.ToString());
         }
     }
 

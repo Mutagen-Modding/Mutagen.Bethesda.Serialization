@@ -166,6 +166,18 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         _kernel.WriteColor(writer, fieldName, item);
     }
     
+    public void WriteTimeOnly(TWriterObject writer, string? fieldName, TimeOnly? item, TimeOnly? defaultVal, bool checkDefaults = true)
+    {
+        if (checkDefaults && EqualityComparer<TimeOnly?>.Default.Equals(item, defaultVal)) return;
+        _kernel.WriteTimeOnly(writer, fieldName, item);
+    }
+    
+    public void WriteDateOnly(TWriterObject writer, string? fieldName, DateOnly? item, DateOnly? defaultVal, bool checkDefaults = true)
+    {
+        if (checkDefaults && EqualityComparer<DateOnly?>.Default.Equals(item, defaultVal)) return;
+        _kernel.WriteDateOnly(writer, fieldName, item);
+    }
+    
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item, ITranslatedStringGetter? defaultVal, bool checkDefaults = true)
     {
         if (checkDefaults && EqualityComparer<ITranslatedStringGetter?>.Default.Equals(item, defaultVal)) return;

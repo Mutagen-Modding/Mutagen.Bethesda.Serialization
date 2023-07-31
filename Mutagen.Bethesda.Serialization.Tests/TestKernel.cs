@@ -165,6 +165,16 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public void WriteTimeOnly(TestWriter writer, string? fieldName, TimeOnly? item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteDateOnly(TestWriter writer, string? fieldName, DateOnly? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteTranslatedString(TestWriter writer, string? fieldName, ITranslatedStringGetter? item)
     {
         throw new NotImplementedException();
@@ -419,6 +429,16 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public Percent? ReadPercent(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TimeOnly? ReadTimeOnly(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public DateOnly? ReadDateOnly(TestReader reader)
     {
         throw new NotImplementedException();
     }

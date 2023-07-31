@@ -349,6 +349,34 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     }
 
     [Fact]
+    public async Task TimeOnly()
+    {
+        await DoPrimitiveTest<TimeOnly?>(
+            "TimeOnly",
+            (k, w, name, item, def) => k.WriteTimeOnly(w, name, item, def),
+            (k, r) => k.ReadTimeOnly(r),
+            new TimeOnly(),
+            new TimeOnly(4, 14),
+            new TimeOnly(4, 14, 14),
+            new TimeOnly(17, 14, 14, 34, 12),
+            System.TimeOnly.MinValue,
+            System.TimeOnly.MaxValue);
+    }
+
+    [Fact]
+    public async Task DateOnly()
+    {
+        await DoPrimitiveTest<DateOnly?>(
+            "DateOnly",
+            (k, w, name, item, def) => k.WriteDateOnly(w, name, item, def),
+            (k, r) => k.ReadDateOnly(r),
+            new DateOnly(),
+            new DateOnly(2023, 5, 14),
+            System.DateOnly.MinValue,
+            System.DateOnly.MaxValue);
+    }
+
+    [Fact]
     public async Task ModKey()
     {
         await DoPrimitiveTest<ModKey?>(

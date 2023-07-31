@@ -74,6 +74,8 @@ public interface ISerializationReaderKernel<TReaderObject>
     public P3Int16? ReadP3Int16(TReaderObject reader);
     public P3UInt16? ReadP3UInt16(TReaderObject reader);
     public Percent? ReadPercent(TReaderObject reader);
+    public TimeOnly? ReadTimeOnly(TReaderObject reader);
+    public DateOnly? ReadDateOnly(TReaderObject reader);
     public TranslatedString? ReadTranslatedString(TReaderObject reader);
     public MemorySlice<byte>? ReadBytes(TReaderObject reader);
     public Task<TObject?> ReadLoqui<TObject>(
@@ -162,6 +164,8 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteP3UInt16(TWriterObject writer, string? fieldName, P3UInt16? item);
     public void WritePercent(TWriterObject writer, string? fieldName, Percent? item);
     public void WriteColor(TWriterObject writer, string? fieldName, Color? item);
+    public void WriteTimeOnly(TWriterObject writer, string? fieldName, TimeOnly? item);
+    public void WriteDateOnly(TWriterObject writer, string? fieldName, DateOnly? item);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)

@@ -441,6 +441,22 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return new Percent(d);
     }
 
+    public TimeOnly? ReadTimeOnly(JsonReadingUnit reader)
+    {
+        SkipPropertyName(reader);
+        var str = (string?)reader.Reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
+        return TimeOnly.Parse(str);
+    }
+
+    public DateOnly? ReadDateOnly(JsonReadingUnit reader)
+    {
+        SkipPropertyName(reader);
+        var str = (string?)reader.Reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
+        return DateOnly.Parse(str);
+    }
+
     public TranslatedString? ReadTranslatedString(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);
