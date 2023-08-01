@@ -130,11 +130,11 @@ public class EdidLinkGenerator : ISerializationForFieldGenerator
                 throw new ArgumentException($"Field is not appropriate for {nameof(EdidLinkGenerator)}: {field}");
             }
             
-            sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\").ToLink<{named.TypeArguments[0]}>();");
+            sb.AppendLine($"{fieldAccessor}new EDIDLink<{named.TypeArguments[0]}>({kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\"));");
         }
         else
         {
-            sb.AppendLine($"{fieldAccessor}.EDID = {kernelAccessor}.ReadString({readerAccessor});");
+            sb.AppendLine($"{fieldAccessor}.EDID = {kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\");");
         }
     }
 
