@@ -145,7 +145,11 @@ public class SerializationForObjectGenerator
             if (isMod)
             {
                 args.Add($"ModKey modKey");
-                args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release release");
+                if (_releaseRetriever.HasRelease(typeSet.GetAny()))
+                {
+                    args.Add($"{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release release");
+                }
+
                 args.Add($"IWorkDropoff? workDropoff");
                 args.Add($"IFileSystem? fileSystem");
                 args.Add($"ICreateStream? streamCreator");
@@ -165,11 +169,25 @@ public class SerializationForObjectGenerator
             sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             if (isMajorRecord)
             {
-                sb.AppendLine($"var obj = new {typeSet.Direct}(kernel.ExtractFormKey(reader), metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release());");
+                using (var f = sb.Call($"var obj = new {typeSet.Direct}"))
+                {
+                    f.Add("kernel.ExtractFormKey(reader)");
+                    if (_releaseRetriever.HasRelease(typeSet.GetAny()))
+                    {
+                        f.Add($"metaData.Release.To{_releaseRetriever.GetReleaseName(typeSet.Getter!)}Release()");
+                    }
+                }
             }
             else if (isMod)
             {
-                sb.AppendLine($"var obj = new {typeSet.Direct}(modKey, release);");
+                using (var f = sb.Call($"var obj = new {typeSet.Direct}"))
+                {
+                    f.Add("modKey");
+                    if (_releaseRetriever.HasRelease(typeSet.GetAny()))
+                    {
+                        f.Add("release");
+                    }
+                }
             }
             else
             {
