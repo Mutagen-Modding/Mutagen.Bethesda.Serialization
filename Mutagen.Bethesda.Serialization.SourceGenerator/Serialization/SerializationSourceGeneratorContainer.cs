@@ -58,6 +58,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(P3UInt16FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P2IntFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(P2Int16FieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(P2UInt8FieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(PercentFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(TimeOnlyFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(DateOnlyFieldGenerator), typeof(ISerializationForFieldGenerator))]

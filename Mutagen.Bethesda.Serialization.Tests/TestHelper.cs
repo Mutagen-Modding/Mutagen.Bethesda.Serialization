@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Loqui;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Mutagen.Bethesda.Fallout4;
 using Mutagen.Bethesda.Oblivion;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
@@ -87,6 +88,7 @@ public static class TestHelper
             MetadataReference.CreateFromFile(typeof(ModKey).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(FormKey).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(SkyrimMod).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Fallout4Mod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(OblivionMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(ISerializationReaderKernel<>).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(LoquiRegistration).Assembly.Location),

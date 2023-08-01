@@ -116,7 +116,11 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException($"No GetDefault defined for {typeof(AListFieldGenerator)}");
+        if (field is not INamedTypeSymbol namedField)
+        {
+            throw new NotImplementedException($"No GetDefault defined for {typeof(AListFieldGenerator)} for {field}");
+        }
+        return $"new ExtendedList<{GetSubtype(namedField)}>();";
     }
 
     public abstract void GenerateForHasSerialize(

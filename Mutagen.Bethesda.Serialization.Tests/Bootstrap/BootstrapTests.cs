@@ -172,6 +172,39 @@ public class SerializationTests
             .Should().BeEmpty();
     }
     
+    [Fact(Skip = "Not finished")]
+    public async Task Fallout4ModGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Fallout4;
+using Noggog.WorkEngine;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptyFallout4Mod()
+    { 
+        var mod = new Fallout4Mod(ModKey.Null);
+        var stream = new MemoryStream();
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+    }
+}";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
+    
     [Fact]
     public async Task CastBootstrapper()
     {
