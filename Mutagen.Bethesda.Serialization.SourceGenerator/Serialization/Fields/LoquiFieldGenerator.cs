@@ -124,7 +124,14 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        return $"default({field})";
+        if (field.IsNullable())
+        {
+            return $"default({field})";
+        }
+        else
+        {
+            return $"new {field}()";
+        }
     }
 
     public void GenerateForHasSerialize(
