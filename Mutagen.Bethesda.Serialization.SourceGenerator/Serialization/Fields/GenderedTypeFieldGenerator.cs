@@ -131,7 +131,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(GenderedTypeFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

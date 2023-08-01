@@ -105,7 +105,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         var sub = named.TypeArguments[0];
         if (!compilation.Mapping.TryGetTypeSet(sub, out var typeSet))
         {
-            throw new NotImplementedException();
+            throw new ArgumentException($"Could not get compilation mapping for {sub} in {nameof(FormLinkFieldGenerator)}");
         }
 
         var linkStr = $"IFormLink{(nullable ? "Nullable" : null)}Getter<{typeSet.Getter}>";
@@ -133,7 +133,7 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
                 || !named.IsGenericType
                 || named.TypeArguments.Length != 1)
             {
-                throw new NotImplementedException();
+                throw new ArgumentException($"Field is not appropriate for {nameof(FormLinkFieldGenerator)}: {field}");
             }
 
             if (nullable)

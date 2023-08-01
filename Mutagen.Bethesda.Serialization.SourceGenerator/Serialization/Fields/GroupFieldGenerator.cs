@@ -126,7 +126,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(GroupFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

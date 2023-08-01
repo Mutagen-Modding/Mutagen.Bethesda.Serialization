@@ -100,7 +100,7 @@ public class EdidLinkGenerator : ISerializationForFieldGenerator
         var sub = named.TypeArguments[0];
         if (!compilation.Mapping.TryGetTypeSet(sub, out var typeSet))
         {
-            throw new NotImplementedException();
+            throw new ArgumentException($"Could not get compilation mapping for {sub} in {nameof(EdidLinkGenerator)}");
         }
 
         var linkStr = $"IEDIDLinkGetter<{typeSet.Getter}>";
@@ -127,7 +127,7 @@ public class EdidLinkGenerator : ISerializationForFieldGenerator
                 || !named.IsGenericType
                 || named.TypeArguments.Length != 1)
             {
-                throw new NotImplementedException();
+                throw new ArgumentException($"Field is not appropriate for {nameof(EdidLinkGenerator)}: {field}");
             }
             
             sb.AppendLine($"{fieldAccessor}{kernelAccessor}.ReadString({readerAccessor}).StripNull(\"{fieldName}\").ToLink<{named.TypeArguments[0]}>();");

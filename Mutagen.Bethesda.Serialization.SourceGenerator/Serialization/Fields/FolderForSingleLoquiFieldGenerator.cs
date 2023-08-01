@@ -64,7 +64,7 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(FolderForSingleLoquiFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field,

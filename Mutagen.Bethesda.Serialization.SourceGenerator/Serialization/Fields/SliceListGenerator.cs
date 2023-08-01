@@ -60,7 +60,7 @@ public class SliceListGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (field is not INamedTypeSymbol namedTypeSymbol) throw new NotImplementedException();
+        if (field is not INamedTypeSymbol namedTypeSymbol) throw new ArgumentException($"Field not a named type symbol: {field}");
         sb.AppendLine($"{kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\");");
         sb.AppendLine($"foreach (var row in {fieldAccessor})");
         using (sb.CurlyBrace())
@@ -86,7 +86,7 @@ public class SliceListGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(SliceListGenerator)}");
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation,

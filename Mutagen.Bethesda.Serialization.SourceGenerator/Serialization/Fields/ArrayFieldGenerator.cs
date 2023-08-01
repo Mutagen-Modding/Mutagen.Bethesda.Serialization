@@ -37,7 +37,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
             return named.TypeArguments[0];
         }
 
-        throw new NotImplementedException();
+        throw new ArgumentException($"Could not get SubType on {t} in {nameof(ArrayFieldGenerator)}");
     }
     
     public IEnumerable<string> RequiredNamespaces(
@@ -78,7 +78,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(ArrayFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

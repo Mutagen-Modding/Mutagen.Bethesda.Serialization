@@ -82,7 +82,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(AssetLinkFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

@@ -57,7 +57,7 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(CacheFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

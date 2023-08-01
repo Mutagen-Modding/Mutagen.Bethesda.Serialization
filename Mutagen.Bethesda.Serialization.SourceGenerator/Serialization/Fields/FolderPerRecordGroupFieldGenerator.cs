@@ -83,7 +83,7 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(FolderPerRecordGroupFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation, LoquiTypeSet obj, ITypeSymbol field, string? fieldName,

@@ -59,7 +59,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
             return ar.ElementType;
         }
 
-        throw new NotImplementedException();
+        throw new ArgumentException($"Could not get SubType on {t} in {nameof(ByteArrayFieldGenerator)}");
     }
 
     public void GenerateForSerialize(
@@ -103,7 +103,7 @@ public class ByteArrayFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(ByteArrayFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation,

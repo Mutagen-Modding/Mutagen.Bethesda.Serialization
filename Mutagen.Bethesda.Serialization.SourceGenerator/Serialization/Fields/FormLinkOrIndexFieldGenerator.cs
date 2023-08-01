@@ -66,7 +66,7 @@ public class FormLinkOrIndexFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(FormLinkOrIndexFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(
@@ -84,7 +84,7 @@ public class FormLinkOrIndexFieldGenerator : ISerializationForFieldGenerator
         var sub = named.TypeArguments[0];
         if (!compilation.Mapping.TryGetTypeSet(sub, out var typeSet))
         {
-            throw new NotImplementedException();
+            throw new ArgumentException($"Could not get compilation mapping for {sub} in {nameof(FormLinkOrIndexFieldGenerator)}");
         }
 
         sb.AppendLine($"if (!FormLinkOrIndex<{typeSet.Getter}>.EqualityComparer.Equals({fieldAccessor}, {defaultValueAccessor ?? $"default(FormLinkOrIndex<{typeSet.Getter}>)"})) return true;");

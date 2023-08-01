@@ -65,7 +65,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
         if (_groupTester.IsGroup(obj.Getter)) return;
         if (defaultValueAccessor != null)
         {
-            throw new NotImplementedException();
+            throw new ArgumentException($"defaultValueAccessor defined for {typeof(DictFieldGenerator)}");
         }
         
         ITypeSymbol keyType;
@@ -122,7 +122,7 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(DictFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(

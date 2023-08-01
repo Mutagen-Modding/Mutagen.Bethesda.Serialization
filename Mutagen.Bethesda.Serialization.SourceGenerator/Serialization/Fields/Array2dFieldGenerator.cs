@@ -111,7 +111,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GetDefault defined for {typeof(Array2dFieldGenerator)}");
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation,
@@ -124,7 +124,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException($"No GenerateForHasSerialize defined for {typeof(Array2dFieldGenerator)}");
     }
 
     public void GenerateForDeserializeSingleFieldInto(
