@@ -256,7 +256,11 @@ using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 
-public record MyMeta(bool MyBool, int MyInt);
+public class MyMeta
+{
+    public int MyInt { get; set; }
+    public bool MyBool { get; set; }
+}
 
 public class SerializationTests
 {
@@ -269,6 +273,52 @@ public class SerializationTests
         MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine, extraMeta: new MyMeta(true, 23));
     }
 }";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
+    
+    [Fact]
+    public async Task MetaFileInOtherNamespaceGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Skyrim;
+using Noggog.WorkEngine;
+using TestNamespace;
+
+namespace TestNamespace
+{
+public class MyMeta
+{
+    public int MyInt { get; set; }
+    public bool MyBool { get; set; }
+}
+}
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests
+{
+public class SerializationTests
+{
+    public void EmptySkyrimMod()
+    { 
+        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+        var stream = new MemoryStream();
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine, extraMeta: new MyMeta(true, 23));
+    }
+}
+}
+
+";
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)

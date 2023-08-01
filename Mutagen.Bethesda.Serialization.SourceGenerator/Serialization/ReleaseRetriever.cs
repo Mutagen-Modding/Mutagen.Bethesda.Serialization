@@ -20,7 +20,7 @@ public class ReleaseRetriever
     {
         // ToDo
         // Upgrade to something with reflection perhaps
-        return GetReleaseName(typeSymbol) switch
+        return _namespaceSuffixRetriever.TryGet(typeSymbol) switch
         {
             "Skyrim" => true,
             _ => false

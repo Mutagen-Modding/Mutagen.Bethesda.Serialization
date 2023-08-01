@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -38,7 +38,7 @@ public class RelatedObjectAccumulator
         CancellationToken cancel)
     {
         return GetRelatedObjects(
-            gameName: _namespaceSuffixRetriever.Get(details),
+            gameName: _namespaceSuffixRetriever.TryGet(details),
             mapper: mapper,
             details: details,
             customization: customization,
@@ -46,7 +46,7 @@ public class RelatedObjectAccumulator
     }
     
     public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
-        string gameName,
+        string? gameName,
         LoquiMapping mapper,
         ITypeSymbol details, 
         CustomizationSpecifications customization,
@@ -64,7 +64,7 @@ public class RelatedObjectAccumulator
     }
 
     private void GetRelatedObjects(
-        string gameName,
+        string? gameName,
         LoquiMapping mapper,
         LoquiTypeSet obj, 
         HashSet<LoquiTypeSet> processedDetails,
@@ -85,7 +85,7 @@ public class RelatedObjectAccumulator
         foreach (var inherit in inheriting)
         {
             cancel.ThrowIfCancellationRequested();
-            if (_namespaceSuffixRetriever.Get(inherit.GetAny()) != gameName) continue;
+            if (_namespaceSuffixRetriever.TryGet(inherit.GetAny()) != gameName) continue;
             GetRelatedObjects(gameName, mapper, inherit, processedDetails, customization, cancel);
         }
         foreach (var memb in obj.GetAny().GetMembers())
