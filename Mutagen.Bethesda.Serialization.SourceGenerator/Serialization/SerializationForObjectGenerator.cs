@@ -21,6 +21,7 @@ public class SerializationForObjectGenerator
     private readonly ObjectTypeTester _modObjectTypeTester;
     private readonly ReleaseRetriever _releaseRetriever;
     private readonly ISerializationInterceptor[] _serializationInterceptors;
+    private readonly HasFormVersionRetriever _hasFormVersionRetriever;
 
     public SerializationForObjectGenerator(
         LoquiNameRetriever nameRetriever,
@@ -31,7 +32,8 @@ public class SerializationForObjectGenerator
         CustomizationDriver customizationDriver,
         ObjectTypeTester modObjectTypeTester,
         ReleaseRetriever releaseRetriever,
-        ISerializationInterceptor[] serializationInterceptors)
+        ISerializationInterceptor[] serializationInterceptors, 
+        HasFormVersionRetriever hasFormVersionRetriever)
     {
         _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
@@ -42,6 +44,7 @@ public class SerializationForObjectGenerator
         _modObjectTypeTester = modObjectTypeTester;
         _releaseRetriever = releaseRetriever;
         _serializationInterceptors = serializationInterceptors;
+        _hasFormVersionRetriever = hasFormVersionRetriever;
     }
     
     public void Generate(
@@ -194,7 +197,7 @@ public class SerializationForObjectGenerator
                 sb.AppendLine($"var obj = new {typeSet.Direct}();");
             }
 
-            if (isModHeader)
+            if (isModHeader && _hasFormVersionRetriever.HasFormVersion(typeSet.GetAny()))
             {
                 sb.AppendLine($"obj.FormVersion = metaData.Release.GetDefaultFormVersion()!.Value;");
             }
