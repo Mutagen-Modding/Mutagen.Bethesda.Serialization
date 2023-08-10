@@ -361,13 +361,22 @@ public class SerializationForObjectGenerator
                         sb.AppendLine(
                             $"await {baseSerializationItems.DeserializationSingleFieldIntoCall()}{genString}(reader, kernel, obj, metaData, name);");
                     }
-
+                    else if (!isMod)
+                    {
+                        sb.AppendLine("kernel.Skip(reader);");
+                    }
+                    
                     if (isMod)
                     {
                         sb.AppendLine("if (extraMeta != null && metaReader != null && name.Equals(extraMeta.GetType().Name))");
                         using (sb.CurlyBrace())
                         {
                             sb.AppendLine("await metaReader(reader, extraMeta, kernel, metaData);");
+                        }
+                        sb.AppendLine("else");
+                        using (sb.CurlyBrace())
+                        {
+                            sb.AppendLine("kernel.Skip(reader);");
                         }
                     }
 

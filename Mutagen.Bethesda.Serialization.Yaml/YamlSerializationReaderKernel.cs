@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Strings;
@@ -49,9 +49,14 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         reader.Parser.TryConsume<MappingStart>(out _);
 
-        if (reader.Parser.Current is MappingEnd)
+        if (reader.Parser.TryConsume<MappingEnd>(out _))
         {
-            reader.Parser.TryConsume<MappingEnd>(out _);
+            name = default!;
+            return false;
+        }
+
+        if (reader.Parser.TryConsume<StreamEnd>(out _))
+        {
             name = default!;
             return false;
         }
@@ -562,7 +567,15 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
 
     public bool TryHasNextItem(YamlReadingUnit reader)
     {
-        return reader.Parser.Current is not SequenceEnd;
+        switch (reader.Parser.Current)
+        {
+            case SequenceEnd:
+            case DocumentEnd:
+            case StreamEnd:
+                return false;
+        }
+
+        return true;
     }
 
     public void StartDictionarySection(YamlReadingUnit reader)
