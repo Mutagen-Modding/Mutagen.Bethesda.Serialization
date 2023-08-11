@@ -44,10 +44,10 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>[2.59.0.1-nightly-20230716-054653]</Version>
+      <Version>[2.59.0.1-nightly-20230811-032099]</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>[2.59.0.1-nightly-20230716-054653]</Version>
+      <Version>[2.59.0.1-nightly-20230811-032099]</Version>
     </PackageVersion>
     <PackageVersion Include="NuGetizer" Version="0.9.5">
       <PrivateAssets>all</PrivateAssets>
