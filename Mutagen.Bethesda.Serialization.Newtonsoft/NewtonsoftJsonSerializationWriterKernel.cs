@@ -427,7 +427,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item.Value.ToString());
+            writer.Writer.WriteValue(item.Value.ToString("MM/dd/yyyy"));
         }
     }
 

@@ -220,7 +220,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteDateOnly(YamlWritingUnit writer, string? fieldName, DateOnly? item)
     {
-        WriteString(writer, fieldName, item == null ? null : item.Value.ToString());
+        WriteString(writer, fieldName, item?.ToString("MM/dd/yyyy"));
     }
 
     public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
