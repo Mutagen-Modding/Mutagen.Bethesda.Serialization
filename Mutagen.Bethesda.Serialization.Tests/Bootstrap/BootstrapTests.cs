@@ -172,7 +172,7 @@ public class SerializationTests
             .Should().BeEmpty();
     }
     
-    [Fact(Skip = "Not finished")]
+    [Fact]
     public async Task Fallout4ModGenerationBootstrapper()
     {
         var source = @"
