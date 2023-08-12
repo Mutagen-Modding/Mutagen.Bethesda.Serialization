@@ -178,6 +178,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
     }
 
+    public void WriteP2UInt8(YamlWritingUnit writer, string? fieldName, P2UInt8? item)
+    {
+        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
+    }
+
     public void WriteP2Float(YamlWritingUnit writer, string? fieldName, P2Float? item)
     {
         WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");

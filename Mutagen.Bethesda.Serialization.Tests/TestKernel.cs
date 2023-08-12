@@ -130,6 +130,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public void WriteP2UInt8(TestWriter writer, string? fieldName, P2UInt8? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteP2Float(TestWriter writer, string? fieldName, P2Float? item)
     {
         throw new NotImplementedException();
@@ -399,6 +404,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public P2Int16? ReadP2Int16(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public P2UInt8? ReadP2UInt8(TestReader reader)
     {
         throw new NotImplementedException();
     }

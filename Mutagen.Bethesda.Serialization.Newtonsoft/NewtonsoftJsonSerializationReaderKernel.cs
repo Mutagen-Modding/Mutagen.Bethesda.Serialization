@@ -368,6 +368,19 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {str}");
     }
 
+    public P2UInt8? ReadP2UInt8(JsonReadingUnit reader)
+    {
+        SkipPropertyName(reader);
+        var str = (string?)reader.Reader.Value!;
+        if (str.IsNullOrEmpty()) return null;
+        if (P2UInt8.TryParse(str, out var pt))
+        {
+            return pt;
+        }
+
+        throw new ArgumentException($"Could not parse string into {nameof(P2UInt8)}: {str}");
+    }
+
     public P2Float? ReadP2Float(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);

@@ -306,6 +306,20 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
     }
 
+    public void WriteP2UInt8(JsonWritingUnit writer, string? fieldName, P2UInt8? item)
+    {
+        writer.WriteName(fieldName);
+
+        if (item == null)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+        }
+    }
+
     public void WriteP2Float(JsonWritingUnit writer, string? fieldName, P2Float? item)
     {
         writer.WriteName(fieldName);

@@ -68,6 +68,7 @@ public interface ISerializationReaderKernel<TReaderObject>
     public RecordType? ReadRecordType(TReaderObject reader);
     public P2Int? ReadP2Int(TReaderObject reader);
     public P2Int16? ReadP2Int16(TReaderObject reader);
+    public P2UInt8? ReadP2UInt8(TReaderObject reader);
     public P2Float? ReadP2Float(TReaderObject reader);
     public P3Float? ReadP3Float(TReaderObject reader);
     public P3UInt8? ReadP3UInt8(TReaderObject reader);
@@ -157,6 +158,7 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteRecordType(TWriterObject writer, string? fieldName, RecordType? item);
     public void WriteP2Int(TWriterObject writer, string? fieldName, P2Int? item);
     public void WriteP2Int16(TWriterObject writer, string? fieldName, P2Int16? item);
+    public void WriteP2UInt8(TWriterObject writer, string? fieldName, P2UInt8? item);
     public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item);
     public void WriteP3Float(TWriterObject writer, string? fieldName, P3Float? item);
     public void WriteP3UInt8(TWriterObject writer, string? fieldName, P3UInt8? item);

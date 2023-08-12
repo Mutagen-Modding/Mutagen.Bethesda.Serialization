@@ -341,6 +341,18 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         throw new ArgumentException($"Could not parse string into {nameof(P2Int16)}: {str}");
     }
 
+    public P2UInt8? ReadP2UInt8(YamlReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        if (P2UInt8.TryParse(str, out var pt))
+        {
+            return pt;
+        }
+
+        throw new ArgumentException($"Could not parse string into {nameof(P2UInt8)}: {str}");
+    }
+
     public P2Float? ReadP2Float(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
