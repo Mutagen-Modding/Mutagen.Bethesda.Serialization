@@ -152,7 +152,12 @@ public class ListFieldGenerator : AListFieldGenerator
 
         var nullable = field.IsNullable();
 
-        if (nullable)
+        if (insideCollection)
+        {
+            sb.AppendLine($"var ret ??= new();");
+            fieldAccessor = "ret";
+        }
+        else if (nullable)
         {
             sb.AppendLine($"{fieldAccessor} ??= new();");
         }
@@ -175,5 +180,10 @@ public class ListFieldGenerator : AListFieldGenerator
             sb.AppendLine($"{fieldAccessor}.Add(item);");
         }
         sb.AppendLine($"{kernelAccessor}.EndListSection({readerAccessor});");
+
+        if (insideCollection)
+        {
+            sb.AppendLine($"return ret;");
+        }
     }
 }
