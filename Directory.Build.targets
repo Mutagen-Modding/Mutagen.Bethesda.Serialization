@@ -1,8 +1,5 @@
 <Project>   
-  
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
-	  <PackageReference Include="NuGetizer" />
-  </ItemGroup>
+ 
 
 	<!-- ToDo Source generator not cleared -->
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
