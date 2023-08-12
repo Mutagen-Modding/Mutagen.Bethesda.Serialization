@@ -24,9 +24,21 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         string? fieldName)
     {
         typeSymbol = typeSymbol.PeelNullable();
-        return typeSymbol.TypeKind == TypeKind.Enum
+        var ret = typeSymbol.TypeKind == TypeKind.Enum
             || (typeSymbol.BaseType is { Name: "Enum" } 
                 && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
+        if (ret) return true;
+
+        if (obj.Getter is INamedTypeSymbol namedTypeSymbol)
+        {
+            var match = namedTypeSymbol.TypeArguments.FirstOrDefault(t => t.Name == typeSymbol.Name);
+            if (match is ITypeParameterSymbol typeParameterSymbol && typeParameterSymbol.ConstraintTypes.Any(x => x.Name == "Enum"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
