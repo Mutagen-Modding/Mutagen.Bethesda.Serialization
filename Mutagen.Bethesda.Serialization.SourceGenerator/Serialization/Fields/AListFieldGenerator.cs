@@ -120,7 +120,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         {
             throw new NotImplementedException($"No GetDefault defined for {typeof(AListFieldGenerator)} for {field}");
         }
-        return $"new ExtendedList<{GetSubtype(namedField)}>();";
+        return $"new ExtendedList<{GetSubtype(namedField)}>()";
     }
 
     public abstract void GenerateForHasSerialize(
