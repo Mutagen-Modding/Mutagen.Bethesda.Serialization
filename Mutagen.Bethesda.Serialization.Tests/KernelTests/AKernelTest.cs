@@ -454,6 +454,20 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     }
 
     [Fact]
+    public async Task P2UInt8()
+    {
+        await DoPrimitiveTest<P2UInt8?>(
+            "P2UInt8",
+            (k, w, name, item, def) => k.WriteP2UInt8(w, name, item, def),
+            (k, r) => k.ReadP2UInt8(r),
+            new P2UInt8(1, 3),
+            new P2UInt8(),
+            new P2UInt8(1, 3),
+            new P2UInt8(byte.MaxValue, byte.MaxValue),
+            new P2UInt8(byte.MinValue, byte.MinValue));
+    }
+
+    [Fact]
     public async Task P2Float()
     {
         await DoPrimitiveTest<P2Float?>(

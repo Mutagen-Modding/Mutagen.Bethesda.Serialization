@@ -123,6 +123,12 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         if (checkDefaults && EqualityComparer<P2Int16?>.Default.Equals(item, defaultVal)) return;
         _kernel.WriteP2Int16(writer, fieldName, item);
     }
+
+    public void WriteP2UInt8(TWriterObject writer, string? fieldName, P2UInt8? item, P2UInt8? defaultVal, bool checkDefaults = true)
+    {
+        if (checkDefaults && EqualityComparer<P2UInt8?>.Default.Equals(item, defaultVal)) return;
+        _kernel.WriteP2UInt8(writer, fieldName, item);
+    }
     
     public void WriteP2Float(TWriterObject writer, string? fieldName, P2Float? item, P2Float? defaultVal, bool checkDefaults = true)
     {
