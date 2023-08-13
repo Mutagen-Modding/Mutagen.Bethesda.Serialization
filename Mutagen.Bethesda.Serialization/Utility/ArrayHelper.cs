@@ -33,6 +33,27 @@ public static partial class SerializationHelper
         
         kernel.EndListSection(reader);
     }
+    
+    public static async Task<TObject[]> ReadArray<TKernel, TReadObject, TObject>(
+        TReadObject reader,
+        TKernel kernel,
+        SerializationMetaData metaData,
+        ReadAsync<TKernel, TReadObject, TObject> itemReader)
+        where TKernel : ISerializationReaderKernel<TReadObject>
+    {
+        int i = 0;
+        kernel.StartListSection(reader);
+        var arr = new List<TObject>();
+        while (i < arr.Count && kernel.TryHasNextItem(reader))
+        {
+            var item = await itemReader(reader, kernel, metaData);
+            arr[i] = item;
+            i++;
+        }
+        
+        kernel.EndListSection(reader);
+        return arr.ToArray();
+    }
 
     public static void ReadIntoSlice<TKernel, TReadObject, TObject>(
         TReadObject reader,
