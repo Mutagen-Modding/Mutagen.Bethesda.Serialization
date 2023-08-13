@@ -23,8 +23,19 @@ public record PropertyMetadata(IPropertySymbol Property, ISerializationForFieldG
     private string? _defaultString;
     public string? DefaultString
     {
-        get => _defaultString ?? (Default == null ? null : $"{Default.ContainingSymbol.ContainingNamespace}.{Default.ContainingSymbol.Name}.{Default.Name}");
+        get => _defaultString ?? GetDefaultDefaultString();
         set => _defaultString = value;
+    }
+
+    private string? GetDefaultDefaultString()
+    {
+        if (Default == null) return null;
+        var className = Default.ContainingSymbol.Name;
+        if (Default.ContainingSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType)
+        {
+            className += $"<{string.Join(", ", namedTypeSymbol.TypeArguments)}>";
+        }
+        return $"{Default.ContainingSymbol.ContainingNamespace}.{className}.{Default.Name}";
     }
 }
 
