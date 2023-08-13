@@ -89,8 +89,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (field is ITypeParameterSymbol namedTypeSymbol
-            && namedTypeSymbol.ConstraintTypes.Length == 1)
+        if (field is ITypeParameterSymbol typeParameterSymbol
+            && typeParameterSymbol.ConstraintTypes.Length == 1)
         {
             return;
         }
@@ -116,7 +116,12 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         }
         using (sb.CurlyBrace(doIt: fieldName != null))
         {
-            sb.AppendLine($"await {kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, {metaAccessor}, static (w, i, k, m) => {call}<TKernel, TWriteObject>(w, i, k, m));");
+            string generics = "TKernel, TWriteObject";
+            if (field is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
+            {
+                generics += ", " + string.Join(", ", namedTypeSymbol.TypeArguments);
+            }
+            sb.AppendLine($"await {kernelAccessor}.WriteLoqui({writerAccessor}, {(fieldName == null ? "null" : $"\"{fieldName}\"")}, {fieldAccessor}, {metaAccessor}, static (w, i, k, m) => {call}<{generics}>(w, i, k, m));");
         }
     }
 
@@ -164,8 +169,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb,
         CancellationToken cancel)
     {
-        if (field is ITypeParameterSymbol namedTypeSymbol
-            && namedTypeSymbol.ConstraintTypes.Length == 1)
+        if (field is ITypeParameterSymbol typeParameterSymbol
+            && typeParameterSymbol.ConstraintTypes.Length == 1)
         {
             return;
         }
@@ -176,6 +181,12 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         var hasInheriting = compilation.Mapping.HasInheritingClasses(typeSet);
 
         var call = fieldSerializationItems.DeserializationCall(withCheck: hasInheriting);
+
+        var genString = "TReadObject";
+        if (field is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
+        {
+            genString += ", " + string.Join(", ", namedTypeSymbol.TypeArguments);
+        }
 
         if (canSet || insideCollection)
         {
@@ -189,11 +200,11 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
                 sb,
                 (sb, f, k, r, setAccessor) =>
                 {
-                    sb.AppendLine($"{setAccessor}await {k}.ReadLoqui({r}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+                    sb.AppendLine($"{setAccessor}await {k}.ReadLoqui({r}, {metaAccessor}, static (r, k, m) => {call}<{genString}>(r, k, m));");
                 });}
         else
         {
-            sb.AppendLine($"var tmp{fieldName} = await {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<TReadObject>(r, k, m));");
+            sb.AppendLine($"var tmp{fieldName} = await {kernelAccessor}.ReadLoqui({readerAccessor}, {metaAccessor}, static (r, k, m) => {call}<{genString}>(r, k, m));");
             sb.AppendLine($"if (tmp{fieldName} == null) return;");
             sb.AppendLine($"{fieldAccessor}.DeepCopyIn(tmp{fieldName});");
         }
