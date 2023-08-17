@@ -33,7 +33,7 @@ public class RelatedObjectAccumulator
     
     public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
         LoquiMapping mapper,
-        ITypeSymbol details, 
+        INamedTypeSymbol details, 
         CustomizationSpecifications customization,
         CancellationToken cancel)
     {
@@ -48,7 +48,7 @@ public class RelatedObjectAccumulator
     public ImmutableHashSet<LoquiTypeSet> GetRelatedObjects(
         string? gameName,
         LoquiMapping mapper,
-        ITypeSymbol details, 
+        INamedTypeSymbol details, 
         CustomizationSpecifications customization,
         CancellationToken cancel)
     {
