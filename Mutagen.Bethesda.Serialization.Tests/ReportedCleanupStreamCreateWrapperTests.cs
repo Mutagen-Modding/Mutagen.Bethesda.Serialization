@@ -41,4 +41,26 @@ public class ReportedCleanupStreamCreateWrapperTests
         fileSystem.File.Exists(file4).Should().BeFalse();
         fileSystem.Directory.Exists(subDir3).Should().BeFalse();
     }
+    
+    [Theory, DefaultAutoData]
+    public void PathingStandardizationTests(
+        IFileSystem fileSystem,
+        DirectoryPath existingDir,
+        ICreateStream createStream)
+    {
+        var file1 = existingDir + "/" + "File1.esp";
+        var file2 = existingDir + "\\" + "File2.esp";
+        var file3 = Path.Combine(existingDir, "File3.esp");
+        fileSystem.File.WriteAllText(file1, string.Empty);
+        fileSystem.File.WriteAllText(file2, string.Empty);
+
+        var sut = new ReportedCleanupStreamCreateWrapper(fileSystem, existingDir, createStream);
+        sut.GetStreamFor(fileSystem, file1, write: true);
+        sut.GetStreamFor(fileSystem, file2, write: true);
+        sut.Dispose();
+
+        fileSystem.File.Exists(file1).Should().BeTrue();
+        fileSystem.File.Exists(file2).Should().BeTrue();
+        fileSystem.File.Exists(file3).Should().BeFalse();
+    }
 }
