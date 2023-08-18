@@ -9,7 +9,7 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
     private readonly IFileSystem _fileSystem;
     private readonly DirectoryPath _baseDir;
     private readonly ICreateStream _wrapped;
-    private readonly HashSet<string> _writtenPaths = new();
+    private readonly HashSet<FilePath> _writtenPaths = new();
 
     public ReportedCleanupStreamCreateWrapper(
         IFileSystem fileSystem, 
@@ -38,13 +38,16 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
 
     public void Dispose()
     {
-        CleanDir(_baseDir);
+        lock (_writtenPaths)
+        {
+            CleanDir(_baseDir);
+        }
     }
 
-    private bool CleanDir(string dir)
+    private bool CleanDir(DirectoryPath dir)
     {
         bool canDelete = true;
-        foreach (var subDir in _fileSystem.Directory.GetDirectories(dir))
+        foreach (var subDir in dir.EnumerateDirectories(includeSelf: false, recursive: false, fileSystem: _fileSystem))
         {
             if (CleanDir(subDir))
             {
@@ -56,7 +59,7 @@ public class ReportedCleanupStreamCreateWrapper : ICreateStream, IDisposable
             }
         }
 
-        foreach (var file in _fileSystem.Directory.GetFiles(dir))
+        foreach (var file in dir.EnumerateFiles(recursive: false, fileSystem: _fileSystem))
         {
             if (_writtenPaths.Contains(file))
             {
