@@ -22,32 +22,32 @@
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>[0.42.0.1-nightly-20230818-103399]</Version>
+      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>[0.42.0.1-nightly-20230818-103399]</Version>
+      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>[0.42.0.1-nightly-20230818-103399]</Version>
+      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>[0.42.0.1-nightly-20230818-103399]</Version>
+      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>[0.42.0.1-nightly-20230818-103399]</Version>
+      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
     </PackageVersion>
-    <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="1.1" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="1.1" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="1.1" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="1.1" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="1.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="1.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="1.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="1.2" />
     <PackageVersion Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>[2.60]</Version>
+      <Version>[2.60.0.1-nightly-20230901-092788]</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>[2.60]</Version>
+      <Version>[2.60.0.1-nightly-20230901-092788]</Version>
     </PackageVersion>
     <PackageVersion Include="NuGetizer" Version="0.9.5">
       <PrivateAssets>all</PrivateAssets>
