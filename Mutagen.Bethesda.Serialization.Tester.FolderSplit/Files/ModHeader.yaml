@@ -1,0 +1,13 @@
+SpriggitSource:
+  PackageName: Spriggit.Yaml.Skyrim
+  Version: 0.4
+ModKey: Test.esm
+GameRelease: Skyrim
+ModHeader:
+  Flags:
+    - Master
+    - Localized
+  Version: 2109106
+  FormVersion: 552
+  MasterReferences:
+    - Master: Skyrim.esm
