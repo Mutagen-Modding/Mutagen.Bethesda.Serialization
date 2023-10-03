@@ -7,10 +7,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Loqui">
-      <Version>[2.60]</Version>
+      <Version>[2.60.0.1-nightly-20230920-202693]</Version>
     </PackageVersion>
     <PackageVersion Include="Loqui.Generation">
-      <Version>[2.60]</Version>
+      <Version>[2.60.0.1-nightly-20230920-202693]</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>3.3.4</Version>
@@ -22,19 +22,19 @@
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
+      <Version>[0.43.0.1-nightly-20231003-100733]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
+      <Version>[0.43.0.1-nightly-20231003-100733]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
+      <Version>[0.43.0.1-nightly-20231003-100733]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
+      <Version>[0.43.0.1-nightly-20231003-100733]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>[0.42.0.1-nightly-20230908-100612]</Version>
+      <Version>[0.43.0.1-nightly-20231003-100733]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="1.2" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="1.2" />

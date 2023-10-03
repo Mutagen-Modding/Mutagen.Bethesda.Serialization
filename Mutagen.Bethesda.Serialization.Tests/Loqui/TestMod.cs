@@ -19,7 +19,6 @@ public partial interface ITestModGetter : ILoquiObjectGetter, IModGetter
 
 internal class TestMod_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 8, 0);
     public override Type ClassType => typeof(TestMod);
     public override Type GetterType => typeof(ITestModGetter);
     public override Type SetterType => typeof(ITestMod);

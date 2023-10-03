@@ -22,7 +22,6 @@ public abstract class AbstractBaseLoqui : IAbstractBaseLoqui
 
 internal class AbstractBaseLoqui_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 4, 0);
     public override Type ClassType => typeof(AbstractBaseLoqui);
     public override Type GetterType => typeof(IAbstractBaseLoquiGetter);
     public override Type SetterType => typeof(IAbstractBaseLoqui);

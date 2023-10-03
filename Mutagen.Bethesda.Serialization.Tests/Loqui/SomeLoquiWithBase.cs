@@ -17,7 +17,6 @@ public class SomeLoquiWithBase : BaseLoqui, ISomeLoquiWithBase
 
 internal class SomeLoquiWithBase_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 3, 0);
     public override Type ClassType => typeof(SomeLoquiWithBase);
     public override Type GetterType => typeof(ISomeLoquiWithBaseGetter);
     public override Type SetterType => typeof(ISomeLoquiWithBase);

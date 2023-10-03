@@ -257,7 +257,6 @@ public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>
 
 internal class TestMajorRecord_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 7, 0);
     public override Type ClassType => typeof(TestMajorRecord);
     public override Type GetterType => typeof(ITestMajorRecord);
     public override Type SetterType => typeof(ITestMajorRecordGetter);

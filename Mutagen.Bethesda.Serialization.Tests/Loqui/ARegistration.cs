@@ -24,8 +24,6 @@ public abstract class ARegistration : ILoquiRegistration
     public bool IsProtected(ushort index) => throw new NotImplementedException();
 
     public ProtocolKey ProtocolKey { get; } = StaticProtocolKey;
-    public abstract ObjectKey ObjectKey { get; }
-    public string GUID => throw new NotImplementedException();
     public ushort AdditionalFieldCount => throw new NotImplementedException();
     public ushort FieldCount => throw new NotImplementedException();
     public Type MaskType => throw new NotImplementedException();

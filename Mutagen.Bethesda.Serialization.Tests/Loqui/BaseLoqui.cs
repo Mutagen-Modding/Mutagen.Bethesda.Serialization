@@ -22,7 +22,6 @@ public class BaseLoqui : IBaseLoqui
 
 internal class BaseLoqui_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 2, 0);
     public override Type ClassType => typeof(BaseLoqui);
     public override Type GetterType => typeof(IBaseLoquiGetter);
     public override Type SetterType => typeof(IBaseLoqui);

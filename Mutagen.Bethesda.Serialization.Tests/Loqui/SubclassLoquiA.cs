@@ -18,7 +18,6 @@ public class SubclassLoquiA : AbstractBaseLoqui, ISubclassLoquiA
 
 internal class SubclassLoquiA_Registration : ARegistration
 {
-    public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 6, 0);
     public override Type ClassType => typeof(SubclassLoquiA);
     public override Type GetterType => typeof(ISubclassLoquiAGetter);
     public override Type SetterType => typeof(ISubclassLoquiA);
