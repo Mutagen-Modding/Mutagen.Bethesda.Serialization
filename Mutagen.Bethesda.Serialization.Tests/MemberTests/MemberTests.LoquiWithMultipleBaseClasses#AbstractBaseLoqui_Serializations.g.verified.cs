@@ -97,9 +97,9 @@ internal static class AbstractBaseLoqui_Serialization
         switch (type.Name)
         {
             case "SubclassLoquiA":
-                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Deserialize(reader, kernel, metaData);
+                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             case "SubclassLoquiB":
-                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Deserialize(reader, kernel, metaData);
+                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             default:
                 throw new NotImplementedException();
         }

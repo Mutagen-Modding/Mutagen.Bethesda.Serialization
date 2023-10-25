@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Noggog;
 
@@ -226,7 +226,7 @@ public class LoquiMapper
         passed.Add(typeSet.Setter);
         foreach (var interf in type.Setter.AllInterfaces)
         {
-            if (!typeSets.TryGetValue(interf, out var otherTypeSet)) continue;
+            if (!typeSets.TryGetValue(interf.OriginalDefinition, out var otherTypeSet)) continue;
             if (otherTypeSet.Setter == null) continue;
             ProcessInterfaceTypeInheritance(type, otherTypeSet.Setter, passed, typeSets, mapping);
         }

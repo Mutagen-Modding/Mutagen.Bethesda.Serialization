@@ -97,7 +97,7 @@ internal static class BaseLoqui_Serialization
         switch (type.Name)
         {
             case "SomeLoquiWithBase":
-                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Deserialize(reader, kernel, metaData);
+                return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoquiWithBase_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             case "BaseLoqui":
                 return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Deserialize(reader, kernel, metaData);
             default:

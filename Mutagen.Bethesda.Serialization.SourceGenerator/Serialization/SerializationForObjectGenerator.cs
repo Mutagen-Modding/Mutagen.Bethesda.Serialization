@@ -61,7 +61,7 @@ public class SerializationForObjectGenerator
         var properties = _propertyCollectionRetriever.GetPropertyCollection(
             compilation,
             typeSet);
-        
+
         GenerateUsings(compilation, typeSet, sb, properties);
 
         GenerateWarningSuppressions(sb);
@@ -776,7 +776,14 @@ public class SerializationForObjectGenerator
                         continue;
                     if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
                     if (inheritTypes.Direct?.IsAbstract ?? true) continue;
-                    sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter} {names.Direct}Getter:");
+                    
+                    var genString = "";
+                    if (inherit is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
+                    {
+                        genString = $"<{string.Join(", ", namedTypeSymbol.TypeArguments)}>";
+                    }
+                    
+                    sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter}{genString} {names.Direct}Getter:");
                     using (sb.IncreaseDepth())
                     {
                         sb.AppendLine(
@@ -850,10 +857,17 @@ public class SerializationForObjectGenerator
                         continue;
                     if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
                     if (inheritTypes.Direct?.IsAbstract ?? true) continue;
+                    
+                    var genString = "TReadObject";
+                    if (inherit is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
+                    {
+                        genString += ", " + string.Join(", ", namedTypeSymbol.TypeArguments);
+                    }
+                    
                     sb.AppendLine($"case \"{names.Direct}\":");
                     using (sb.IncreaseDepth())
                     {
-                        sb.AppendLine($"return await {inheritSerializeItems.DeserializationCall()}(reader, kernel, metaData);");
+                        sb.AppendLine($"return await {inheritSerializeItems.DeserializationCall()}<{genString}>(reader, kernel, metaData);");
                     }
                 }
 
