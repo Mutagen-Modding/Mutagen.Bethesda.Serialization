@@ -83,7 +83,7 @@ public abstract class ATestsBase
         namespaceBuilder?.Invoke(sb);
         sb.AppendLine();
         
-        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.Tests");
+        using var ns = sb.Namespace("Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
         
         outsideBuilder?.Invoke(sb);
         
