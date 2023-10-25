@@ -1,10 +1,8 @@
 ﻿{
-  "FormKey": "123456:Skyrim.esm",
+  "FormKey": "123456:Fallout4.esm",
   "EditorID": "TestEdid",
-  "Configuration": {
-    "Level": {
-      "MutagenObjectType": "NpcLevel"
-    }
+  "Level": {
+    "MutagenObjectType": "NpcLevel"
   },
-  "Height": 5.0
+  "Aggression": "Frenzied"
 }

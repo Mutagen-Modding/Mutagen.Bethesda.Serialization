@@ -2,11 +2,11 @@ using System.Drawing;
 using System.IO.Abstractions;
 using System.Text;
 using FluentAssertions;
+using Mutagen.Bethesda.Fallout4;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Mutagen.Bethesda.Serialization.Utility;
-using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 using Noggog.IO;
@@ -578,7 +578,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
 
         var readItem = GetReadResults(str, "Loqui", (kernel, reader) =>
         {
-            return kernel.GetNextType(reader, "Mutagen.Bethesda.Skyrim");
+            return kernel.GetNextType(reader, "Mutagen.Bethesda.Fallout4");
         });
 
         readItem.Should().Be(typeof(NpcLevel));

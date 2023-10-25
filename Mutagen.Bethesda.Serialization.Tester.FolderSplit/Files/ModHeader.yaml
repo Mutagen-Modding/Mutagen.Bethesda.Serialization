@@ -1,8 +1,8 @@
 SpriggitSource:
-  PackageName: Spriggit.Yaml.Skyrim
+  PackageName: Spriggit.Yaml.Fallout4
   Version: 0.4
 ModKey: Test.esm
-GameRelease: Skyrim
+GameRelease: Fallout4
 ModHeader:
   Flags:
     - Master
@@ -10,4 +10,4 @@ ModHeader:
   Version: 2109106
   FormVersion: 552
   MasterReferences:
-    - Master: Skyrim.esm
+    - Master: Fallout4.esm

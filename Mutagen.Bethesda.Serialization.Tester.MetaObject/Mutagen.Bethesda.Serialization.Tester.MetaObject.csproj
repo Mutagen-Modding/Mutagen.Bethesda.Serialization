@@ -10,7 +10,7 @@
         <PackageReference Include="CommandLineParser" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" />
-        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
+        <PackageReference Include="Mutagen.Bethesda.Fallout4" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.SourceGenerators" />

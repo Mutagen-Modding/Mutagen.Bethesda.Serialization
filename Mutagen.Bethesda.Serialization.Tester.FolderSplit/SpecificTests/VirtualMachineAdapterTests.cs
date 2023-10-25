@@ -1,6 +1,6 @@
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
@@ -15,7 +15,7 @@ public class VirtualMachineAdapterTests
         var groupRecStreamPackage = new StreamPackage(File.OpenRead("Files/VirtualMachineAdapterTestData.json"), null!);
         var kernel = new NewtonsoftJsonSerializationReaderKernel();
         var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), IFileSystemExt.DefaultFilesystem, NormalFileStreamCreator.Instance, CancellationToken.None);
+        var metaData = new SerializationMetaData(GameRelease.Fallout4, new InlineWorkDropoff(), IFileSystemExt.DefaultFilesystem, NormalFileStreamCreator.Instance, CancellationToken.None);
         var a = await Activator_Serialization.Deserialize(dataWriter, kernel, metaData);
         // ToDo
         // Maybe add specific property checks

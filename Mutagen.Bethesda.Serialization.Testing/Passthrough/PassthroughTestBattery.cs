@@ -1,5 +1,5 @@
 ﻿using System.IO.Abstractions;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Mutagen.Bethesda.Testing.AutoData;
 using Noggog;
 using Xunit;
@@ -12,7 +12,7 @@ public abstract class PassthroughTestBattery
 
     private async Task RunTestFor(
         IFileSystem fileSystem,
-        ISkyrimModGetter mod,
+        IFallout4ModGetter mod,
         DirectoryPath testFolder)
     {
         var path = Path.Combine(testFolder, mod.ModKey.ToString());
@@ -26,7 +26,7 @@ public abstract class PassthroughTestBattery
             GetTest(),
             new RunPassthroughCommand()
             {
-                GameRelease = GameRelease.SkyrimSE,
+                GameRelease = GameRelease.Fallout4,
                 Parallel = false,
                 Path = path,
                 TestFolder = Path.Combine(testFolder)
@@ -37,7 +37,7 @@ public abstract class PassthroughTestBattery
             GetTest(),
             new RunPassthroughCommand()
             {
-                GameRelease = GameRelease.SkyrimSE,
+                GameRelease = GameRelease.Fallout4,
                 Parallel = true,
                 Path = path,
                 TestFolder = Path.Combine(testFolder)
@@ -45,11 +45,11 @@ public abstract class PassthroughTestBattery
             fileSystem);
     }
     
-    [Theory, MutagenModAutoData]
+    [Theory, MutagenModAutoData(GameRelease.Fallout4)]
     public async Task EmptyMod(
         IFileSystem fileSystem,
         DirectoryPath testDir,
-        SkyrimMod skyrimMod)
+        Fallout4Mod skyrimMod)
     {
         await RunTestFor(
             fileSystem,
@@ -57,14 +57,14 @@ public abstract class PassthroughTestBattery
             testDir);
     }
     
-    [Theory, MutagenModAutoData(ConfigureMembers: true)]
+    [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
     public async Task TypicalRecords(
         IFileSystem fileSystem,
         DirectoryPath testDir,
-        SkyrimMod mod,
-        Npc npc1,
-        Npc npc2,
-        Weapon weapon1)
+        Fallout4Mod mod,
+        Ammunition ammo1,
+        Ammunition ammo2,
+        ArmorAddon armor1)
     {
         var path = $"C:/TestDirectory/{mod.ModKey}";
 
@@ -77,11 +77,11 @@ public abstract class PassthroughTestBattery
             testDir);
     }
 
-    [Theory, MutagenModAutoData(ConfigureMembers: true)]
+    [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
     public async Task Cell(
         IFileSystem fileSystem,
         DirectoryPath testDir,
-        SkyrimMod mod,
+        Fallout4Mod mod,
         CellBlock cellBlock)
     {
         mod.Cells.Add(cellBlock);
@@ -91,11 +91,11 @@ public abstract class PassthroughTestBattery
             testDir);
     }
     
-    [Theory, MutagenModAutoData(ConfigureMembers: true)]
+    [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
     public async Task Worldspace(
         IFileSystem fileSystem,
         DirectoryPath testDir,
-        SkyrimMod skyrimMod,
+        Fallout4Mod skyrimMod,
         Worldspace worldspace)
     {
         await RunTestFor(
@@ -104,11 +104,11 @@ public abstract class PassthroughTestBattery
             testDir);
     }
     
-    [Theory, MutagenModAutoData(ConfigureMembers: true)]
+    [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
     public async Task DialogTopic(
         IFileSystem fileSystem,
         DirectoryPath testDir,
-        SkyrimMod skyrimMod,
+        Fallout4Mod skyrimMod,
         DialogTopic topic)
     {
         // Ideally not required, but builder not yet smart enough

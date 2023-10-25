@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Noggog.Verify.FileAbstractions;
 
-namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
 public static class ModuleInitializer
 {

@@ -4,7 +4,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 
@@ -13,14 +13,14 @@ namespace Mutagen.Bethesda.Serialization.Tests;
 [UsesVerify]
 public abstract class ASerializationTests
 {
-    public abstract Task Serialize(ISkyrimModGetter mod, Stream stream, ICreateStream createStream);
-    public abstract Task<ISkyrimModGetter> Deserialize(Stream stream, ModKey modKey, GameRelease release, ICreateStream createStream);
+    public abstract Task Serialize(IFallout4ModGetter mod, Stream stream, ICreateStream createStream);
+    public abstract Task<IFallout4ModGetter> Deserialize(Stream stream, ModKey modKey, GameRelease release, ICreateStream createStream);
     public ModKey ModKey => ModKey.FromFileName("InputMod.esp");
 
     [Fact]
-    public async Task EmptySkyrimModExport()
+    public async Task EmptyFallout4ModExport()
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var stream = new MemoryStream();
         await Serialize(mod, stream, NormalFileStreamCreator.Instance);
         stream.Position = 0;
@@ -30,16 +30,21 @@ public abstract class ASerializationTests
     }
     
     [Fact]
-    public async Task SingleGroupSkyrimModExport()
+    public async Task SingleGroupFallout4ModExport()
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var npc = mod.Npcs.AddNew();
         npc.Name = "Goblin";
-        npc.Configuration.Level = new NpcLevel();
-        npc.Configuration.HealthOffset = 100;
+        npc.Level = new NpcLevel()
+        {
+            Level = 123,
+        };
         var npc2 = mod.Npcs.AddNew();
         npc2.Name = "Hobgoblin";
-        npc2.Configuration.HealthOffset = 200;
+        npc.Level = new PcLevelMult()
+        {
+            LevelMult = 1.3f
+        };
         npc2.Attacks.Add(new Attack()
         {
             AttackEvent = "Event1"
@@ -57,31 +62,31 @@ public abstract class ASerializationTests
     }
     
     [Theory, TestAutoData]
-    public async Task EmptySkyrimModPassthrough(
+    public async Task EmptyFallout4ModPassthrough(
         IFileSystem fileSystem)
     {
         await PassThrough(
             fileSystem,
-            new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE));
+            new Fallout4Mod(ModKey, Fallout4Release.Fallout4));
     }
     
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task GroupPassthrough(
         IFileSystem fileSystem,
-        Npc npc1,
-        Npc npc2,
-        Weapon weapon1,
-        Weapon weapon2)
+        Ammunition ammo1,
+        Ammunition ammo2,
+        ArmorAddon armorAddon1,
+        ArmorAddon armorAddon2)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
-        var firstNpc = mod.Npcs.AddNew();
-        firstNpc.DeepCopyIn(npc1);
-        var secondNpc = mod.Npcs.AddNew();
-        secondNpc.DeepCopyIn(npc2);
-        var firstWeapon = mod.Weapons.AddNew();
-        firstWeapon.DeepCopyIn(weapon1);
-        var secondWeapon = mod.Weapons.AddNew();
-        secondWeapon.DeepCopyIn(weapon2);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
+        var firstAmmo = mod.Ammunitions.AddNew();
+        firstAmmo.DeepCopyIn(ammo1);
+        var secondAmmo = mod.Ammunitions.AddNew();
+        secondAmmo.DeepCopyIn(ammo2);
+        var firstArmorAddon = mod.ArmorAddons.AddNew();
+        firstArmorAddon.DeepCopyIn(armorAddon1);
+        var secondArmorAddon = mod.ArmorAddons.AddNew();
+        secondArmorAddon.DeepCopyIn(armorAddon2);
 
         await PassThrough( 
             fileSystem,
@@ -91,11 +96,18 @@ public abstract class ASerializationTests
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task EnumDictionary(
         IFileSystem fileSystem,
-        IEnumerable<KeyValuePair<BasicStat, Byte>> vals)
+        IEnumerable<KeyValuePair<BipedObject, BipedObjectData>> vals)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
-        var newClass = mod.Classes.AddNew();
-        newClass.StatWeights.SetTo(vals);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
+        var newRace = mod.Races.AddNew();
+        
+        // Can remove after update
+        for (int key = 0; key < 32; ++key)
+        {
+            newRace.BipedObjects[(BipedObject)key] = new BipedObjectData();
+        }
+        
+        newRace.BipedObjects.Set(vals);
 
         await PassThrough(
             fileSystem,
@@ -105,8 +117,15 @@ public abstract class ASerializationTests
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task FlagEnum(IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var added = mod.Races.AddNew();
+        
+        // Can remove after update
+        for (int key = 0; key < 32; ++key)
+        {
+            added.BipedObjects[(BipedObject)key] = new BipedObjectData();
+        }
+        
         added.Flags = Race.Flag.FaceGenHead 
                       | Race.Flag.Child
                       | Race.Flag.Swims
@@ -125,7 +144,7 @@ public abstract class ASerializationTests
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task ColorWithAlpha(IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var added = mod.Keywords.AddNew();
         added.Color = Color.FromArgb(55, 66, 77, 88);
 
@@ -137,7 +156,7 @@ public abstract class ASerializationTests
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task NullableButDefaultLoqui(IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var added = mod.Factions.AddNew();
         added.VendorValues = new();
         
@@ -149,7 +168,7 @@ public abstract class ASerializationTests
     [Theory, TestAutoData(ConfigureMembers: true)]
     public async Task NullableButDefaultEnum(IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var added = mod.TextureSets.AddNew();
         added.Flags = default(TextureSet.Flag);
 
@@ -163,7 +182,7 @@ public abstract class ASerializationTests
         IFileSystem fileSystem,
         Faction f)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var newFaction = mod.Factions.AddNew();
         newFaction.DeepCopyIn(f);
 
@@ -176,7 +195,7 @@ public abstract class ASerializationTests
     public async Task Subclassed(
         IFileSystem fileSystem)
     {
-        var mod = new SkyrimMod(ModKey, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
         var newFloat = mod.Globals.AddNewFloat();
         newFloat.Data = 1.3f;
         
@@ -185,22 +204,22 @@ public abstract class ASerializationTests
             mod);
     }
 
-    private async Task PassThrough(IFileSystem fileSystem, SkyrimMod skyrimMod)
+    private async Task PassThrough(IFileSystem fileSystem, Fallout4Mod mod)
     {
         using var tmp = TempFolder.FactoryByAddedPath(fileSystem: fileSystem, addedFolderPath: "Mutagen.Bethesda.Serialization.Tests");
         await PassthroughTest.PassThrough(
             fileSystem,
             tmp.Dir,
-            skyrimMod,
+            mod,
             async (m, d, c) =>
             {
-                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, skyrimMod.ModKey.ToString()), write: true);
+                using var s = c.GetStreamFor(fileSystem, Path.Combine(d, mod.ModKey.ToString()), write: true);
                 await Serialize(m, s, c);
             },
             async (d, m, c) =>
             {
                 using var s = c.GetStreamFor(fileSystem, Path.Combine(d, m.ToString()), write: false);
-                return await Deserialize(s, skyrimMod.ModKey, skyrimMod.GameRelease, c);
+                return await Deserialize(s, mod.ModKey, mod.GameRelease, c);
             });
     }
 }

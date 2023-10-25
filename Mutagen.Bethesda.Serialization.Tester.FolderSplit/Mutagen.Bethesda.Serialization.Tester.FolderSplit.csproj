@@ -10,7 +10,7 @@
         <PackageReference Include="CommandLineParser" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" />
-        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
+        <PackageReference Include="Mutagen.Bethesda.Fallout4" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.SourceGenerators" />
@@ -147,11 +147,11 @@
           <ParentFile>TopLevelRecord_GroupRecordData</ParentFile>
           <DependentUpon>TopLevelRecord_GroupRecordData.cs</DependentUpon>
         </None>
-        <None Update="UtilityTests\TypicalWrite_123457_Skyrim.esm.json.verified.txt">
+        <None Update="UtilityTests\TypicalWrite_123457_Fallout4.esm.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
           <BuildAction>None</BuildAction>
-          <ParentFile>TypicalWrite_123457_Skyrim</ParentFile>
-          <DependentUpon>TypicalWrite_123457_Skyrim.cs</DependentUpon>
+          <ParentFile>TypicalWrite_123457_Fallout4</ParentFile>
+          <DependentUpon>TypicalWrite_123457_Fallout4.cs</DependentUpon>
         </None>
         <None Update="UtilityTests\TypicalWrite_TestEdid.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
@@ -159,11 +159,11 @@
           <ParentFile>TypicalWrite_TestEdid</ParentFile>
           <DependentUpon>TypicalWrite_TestEdid.cs</DependentUpon>
         </None>
-        <None Update="UtilityTests\WriteFilePerRecord_123457_Skyrim.esm.json.verified.txt">
+        <None Update="UtilityTests\WriteFilePerRecord_123457_Fallout4.esm.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
           <BuildAction>None</BuildAction>
-          <ParentFile>WriteFilePerRecord_123457_Skyrim</ParentFile>
-          <DependentUpon>WriteFilePerRecord_123457_Skyrim.cs</DependentUpon>
+          <ParentFile>WriteFilePerRecord_123457_Fallout4</ParentFile>
+          <DependentUpon>WriteFilePerRecord_123457_Fallout4.cs</DependentUpon>
         </None>
         <None Update="UtilityTests\WriteFilePerRecord_GroupRecordData.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
@@ -177,11 +177,11 @@
           <ParentFile>WriteFilePerRecord_TestEdid</ParentFile>
           <DependentUpon>WriteFilePerRecord_TestEdid.cs</DependentUpon>
         </None>
-        <None Update="UtilityTests\WriteFolderPerRecord_123457_Skyrim.esm.json.verified.txt">
+        <None Update="UtilityTests\WriteFolderPerRecord_123457_Fallout4.esm.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
           <BuildAction>None</BuildAction>
-          <ParentFile>WriteFolderPerRecord_123457_Skyrim</ParentFile>
-          <DependentUpon>WriteFolderPerRecord_123457_Skyrim.cs</DependentUpon>
+          <ParentFile>WriteFolderPerRecord_123457_Fallout4</ParentFile>
+          <DependentUpon>WriteFolderPerRecord_123457_Fallout4.cs</DependentUpon>
         </None>
         <None Update="UtilityTests\WriteFolderPerRecord_GroupRecordData.json.verified.txt">
           <DefaultPackFolder>none</DefaultPackFolder>
@@ -210,11 +210,11 @@
             <ParentFile>AddBlocksToWork_4_5_6_4_TestCell</ParentFile>
             <DependentUpon>AddBlocksToWork_4_5_6_4_TestCell.cs</DependentUpon>
         </None>
-        <None Update="AddGroupToWork_123457_Skyrim.esm.json.verified.txt">
+        <None Update="AddGroupToWork_123457_Fallout4.esm.json.verified.txt">
             <DefaultPackFolder>none</DefaultPackFolder>
             <BuildAction>None</BuildAction>
-            <ParentFile>AddGroupToWork_123457_Skyrim</ParentFile>
-            <DependentUpon>AddGroupToWork_123457_Skyrim.cs</DependentUpon>
+            <ParentFile>AddGroupToWork_123457_Fallout4</ParentFile>
+            <DependentUpon>AddGroupToWork_123457_Fallout4.cs</DependentUpon>
         </None>
         <None Update="AddGroupToWork_GroupRecordData.json.verified.txt">
             <DefaultPackFolder>none</DefaultPackFolder>

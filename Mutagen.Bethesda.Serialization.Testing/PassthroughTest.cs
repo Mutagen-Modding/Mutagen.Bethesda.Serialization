@@ -60,7 +60,7 @@ public static class PassthroughTest
 
         using var stream1 = fileSystem.FileStream.New(mod1OutFile, FileMode.Open);
         using var stream2 = fileSystem.FileStream.New(mod2OutFile, FileMode.Open);
-
+        
         AssertFilesEqual(
             stream1,
             mod2OutFile,

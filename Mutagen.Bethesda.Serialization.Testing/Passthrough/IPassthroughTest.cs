@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
@@ -10,13 +10,13 @@ namespace Mutagen.Bethesda.Serialization.Testing.Passthrough;
 public interface IPassthroughTest
 {
     Task JsonSerialize(
-        ISkyrimModGetter modGetter,
+        IFallout4ModGetter modGetter,
         DirectoryPath dir,
         IWorkDropoff workDropoff, 
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
     
-    Task<ISkyrimModGetter> JsonDeserialize(
+    Task<IFallout4ModGetter> JsonDeserialize(
         DirectoryPath dir,
         ModKey modKey,
         IWorkDropoff workDropoff,
@@ -24,13 +24,13 @@ public interface IPassthroughTest
         ICreateStream streamCreator);
     
     Task YamlSerialize(
-        ISkyrimModGetter modGetter,
+        IFallout4ModGetter modGetter,
         DirectoryPath dir,
         IWorkDropoff workDropoff,
         IFileSystem fileSystem, 
         ICreateStream streamCreator);
     
-    Task<ISkyrimModGetter> YamlDeserialize(
+    Task<IFallout4ModGetter> YamlDeserialize(
         DirectoryPath dir,
         ModKey modKey,
         IWorkDropoff workDropoff,

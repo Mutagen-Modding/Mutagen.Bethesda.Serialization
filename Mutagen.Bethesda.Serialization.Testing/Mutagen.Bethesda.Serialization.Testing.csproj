@@ -7,7 +7,7 @@
     <ItemGroup>
         <PackageReference Include="CommandLineParser" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
+        <PackageReference Include="Mutagen.Bethesda.Fallout4" />
         <PackageReference Include="Noggog.CSharpExt" />
         <PackageReference Include="Mutagen.Bethesda.Core" />
 		<PackageReference Include="Mutagen.Bethesda.Testing" />

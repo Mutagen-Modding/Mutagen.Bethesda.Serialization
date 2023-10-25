@@ -5,7 +5,7 @@ using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Serialization.Utility;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
@@ -23,7 +23,7 @@ public class BlockSerializationTests
     {
         var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
-        var mod = new SkyrimMod(ModKey.FromNameAndExtension("Mod0.esp"), SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey.FromNameAndExtension("Mod0.esp"), Fallout4Release.Fallout4);
 
         mod.Cells.LastModified = 789;
         mod.Cells.Records.SetTo(
@@ -54,7 +54,7 @@ public class BlockSerializationTests
                                         new PlacedNpc(mod)
                                         {
                                             EditorID = "Placed1",
-                                            Health = 23
+                                            Health = new Percent(0.23d)
                                         }
                                     },
                                     Persistent = new ExtendedList<IPlaced>()
@@ -62,7 +62,7 @@ public class BlockSerializationTests
                                         new PlacedNpc(mod)
                                         {
                                             EditorID = "Placed2",
-                                            Health = 45
+                                            Health = new Percent(0.45d)
                                         }
                                     }
                                 }
@@ -77,9 +77,9 @@ public class BlockSerializationTests
                 }
             });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
+        var metaData = new SerializationMetaData(GameRelease.Fallout4, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
-        await SerializationHelper.AddBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimListGroup<CellBlock>, CellBlock, CellSubBlock, Cell>(
+        await SerializationHelper.AddBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Fallout4ListGroup<CellBlock>, CellBlock, CellSubBlock, Cell>(
             streamPackage,
             mod.Cells,
             "Cells",
@@ -90,13 +90,13 @@ public class BlockSerializationTests
             static x => x.BlockNumber,
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
-            metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimListGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, ICellBlockGetter>(w, i, k, m),
-            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
-            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.CellBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.CellBlock_Serialization.HasSerializationItems(i, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.CellSubBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.CellSubBlock_Serialization.HasSerializationItems(i, m),
-            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            metaWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Fallout4ListGroup_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, ICellBlockGetter>(w, i, k, m),
+            metaHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.Fallout4ListGroup_Serialization.HasSerializationItems<ICellBlockGetter>(i, m),
+            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.CellBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.CellBlock_Serialization.HasSerializationItems(i, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.CellSubBlock_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.CellSubBlock_Serialization.HasSerializationItems(i, m),
+            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Cells")).Should().BeTrue();

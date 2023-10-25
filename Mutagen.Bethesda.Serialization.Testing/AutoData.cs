@@ -7,7 +7,7 @@ namespace Mutagen.Bethesda.Serialization.Testing;
 public class TestAutoDataAttribute : AutoDataAttribute
 {
     public TestAutoDataAttribute(
-        GameRelease Release = GameRelease.SkyrimSE,
+        GameRelease Release = GameRelease.Fallout4,
         bool ConfigureMembers = false, 
         bool UseMockFileSystem = true)
         : base(() =>

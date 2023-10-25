@@ -10,7 +10,7 @@
         <PackageReference Include="CommandLineParser" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" />
-        <PackageReference Include="Mutagen.Bethesda.Skyrim" />
+        <PackageReference Include="Mutagen.Bethesda.Fallout4" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.SourceGenerators" />
@@ -43,25 +43,25 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="NewtonsoftSerializationTests.EmptySkyrimModExport.verified.txt">
+      <None Update="NewtonsoftSerializationTests.EmptyFallout4ModExport.verified.txt">
         <DefaultPackFolder>none</DefaultPackFolder>
         <BuildAction>None</BuildAction>
         <ParentFile>NewtonsoftSerializationTests</ParentFile>
         <DependentUpon>NewtonsoftSerializationTests.cs</DependentUpon>
       </None>
-      <None Update="NewtonsoftSerializationTests.SingleGroupSkyrimModExport.verified.txt">
+      <None Update="NewtonsoftSerializationTests.SingleGroupFallout4ModExport.verified.txt">
         <DefaultPackFolder>none</DefaultPackFolder>
         <BuildAction>None</BuildAction>
         <ParentFile>NewtonsoftSerializationTests</ParentFile>
         <DependentUpon>NewtonsoftSerializationTests.cs</DependentUpon>
       </None>
-      <None Update="YamlSerializationTests.EmptySkyrimModExport.verified.txt">
+      <None Update="YamlSerializationTests.EmptyFallout4ModExport.verified.txt">
         <DefaultPackFolder>none</DefaultPackFolder>
         <BuildAction>None</BuildAction>
         <ParentFile>YamlSerializationTests</ParentFile>
         <DependentUpon>YamlSerializationTests.cs</DependentUpon>
       </None>
-      <None Update="YamlSerializationTests.SingleGroupSkyrimModExport.verified.txt">
+      <None Update="YamlSerializationTests.SingleGroupFallout4ModExport.verified.txt">
         <DefaultPackFolder>none</DefaultPackFolder>
         <BuildAction>None</BuildAction>
         <ParentFile>YamlSerializationTests</ParentFile>

@@ -1,9 +1,8 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
-using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Noggog;

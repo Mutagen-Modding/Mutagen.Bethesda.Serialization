@@ -1,9 +1,0 @@
-﻿{
-  "FormKey": "123457:Skyrim.esm",
-  "Configuration": {
-    "Level": {
-      "MutagenObjectType": "NpcLevel"
-    }
-  },
-  "Height": 15.0
-}

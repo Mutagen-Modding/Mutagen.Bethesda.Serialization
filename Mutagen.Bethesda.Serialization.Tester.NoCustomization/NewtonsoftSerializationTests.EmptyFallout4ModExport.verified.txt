@@ -1,4 +1,4 @@
 ﻿{
   "ModKey": "InputMod.esp",
-  "GameRelease": "SkyrimSE"
+  "GameRelease": "Fallout4"
 }

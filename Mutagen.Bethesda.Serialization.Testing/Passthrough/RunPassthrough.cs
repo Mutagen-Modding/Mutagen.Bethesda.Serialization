@@ -2,7 +2,7 @@ using System.IO.Abstractions;
 using System.Reactive.Disposables;
 using CommandLine;
 using Mutagen.Bethesda.Serialization.Streams;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
@@ -38,7 +38,7 @@ public static class RunPassthrough
             dir = command.TestFolder;
         }
 
-        using var mod = SkyrimMod.CreateFromBinaryOverlay(command.Path, command.GameRelease.ToSkyrimRelease(), fileSystem: fileSystem);
+        using var mod = Fallout4Mod.CreateFromBinaryOverlay(command.Path, command.GameRelease.ToFallout4Release(), fileSystem: fileSystem);
 
         IWorkDropoff workDropoff = command.Parallel ? new ParallelWorkDropoff() : new InlineWorkDropoff();
         //IWorkQueue? workQueue = workDropoff as IWorkQueue;
@@ -47,14 +47,14 @@ public static class RunPassthrough
         //    : new WorkConsumer(new NumWorkThreadsUnopinionated(), workQueue);
         //workConsumer?.Start();
 
-        await PassthroughTest.PassThrough<ISkyrimModGetter>(
+        await PassthroughTest.PassThrough<IFallout4ModGetter>(
             fileSystem,
             Path.Combine(dir, "Json"),
             mod,
             (m, s, c) => test.JsonSerialize(m, s, workDropoff, fileSystem, c),
             (d, m, c) => test.JsonDeserialize(d, m, workDropoff, fileSystem, c));
 
-        await PassthroughTest.PassThrough<ISkyrimModGetter>(
+        await PassthroughTest.PassThrough<IFallout4ModGetter>(
             fileSystem,
             Path.Combine(dir, "Yaml"),
             mod,

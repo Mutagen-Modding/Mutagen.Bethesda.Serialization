@@ -1,5 +1,5 @@
 ﻿{
-  "FormKey": "02167E:Skyrim.esm",
+  "FormKey": "02167E:Fallout4.esm",
   "EditorID": "MS11InsideHjerimTrigger",
   "VirtualMachineAdapter": {
     "Scripts": [
@@ -9,41 +9,41 @@
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "MS11Script",
-            "Object": "01F7A3:Skyrim.esm"
+            "Object": "01F7A3:Fallout4.esm"
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "Witness1",
-            "Object": "01F7A3:Skyrim.esm",
+            "Object": "01F7A3:Fallout4.esm",
             "Alias": 0
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "MS11",
-            "Object": "01F7A3:Skyrim.esm"
+            "Object": "01F7A3:Fallout4.esm"
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "Witness3",
-            "Object": "01F7A3:Skyrim.esm",
+            "Object": "01F7A3:Fallout4.esm",
             "Alias": 2
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "Calixto",
-            "Object": "01F7A3:Skyrim.esm",
+            "Object": "01F7A3:Fallout4.esm",
             "Alias": 19
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "Viola",
-            "Object": "01F7A3:Skyrim.esm",
+            "Object": "01F7A3:Fallout4.esm",
             "Alias": 13
           },
           {
             "MutagenObjectType": "ScriptObjectProperty",
             "Name": "Witness2",
-            "Object": "01F7A3:Skyrim.esm",
+            "Object": "01F7A3:Fallout4.esm",
             "Alias": 1
           }
         ]

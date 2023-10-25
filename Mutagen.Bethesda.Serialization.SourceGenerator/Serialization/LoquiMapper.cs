@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Noggog;
 
@@ -183,7 +183,21 @@ public class LoquiMapper
             if (getter != null
                 && setter != null)
             {
-                typeSets[symb] = new(direct, getter, setter);
+                var set = new LoquiTypeSet(direct, getter, setter);
+                if (symb.IsGenericType)
+                {
+                    typeSets[symb.OriginalDefinition] = set;
+                }
+                else
+                {
+                    typeSets[symb] = set;
+                }
+                typeSets[getter] = set;
+                typeSets[setter] = set;
+                if (direct != null)
+                {
+                    typeSets[direct] = set;
+                }
             }
         }
 

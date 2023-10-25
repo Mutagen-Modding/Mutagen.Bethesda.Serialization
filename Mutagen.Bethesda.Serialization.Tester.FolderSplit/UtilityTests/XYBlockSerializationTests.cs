@@ -4,7 +4,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
-using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.Testing.AutoFixture;
@@ -22,12 +22,12 @@ public class XYBlockSerializationTests
     {
         var streamPackage = new StreamPackage(null!, existingDir);
 
-        var group = new SkyrimGroup<Worldspace>(null!)
+        var group = new Fallout4Group<Worldspace>(null!)
         {
             LastModified = 793
         };
 
-        var mod = new SkyrimMod(ModKey.Null, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4);
         
         group.RecordCache.Set(new Worldspace(mod)
         {
@@ -63,7 +63,7 @@ public class XYBlockSerializationTests
                                         new PlacedNpc(mod)
                                         {
                                             EditorID = "Placed1",
-                                            Health = 23
+                                            Health = new Percent(0.23d)
                                         }
                                     },
                                     Persistent = new ExtendedList<IPlaced>()
@@ -71,7 +71,7 @@ public class XYBlockSerializationTests
                                         new PlacedNpc(mod)
                                         {
                                             EditorID = "Placed2",
-                                            Health = 45
+                                            Health = new Percent(0.45d)
                                         }
                                     }
                                 }
@@ -88,9 +88,9 @@ public class XYBlockSerializationTests
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
+        var metaData = new SerializationMetaData(GameRelease.Fallout4, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
-        await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
+        await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Fallout4Group<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,
             group,
             "Worldspaces",
@@ -102,15 +102,15 @@ public class XYBlockSerializationTests
             static x => new P2Int16(x.BlockNumberX, x.BlockNumberY),
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
-            groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
-            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.HasSerializationItems<Worldspace>(i, m),
-            topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.HasSerializationItems(i, m),
-            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
-            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Fallout4Group_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
+            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.Fallout4Group_Serialization.HasSerializationItems<Worldspace>(i, m),
+            topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.Worldspace_Serialization.HasSerializationItems(i, m),
+            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
+            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).Should().BeTrue();
@@ -179,12 +179,12 @@ public class XYBlockSerializationTests
     {
         var streamPackage = new StreamPackage(null!, existingDir);
 
-        var group = new SkyrimGroup<Worldspace>(null!)
+        var group = new Fallout4Group<Worldspace>(null!)
         {
             LastModified = 793
         };
 
-        var mod = new SkyrimMod(ModKey.Null, SkyrimRelease.SkyrimSE);
+        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4);
 
         group.RecordCache.Set(new Worldspace(mod)
         {
@@ -198,7 +198,7 @@ public class XYBlockSerializationTests
                     new PlacedNpc(mod)
                     {
                         EditorID = "Placed1",
-                        Health = 23
+                        Health = new Percent(0.23d)
                     }
                 },
                 Persistent = new ExtendedList<IPlaced>()
@@ -206,15 +206,15 @@ public class XYBlockSerializationTests
                     new PlacedNpc(mod)
                     {
                         EditorID = "Placed2",
-                        Health = 45
+                        Health = new Percent(0.45d)
                     }
                 }
             }
         });
 
-        var metaData = new SerializationMetaData(GameRelease.SkyrimSE, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
+        var metaData = new SerializationMetaData(GameRelease.Fallout4, new InlineWorkDropoff(), fileSystem, NormalFileStreamCreator.Instance, CancellationToken.None);
 
-        await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, SkyrimGroup<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
+        await SerializationHelper.AddXYBlocksToWork<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Fallout4Group<Worldspace>, Worldspace, WorldspaceBlock, WorldspaceSubBlock, Cell>(
             streamPackage,
             group,
             "Worldspaces",
@@ -226,15 +226,15 @@ public class XYBlockSerializationTests
             static x => new P2Int16(x.BlockNumberX, x.BlockNumberY),
             metaData,
             new MutagenSerializationWriterKernel<NewtonsoftJsonSerializationWriterKernel,JsonWritingUnit>(),
-            groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
-            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.SkyrimGroup_Serialization.HasSerializationItems<Worldspace>(i, m),
-            topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.Worldspace_Serialization.HasSerializationItems(i, m),
-            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
-            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
-            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Skyrim.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
-            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Skyrim.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            groupWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Fallout4Group_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit, Worldspace>(w, i, k, m),
+            groupHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.Fallout4Group_Serialization.HasSerializationItems<Worldspace>(i, m),
+            topRecordWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Worldspace_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            topRecordHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.Worldspace_Serialization.HasSerializationItems(i, m),
+            blockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.WorldspaceBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            blockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.WorldspaceBlock_Serialization.HasSerializationItems(i, m),
+            subBlockWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.WorldspaceSubBlock_Serialization.SerializeFields<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
+            subBlockHasSerialization: static (i, m) => Mutagen.Bethesda.Fallout4.WorldspaceSubBlock_Serialization.HasSerializationItems(i, m),
+            majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).Should().BeTrue();
