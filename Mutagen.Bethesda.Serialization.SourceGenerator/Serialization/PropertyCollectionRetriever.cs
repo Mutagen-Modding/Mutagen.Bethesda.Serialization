@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 using Noggog;
 
@@ -102,7 +102,7 @@ public class PropertyCollectionRetriever
     {
         if (collection.Lookup.TryGetValue("FormVersion", out var prop))
         {
-            prop.DefaultString = $"metaData.Release.GetDefaultFormVersion() ?? 0";
+            prop.DefaultString = $"metaData.Constants.DefaultFormVersion ?? 0";
         }
     }
 }

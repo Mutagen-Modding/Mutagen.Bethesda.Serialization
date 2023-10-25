@@ -199,7 +199,7 @@ public class SerializationForObjectGenerator
 
             if (isModHeader && _hasFormVersionRetriever.HasFormVersion(typeSet.GetAny()))
             {
-                sb.AppendLine($"obj.FormVersion = metaData.Release.GetDefaultFormVersion()!.Value;");
+                sb.AppendLine($"obj.FormVersion = metaData.Constants.DefaultFormVersion!.Value;");
             }
             using (var c = sb.Call($"await DeserializeInto{genString}"))
             {
