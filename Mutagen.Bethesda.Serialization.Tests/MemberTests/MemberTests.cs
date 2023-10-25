@@ -408,6 +408,19 @@ public class MemberTests : ATestsBase
     }
     
     [Fact]
+    public Task GenderedItemNullable()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public GenderedItem<ExtendedList<int>?> SomeGendered { get; set; }");
+            sb.AppendLine("public IGenderedItem<ExtendedList<int>?> SomeGendered2 { get; set; }");
+            sb.AppendLine("public IGenderedItemGetter<ExtendedList<int>?> SomeGendered3 { get; set; }");
+        });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
     public Task ModKey()
     {
         return TestHelper.VerifySerialization(GetPrimitiveTest("ModKey", "Mutagen.Bethesda.Plugins.ModKey"));

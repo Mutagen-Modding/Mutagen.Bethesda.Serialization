@@ -154,7 +154,7 @@ public class ListFieldGenerator : AListFieldGenerator
 
         if (insideCollection)
         {
-            sb.AppendLine($"var ret = {GetDefault(field)};");
+            sb.AppendLine($"var ret = new ExtendedList<{subType}>();");
             fieldAccessor = "ret";
         }
         else if (nullable)
