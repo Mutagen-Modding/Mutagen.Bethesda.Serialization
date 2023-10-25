@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
@@ -22,8 +22,8 @@ public class ReleaseRetriever
         // Upgrade to something with reflection perhaps
         return _namespaceSuffixRetriever.TryGet(typeSymbol) switch
         {
-            "Skyrim" => true,
-            _ => false
+            "Oblivion" => false,
+            _ => true
         };
     }
 }
