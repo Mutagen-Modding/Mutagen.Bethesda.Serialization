@@ -19,22 +19,22 @@
       <Version>17.7.2</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Starfield">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>[0.43.0.1-nightly-20231025-164174]</Version>
+      <Version>[0.43.0.1-nightly-20231025-223105]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="$(Version)" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="$(Version)" />
