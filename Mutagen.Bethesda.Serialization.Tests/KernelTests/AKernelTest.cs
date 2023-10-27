@@ -349,6 +349,21 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     }
 
     [Fact]
+    public async Task Double()
+    {
+        await DoPrimitiveTest<double?>(
+            "Double",
+            (k, w, name, item, def) => k.WriteDouble(w, name, item, def),
+            (k, r) => k.ReadDouble(r),
+            1d,
+            0d,
+            -5d,
+            5d,
+            double.MinValue,
+            double.MaxValue);
+    }
+
+    [Fact]
     public async Task TimeOnly()
     {
         await DoPrimitiveTest<TimeOnly?>(

@@ -285,6 +285,13 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         return float.Parse(str);
     }
 
+    public double? ReadDouble(YamlReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        if (str.IsNullOrWhitespace()) return null;
+        return double.Parse(str);
+    }
+
     public ModKey? ReadModKey(YamlReadingUnit reader)
     {
         var str = ReadString(reader);

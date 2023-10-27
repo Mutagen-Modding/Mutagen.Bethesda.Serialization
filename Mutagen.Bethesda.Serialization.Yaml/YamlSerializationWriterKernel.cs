@@ -140,6 +140,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         WriteString(writer, fieldName, item?.ToString());
     }
 
+    public void WriteDouble(YamlWritingUnit writer, string? fieldName, double? item)
+    {
+        WriteString(writer, fieldName, item?.ToString());
+    }
+
     public void WriteModKey(YamlWritingUnit writer, string? fieldName, ModKey? item)
     {
         WriteString(writer, fieldName, item == null ? string.Empty : item.Value.FileName);

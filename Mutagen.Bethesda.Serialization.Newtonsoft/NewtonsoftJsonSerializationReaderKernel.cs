@@ -308,6 +308,13 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return (float)(double)reader.Reader.Value!;
     }
 
+    public double? ReadDouble(JsonReadingUnit reader)
+    {
+        SkipPropertyName(reader);
+        if (reader.Reader.Value is null or "") return null;
+        return (double)reader.Reader.Value!;
+    }
+
     public ModKey? ReadModKey(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);

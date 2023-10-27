@@ -105,6 +105,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public void WriteDouble(TestWriter writer, string? fieldName, double? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteModKey(TestWriter writer, string? fieldName, ModKey? item)
     {
         throw new NotImplementedException();
@@ -379,6 +384,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public float? ReadFloat(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public double? ReadDouble(TestReader reader)
     {
         throw new NotImplementedException();
     }

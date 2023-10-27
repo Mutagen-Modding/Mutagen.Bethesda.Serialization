@@ -232,6 +232,20 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
     }
 
+    public void WriteDouble(JsonWritingUnit writer, string? fieldName, double? item)
+    {
+        writer.WriteName(fieldName);
+
+        if (item == null)
+        {
+            writer.Writer.WriteValue(string.Empty);
+        }
+        else
+        {
+            writer.Writer.WriteValue(item);
+        }
+    }
+
     public void WriteModKey(JsonWritingUnit writer, string? fieldName, ModKey? item)
     {
         writer.WriteName(fieldName);

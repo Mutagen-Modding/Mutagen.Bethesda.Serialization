@@ -100,6 +100,12 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         _kernel.WriteFloat(writer, fieldName, item);
     }
     
+    public void WriteDouble(TWriterObject writer, string? fieldName, double? item, double? defaultVal, bool checkDefaults = true)
+    {
+        if (checkDefaults && EqualityComparer<double?>.Default.Equals(item, defaultVal)) return;
+        _kernel.WriteDouble(writer, fieldName, item);
+    }
+    
     public void WriteModKey(TWriterObject writer, string? fieldName, ModKey? item, ModKey? defaultVal, bool checkDefaults = true)
     {
         if (checkDefaults && EqualityComparer<ModKey?>.Default.Equals(item, defaultVal)) return;

@@ -1,0 +1,6 @@
+﻿Double1: {}
+Double2: 0
+Double3: -5
+Double4: 5
+Double5: -1.7976931348623157E+308
+Double6: 1.7976931348623157E+308
