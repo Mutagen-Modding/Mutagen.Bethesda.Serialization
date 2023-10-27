@@ -77,6 +77,7 @@ public interface ISerializationReaderKernel<TReaderObject>
     public Percent? ReadPercent(TReaderObject reader);
     public TimeOnly? ReadTimeOnly(TReaderObject reader);
     public DateOnly? ReadDateOnly(TReaderObject reader);
+    public Guid? ReadGuid(TReaderObject reader);
     public TranslatedString? ReadTranslatedString(TReaderObject reader);
     public MemorySlice<byte>? ReadBytes(TReaderObject reader);
     public Task<TObject?> ReadLoqui<TObject>(
@@ -168,6 +169,7 @@ public interface ISerializationWriterKernel<TWriterObject>
     public void WriteColor(TWriterObject writer, string? fieldName, Color? item);
     public void WriteTimeOnly(TWriterObject writer, string? fieldName, TimeOnly? item);
     public void WriteDateOnly(TWriterObject writer, string? fieldName, DateOnly? item);
+    public void WriteGuid(TWriterObject writer, string? fieldName, Guid? item);
     public void WriteTranslatedString(TWriterObject writer, string? fieldName, ITranslatedStringGetter? item);
     public void WriteBytes(TWriterObject writer, string? fieldName, ReadOnlyMemorySlice<byte>? item);
     public void WriteEnum<TEnum>(TWriterObject writer, string? fieldName, TEnum? item)

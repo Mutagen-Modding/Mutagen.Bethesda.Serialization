@@ -228,6 +228,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
         WriteString(writer, fieldName, item?.ToString("MM/dd/yyyy"));
     }
 
+    public void WriteGuid(YamlWritingUnit writer, string? fieldName, Guid? item)
+    {
+        WriteString(writer, fieldName, item?.ToString());
+    }
+
     public void WriteTranslatedString(YamlWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
         writer.WriteName(fieldName);

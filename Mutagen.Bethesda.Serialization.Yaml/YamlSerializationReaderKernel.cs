@@ -449,6 +449,12 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         throw new ArgumentException($"Could not parse string into {nameof(DateOnly)}: {str}");
     }
 
+    public Guid? ReadGuid(YamlReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        return str == null ? null : new Guid(str);
+    }
+
     public TranslatedString? ReadTranslatedString(YamlReadingUnit reader)
     {
         Language? targetLanguage = null;

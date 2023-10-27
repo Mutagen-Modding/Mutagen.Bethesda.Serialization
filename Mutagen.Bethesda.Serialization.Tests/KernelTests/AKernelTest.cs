@@ -552,6 +552,21 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     }
 
     [Fact]
+    public async Task Guid()
+    {
+        var def = "9ee4148a-f209-4db5-a7ce-8150dbefab1c";
+        var guid = "28a1119f-72a0-4c22-9194-1e1cec79c16a";
+        
+        await DoPrimitiveTest<Guid?>(
+            "Guid",
+            (k, w, name, item, def) => k.WriteGuid(w, name, item, def),
+            (k, r) => k.ReadGuid(r),
+            new Guid(def),
+            new Guid(),
+            new Guid(guid));
+    }
+
+    [Fact]
     public async Task Color()
     {
         await DoPrimitiveTest<Color?>(

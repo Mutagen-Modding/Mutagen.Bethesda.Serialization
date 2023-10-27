@@ -11,6 +11,7 @@ using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Starfield;
 using Noggog;
 using StrongInject;
 
@@ -89,6 +90,7 @@ public static class TestHelper
             MetadataReference.CreateFromFile(typeof(FormKey).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(SkyrimMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Fallout4Mod).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(StarfieldMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(OblivionMod).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(ISerializationReaderKernel<>).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(LoquiRegistration).Assembly.Location),

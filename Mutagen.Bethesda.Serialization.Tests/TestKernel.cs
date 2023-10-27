@@ -180,6 +180,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
         throw new NotImplementedException();
     }
 
+    public void WriteGuid(TestWriter writer, string? fieldName, Guid? item)
+    {
+        throw new NotImplementedException();
+    }
+
     public void WriteTranslatedString(TestWriter writer, string? fieldName, ITranslatedStringGetter? item)
     {
         throw new NotImplementedException();
@@ -449,6 +454,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     public DateOnly? ReadDateOnly(TestReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Guid? ReadGuid(TestReader reader)
     {
         throw new NotImplementedException();
     }

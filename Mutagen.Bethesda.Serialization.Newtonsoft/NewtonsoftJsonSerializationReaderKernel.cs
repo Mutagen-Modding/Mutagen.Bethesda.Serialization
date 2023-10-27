@@ -470,6 +470,12 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         return DateOnly.Parse(str);
     }
 
+    public Guid? ReadGuid(JsonReadingUnit reader)
+    {
+        var str = ReadString(reader);
+        return str == null ? null : new Guid(str);
+    }
+
     public TranslatedString? ReadTranslatedString(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);

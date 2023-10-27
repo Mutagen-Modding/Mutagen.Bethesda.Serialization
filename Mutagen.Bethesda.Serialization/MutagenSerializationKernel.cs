@@ -34,6 +34,12 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
         _kernel.WriteBool(writer, fieldName, item);
     }
     
+    public void WriteGuid(TWriterObject writer, string? fieldName, Guid? item, Guid? defaultVal, bool checkDefaults = true)
+    {
+        if (checkDefaults && EqualityComparer<Guid?>.Default.Equals(item, defaultVal)) return;
+        _kernel.WriteGuid(writer, fieldName, item);
+    }
+    
     public void WriteString(TWriterObject writer, string? fieldName, string? item, string? defaultVal, bool checkDefaults = true)
     {
         if (checkDefaults && EqualityComparer<string?>.Default.Equals(item, defaultVal)) return;

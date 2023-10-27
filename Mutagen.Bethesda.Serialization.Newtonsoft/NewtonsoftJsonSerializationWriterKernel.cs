@@ -445,6 +445,11 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
     }
 
+    public void WriteGuid(JsonWritingUnit writer, string? fieldName, Guid? item)
+    {
+        WriteString(writer, fieldName, item?.ToString());
+    }
+
     public void WriteTranslatedString(JsonWritingUnit writer, string? fieldName, ITranslatedStringGetter? item)
     {
         writer.WriteName(fieldName);
