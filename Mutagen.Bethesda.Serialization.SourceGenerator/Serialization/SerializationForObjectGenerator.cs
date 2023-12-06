@@ -807,7 +807,7 @@ public class SerializationForObjectGenerator
                 sb.AppendLine("default:");
                 using (sb.IncreaseDepth())
                 {
-                    sb.AppendLine($"throw new NotImplementedException();");
+                    sb.AppendLine($"throw new NotImplementedException($\"Unknown object {{item}}\");");
                 }
             }
         }
@@ -884,7 +884,7 @@ public class SerializationForObjectGenerator
                 sb.AppendLine("default:");
                 using (sb.IncreaseDepth())
                 {
-                    sb.AppendLine($"throw new NotImplementedException();");
+                    sb.AppendLine($"throw new NotImplementedException($\"Unknown object name {{type.Name}}\");");
                 }
             }
         }

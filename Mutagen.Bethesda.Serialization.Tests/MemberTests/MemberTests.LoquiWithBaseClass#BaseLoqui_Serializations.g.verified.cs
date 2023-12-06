@@ -1,4 +1,4 @@
-﻿//HintName: BaseLoqui_Serializations.g.cs
+//HintName: BaseLoqui_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
@@ -39,7 +39,7 @@ internal static class BaseLoqui_Serialization
                 await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Serialize(writer, IBaseLoquiGetter, kernel, metaData);
                 break;
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unknown object {item}");
         }
     }
 
@@ -101,7 +101,7 @@ internal static class BaseLoqui_Serialization
             case "BaseLoqui":
                 return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.BaseLoqui_Serialization.Deserialize(reader, kernel, metaData);
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unknown object name {type.Name}");
         }
     }
 

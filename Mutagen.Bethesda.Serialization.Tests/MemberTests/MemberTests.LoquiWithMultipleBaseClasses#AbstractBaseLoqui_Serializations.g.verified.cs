@@ -39,7 +39,7 @@ internal static class AbstractBaseLoqui_Serialization
                 await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Serialize(writer, SubclassLoquiBGetter, kernel, metaData);
                 break;
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unknown object {item}");
         }
     }
 
@@ -101,7 +101,7 @@ internal static class AbstractBaseLoqui_Serialization
             case "SubclassLoquiB":
                 return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unknown object name {type.Name}");
         }
     }
 
