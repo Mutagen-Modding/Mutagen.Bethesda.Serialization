@@ -1,4 +1,5 @@
 using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Serialization.Exceptions;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 
@@ -32,11 +33,18 @@ public static partial class SerializationHelper
         await metaData.WorkDropoff.EnqueueAndWait(() =>
         {
             var dataPath = Path.Combine(groupDir, fileName);
-            using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, dataPath, write: true);
-            var groupRecStreamPackage = new StreamPackage(stream, groupDir);
-            var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
-            writer(dataWriter, group, kernel, metaData);
-            kernel.Finalize(groupRecStreamPackage, dataWriter);
+            try
+            {
+                using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, dataPath, write: true);
+                var groupRecStreamPackage = new StreamPackage(stream, groupDir);
+                var dataWriter = kernel.GetNewObject(groupRecStreamPackage);
+                writer(dataWriter, group, kernel, metaData);
+                kernel.Finalize(groupRecStreamPackage, dataWriter);
+            }
+            catch (Exception e)
+            {
+                throw new FilePathedException(e, dataPath);
+            }
         });
         return groupDir;
     }
@@ -79,11 +87,18 @@ public static partial class SerializationHelper
             files,
             async recordPath =>
             {
-                using var stream = metaData.FileSystem.File.OpenRead(recordPath);
+                try
+                {
+                    using var stream = metaData.FileSystem.File.OpenRead(recordPath);
 
-                var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
+                    var reader = kernel.GetNewObject(streamPackage with { Stream = stream });
 
-                return (Path.GetFileName(recordPath), await itemReader(reader, kernel, metaData));
+                    return (Path.GetFileName(recordPath), await itemReader(reader, kernel, metaData));
+                }
+                catch (Exception e)
+                {
+                    throw new FilePathedException(e, recordPath);
+                }
             });
         
         group.RecordCache.SetTo(
