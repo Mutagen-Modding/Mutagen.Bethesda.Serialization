@@ -1,5 +1,6 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Globalization;
+using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
@@ -68,7 +69,8 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteType(YamlWritingUnit writer, Type type)
     {
-        WriteString(writer, "MutagenObjectType", type.GetNameWithDeclaringType());
+        var classType = TypeHelper.GetTypeToSerialize(type);
+        WriteString(writer, "MutagenObjectType", classType.GetNameWithDeclaringType());
     }
 
     public void WriteChar(YamlWritingUnit writer, string? fieldName, char? item)

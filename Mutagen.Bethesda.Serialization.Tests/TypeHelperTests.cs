@@ -37,4 +37,26 @@ public class TypeHelperTests
         TypeHelper.GetNameWithDeclaringType(typeof(ObjectModFormLinkIntProperty<Npc.Property>))
             .Should().Be("ObjectModFormLinkIntProperty<Npc+Property>");
     }
+    
+    [Fact]
+    public void GetTypeToSerializeTypical()
+    {
+        TypeHelper.GetTypeToSerialize(typeof(Npc))
+            .Should().Be(typeof(Npc));
+        TypeHelper.GetTypeToSerialize(typeof(INpcGetter))
+            .Should().Be(typeof(Npc));
+        TypeHelper.GetTypeToSerialize(typeof(INpc))
+            .Should().Be(typeof(Npc));
+    }
+    
+    [Fact]
+    public void GetTypeToSerializeGeneric()
+    {
+        TypeHelper.GetTypeToSerialize(typeof(ObjectModFormLinkIntProperty<Npc.Property>))
+            .Should().Be(typeof(ObjectModFormLinkIntProperty<Npc.Property>));
+        TypeHelper.GetTypeToSerialize(typeof(IObjectModFormLinkIntPropertyGetter<Npc.Property>))
+            .Should().Be(typeof(ObjectModFormLinkIntProperty<Npc.Property>));
+        TypeHelper.GetTypeToSerialize(typeof(IObjectModFormLinkIntProperty<Npc.Property>))
+            .Should().Be(typeof(ObjectModFormLinkIntProperty<Npc.Property>));
+    }
 }

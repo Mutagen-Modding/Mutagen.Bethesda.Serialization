@@ -1,10 +1,34 @@
-﻿using System.Text;
-using Noggog;
+﻿using System.Diagnostics;
+using System.Text;
+using Loqui;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
 public static class TypeHelper
 {
+    public static Type GetTypeToSerialize(Type type)
+    {
+        if (type.IsGenericType)
+        {
+            var classType = LoquiRegistration.StaticRegister.GetRegister(type.GetGenericTypeDefinition()).ClassType;
+            if (type.GetGenericArguments().Length != 1)
+            {
+                throw new NotImplementedException();
+            }
+
+            var firstArg = type.GetGenericArguments().First();
+            var genType = classType.MakeGenericType(new Type[] { firstArg });
+            Debug.WriteLine($"TEST {type} -> {genType}");
+            return genType;
+        }
+        else
+        {
+            var classType = LoquiRegistration.StaticRegister.GetRegister(type).ClassType;
+            Debug.WriteLine($"TEST {type} -> {classType}");
+            return classType;
+        }
+    }
+    
     public static Type GetTypeFromString(string typeStr, string namespaceString)
     {
         int indexLeft = typeStr.IndexOf("<");

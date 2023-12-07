@@ -29,7 +29,7 @@ internal static class BaseLoqui_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);
+        kernel.WriteType(writer, item.GetType());
         switch (item)
         {
             case Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeLoquiWithBaseGetter SomeLoquiWithBaseGetter:

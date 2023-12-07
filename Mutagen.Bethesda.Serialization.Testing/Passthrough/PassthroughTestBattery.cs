@@ -76,6 +76,39 @@ public abstract class PassthroughTestBattery
             mod,
             testDir);
     }
+    
+    [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
+    public async Task GenericRecords(
+        IFileSystem fileSystem,
+        DirectoryPath testDir,
+        Fallout4Mod mod)
+    {
+        var armor = mod.Armors.AddNew();
+        armor.ObjectTemplates ??= new();
+        armor.ObjectTemplates.SetTo(new ObjectTemplate<Armor.Property>()
+        {
+            Properties = new ExtendedList<AObjectModProperty<Armor.Property>>()
+            {
+                new ObjectModBoolProperty<Armor.Property>()
+                {
+                    Property = Armor.Property.Rating,
+                    Value = true,
+                    Value2 = false,
+                    Step = 1.23f
+                }
+            }
+        });
+        
+        var path = $"C:/TestDirectory/{mod.ModKey}";
+
+        fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        mod.WriteToBinary(path, fileSystem: fileSystem);
+
+        await RunTestFor(
+            fileSystem,
+            mod,
+            testDir);
+    }
 
     [Theory, MutagenModAutoData(GameRelease.Fallout4, ConfigureMembers: true)]
     public async Task Cell(

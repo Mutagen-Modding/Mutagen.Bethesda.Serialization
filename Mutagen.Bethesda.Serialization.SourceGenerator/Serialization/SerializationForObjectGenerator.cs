@@ -761,7 +761,7 @@ public class SerializationForObjectGenerator
             {
                 GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
             }
-            sb.AppendLine($"kernel.WriteType(writer, LoquiRegistration.StaticRegister.GetRegister(item.GetType()).ClassType);");
+            sb.AppendLine($"kernel.WriteType(writer, item.GetType());");
             sb.AppendLine("switch (item)");
             using (sb.CurlyBrace())
             {
