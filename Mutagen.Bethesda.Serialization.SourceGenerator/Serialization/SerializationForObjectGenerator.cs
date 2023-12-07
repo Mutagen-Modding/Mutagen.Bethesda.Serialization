@@ -843,7 +843,7 @@ public class SerializationForObjectGenerator
         {
             sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             sb.AppendLine($"var type = kernel.GetNextType(reader, \"{typeSet.GetAny().ContainingNamespace}\");");
-            sb.AppendLine($"switch (type.Name)");
+            sb.AppendLine($"switch (type.GetSimpleName())");
             using (sb.CurlyBrace())
             {
                 foreach (var inherit in inheriting
@@ -884,7 +884,7 @@ public class SerializationForObjectGenerator
                 sb.AppendLine("default:");
                 using (sb.IncreaseDepth())
                 {
-                    sb.AppendLine($"throw new NotImplementedException($\"Unknown object name {{type.Name}}\");");
+                    sb.AppendLine($"throw new NotImplementedException($\"Unknown object name {{type.GetSimpleName()}}\");");
                 }
             }
         }

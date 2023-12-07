@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Mutagen.Bethesda.Fallout4;
 using Mutagen.Bethesda.Serialization.Utility;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 

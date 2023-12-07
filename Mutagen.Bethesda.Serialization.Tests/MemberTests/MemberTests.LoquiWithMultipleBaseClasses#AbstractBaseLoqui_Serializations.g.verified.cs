@@ -94,14 +94,14 @@ internal static class AbstractBaseLoqui_Serialization
     {
         metaData.Cancel.ThrowIfCancellationRequested();
         var type = kernel.GetNextType(reader, "Mutagen.Bethesda.Serialization.SourceGenerator.Tests");
-        switch (type.Name)
+        switch (type.GetSimpleName())
         {
             case "SubclassLoquiA":
                 return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiA_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             case "SubclassLoquiB":
                 return await Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SubclassLoquiB_Serialization.Deserialize<TReadObject>(reader, kernel, metaData);
             default:
-                throw new NotImplementedException($"Unknown object name {type.Name}");
+                throw new NotImplementedException($"Unknown object name {type.GetSimpleName()}");
         }
     }
 

@@ -18,13 +18,11 @@ public static class TypeHelper
 
             var firstArg = type.GetGenericArguments().First();
             var genType = classType.MakeGenericType(new Type[] { firstArg });
-            Debug.WriteLine($"TEST {type} -> {genType}");
             return genType;
         }
         else
         {
             var classType = LoquiRegistration.StaticRegister.GetRegister(type).ClassType;
-            Debug.WriteLine($"TEST {type} -> {classType}");
             return classType;
         }
     }
