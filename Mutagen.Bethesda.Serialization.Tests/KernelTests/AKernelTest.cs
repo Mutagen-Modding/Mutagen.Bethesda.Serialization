@@ -615,6 +615,27 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
     }
 
     [Fact]
+    public async Task GenericObjectType()
+    {
+        var str = await GetResults(async (k, w) =>
+        {
+            await k.WriteLoqui<int>(w, "Loqui", 4, null!, async (w, o, k, m) =>
+            {
+                k.WriteType(w, typeof(AObjectModProperty<Npc.Property>));
+            });
+        });
+
+        await TestHelper.VerifyString(str);
+
+        var readItem = GetReadResults(str, "Loqui", (kernel, reader) =>
+        {
+            return kernel.GetNextType(reader, "Mutagen.Bethesda.Fallout4");
+        });
+
+        readItem.Should().Be(typeof(AObjectModProperty<Npc.Property>));
+    }
+
+    [Fact]
     public async Task List()
     {
         var str = await GetResults(async (k, w) =>

@@ -1,6 +1,7 @@
 using System.Drawing;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
+using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Strings;
 using Noggog;
 using YamlDotNet.Core;
@@ -77,9 +78,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
         reader.Parser.Consume<Scalar>();
         
         var scalar = reader.Parser.Consume<Scalar>();
-        var val = scalar.Value;
-        var typeStr = $"{namespaceString}.{val}, {namespaceString}";
-        return Type.GetType(typeStr)!;
+        return TypeHelper.GetTypeFromString(scalar.Value, namespaceString);
     }
 
     public FormKey ExtractFormKey(YamlReadingUnit reader)

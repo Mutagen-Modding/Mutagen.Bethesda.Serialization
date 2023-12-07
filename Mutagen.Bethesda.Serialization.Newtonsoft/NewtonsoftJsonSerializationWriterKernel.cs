@@ -60,7 +60,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
 
     public void WriteType(JsonWritingUnit writer, Type type)
     {
-        WriteString(writer, "MutagenObjectType", type.Name);
+        WriteString(writer, "MutagenObjectType", type.GetNameWithDeclaringType());
     }
 
     public void WriteChar(JsonWritingUnit writer, string? fieldName, char? item)

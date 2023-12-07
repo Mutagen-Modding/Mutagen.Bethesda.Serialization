@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Numerics;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
+using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Strings;
 using Newtonsoft.Json;
 using Noggog;
@@ -75,9 +76,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         }
 
         SkipPropertyName(reader);
-        var val = (string)reader.Reader.Value!;
-        var typeStr = $"{namespaceString}.{val}, {namespaceString}";
-        return Type.GetType(typeStr)!;
+        return TypeHelper.GetTypeFromString((string)reader.Reader.Value!, namespaceString);
     }
 
     public FormKey ExtractFormKey(JsonReadingUnit reader)

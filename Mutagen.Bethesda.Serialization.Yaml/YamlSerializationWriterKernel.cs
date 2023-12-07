@@ -68,7 +68,7 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteType(YamlWritingUnit writer, Type type)
     {
-        WriteString(writer, "MutagenObjectType", type.Name);
+        WriteString(writer, "MutagenObjectType", type.GetNameWithDeclaringType());
     }
 
     public void WriteChar(YamlWritingUnit writer, string? fieldName, char? item)

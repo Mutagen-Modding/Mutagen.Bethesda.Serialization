@@ -1,0 +1,2 @@
+Loqui:
+  MutagenObjectType: AObjectModProperty<Npc+Property>
