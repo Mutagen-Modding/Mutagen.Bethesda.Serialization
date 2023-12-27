@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.Globalization;
-using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;

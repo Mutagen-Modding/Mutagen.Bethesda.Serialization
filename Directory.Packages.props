@@ -2,10 +2,10 @@
   <ItemGroup>
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Loqui">
-      <Version>[2.60.0.1-nightly-20231103-214588]</Version>
+      <Version>[2.60.0.1-nightly-20231224-092544]</Version>
     </PackageVersion>
     <PackageVersion Include="Loqui.Generation">
-      <Version>[2.60.0.1-nightly-20231103-214588]</Version>
+      <Version>[2.60.0.1-nightly-20231224-092544]</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>3.3.4</Version>
@@ -19,22 +19,22 @@
       <Version>17.7.2</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Starfield">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>[0.43.0.1-nightly-20231210-110892]</Version>
+      <Version>[0.43.0.1-zdev-nightly-20231227-062458]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
