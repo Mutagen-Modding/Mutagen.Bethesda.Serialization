@@ -312,6 +312,47 @@ public class Customization : ICustomize
     }
     
     [Fact]
+    public async Task StarfieldModFilePerRecordGenerationBootstrapper()
+    {
+        var source = @"
+using Mutagen.Bethesda.Serialization.Tests;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+using Mutagen.Bethesda.Starfield;
+using Noggog.WorkEngine;
+
+namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+public class SerializationTests
+{
+    public void EmptyStarfieldMod()
+    { 
+        var mod = new StarfieldMod(Constants.Starfield, StarfieldRelease.Starfield);
+        var stream = new MemoryStream();
+        var workEngine = new InlineWorkDropoff();
+
+        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+    }
+}
+
+public class Customization : ICustomize
+{
+    public void Customize(ICustomizationBuilder builder)
+    {
+        builder.FilePerRecord();
+    }
+}";
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
+    }
+    
+    [Fact]
     public async Task SkyrimModWithMetaFileGenerationBootstrapper()
     {
         var source = @"
