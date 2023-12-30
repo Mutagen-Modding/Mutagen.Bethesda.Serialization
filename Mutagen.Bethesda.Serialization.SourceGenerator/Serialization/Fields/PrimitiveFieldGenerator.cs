@@ -28,6 +28,12 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
                 .Concat(associatedTypes.Select(x => $"{x}?"))
                 .Concat(associatedTypes.Select(x => $"Nullable<{x}>"))
                 .Concat(associatedTypes.Select(x => $"System.Nullable<{x}>"))
+                .Concat(associatedTypes.Select(x => $"Nullable<{x}?>"))
+                .Concat(associatedTypes.Select(x => $"System.Nullable<{x}?>"))
+                .Concat(associatedTypes.Select(x => $"Nullable<{x}>?"))
+                .Concat(associatedTypes.Select(x => $"System.Nullable<{x}>?"))
+                .Concat(associatedTypes.Select(x => $"Nullable<{x}?>?"))
+                .Concat(associatedTypes.Select(x => $"System.Nullable<{x}?>?"))
                 .ToArray();
         });
     }
