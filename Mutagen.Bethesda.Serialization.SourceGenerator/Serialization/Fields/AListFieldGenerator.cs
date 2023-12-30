@@ -9,26 +9,18 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 {
     protected readonly IsGroupTester GroupTester;
     protected readonly Func<IOwned<SerializationFieldGenerator>> ForFieldGenerator;
+    private readonly IsListTester _isListTester;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
     public AListFieldGenerator(
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsListTester isListTester,
         IsGroupTester groupTester)
     {
         ForFieldGenerator = forFieldGenerator;
+        _isListTester = isListTester;
         GroupTester = groupTester;
     }
-
-    private static readonly HashSet<string> _listStrings = new()
-    {
-        "List",
-        "IReadOnlyList",
-        "IList",
-        "ExtendedList",
-        "IExtendedList",
-    };
-
-    public static IReadOnlyCollection<string> ListNameStrings => _listStrings;
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
 
@@ -67,19 +59,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (typeSymbol is IArrayTypeSymbol arr)
-        {
-            if (arr.ElementType.Name == "Byte") return false;
-            return true;
-        }
-        else
-        {
-            typeSymbol = typeSymbol.PeelNullable();
-            if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
-            var typeMembers = namedTypeSymbol.TypeArguments;
-            if (typeMembers.Length != 1) return false;
-            return _listStrings.Contains(typeSymbol.Name);
-        }
+        return _isListTester.Applicable(obj, customization, typeSymbol, fieldName);
     }
 
     protected ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];

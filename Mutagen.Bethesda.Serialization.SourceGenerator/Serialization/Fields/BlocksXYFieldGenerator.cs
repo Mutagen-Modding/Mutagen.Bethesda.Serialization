@@ -9,13 +9,17 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 public class BlocksXYFieldMemberBlocker : AListFieldGenerator
 {
     private readonly LoquiNameRetriever _nameRetriever;
+    private readonly IsListTester _listTester;
+
     public BlocksXYFieldMemberBlocker(
         LoquiNameRetriever nameRetriever,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsListTester listTester,
         IsGroupTester groupTester) 
-        : base(forFieldGenerator, groupTester)
+        : base(forFieldGenerator, listTester, groupTester)
     {
         _nameRetriever = nameRetriever;
+        _listTester = listTester;
     }
 
     public override bool Applicable(
@@ -29,7 +33,7 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
             && namedTypeSymbol.TypeArguments.Length == 1)
         {
             var name = _nameRetriever.GetNames(typeSymbol.Name);
-            if (ListFieldGenerator.ListNameStrings.Contains(name.Direct)
+            if (_listTester.ListNameStrings.Contains(name.Direct)
                 && IsBlockGroup(namedTypeSymbol.TypeArguments[0]))
             {
                 return true;
@@ -92,8 +96,9 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
         LoquiSerializationNaming serializationNaming,
         LoquiNameRetriever nameRetriever,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsListTester listTester,
         IsGroupTester groupTester) 
-        : base(forFieldGenerator, groupTester)
+        : base(forFieldGenerator, listTester, groupTester)
     {
         _serializationNaming = serializationNaming;
         _nameRetriever = nameRetriever;

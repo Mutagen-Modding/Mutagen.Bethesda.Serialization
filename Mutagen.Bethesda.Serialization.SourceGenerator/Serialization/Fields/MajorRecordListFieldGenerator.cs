@@ -17,8 +17,9 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator, 
         LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming,
+        IsListTester listTester,
         IsGroupTester groupTester) 
-        : base(forFieldGenerator, groupTester)
+        : base(forFieldGenerator, listTester, groupTester)
     {
         _isMajorRecordTester = isMajorRecordTester;
         _nameRetriever = nameRetriever;

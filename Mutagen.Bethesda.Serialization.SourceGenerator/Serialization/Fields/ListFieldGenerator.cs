@@ -13,8 +13,9 @@ public class ListFieldGenerator : AListFieldGenerator
     public ListFieldGenerator(
         IsMajorRecordTester isMajorRecordTester,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
+        IsListTester listTester,
         IsGroupTester groupTester) 
-        : base(forFieldGenerator, groupTester)
+        : base(forFieldGenerator, listTester, groupTester)
     {
         _isMajorRecordTester = isMajorRecordTester;
     }
