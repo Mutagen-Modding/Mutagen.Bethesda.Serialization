@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>true</ImplicitUsings>
     <WarningsAsErrors>nullable</WarningsAsErrors>
-	<Version>1.10.1</Version>
+	<Version>1.11</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
