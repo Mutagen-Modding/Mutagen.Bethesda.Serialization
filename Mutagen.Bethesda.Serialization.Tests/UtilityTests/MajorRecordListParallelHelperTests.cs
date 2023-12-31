@@ -109,11 +109,11 @@ public class MajorRecordListParallelHelperTests
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3}.yaml"))
             .Should().BeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1}.yaml"))
-            .Should().Be($"Height: 1\r\n");
+            .Should().Be($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2}.yaml"))
-            .Should().Be($"Height: 2\r\n");
+            .Should().Be($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3}.yaml"))
-            .Should().Be($"Height: 3\r\n");
+            .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -167,11 +167,11 @@ public class MajorRecordListParallelHelperTests
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3}.yaml"))
             .Should().BeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1}.yaml"))
-            .Should().Be($"Height: 1\r\n");
+            .Should().Be($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2}.yaml"))
-            .Should().Be($"Height: 2\r\n");
+            .Should().Be($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3}.yaml"))
-            .Should().Be($"Height: 3\r\n");
+            .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -226,11 +226,11 @@ public class MajorRecordListParallelHelperTests
         fileSystem.File.Exists(Path.Combine(dir, fieldName, e3, $"RecordData.yaml"))
             .Should().BeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e1, $"RecordData.yaml"))
-            .Should().Be($"Height: 1\r\n");
+            .Should().Be($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e2, $"RecordData.yaml"))
-            .Should().Be($"Height: 2\r\n");
+            .Should().Be($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e3, $"RecordData.yaml"))
-            .Should().Be($"Height: 3\r\n");
+            .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -285,11 +285,11 @@ public class MajorRecordListParallelHelperTests
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3}", $"RecordData.yaml"))
             .Should().BeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1}", $"RecordData.yaml"))
-            .Should().Be($"Height: 1\r\n");
+            .Should().Be($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2}", $"RecordData.yaml"))
-            .Should().Be($"Height: 2\r\n");
+            .Should().Be($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3}", $"RecordData.yaml"))
-            .Should().Be($"Height: 3\r\n");
+            .Should().Be($"Height: 3{Environment.NewLine}");
     }
 
     [Theory, MutagenAutoData]
