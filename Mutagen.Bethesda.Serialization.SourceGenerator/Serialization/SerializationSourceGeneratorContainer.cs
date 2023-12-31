@@ -89,6 +89,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(CacheFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(EdidLinkGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FolderForSingleLoquiFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(FolderForLoquiListFieldGenerator), typeof(ISerializationForFieldGenerator))]
 partial class SerializationSourceGeneratorContainer : IContainer<SerializationSourceGeneratorInitializer>
 {
 }

@@ -370,6 +370,24 @@ public class MemberTests : ATestsBase
     }
     
     [Fact]
+    public Task MajorRecordWithNestedMajorRecordsList()
+    {
+        var source = GetObjWithMember(sb =>
+            {
+                sb.AppendLine("public List<TestMajorRecordWithNested> SomeList { get; set; }");
+                sb.AppendLine("public IReadOnlyList<TestMajorRecordWithNested> SomeList2 { get; set; }");
+                sb.AppendLine("public ExtendedList<TestMajorRecordWithNested> SomeList3 { get; set; }");
+                sb.AppendLine("public TestMajorRecordWithNested[] SomeList4 { get; set; }");
+            },
+            sb =>
+            {
+                CustomizeForFolderRecord(sb);
+            });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
     public Task FormLinkList()
     {
         var source = GetObjWithMember(sb =>

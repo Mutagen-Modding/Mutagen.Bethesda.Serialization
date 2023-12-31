@@ -195,7 +195,7 @@ public static partial class SerializationHelper
                     withNumbering ? recordGetter.Index : null));
 
                 metaData.FileSystem.Directory.CreateDirectory(recordFolder);
-                                
+                
                 var fileName = RecordDataFileName(kernel.ExpectedExtension);
                 var recordPath = Path.Combine(recordFolder, fileName);
                 await using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, recordPath, write: true);

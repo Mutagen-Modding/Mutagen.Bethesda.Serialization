@@ -12,13 +12,14 @@ public static partial class SerializationHelper
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         WriteAsync<TKernel, TWriteObject, TObject> itemWriter,
         TObject recordGetter,
-        int? numbering) where TKernel : ISerializationWriterKernel<TWriteObject>, new()
+        int? numbering,
+        string? nameOverride = null) where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TObject : class, IMajorRecordGetter
         where TWriteObject : IContainStreamPackage
     {
         try
         {
-            var fileName = RecordFileNameProvider(recordGetter, kernel.ExpectedExtension, numbering);
+            var fileName = nameOverride ?? RecordFileNameProvider(recordGetter, kernel.ExpectedExtension, numbering);
             var recordPath = Path.Combine(streamPackage.Path!, fileName);
             using var stream = metaData.StreamCreator.GetStreamFor(metaData.FileSystem, recordPath, write: true);
             var recordStreamPackage = streamPackage with { Stream = stream };
