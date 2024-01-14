@@ -312,7 +312,7 @@ public static partial class SerializationHelper
             topRecord = MajorRecordInstantiator<TObject>.Activator(fk, metaData.Release);
         }
 
-        streamPackage = streamPackage with { Path = Path.Combine(streamPackage.Path!, topRecordDir) };
+        streamPackage = streamPackage with { Path = topRecordDir };
 
         if (metaData.FileSystem.Directory.Exists(streamPackage.Path))
         {

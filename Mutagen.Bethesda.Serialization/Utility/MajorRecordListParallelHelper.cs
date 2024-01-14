@@ -115,7 +115,7 @@ public static partial class SerializationHelper
                 var reader = kernel.GetNewObject(streamPackage with
                 { 
                     Stream = stream, 
-                    Path = Path.Combine(streamPackage.Path, x)
+                    Path = x
                 });
                 return (Path.GetFileName(x), await itemReader(reader, kernel, metaData));
             });
