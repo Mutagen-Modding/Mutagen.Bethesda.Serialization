@@ -148,6 +148,7 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("path = path.MakeAbsolute();");
                 sb.AppendLine("cancel ??= CancellationToken.None;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 if (customization.FilePerRecord)
@@ -325,6 +326,7 @@ public class MixinGenerator
             }
             using (sb.CurlyBrace())
             {
+                sb.AppendLine("path = path.MakeAbsolute();");
                 sb.AppendLine("cancel ??= CancellationToken.None;");
                 sb.AppendLine("fileSystem = fileSystem.GetOrDefault();");
                 sb.AppendLine("streamCreator = streamCreator.GetOrFallback(static () => NormalFileStreamCreator.Instance);");
