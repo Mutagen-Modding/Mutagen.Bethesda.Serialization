@@ -159,7 +159,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             {
                 throw new NullReferenceException("Object with Array2D was not concrete");
             }
-            sb.AppendLine($"{fieldAccessor} = new Array2d<{subType.Name}>({obj.Direct.Name}.{fieldName}FixedSize);");
+            sb.AppendLine($"{fieldAccessor} = new Array2d<{subType.Name}>({obj.Direct.Name}.{fieldName}FixedSize, default);");
         }
         using (var i = sb.If(ands: true))
         {
