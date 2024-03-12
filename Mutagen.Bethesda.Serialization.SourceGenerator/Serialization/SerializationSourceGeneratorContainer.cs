@@ -84,7 +84,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register(typeof(BlocksXYFieldMemberBlocker), typeof(ISerializationForFieldGenerator), typeof(BlocksXYFieldMemberBlocker))]
 [Register(typeof(BlocksXYFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(BlocksXYFieldGenerator))]
 [Register(typeof(CharFieldGenerator), typeof(ISerializationForFieldGenerator))]
-[Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator))]
+[Register(typeof(Array2dFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(Array2dFieldGenerator))]
 [Register(typeof(FolderPerRecordGroupFieldGenerator), typeof(ISerializationForFieldGenerator), typeof(FolderPerRecordGroupFieldGenerator))]
 [Register(typeof(CacheFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(EdidLinkGenerator), typeof(ISerializationForFieldGenerator))]

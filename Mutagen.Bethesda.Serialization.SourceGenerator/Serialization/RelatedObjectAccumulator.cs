@@ -10,6 +10,7 @@ public class RelatedObjectAccumulator
 {
     private readonly IsGroupTester _isGroupTester;
     private readonly GenderedTypeFieldGenerator _genderedTypeFieldGenerator;
+    private readonly Array2dFieldGenerator _array2dTypeFieldGenerator;
     private readonly ArrayFieldGenerator _arrayFieldGenerator;
     private readonly ListFieldGenerator _listFieldGenerator;
     private readonly IsLoquiObjectTester _loquiObjectTester;
@@ -18,6 +19,7 @@ public class RelatedObjectAccumulator
     public RelatedObjectAccumulator(
         IsGroupTester isGroupTester,
         GenderedTypeFieldGenerator genderedTypeFieldGenerator,
+        Array2dFieldGenerator array2dTypeFieldGenerator,
         ListFieldGenerator listFieldGenerator,
         IsLoquiObjectTester loquiObjectTester,
         ArrayFieldGenerator arrayFieldGenerator, 
@@ -25,6 +27,7 @@ public class RelatedObjectAccumulator
     {
         _isGroupTester = isGroupTester;
         _genderedTypeFieldGenerator = genderedTypeFieldGenerator;
+        _array2dTypeFieldGenerator = array2dTypeFieldGenerator;
         _listFieldGenerator = listFieldGenerator;
         _loquiObjectTester = loquiObjectTester;
         _arrayFieldGenerator = arrayFieldGenerator;
@@ -172,6 +175,11 @@ public class RelatedObjectAccumulator
         {
             return replacement;
         }
+        
+        if (TryGetAsArray2d(obj, customization, typeSymbol, fieldName, out replacement))
+        {
+            return replacement;
+        }
 
         if (typeSymbol.NullableAnnotation != NullableAnnotation.None)
         {
@@ -204,6 +212,23 @@ public class RelatedObjectAccumulator
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && _genderedTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol, fieldName))
+        {
+            replacement = namedTypeSymbol.TypeArguments[0];
+            return true;
+        }
+        replacement = default!;
+        return false;
+    }
+
+    private bool TryGetAsArray2d(
+        LoquiTypeSet obj, 
+        CustomizationSpecifications customization, 
+        ITypeSymbol typeSymbol, 
+        string? fieldName,
+        out ITypeSymbol replacement)
+    {
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol
+            && _array2dTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol, fieldName))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;
