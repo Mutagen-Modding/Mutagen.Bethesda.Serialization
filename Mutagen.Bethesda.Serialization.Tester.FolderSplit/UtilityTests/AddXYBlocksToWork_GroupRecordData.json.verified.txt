@@ -1,5 +1,5 @@
 ﻿{
-  "FormKey": "000800:Null",
+  "FormKey": "000001:Null",
   "EditorID": "MyWorldspace",
   "SubCellsTimestamp": 123
 }

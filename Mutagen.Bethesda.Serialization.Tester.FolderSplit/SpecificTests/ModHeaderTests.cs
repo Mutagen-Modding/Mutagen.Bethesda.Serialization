@@ -19,6 +19,6 @@ public class ModHeaderTests
         var metaData = new SerializationMetaData(GameRelease.Fallout4, new InlineWorkDropoff(), IFileSystemExt.DefaultFilesystem, NormalFileStreamCreator.Instance, CancellationToken.None);
         var a = await Fallout4ModHeader_Serialization.Deserialize(dataWriter, kernel, metaData);
         a.Stats.NumRecords.Should().Be(0);
-        a.Stats.NextFormID.Should().Be(0x800);
+        a.Stats.NextFormID.Should().Be(0x1);
     }
 }

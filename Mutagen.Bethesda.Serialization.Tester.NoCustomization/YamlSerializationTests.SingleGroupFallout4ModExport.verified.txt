@@ -1,18 +1,18 @@
-﻿ModKey: InputMod.esp
+ModKey: InputMod.esp
 GameRelease: Fallout4
 ModHeader:
   Stats:
-    NextFormID: 2050
+    NextFormID: 3
 Npcs:
   Records:
-  - FormKey: 000800:InputMod.esp
+  - FormKey: 000001:InputMod.esp
     Level:
       MutagenObjectType: PcLevelMult
       LevelMult: 1.3
     Name:
       TargetLanguage: English
       Value: Goblin
-  - FormKey: 000801:InputMod.esp
+  - FormKey: 000002:InputMod.esp
     Level:
       MutagenObjectType: NpcLevel
     Attacks:

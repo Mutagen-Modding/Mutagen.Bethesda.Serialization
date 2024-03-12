@@ -1,2 +1,2 @@
-﻿ModKey: InputMod.esp
+ModKey: InputMod.esp
 GameRelease: Fallout4

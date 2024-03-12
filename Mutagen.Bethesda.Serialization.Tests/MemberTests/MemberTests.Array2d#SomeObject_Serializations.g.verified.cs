@@ -1,4 +1,4 @@
-﻿//HintName: SomeObject_Serializations.g.cs
+//HintName: SomeObject_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
@@ -249,7 +249,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray4":
-                obj.SomeArray4 = new Array2d<String>(SomeObject.SomeArray4FixedSize);
+                obj.SomeArray4 = new Array2d<String>(SomeObject.SomeArray4FixedSize, default);
                 if (obj.SomeArray4 is {} checkedSomeArray4)
                 {
                     kernel.StartArray2dSection(reader);
@@ -273,7 +273,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray5":
-                obj.SomeArray5 = new Array2d<String>(SomeObject.SomeArray5FixedSize);
+                obj.SomeArray5 = new Array2d<String>(SomeObject.SomeArray5FixedSize, default);
                 if (obj.SomeArray5 is {} checkedSomeArray5)
                 {
                     kernel.StartArray2dSection(reader);
@@ -297,7 +297,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray6":
-                obj.SomeArray6 = new Array2d<String>(SomeObject.SomeArray6FixedSize);
+                obj.SomeArray6 = new Array2d<String>(SomeObject.SomeArray6FixedSize, default);
                 if (obj.SomeArray6 is {} checkedSomeArray6)
                 {
                     kernel.StartArray2dSection(reader);

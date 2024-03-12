@@ -1,6 +1,6 @@
-﻿{
+{
   "MutagenObjectType": "PlacedNpc",
-  "FormKey": "000803:Null",
+  "FormKey": "000004:Null",
   "EditorID": "Placed2",
   "Health": 0.45
 }
