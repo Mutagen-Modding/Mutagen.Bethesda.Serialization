@@ -2,7 +2,6 @@ using System.Drawing;
 using System.IO.Abstractions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Records;
-using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Testing;
 using Mutagen.Bethesda.Fallout4;
 using Noggog;
@@ -10,7 +9,6 @@ using Noggog.IO;
 
 namespace Mutagen.Bethesda.Serialization.Tests;
 
-[UsesVerify]
 public abstract class ASerializationTests
 {
     public abstract Task Serialize(IFallout4ModGetter mod, Stream stream, ICreateStream createStream);

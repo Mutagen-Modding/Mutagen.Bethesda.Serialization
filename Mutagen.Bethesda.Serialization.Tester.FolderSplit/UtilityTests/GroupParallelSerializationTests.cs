@@ -12,7 +12,7 @@ using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit.UtilityTests;
 
-[UsesVerify, Collection("Verify")]
+[Collection("Verify")]
 public class GroupParallelSerializationTests
 {
     [Theory, TestAutoData]
