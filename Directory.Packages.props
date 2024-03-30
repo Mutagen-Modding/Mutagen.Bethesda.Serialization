@@ -13,10 +13,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>4.7.0</Version>
+      <Version>4.9.2</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk">
-      <Version>17.7.2</Version>
+      <Version>17.9.0</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Core">
       <Version>[0.43.3]</Version>
@@ -52,10 +52,10 @@
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
     <PackageVersion Include="System.IO.Abstractions">
-      <Version>19.2.69</Version>
+      <Version>20.0.28</Version>
     </PackageVersion>
     <PackageVersion Include="Verify">
-      <Version>22.1.4</Version>
+      <Version>23.6.0</Version>
     </PackageVersion>
     <PackageVersion Include="Verify.DiffPlex">
       <Version>2.3.0</Version>
@@ -64,21 +64,21 @@
       <Version>2.2.0</Version>
     </PackageVersion>
     <PackageVersion Include="Verify.Xunit">
-      <Version>22.1.4</Version>
+      <Version>23.6.0</Version>
     </PackageVersion>
     <PackageVersion Include="xunit">
-      <Version>2.6.1</Version>
+      <Version>2.7.0</Version>
     </PackageVersion>
     <PackageVersion Include="YamlDotNet">
-      <Version>13.7.1</Version>
+      <Version>15.1.2</Version>
     </PackageVersion>
     <PackageVersion Include="xunit.runner.console">
-      <Version>2.6.1</Version>
+      <Version>2.7.0</Version>
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="xunit.runner.visualstudio">
-      <Version>2.5.3</Version>
+      <Version>2.5.7</Version>
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>

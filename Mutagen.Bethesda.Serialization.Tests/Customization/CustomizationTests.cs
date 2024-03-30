@@ -1,10 +1,9 @@
-﻿using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-[UsesVerify]
 public class CustomizationTests : ATestsBase
 {
     private string GetBasicTest(

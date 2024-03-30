@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
@@ -6,7 +6,6 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Bootstrap;
 
-[UsesVerify]
 public class BootstrapTests
 {
     [Fact]

@@ -4,7 +4,6 @@ using Noggog.StructuredStrings.CSharp;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.MemberTests;
 
-[UsesVerify]
 public class MemberTests : ATestsBase
 {
     private string GetPrimitiveTest(params string[] nicknames)
