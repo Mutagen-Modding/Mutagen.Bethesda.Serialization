@@ -23,7 +23,7 @@ public class BlockSerializationTests
     {
         var streamPackage = new StreamPackage(fileSystem.File.Create(someFile), existingDir);
 
-        var mod = new Fallout4Mod(ModKey.FromNameAndExtension("Mod0.esp"), Fallout4Release.Fallout4);
+        var mod = new Fallout4Mod(ModKey.FromNameAndExtension("Mod0.esp"), Fallout4Release.Fallout4, forceUseLowerFormIDRanges: true);
 
         mod.Cells.LastModified = 789;
         mod.Cells.Records.SetTo(

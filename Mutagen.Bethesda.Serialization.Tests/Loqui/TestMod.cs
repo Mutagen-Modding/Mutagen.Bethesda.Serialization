@@ -65,6 +65,11 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
         throw new NotImplementedException();
     }
 
+    public override uint MinimumCustomFormID(bool? forceUseLowerFormIDRanges)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<IFormLinkGetter> EnumerateFormLinks()
     {
         throw new NotImplementedException();

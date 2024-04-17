@@ -19,22 +19,22 @@
       <Version>17.9.0</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Starfield">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>[0.43.3]</Version>
+      <Version>[0.44.0-nightly-20240416-100906]</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
@@ -44,10 +44,10 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>[2.64]</Version>
+      <Version>[2.65.0-nightly-20240413-211475]</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>[2.64]</Version>
+      <Version>[2.65.0-nightly-20240413-211475]</Version>
     </PackageVersion>
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />

@@ -18,7 +18,7 @@ public abstract class ASerializationTests
     [Fact]
     public async Task EmptyFallout4ModExport()
     {
-        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4, forceUseLowerFormIDRanges: true);
         var stream = new MemoryStream();
         await Serialize(mod, stream, NormalFileStreamCreator.Instance);
         stream.Position = 0;
@@ -30,7 +30,7 @@ public abstract class ASerializationTests
     [Fact]
     public async Task SingleGroupFallout4ModExport()
     {
-        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4);
+        var mod = new Fallout4Mod(ModKey, Fallout4Release.Fallout4, forceUseLowerFormIDRanges: true);
         var npc = mod.Npcs.AddNew();
         npc.Name = "Goblin";
         npc.Level = new NpcLevel()

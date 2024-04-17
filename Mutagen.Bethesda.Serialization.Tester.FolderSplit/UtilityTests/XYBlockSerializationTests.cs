@@ -27,7 +27,7 @@ public class XYBlockSerializationTests
             LastModified = 793
         };
 
-        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4);
+        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4, forceUseLowerFormIDRanges: true);
         
         group.RecordCache.Set(new Worldspace(mod)
         {
@@ -184,7 +184,7 @@ public class XYBlockSerializationTests
             LastModified = 793
         };
 
-        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4);
+        var mod = new Fallout4Mod(ModKey.Null, Fallout4Release.Fallout4, forceUseLowerFormIDRanges: true);
 
         group.RecordCache.Set(new Worldspace(mod)
         {
