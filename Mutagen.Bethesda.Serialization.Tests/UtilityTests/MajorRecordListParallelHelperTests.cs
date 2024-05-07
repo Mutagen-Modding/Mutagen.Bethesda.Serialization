@@ -102,17 +102,17 @@ public class MajorRecordListParallelHelperTests
             },
             withNumbering: false);
         fileSystem.Directory.Exists(dir).Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e1}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e2}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 1{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 2{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
@@ -160,17 +160,17 @@ public class MajorRecordListParallelHelperTests
             },
             withNumbering: true);
         fileSystem.Directory.Exists(dir).Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3}.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}.yaml"))
             .Should().BeTrue();
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 1{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 2{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3}.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}.yaml"))
             .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
@@ -219,17 +219,17 @@ public class MajorRecordListParallelHelperTests
             withNumbering: false,
             eachRecordInFolder: true);
         fileSystem.Directory.Exists(dir).Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, e1, $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, e2, $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, e3, $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e1, $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 1{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e2, $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 2{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, e3, $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 3{Environment.NewLine}");
     }
     
@@ -278,17 +278,17 @@ public class MajorRecordListParallelHelperTests
             withNumbering: true,
             eachRecordInFolder: true);
         fileSystem.Directory.Exists(dir).Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1}", $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2}", $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3}", $"RecordData.yaml"))
+        fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().BeTrue();
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1}", $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 1{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2}", $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 2{Environment.NewLine}");
-        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3}", $"RecordData.yaml"))
+        fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
             .Should().Be($"Height: 3{Environment.NewLine}");
     }
 

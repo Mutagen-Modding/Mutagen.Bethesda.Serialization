@@ -44,22 +44,27 @@ public static partial class SerializationHelper
     {
         return $"GroupRecordData{expectedExtension}";
     }
+
+    private static string EdidStringProcessor(IMajorRecordGetter recordGetter)
+    {
+        var edid = recordGetter.EditorID;
+        if (edid == null) return string.Empty;
+        return $"{edid} - ";
+    }
     
     public static string RecordFileNameProvider(
         IMajorRecordGetter recordGetter, 
         string expectedExtension,
         int? number)
     {
-        var edid = recordGetter.EditorID;
-        return DecorateWithNumber($"{edid ?? recordGetter.FormKey.ToFilesafeString()}{expectedExtension}", number);
+        return DecorateWithNumber($"{EdidStringProcessor(recordGetter)}{recordGetter.FormKey.ToFilesafeString()}{expectedExtension}", number);
     }
     
     public static string RecordNameProvider(
         IMajorRecordGetter recordGetter,
         int? number)
     {
-        var edid = recordGetter.EditorID;
-        return DecorateWithNumber($"{edid ?? recordGetter.FormKey.ToFilesafeString()}", number);
+        return DecorateWithNumber($"{EdidStringProcessor(recordGetter)}{recordGetter.FormKey.ToFilesafeString()}", number);
     }
 
     public static string DecorateWithNumber(string str, int? number)
