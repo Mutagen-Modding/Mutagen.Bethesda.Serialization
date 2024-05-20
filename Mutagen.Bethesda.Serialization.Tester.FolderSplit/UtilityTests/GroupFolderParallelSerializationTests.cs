@@ -50,7 +50,7 @@ public class GroupFolderParallelSerializationTests
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
         var headerDataPath = Path.Combine(existingDir, "Npcs", "GroupRecordData.json");
         fileSystem.File.Exists(headerDataPath).Should().BeTrue();
-        var npcPath1 = Path.Combine(existingDir, "Npcs", "TestEdid", "RecordData.json");
+        var npcPath1 = Path.Combine(existingDir, "Npcs", $"TestEdid - 123456_Fallout4.esm", "RecordData.json");
         fileSystem.File.Exists(npcPath1).Should().BeTrue();
         var npcPath2 = Path.Combine(existingDir, "Npcs", "123457_Fallout4.esm", "RecordData.json");
         fileSystem.File.Exists(npcPath2).Should().BeTrue();

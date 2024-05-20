@@ -134,23 +134,23 @@ public class BlockSerializationTests
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(oneSixHeaderDataPath), settings);
         
-        var cellDirPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell");
+        var cellDirPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp");
         fileSystem.Directory.Exists(cellDirPath).Should().BeTrue();
-        var cellPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell", "RecordData.json");
+        var cellPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp", "RecordData.json");
         fileSystem.File.Exists(cellPath).Should().BeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(cellPath), settings);
         
-        var tempPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell", "Temporary");
+        var tempPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp", "Temporary");
         fileSystem.Directory.Exists(tempPath).Should().BeTrue();
-        var placed1Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell", "Temporary", "[0] Placed1.json");
+        var placed1Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp", "Temporary", "[0] Placed1 - 000002_Mod0.esp.json");
         fileSystem.File.Exists(placed1Path).Should().BeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid_Temporary_Placed1.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed1Path), settings);
         
-        var perstPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell", "Persistent");
+        var perstPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp", "Persistent");
         fileSystem.Directory.Exists(perstPath).Should().BeTrue();
-        var placed2Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell", "Persistent", "[0] Placed2.json");
+        var placed2Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000001_Mod0.esp", "Persistent", "[0] Placed2 - 000003_Mod0.esp.json");
         fileSystem.File.Exists(placed2Path).Should().BeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid_Persistent_Placed2.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed2Path), settings);

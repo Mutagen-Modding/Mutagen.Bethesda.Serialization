@@ -47,7 +47,7 @@ public class MajorRecordListSerializationTests
             withNumbering: false);
         
         fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
-        var npcPath1 = Path.Combine(existingDir, "Npcs", "TestEdid.json");
+        var npcPath1 = Path.Combine(existingDir, "Npcs", "TestEdid - 123456_Fallout4.esm.json");
         fileSystem.File.Exists(npcPath1).Should().BeTrue();
         var npcPath2 = Path.Combine(existingDir, "Npcs", "123457_Fallout4.esm.json");
         fileSystem.File.Exists(npcPath2).Should().BeTrue();
