@@ -65,7 +65,7 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
         throw new NotImplementedException();
     }
 
-    public override uint MinimumCustomFormID(bool? forceUseLowerFormIDRanges)
+    public override uint GetDefaultInitialNextFormID(bool? forceUseLowerFormIDRanges)
     {
         throw new NotImplementedException();
     }
@@ -113,6 +113,10 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
     public override GameRelease GameRelease { get; }
     public override bool CanUseLocalization { get; }
     public override bool UsingLocalization { get; set; }
+    public override bool CanBeLightMaster { get; }
+    public override bool IsLightMaster { get; set; }
+    public override bool CanBeHalfMaster { get; }
+    public override bool IsHalfMaster { get; set; }
     public ILoquiRegistration Registration => throw new NotImplementedException();
     public void Print(StructuredStringBuilder sb, string? name = null)
     {
