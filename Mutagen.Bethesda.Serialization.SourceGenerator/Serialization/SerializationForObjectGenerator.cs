@@ -905,6 +905,7 @@ public class SerializationForObjectGenerator
             .And("Mutagen.Bethesda.Serialization")
             .And("Mutagen.Bethesda.Serialization.Streams")
             .And("Mutagen.Bethesda.Serialization.Utility")
+            .And("Mutagen.Bethesda.Serialization.Exceptions")
             .And("System.Threading.Tasks")
             .And("System.IO.Abstractions")
             .And("Noggog.WorkEngine")
