@@ -1,7 +1,8 @@
-//HintName: SomeObject_Serializations.g.cs
+﻿//HintName: SomeObject_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
+using Mutagen.Bethesda.Serialization.Exceptions;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
