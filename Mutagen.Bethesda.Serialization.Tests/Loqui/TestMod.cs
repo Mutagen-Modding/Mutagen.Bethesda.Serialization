@@ -114,8 +114,8 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
     public override IReadOnlyList<IFormLinkGetter<IMajorRecordGetter>>? OverriddenForms { get; }
     public override bool CanUseLocalization { get; }
     public override bool UsingLocalization { get; set; }
-    public override bool CanBeLightMaster { get; }
-    public override bool IsLightMaster { get; set; }
+    public override bool CanBeSmallMaster { get; }
+    public override bool IsSmallMaster { get; set; }
     public override bool CanBeMediumMaster { get; }
     public override bool IsMediumMaster { get; set; }
     public override bool ListsOverriddenForms { get; }

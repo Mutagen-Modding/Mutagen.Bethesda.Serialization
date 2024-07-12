@@ -49,6 +49,11 @@ public class TestGroup : IGroup<TestMajorRecord>, IEquatable<TestGroup>
         Records.Add(record);
     }
 
+    public TestMajorRecord AddReturn(TestMajorRecord record)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Set(TestMajorRecord record)
     {
         throw new NotImplementedException();
