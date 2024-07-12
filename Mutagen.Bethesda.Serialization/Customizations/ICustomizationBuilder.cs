@@ -5,6 +5,7 @@ namespace Mutagen.Bethesda.Serialization.Customizations;
 public interface ICustomizationBuilder
 {
     IFilePerRecordCustomizationBuilder FilePerRecord();
+    ICustomizationBuilder OmitLastModifiedData();
 }
 
 public interface IFilePerRecordCustomizationBuilder : ICustomizationBuilder

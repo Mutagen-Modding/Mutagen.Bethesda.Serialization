@@ -41,6 +41,8 @@ public class CustomizationInterpreter
         {
             case "FilePerRecord" when invoke.ArgumentList.Arguments.Count is 0:
                 return HandleFilePerRecord(specifications, invoke, member);
+            case "OmitLastModifiedData" when invoke.ArgumentList.Arguments.Count is 0:
+                return HandleOmitLastModifiedData(specifications, invoke, member);
             case "EnforceRecordOrder" when invoke.ArgumentList.Arguments.Count is 0:
                 return EnforceRecordOrder(specifications, invoke, member);
             default:
@@ -63,6 +65,15 @@ public class CustomizationInterpreter
         MemberAccessExpressionSyntax memberAccess)
     {
         specifications.EnforceRecordOrder = true;
+        return true;
+    }
+
+    private bool HandleOmitLastModifiedData(
+        CustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        specifications.OmitLastModifiedData = true;
         return true;
     }
 }

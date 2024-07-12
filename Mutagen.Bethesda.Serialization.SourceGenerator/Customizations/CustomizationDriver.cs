@@ -86,15 +86,20 @@ public class CustomizationDriver
         PropertyMetadata property,
         Action toDo)
     {
+        var name = property.Property.Name;
+        if (compilation.Customization.Overall.OmitLastModifiedData
+            && name == "LastModified")
+        {
+            return;
+        }
+        
         if (compilation.Customization.RecordSpecs == null)
         {
             toDo();
             return;
         }
 
-        var name = property.Property.Name;
-
-        if (!compilation.Customization.RecordSpecs.ToOmit.TryGetValue(name, out var omission))
+        if (!compilation.Customization.RecordSpecs.ToOmit.TryGetValue(name, out _))
         {
             toDo();
             return;

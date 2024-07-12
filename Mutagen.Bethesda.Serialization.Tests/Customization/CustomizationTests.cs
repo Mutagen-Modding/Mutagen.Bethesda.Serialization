@@ -59,6 +59,42 @@ public class CustomizationTests : ATestsBase
     }
     
     [Fact]
+    public Task OmitLastModified()
+    {
+        var sb = new StructuredStringBuilder();
+        GetObjWithMember(sb, sb =>
+            {
+                sb.AppendLine("public int SomeMember1 { get; set; } = 1;");
+                sb.AppendLine("public int SomeMember2 { get; set; } = 2;");
+                sb.AppendLine("public int SomeMember3 { get; set; } = 3;");
+                sb.AppendLine("public int LastModified { get; set; } = 5;");
+            },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "SomeMajorRecord");
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void Customize"))
+            {
+                f.Add("ICustomizationBuilder builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder.OmitLastModifiedData();");
+            }
+        }
+        
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
+    
+    [Fact]
     public Task NormalGroup()
     {
         var sb = new StructuredStringBuilder();
