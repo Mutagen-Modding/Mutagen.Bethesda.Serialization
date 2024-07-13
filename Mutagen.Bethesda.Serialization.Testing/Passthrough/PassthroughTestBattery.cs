@@ -20,7 +20,11 @@ public abstract class PassthroughTestBattery
         // fileSystem = new FileSystem();
         fileSystem.Directory.CreateDirectory(testFolder);
         
-        mod.WriteToBinary(path, fileSystem: fileSystem);
+        await mod.BeginWrite
+            .WithNoLoadOrder()
+            .ToPath(path)
+            .WithFileSystem(fileSystem: fileSystem)
+            .WriteAsync();
 
         await RunPassthrough.RunTest(
             GetTest(),
@@ -69,7 +73,11 @@ public abstract class PassthroughTestBattery
         var path = $"C:/TestDirectory/{mod.ModKey}";
 
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        mod.WriteToBinary(path, fileSystem: fileSystem);
+        await mod.BeginWrite
+            .WithNoLoadOrder()
+            .ToPath(path)
+            .WithFileSystem(fileSystem: fileSystem)
+            .WriteAsync();
 
         await RunTestFor(
             fileSystem,
@@ -102,7 +110,11 @@ public abstract class PassthroughTestBattery
         var path = $"C:/TestDirectory/{mod.ModKey}";
 
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        mod.WriteToBinary(path, fileSystem: fileSystem);
+        await mod.BeginWrite
+            .WithNoLoadOrder()
+            .ToPath(path)
+            .WithFileSystem(fileSystem: fileSystem)
+            .WriteAsync();
 
         await RunTestFor(
             fileSystem,

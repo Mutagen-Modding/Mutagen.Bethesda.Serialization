@@ -37,8 +37,11 @@ public static class RunPassthrough
         {
             dir = command.TestFolder;
         }
-
-        using var mod = Fallout4Mod.CreateFromBinaryOverlay(command.Path, command.GameRelease.ToFallout4Release(), fileSystem: fileSystem);
+        
+        using var mod = Fallout4Mod.Create(command.GameRelease.ToFallout4Release())
+            .FromPath(command.Path)
+            .WithFileSystem(fileSystem)
+            .Construct();
 
         IWorkDropoff workDropoff = command.Parallel ? new ParallelWorkDropoff() : new InlineWorkDropoff();
         //IWorkQueue? workQueue = workDropoff as IWorkQueue;
