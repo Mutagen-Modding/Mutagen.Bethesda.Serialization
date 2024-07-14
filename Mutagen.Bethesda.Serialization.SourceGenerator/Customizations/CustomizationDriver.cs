@@ -93,6 +93,18 @@ public class CustomizationDriver
             return;
         }
         
+        if (compilation.Customization.Overall.OmitTimestampData)
+        {
+            switch (name)
+            {
+                case "Timestamp":
+                case "PersistentTimestamp":
+                case "TemporaryTimestamp":
+                case "SubCellsTimestamp":
+                    return;
+            }
+        }
+
         if (compilation.Customization.RecordSpecs == null)
         {
             toDo();
