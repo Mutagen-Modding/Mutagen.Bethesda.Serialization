@@ -61,10 +61,10 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
         {
             c.Add(writerAccessor);
             c.Add($"{(fieldName == null ? "null" : $"\"{fieldName}\"")}");
-            c.Add($"{fieldAccessor}?.RawPath");
+            c.Add($"{fieldAccessor}?.GivenPath");
             if (defaultValueAccessor != null)
             {
-                c.Add($"{defaultValueAccessor}.RawPath");
+                c.Add($"{defaultValueAccessor}.GivenPath");
             }
             else
             {

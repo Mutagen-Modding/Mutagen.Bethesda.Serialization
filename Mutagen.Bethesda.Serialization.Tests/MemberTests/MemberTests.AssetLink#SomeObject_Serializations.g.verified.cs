@@ -47,27 +47,27 @@ internal static class SomeObject_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        kernel.WriteString(writer, "SomeAssetLink", item.SomeAssetLink?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink2", item.SomeAssetLink2?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink3", item.SomeAssetLink3?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink4", item.SomeAssetLink4?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink5", item.SomeAssetLink5?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink6", item.SomeAssetLink6?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink7", item.SomeAssetLink7?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink8", item.SomeAssetLink8?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink9", item.SomeAssetLink9?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink10", item.SomeAssetLink10?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink11", item.SomeAssetLink11?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink12", item.SomeAssetLink12?.RawPath, default(string));
-        kernel.WriteString(writer, "SomeAssetLink13", item.SomeAssetLink13?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink14", item.SomeAssetLink14?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink15", item.SomeAssetLink15?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink16", item.SomeAssetLink16?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink17", item.SomeAssetLink17?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink18", item.SomeAssetLink18?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink19", item.SomeAssetLink19?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink20", item.SomeAssetLink20?.RawPath, default(string?));
-        kernel.WriteString(writer, "SomeAssetLink21", item.SomeAssetLink21?.RawPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink", item.SomeAssetLink?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink2", item.SomeAssetLink2?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink3", item.SomeAssetLink3?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink4", item.SomeAssetLink4?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink5", item.SomeAssetLink5?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink6", item.SomeAssetLink6?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink7", item.SomeAssetLink7?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink8", item.SomeAssetLink8?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink9", item.SomeAssetLink9?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink10", item.SomeAssetLink10?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink11", item.SomeAssetLink11?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink12", item.SomeAssetLink12?.GivenPath, default(string));
+        kernel.WriteString(writer, "SomeAssetLink13", item.SomeAssetLink13?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink14", item.SomeAssetLink14?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink15", item.SomeAssetLink15?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink16", item.SomeAssetLink16?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink17", item.SomeAssetLink17?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink18", item.SomeAssetLink18?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink19", item.SomeAssetLink19?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink20", item.SomeAssetLink20?.GivenPath, default(string?));
+        kernel.WriteString(writer, "SomeAssetLink21", item.SomeAssetLink21?.GivenPath, default(string?));
     }
 
     public static bool HasSerializationItems(
