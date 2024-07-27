@@ -2,39 +2,35 @@
   <ItemGroup>
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Loqui">
-      <Version>2.64.0-nightly-20240520-062594</Version>
+      <Version>2.64.0-nightly-20240725-210667</Version>
     </PackageVersion>
     <PackageVersion Include="Loqui.Generation">
-      <Version>2.64.0-nightly-20240520-062594</Version>
+      <Version>2.64.0-nightly-20240725-210667</Version>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers">
       <Version>3.3.4</Version>
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>4.9.2</Version>
-    </PackageVersion>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk">
-      <Version>17.9.0</Version>
-    </PackageVersion>
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Starfield">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>0.45.0.2-nightly-20240712-232267</Version>
+      <Version>0.45.1.1-nightly-20240726-095782</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
@@ -44,41 +40,27 @@
       <Version>13.0.3</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt">
-      <Version>2.65.0-nightly-20240521-192763</Version>
+      <Version>2.65.0-nightly-20240725-051927</Version>
     </PackageVersion>
     <PackageVersion Include="Noggog.Testing">
-      <Version>2.65.0-nightly-20240521-192763</Version>
+      <Version>2.65.0-nightly-20240725-051927</Version>
     </PackageVersion>
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
-    <PackageVersion Include="System.IO.Abstractions">
-      <Version>20.0.28</Version>
-    </PackageVersion>
-    <PackageVersion Include="Verify">
-      <Version>23.6.0</Version>
-    </PackageVersion>
-    <PackageVersion Include="Verify.DiffPlex">
-      <Version>2.3.0</Version>
-    </PackageVersion>
+    <PackageVersion Include="System.IO.Abstractions" Version="21.0.29" />
+    <PackageVersion Include="Verify" Version="26.1.2" />
+    <PackageVersion Include="Verify.DiffPlex" Version="3.1.0" />
     <PackageVersion Include="Verify.SourceGenerators">
       <Version>2.2.0</Version>
     </PackageVersion>
-    <PackageVersion Include="Verify.Xunit">
-      <Version>23.6.0</Version>
-    </PackageVersion>
-    <PackageVersion Include="xunit">
-      <Version>2.7.0</Version>
-    </PackageVersion>
-    <PackageVersion Include="YamlDotNet">
-      <Version>15.1.2</Version>
-    </PackageVersion>
-    <PackageVersion Include="xunit.runner.console">
-      <Version>2.7.0</Version>
+    <PackageVersion Include="Verify.Xunit" Version="26.1.2" />
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="YamlDotNet" Version="16.0.0" />
+    <PackageVersion Include="xunit.runner.console" Version="2.9.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="xunit.runner.visualstudio">
-      <Version>2.5.7</Version>
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
