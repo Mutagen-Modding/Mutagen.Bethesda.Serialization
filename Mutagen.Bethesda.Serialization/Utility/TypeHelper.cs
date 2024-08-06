@@ -29,8 +29,8 @@ public static class TypeHelper
     
     public static Type GetTypeFromString(string typeStr, string namespaceString)
     {
-        int indexLeft = typeStr.IndexOf("<");
-        int indexRight = typeStr.IndexOf(">");
+        int indexLeft = typeStr.IndexOf("<", StringComparison.OrdinalIgnoreCase);
+        int indexRight = typeStr.IndexOf(">", StringComparison.OrdinalIgnoreCase);
         if (indexLeft != -1 && indexRight != -1)
         {
             var generics = typeStr.Substring(indexLeft + 1, indexRight - indexLeft - 1);
@@ -74,7 +74,7 @@ public static class TypeHelper
         }
         string name = t.Name;
         var stringBuilder = new StringBuilder();
-        int length = name.IndexOf("`");
+        int length = name.IndexOf("`", StringComparison.OrdinalIgnoreCase);
         string str = name.Substring(0, length);
         Type[] genericArguments = t.GetGenericArguments();
         if ("Nullable".Equals(str, StringComparison.CurrentCultureIgnoreCase))
