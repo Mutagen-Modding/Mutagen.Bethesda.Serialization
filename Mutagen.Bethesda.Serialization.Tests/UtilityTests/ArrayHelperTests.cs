@@ -37,6 +37,32 @@ public class ArrayHelperTests : UtilityTests
     }
     
     [Theory, DefaultAutoData]
+    public async Task ReadArray(
+        YamlSerializationReaderKernel kernel,
+        SerializationMetaData meta)
+    {
+        var str =
+            """
+            key:
+            - 4
+            - 5
+            - 6
+            """;
+        var stream = GenerateStreamFromString(str);
+        var reader = kernel.GetNewObject(new StreamPackage(stream, null));
+        kernel.ReadString(reader);
+        var i = await SerializationHelper.ReadArray(
+            reader,
+            kernel,
+            meta,
+            async (r, k, m) =>
+            {
+                return k.ReadInt32(r);
+            });
+        i.Should().Equal(4, 5, 6);
+    }
+    
+    [Theory, DefaultAutoData]
     public async Task ReadNotEnoughIntoArray(
         YamlSerializationReaderKernel kernel,
         SerializationMetaData meta)

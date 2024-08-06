@@ -41,18 +41,16 @@ public static partial class SerializationHelper
         ReadAsync<TKernel, TReadObject, TObject> itemReader)
         where TKernel : ISerializationReaderKernel<TReadObject>
     {
-        int i = 0;
         kernel.StartListSection(reader);
-        var arr = new List<TObject>();
-        while (i < arr.Count && kernel.TryHasNextItem(reader))
+        var list = new List<TObject>();
+        while (kernel.TryHasNextItem(reader))
         {
             var item = await itemReader(reader, kernel, metaData);
-            arr[i] = item;
-            i++;
+            list.Add(item);
         }
         
         kernel.EndListSection(reader);
-        return arr.ToArray();
+        return list.ToArray();
     }
 
     public static void ReadIntoSlice<TKernel, TReadObject, TObject>(
