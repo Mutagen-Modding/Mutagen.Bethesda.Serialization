@@ -43,7 +43,7 @@ public static partial class SerializationHelper
             }
             catch (Exception e)
             {
-                throw FilePathedException.Enrich(e, dataPath);
+                throw FilePathedException.Enrich(kernel.ConvertException(e), dataPath);
             }
         });
         return groupDir;
@@ -97,7 +97,7 @@ public static partial class SerializationHelper
                 }
                 catch (Exception e)
                 {
-                    throw FilePathedException.Enrich(e, recordPath);
+                    throw FilePathedException.Enrich(kernel.ConvertException(e), recordPath);
                 }
             });
         

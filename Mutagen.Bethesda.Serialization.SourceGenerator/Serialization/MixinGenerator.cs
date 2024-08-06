@@ -215,7 +215,7 @@ public class MixinGenerator
                 sb.AppendLine("catch (Exception ex)");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"throw FilePathedException.Enrich(ex, exceptionPath);");
+                    sb.AppendLine($"throw FilePathedException.Enrich(converterBootstrap.ConvertException(ex), exceptionPath);");
                 }
             }
 
@@ -453,7 +453,7 @@ public class MixinGenerator
                 sb.AppendLine("catch (Exception ex)");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"throw FilePathedException.Enrich(ex, exceptionPath);");
+                    sb.AppendLine($"throw FilePathedException.Enrich(converterBootstrap.ConvertException(ex), exceptionPath);");
                 }
             }
 
@@ -683,7 +683,7 @@ public class MixinGenerator
                 sb.AppendLine("catch (Exception ex)");
                 using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"throw FilePathedException.Enrich(ex, exceptionPath);");
+                    sb.AppendLine($"throw FilePathedException.Enrich(converterBootstrap.ConvertException(ex), exceptionPath);");
                 }
             }
 

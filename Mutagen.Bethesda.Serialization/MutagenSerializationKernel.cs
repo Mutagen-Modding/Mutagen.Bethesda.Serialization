@@ -6,7 +6,7 @@ using Noggog;
 
 namespace Mutagen.Bethesda.Serialization;
 
-public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
+public class MutagenSerializationWriterKernel<TKernel, TWriterObject> : IExceptionConverter
     where TKernel : ISerializationWriterKernel<TWriterObject>, new()
 {
     private readonly TKernel _kernel = new();
@@ -279,5 +279,9 @@ public class MutagenSerializationWriterKernel<TKernel, TWriterObject>
     public void StartArray2dYSection(TWriterObject writer) => _kernel.StartArray2dYSection(writer);
     
     public void EndArray2dYSection(TWriterObject writer) => _kernel.EndArray2dYSection(writer);
-    
+
+    public Exception ConvertException(Exception ex)
+    {
+        return _kernel.ConvertException(ex);
+    }
 }

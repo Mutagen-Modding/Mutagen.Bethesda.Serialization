@@ -665,4 +665,9 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         writer.Writer.WriteEndArray();
         writer.Writer.Formatting = Formatting.Indented;
     }
+
+    public Exception ConvertException(Exception ex)
+    {
+        return ex;
+    }
 }

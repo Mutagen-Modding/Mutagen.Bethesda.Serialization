@@ -749,4 +749,9 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
             throw new DataMisalignedException();
         }
     }
+
+    public Exception ConvertException(Exception ex)
+    {
+        return ex;
+    }
 }

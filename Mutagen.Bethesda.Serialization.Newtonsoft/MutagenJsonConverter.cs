@@ -10,4 +10,9 @@ public class MutagenJsonConverter
     private MutagenJsonConverter()
     {
     }
+
+    public Exception ConvertException(Exception ex)
+    {
+        return ex;
+    }
 }

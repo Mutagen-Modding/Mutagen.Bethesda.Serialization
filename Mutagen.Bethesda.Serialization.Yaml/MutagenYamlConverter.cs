@@ -1,4 +1,6 @@
-﻿namespace Mutagen.Bethesda.Serialization.Yaml;
+﻿using YamlDotNet.Core;
+
+namespace Mutagen.Bethesda.Serialization.Yaml;
 
 public partial class MutagenYamlConverter
     : IMutagenSerializationBootstrap<
@@ -9,5 +11,11 @@ public partial class MutagenYamlConverter
     
     private MutagenYamlConverter()
     {
+    }
+
+    public Exception ConvertException(Exception ex)
+    {
+        if (ex is not YamlException yamlEx) return ex;
+        return new SpriggitYamlException(yamlEx);
     }
 }

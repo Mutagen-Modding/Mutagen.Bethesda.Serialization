@@ -437,4 +437,11 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
     {
         writer.Emitter.Emit(new SequenceEnd());
     }
+
+
+    public Exception ConvertException(Exception ex)
+    {
+        if (ex is not YamlException yamlEx) return ex;
+        return new SpriggitYamlException(yamlEx);
+    }
 }

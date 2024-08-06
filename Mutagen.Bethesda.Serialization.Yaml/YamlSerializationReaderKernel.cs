@@ -685,4 +685,11 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         reader.Parser.Consume<SequenceEnd>();
     }
+
+
+    public Exception ConvertException(Exception ex)
+    {
+        if (ex is not YamlException yamlEx) return ex;
+        return new SpriggitYamlException(yamlEx);
+    }
 }

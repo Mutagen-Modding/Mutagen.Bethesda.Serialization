@@ -16,6 +16,11 @@ public class MutagenTestConverter
     private MutagenTestConverter()
     {
     }
+
+    public Exception ConvertException(Exception ex)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class TestReader
@@ -584,6 +589,11 @@ public class TestKernel : ISerializationReaderKernel<TestReader>, ISerialization
     }
 
     TestWriter ISerializationWriterKernel<TestWriter>.GetNewObject(StreamPackage stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Exception ConvertException(Exception ex)
     {
         throw new NotImplementedException();
     }

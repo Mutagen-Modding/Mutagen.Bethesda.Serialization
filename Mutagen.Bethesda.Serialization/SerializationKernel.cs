@@ -40,7 +40,7 @@ public delegate Task ReadNamedInto<TKernel, TReaderObject, TObject>(
     string name)
     where TKernel : ISerializationReaderKernel<TReaderObject>;
 
-public interface ISerializationReaderKernel<TReaderObject>
+public interface ISerializationReaderKernel<TReaderObject> : IExceptionConverter
 {
     public string ExpectedExtension { get; }
     public TReaderObject GetNewObject(StreamPackage stream);
@@ -137,7 +137,7 @@ public delegate Task WriteAsync<TKernel, TWriterObject, TObject>(
 
 public delegate bool HasSerializationItems<TObject>(TObject? obj, SerializationMetaData metaData);
 
-public interface ISerializationWriterKernel<TWriterObject>
+public interface ISerializationWriterKernel<TWriterObject> : IExceptionConverter
 {
     public string ExpectedExtension { get; }
     public TWriterObject GetNewObject(StreamPackage stream);
