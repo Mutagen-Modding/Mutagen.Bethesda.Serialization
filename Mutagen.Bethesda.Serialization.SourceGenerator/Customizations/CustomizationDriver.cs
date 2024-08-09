@@ -111,7 +111,8 @@ public class CustomizationDriver
             return;
         }
 
-        if (!compilation.Customization.RecordSpecs.ToOmit.TryGetValue(name, out _))
+        if (compilation.Customization.RecordSpecs.ToOmit == null
+            || !compilation.Customization.RecordSpecs.ToOmit.TryGetValue(name, out _))
         {
             toDo();
             return;

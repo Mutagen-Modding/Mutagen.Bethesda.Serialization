@@ -80,6 +80,7 @@ public class RecordCustomizationInterpreter
             filter = arg2Syntax;
         }
         var name = memberAccessExpressionSyntax.Name.ToString();
+        specifications.ToOmit ??= new();
         specifications.ToOmit[name] = new Omission(name, filter);
         return true;
     }
