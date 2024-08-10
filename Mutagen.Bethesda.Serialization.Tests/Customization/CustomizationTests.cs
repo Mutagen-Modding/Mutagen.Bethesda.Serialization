@@ -259,4 +259,47 @@ public class CustomizationTests : ATestsBase
 
         return TestHelper.VerifySerialization(sb.ToString());
     }
+    
+    [Fact]
+    public Task FilePerRecordWithList()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        GetObjWithMember(sb, sb =>
+            {
+                sb.AppendLine("public int SomeMember1 { get; set; } = 1;");
+                sb.AppendLine("public ExtendedList<TestMajorRecord> SomeList { get; set; } = null!;");
+                sb.AppendLine("public int SomeMember2 { get; set; } = 2;");
+            },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "SomeRecord");
+        
+        GenerateGroup(sb);
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void Customize"))
+            {
+                f.Add("ICustomizationBuilder builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine(".FilePerRecord();");
+                }
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
 }
