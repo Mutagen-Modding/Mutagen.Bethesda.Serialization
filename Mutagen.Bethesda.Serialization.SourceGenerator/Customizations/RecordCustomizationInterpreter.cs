@@ -52,6 +52,8 @@ public class RecordCustomizationInterpreter
         {
             case "Omit" when invoke.ArgumentList.Arguments.Count is 1 or 2:
                 return HandleOmit(specifications, invoke, member);
+            case "EmbedRecordsInSameFile" when invoke.ArgumentList.Arguments.Count is 1:
+                return HandleEmbedRecordsInSameFile(specifications, invoke, member);
             default:
                 return false;
         }
@@ -66,7 +68,7 @@ public class RecordCustomizationInterpreter
             // ToDo
             // Implement filters
             // and not 2
-            )
+           )
         {
             return false;
         }
@@ -82,6 +84,20 @@ public class RecordCustomizationInterpreter
         var name = memberAccessExpressionSyntax.Name.ToString();
         specifications.ToOmit ??= new();
         specifications.ToOmit[name] = new Omission(name, filter);
+        return true;
+    }
+    
+    private bool HandleEmbedRecordsInSameFile(
+        RecordCustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        var arg = invoke.ArgumentList.Arguments[0];
+        if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
+        if (simpleLambda.ExpressionBody is not MemberAccessExpressionSyntax memberAccessExpressionSyntax) return false;
+        var name = memberAccessExpressionSyntax.Name.ToString();
+        specifications.ToEmbedRecordsInSameFile ??= new();
+        specifications.ToEmbedRecordsInSameFile.Add(name);
         return true;
     }
 }

@@ -24,12 +24,22 @@ public class CustomizationDriver
     {
         return compilation.Customization.Overall.FilePerRecord
             && propertyCollection.InOrder.Any(
-                x => _isGroupTester.IsGroup(x.Property.Type)
-                    || _majorRecordListFieldGenerator.Applicable(
-                        obj,
-                        compilation.Customization, 
-                        x.Property.Type,
-                        x.Property.Name));
+                x =>
+                {
+                    var isTarget = _isGroupTester.IsGroup(x.Property.Type)
+                        || _majorRecordListFieldGenerator.Applicable(
+                            obj,
+                            compilation.Customization,
+                            x.Property.Type,
+                            x.Property.Name);
+                    if (isTarget
+                        && compilation.Customization.EmbedRecordForProperty(x.Property))
+                    {
+                        return false;
+                    }
+
+                    return isTarget;
+                });
     }
     
     public void SerializationPreWork(

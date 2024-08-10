@@ -4,7 +4,20 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
 public record CustomizationCatalog(
     CustomizationSpecifications Overall,
-    RecordCustomizationSpecifications? RecordSpecs);
+    RecordCustomizationSpecifications? RecordSpecs)
+{
+    public bool EmbedRecordForProperty(IPropertySymbol prop)
+    {
+        return RecordSpecs?.ToEmbedRecordsInSameFile != null
+               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(prop.Name);
+    }
+    
+    public bool EmbedRecordForProperty(ITypeSymbol prop)
+    {
+        return RecordSpecs?.ToEmbedRecordsInSameFile != null
+               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(prop.Name);
+    }
+}
 
 public record CustomizationSpecifications(ITypeSymbol? CustomizationClass)
 {

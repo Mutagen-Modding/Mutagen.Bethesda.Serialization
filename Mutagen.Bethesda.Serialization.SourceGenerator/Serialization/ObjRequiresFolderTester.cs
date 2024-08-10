@@ -18,6 +18,7 @@ public class ObjRequiresFolderTester
         if (!customization.Overall.FilePerRecord) return false;
         foreach (var prop in typeSymbol.GetMembers().OfType<IPropertySymbol>())
         {
+            if (customization.EmbedRecordForProperty(prop)) continue;
             if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name))
             {
                 return true;
