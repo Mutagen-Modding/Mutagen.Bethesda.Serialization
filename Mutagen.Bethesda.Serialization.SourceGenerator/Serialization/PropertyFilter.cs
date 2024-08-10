@@ -35,7 +35,7 @@ public class PropertyFilter
         if (propertySymbol.Name.EndsWith("Release")
             && _enumFieldGenerator.Applicable(
                 obj,
-                compilation.Customization.Overall,
+                compilation.Customization,
                 propertySymbol.Type,
                 propertySymbol.Name))
         {

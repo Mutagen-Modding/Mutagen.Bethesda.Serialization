@@ -24,11 +24,11 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (!customization.FilePerRecord) return false;
+        if (!customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeArguments.Length == 1)
         {
@@ -106,11 +106,11 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customizations,
+        CustomizationCatalog customizations,
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (!customizations.FilePerRecord) return false;
+        if (!customizations.Overall.FilePerRecord) return false;
         if (!GroupTester.IsGroup(typeSymbol)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var subType = namedTypeSymbol.TypeArguments[0];

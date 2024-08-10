@@ -32,7 +32,7 @@ public class AssetLinkFieldGenerator : ISerializationForFieldGenerator
     
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {

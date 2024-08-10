@@ -23,7 +23,7 @@ public class IsLoquiFieldTester
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization, 
+        CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
@@ -67,7 +67,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization, 
+        CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {

@@ -9,24 +9,36 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 public class ListFieldGenerator : AListFieldGenerator
 {
     private readonly IsMajorRecordTester _isMajorRecordTester;
+    private readonly IsListTester _isListTester;
     
     public ListFieldGenerator(
         IsMajorRecordTester isMajorRecordTester,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
         IsListTester listTester,
-        IsGroupTester groupTester) 
+        IsGroupTester groupTester,
+        IsListTester isListTester) 
         : base(forFieldGenerator, listTester, groupTester)
     {
         _isMajorRecordTester = isMajorRecordTester;
+        _isListTester = isListTester;
     }
 
     public override bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationCatalog customization, 
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
+    {
+        return Applicable(obj, customization.Overall, typeSymbol, fieldName);
+    }
+
+    public bool Applicable(
         LoquiTypeSet obj, 
         CustomizationSpecifications customization, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
+        if (!_isListTester.Applicable(typeSymbol)) return false;
 
         if (ShouldSkip(customization, obj, fieldName)) return true;
         

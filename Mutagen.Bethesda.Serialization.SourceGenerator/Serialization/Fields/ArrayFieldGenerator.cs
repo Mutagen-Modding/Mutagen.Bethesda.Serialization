@@ -53,7 +53,6 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
     
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
@@ -68,6 +67,15 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         if (typeMembers.Length != 1) return false;
         if (!_listStrings.Contains(typeSymbol.Name)) return false;
         return typeMembers[0].Name != "Byte";
+    }
+    
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CustomizationCatalog customization, 
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
+    {
+        return Applicable(obj, typeSymbol, fieldName);
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;

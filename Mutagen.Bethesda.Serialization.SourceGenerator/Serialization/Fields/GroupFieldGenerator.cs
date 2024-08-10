@@ -37,7 +37,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization, 
+        CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
@@ -54,7 +54,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             var name = _nameRetriever.GetNames(typeSymbol.Name);
             if (name.Direct == "ListGroup")
             {
-                return !customization.FilePerRecord;
+                return !customization.Overall.FilePerRecord;
             }
             
             if (name.Direct.EndsWith("Group"))

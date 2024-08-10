@@ -17,10 +17,7 @@ public class IsListTester
     public IReadOnlyCollection<string> ListNameStrings => _listStrings;
     
     public bool Applicable(
-        LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
-        ITypeSymbol typeSymbol, 
-        string? fieldName)
+        ITypeSymbol typeSymbol)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {

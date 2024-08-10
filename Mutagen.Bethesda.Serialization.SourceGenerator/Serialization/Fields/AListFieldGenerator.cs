@@ -55,11 +55,11 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     
     public virtual bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        return _isListTester.Applicable(obj, customization, typeSymbol, fieldName);
+        return _isListTester.Applicable(typeSymbol);
     }
 
     protected ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];

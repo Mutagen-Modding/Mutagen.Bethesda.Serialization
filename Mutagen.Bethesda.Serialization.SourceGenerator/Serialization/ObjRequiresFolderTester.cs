@@ -13,9 +13,9 @@ public class ObjRequiresFolderTester
         _majorRecordListFieldGenerator = majorRecordListFieldGenerator;
     }
 
-    public bool ObjRequiresFolder(LoquiTypeSet obj, ITypeSymbol typeSymbol, CustomizationSpecifications customization)
+    public bool ObjRequiresFolder(LoquiTypeSet obj, ITypeSymbol typeSymbol, CustomizationCatalog customization)
     {
-        if (!customization.FilePerRecord) return false;
+        if (!customization.Overall.FilePerRecord) return false;
         foreach (var prop in typeSymbol.GetMembers().OfType<IPropertySymbol>())
         {
             if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name))

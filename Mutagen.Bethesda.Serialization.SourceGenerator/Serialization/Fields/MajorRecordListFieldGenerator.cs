@@ -28,14 +28,14 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj,
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (!customization.FilePerRecord) return false;
+        if (!customization.Overall.FilePerRecord) return false;
         if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
-        if (ShouldSkip(customization, obj, null)) return false;
+        if (ShouldSkip(customization.Overall, obj, null)) return false;
         return _isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);
     }
 

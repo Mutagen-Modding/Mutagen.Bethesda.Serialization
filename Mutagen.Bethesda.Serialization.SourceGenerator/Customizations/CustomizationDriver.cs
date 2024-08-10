@@ -27,7 +27,7 @@ public class CustomizationDriver
                 x => _isGroupTester.IsGroup(x.Property.Type)
                     || _majorRecordListFieldGenerator.Applicable(
                         obj,
-                        compilation.Customization.Overall, 
+                        compilation.Customization, 
                         x.Property.Type,
                         x.Property.Name));
     }

@@ -46,7 +46,15 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
     
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
+        ITypeSymbol typeSymbol, 
+        string? fieldName)
+    {
+        return Applicable(obj, typeSymbol, fieldName);
+    }
+    
+    public bool Applicable(
+        LoquiTypeSet obj, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {

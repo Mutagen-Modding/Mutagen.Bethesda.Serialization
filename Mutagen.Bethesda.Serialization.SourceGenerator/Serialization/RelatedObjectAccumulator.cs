@@ -117,7 +117,7 @@ public class RelatedObjectAccumulator
             return namedTypeSymbol.TypeArguments[0];
         }
 
-        if (_arrayFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName))
+        if (_arrayFieldGenerator.Applicable(obj, typeSymbol, fieldName))
         {
             return _arrayFieldGenerator.GetSubtype(typeSymbol);
         }
@@ -211,7 +211,7 @@ public class RelatedObjectAccumulator
         out ITypeSymbol replacement)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && _genderedTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol, fieldName))
+            && _genderedTypeFieldGenerator.Applicable(obj, namedTypeSymbol, fieldName))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;
@@ -228,7 +228,7 @@ public class RelatedObjectAccumulator
         out ITypeSymbol replacement)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
-            && _array2dTypeFieldGenerator.Applicable(obj, customization, namedTypeSymbol, fieldName))
+            && _array2dTypeFieldGenerator.Applicable(obj, namedTypeSymbol, fieldName))
         {
             replacement = namedTypeSymbol.TypeArguments[0];
             return true;

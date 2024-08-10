@@ -29,10 +29,10 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
         => Enumerable.Empty<string>();
 
     public bool Applicable(LoquiTypeSet obj, 
-        CustomizationSpecifications customization,
+        CustomizationCatalog customization,
         ITypeSymbol typeSymbol, string? fieldName)
     {
-        if (!customization.FilePerRecord) return false;
+        if (!customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeParameters.Length == 1)
         {
