@@ -31,7 +31,8 @@ public class CustomizationDriver
                             obj,
                             compilation.Customization,
                             x.Property.Type,
-                            x.Property.Name);
+                            x.Property.Name,
+                            isInsideCollection: false);
                     if (isTarget
                         && compilation.Customization.EmbedRecordForProperty(x.Property))
                     {

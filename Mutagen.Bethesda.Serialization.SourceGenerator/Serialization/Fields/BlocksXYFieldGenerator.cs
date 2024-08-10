@@ -26,7 +26,8 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (!customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
@@ -108,7 +109,8 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customizations,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (!customizations.Overall.FilePerRecord) return false;
         if (!GroupTester.IsGroup(typeSymbol)) return false;

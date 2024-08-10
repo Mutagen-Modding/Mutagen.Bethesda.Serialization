@@ -69,7 +69,8 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         return _isLoquiObjectTester.Applicable(obj, customization, typeSymbol, fieldName)
                && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, fieldName, customization);

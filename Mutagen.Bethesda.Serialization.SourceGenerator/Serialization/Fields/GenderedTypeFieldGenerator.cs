@@ -48,7 +48,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         return Applicable(obj, typeSymbol, fieldName);
     }

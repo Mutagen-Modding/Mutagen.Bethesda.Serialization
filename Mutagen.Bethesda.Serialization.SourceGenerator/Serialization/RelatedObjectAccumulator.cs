@@ -117,7 +117,7 @@ public class RelatedObjectAccumulator
             return namedTypeSymbol.TypeArguments[0];
         }
 
-        if (_arrayFieldGenerator.Applicable(obj, typeSymbol, fieldName))
+        if (_arrayFieldGenerator.Applicable(obj, typeSymbol, fieldName, false))
         {
             return _arrayFieldGenerator.GetSubtype(typeSymbol);
         }

@@ -54,7 +54,8 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
     public bool Applicable(
         LoquiTypeSet obj, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (typeSymbol is IArrayTypeSymbol arr)
         {
@@ -73,9 +74,10 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
-        return Applicable(obj, typeSymbol, fieldName);
+        return Applicable(obj, typeSymbol, fieldName, isInsideCollection);
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;

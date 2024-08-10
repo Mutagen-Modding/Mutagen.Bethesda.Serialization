@@ -34,7 +34,8 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
     public IEnumerable<string> RequiredNamespaces(LoquiTypeSet obj, CompilationUnit compilation, ITypeSymbol typeSymbol)
         => Enumerable.Empty<string>();
 
-    public bool Applicable(LoquiTypeSet obj, CustomizationCatalog customization, ITypeSymbol typeSymbol, string? fieldName)
+    public bool Applicable(LoquiTypeSet obj, CustomizationCatalog customization, ITypeSymbol typeSymbol, string? fieldName,
+        bool isInsideCollection)
     {
         if (!customization.Overall.FilePerRecord) return false;
         if (!_loquiFieldTester.Applicable(obj, customization, typeSymbol, fieldName)) return false;

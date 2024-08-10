@@ -37,7 +37,8 @@ public class PropertyFilter
                 obj,
                 compilation.Customization,
                 propertySymbol.Type,
-                propertySymbol.Name))
+                propertySymbol.Name,
+                isInsideCollection: false))
         {
             return true;
         }

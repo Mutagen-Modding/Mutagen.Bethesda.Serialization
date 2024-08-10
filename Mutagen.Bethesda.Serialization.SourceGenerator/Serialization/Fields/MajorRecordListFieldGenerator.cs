@@ -30,11 +30,12 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         LoquiTypeSet obj,
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (!customization.Overall.FilePerRecord) return false;
         if (customization.EmbedRecordForProperty(fieldName)) return false;
-        if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
+        if (!base.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (ShouldSkip(customization.Overall, obj, null)) return false;
         return _isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);

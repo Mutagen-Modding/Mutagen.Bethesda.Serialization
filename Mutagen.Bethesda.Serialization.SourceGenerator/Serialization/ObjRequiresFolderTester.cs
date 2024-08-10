@@ -13,13 +13,15 @@ public class ObjRequiresFolderTester
         _majorRecordListFieldGenerator = majorRecordListFieldGenerator;
     }
 
-    public bool ObjRequiresFolder(LoquiTypeSet obj, ITypeSymbol typeSymbol, string? fieldName, CustomizationCatalog customization)
+    public bool ObjRequiresFolder(
+        LoquiTypeSet obj, ITypeSymbol typeSymbol,
+        string? fieldName, CustomizationCatalog customization)
     {
         if (!customization.Overall.FilePerRecord) return false;
         foreach (var prop in typeSymbol.GetMembers().OfType<IPropertySymbol>())
         {
             if (customization.EmbedRecordForProperty(prop)) continue;
-            if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name))
+            if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name, false))
             {
                 return true;
             }

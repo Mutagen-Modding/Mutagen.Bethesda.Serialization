@@ -37,7 +37,8 @@ public class FormLinkFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var typeMembers = namedTypeSymbol.TypeArguments;

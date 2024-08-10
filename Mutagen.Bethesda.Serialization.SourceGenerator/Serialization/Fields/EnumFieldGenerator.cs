@@ -21,7 +21,8 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         typeSymbol = typeSymbol.PeelNullable();
         var ret = typeSymbol.TypeKind == TypeKind.Enum

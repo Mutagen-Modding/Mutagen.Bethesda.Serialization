@@ -27,7 +27,8 @@ public class TranslatedStringFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName) => false;
+        string? fieldName,
+        bool isInsideCollection) => false;
 
     public IEnumerable<string> RequiredNamespaces(
         LoquiTypeSet obj,

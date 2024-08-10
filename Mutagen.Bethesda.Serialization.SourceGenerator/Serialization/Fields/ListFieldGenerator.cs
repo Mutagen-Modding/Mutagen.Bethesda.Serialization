@@ -27,7 +27,8 @@ public class ListFieldGenerator : AListFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (!_isListTester.Applicable(typeSymbol)) return false;
 

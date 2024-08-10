@@ -34,7 +34,8 @@ public class BlocksFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         if (!customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol

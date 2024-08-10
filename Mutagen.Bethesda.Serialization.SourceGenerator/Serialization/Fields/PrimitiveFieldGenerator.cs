@@ -42,7 +42,8 @@ public class PrimitiveFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName) => false;
+        string? fieldName,
+        bool isInsideCollection) => false;
     
     public virtual bool ShouldGenerate(IPropertySymbol propertySymbol)
     {

@@ -17,7 +17,8 @@ public interface ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName);
+        string? fieldName,
+        bool isInsideCollection);
 
     bool ShouldGenerate(IPropertySymbol propertySymbol);
     

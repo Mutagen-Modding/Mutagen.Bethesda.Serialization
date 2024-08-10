@@ -39,11 +39,12 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization, 
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
-        if (_blocksFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
-            || _blocksXyFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
-            || _folderPerRecordGroupFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName))
+        if (_blocksFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection)
+            || _blocksXyFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection)
+            || _folderPerRecordGroupFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection))
         {
             return false;
         }

@@ -29,7 +29,8 @@ public class CacheFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         CustomizationCatalog customization,
         ITypeSymbol typeSymbol, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         typeSymbol = typeSymbol.PeelNullable();
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
