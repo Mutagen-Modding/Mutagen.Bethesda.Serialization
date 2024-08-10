@@ -42,7 +42,7 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
         if (!customization.Overall.FilePerRecord) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (!_isListTester.Applicable(typeSymbol)) return false;
-        return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], customization);
+        return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], fieldName, customization);
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;

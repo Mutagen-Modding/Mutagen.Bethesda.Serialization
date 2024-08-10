@@ -72,7 +72,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string? fieldName)
     {
         return _isLoquiObjectTester.Applicable(obj, customization, typeSymbol, fieldName)
-               && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, customization);
+               && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, fieldName, customization);
     }
     
     public void GenerateForSerialize(

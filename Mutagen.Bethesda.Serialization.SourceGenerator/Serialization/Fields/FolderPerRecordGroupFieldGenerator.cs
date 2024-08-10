@@ -42,7 +42,7 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
 
             var subObj = namedTypeSymbol.TypeArguments[0];
 
-            if (_objRequiresFolder.ObjRequiresFolder(obj, subObj, customization)) return true;
+            if (_objRequiresFolder.ObjRequiresFolder(obj, subObj, fieldName, customization)) return true;
         }
 
         return false;

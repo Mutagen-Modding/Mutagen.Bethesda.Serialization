@@ -38,7 +38,7 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
     {
         if (!customization.Overall.FilePerRecord) return false;
         if (!_loquiFieldTester.Applicable(obj, customization, typeSymbol, fieldName)) return false;
-        return _objRequiresFolderTester.ObjRequiresFolder(obj, typeSymbol, customization);
+        return _objRequiresFolderTester.ObjRequiresFolder(obj, typeSymbol, fieldName, customization);
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
