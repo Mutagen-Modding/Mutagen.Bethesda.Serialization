@@ -12,7 +12,7 @@ public class RelatedObjectAccumulator
     private readonly GenderedTypeFieldGenerator _genderedTypeFieldGenerator;
     private readonly Array2dFieldGenerator _array2dTypeFieldGenerator;
     private readonly ArrayFieldGenerator _arrayFieldGenerator;
-    private readonly ListFieldGenerator _listFieldGenerator;
+    private readonly IsListTester _isListTester;
     private readonly IsLoquiObjectTester _loquiObjectTester;
     private readonly NamespaceSuffixRetriever _namespaceSuffixRetriever;
 
@@ -20,7 +20,7 @@ public class RelatedObjectAccumulator
         IsGroupTester isGroupTester,
         GenderedTypeFieldGenerator genderedTypeFieldGenerator,
         Array2dFieldGenerator array2dTypeFieldGenerator,
-        ListFieldGenerator listFieldGenerator,
+        IsListTester isListTester,
         IsLoquiObjectTester loquiObjectTester,
         ArrayFieldGenerator arrayFieldGenerator, 
         NamespaceSuffixRetriever namespaceSuffixRetriever)
@@ -28,7 +28,7 @@ public class RelatedObjectAccumulator
         _isGroupTester = isGroupTester;
         _genderedTypeFieldGenerator = genderedTypeFieldGenerator;
         _array2dTypeFieldGenerator = array2dTypeFieldGenerator;
-        _listFieldGenerator = listFieldGenerator;
+        _isListTester = isListTester;
         _loquiObjectTester = loquiObjectTester;
         _arrayFieldGenerator = arrayFieldGenerator;
         _namespaceSuffixRetriever = namespaceSuffixRetriever;
@@ -111,7 +111,7 @@ public class RelatedObjectAccumulator
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        if (_listFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName)
+        if (_isListTester.Applicable(typeSymbol)
             && typeSymbol is INamedTypeSymbol namedTypeSymbol)
         {
             return namedTypeSymbol.TypeArguments[0];
