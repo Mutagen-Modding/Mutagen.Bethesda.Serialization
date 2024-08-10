@@ -47,7 +47,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
     {
         var subType = GetSubtype(typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType, fieldName: null);
+            .GetGenerator(obj, compilation, subType, fieldName: null, isInsideCollection: true);
         return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
     }
     
@@ -180,7 +180,8 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
                             fieldName: fieldName, 
                             fieldAccessor: "return ",
                             sb: subSb,
-                            cancel: cancel);
+                            cancel: cancel,
+                            isInsideCollection: true);
                     }
                 });
             }

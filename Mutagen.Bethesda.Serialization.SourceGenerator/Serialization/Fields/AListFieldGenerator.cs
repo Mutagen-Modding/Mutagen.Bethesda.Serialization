@@ -31,7 +31,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     {
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = ForFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType, fieldName: null);
+            .GetGenerator(obj, compilation, subType, fieldName: null, isInsideCollection: true);
         return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
     }
     

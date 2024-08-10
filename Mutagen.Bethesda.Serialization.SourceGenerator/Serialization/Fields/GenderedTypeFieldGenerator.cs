@@ -32,7 +32,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
         yield return "Mutagen.Bethesda.Plugins.Records";
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = _forFieldGenerator().Value
-            .GetGenerator(obj, compilation, subType, fieldName: null);
+            .GetGenerator(obj, compilation, subType, fieldName: null, isInsideCollection: true);
         if (gen != null)
         {
             foreach (var ns in gen.RequiredNamespaces(obj, compilation, subType))
@@ -118,7 +118,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                         fieldAccessor: $"o.Male",
                         defaultValueAccessor: null,
                         sb: subSb,
-                        cancel: cancel);
+                        cancel: cancel,
+                        isInsideCollection: true);
                     _forFieldGenerator().Value.GenerateSerializeForField(
                         compilation: compilation,
                         obj: obj,
@@ -130,7 +131,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                         fieldAccessor: $"o.Female",
                         defaultValueAccessor: null,
                         sb: subSb,
-                        cancel: cancel);
+                        cancel: cancel,
+                        isInsideCollection: true);
                 }
             });
         }
@@ -227,7 +229,7 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
             return;
         }
         
-        var subGen = _forFieldGenerator().Value.GetGenerator(obj, compilation, subType, null);
+        var subGen = _forFieldGenerator().Value.GetGenerator(obj, compilation, subType, null, isInsideCollection: true);
         var def = subGen?.GetDefault(subType) ?? $"default({subType})";
         
         Utility.WrapStripNull(
@@ -270,7 +272,8 @@ public class GenderedTypeFieldGenerator : ISerializationForFieldGenerator
                                             fieldName: "n",
                                             fieldAccessor: $"return ",
                                             sb: readerSb,
-                                            cancel: cancel);
+                                            cancel: cancel,
+                                            isInsideCollection: true);
                                     }
                                 });
                             }

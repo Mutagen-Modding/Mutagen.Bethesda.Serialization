@@ -117,7 +117,8 @@ public class ListFieldGenerator : AListFieldGenerator
                     fieldAccessor: "listItem",
                     defaultValueAccessor: null,
                     sb: sb,
-                    cancel: cancel);
+                    cancel: cancel,
+                    isInsideCollection: true);
             }
             sb.AppendLine($"{kernelAccessor}.EndListSection({writerAccessor});");
         }
@@ -181,7 +182,8 @@ public class ListFieldGenerator : AListFieldGenerator
                 fieldName: fieldName, 
                 fieldAccessor: "var item = ",
                 sb: sb,
-                cancel: cancel);
+                cancel: cancel,
+                isInsideCollection: true);
             sb.AppendLine($"{fieldAccessor}.Add(item);");
         }
         sb.AppendLine($"{kernelAccessor}.EndListSection({readerAccessor});");

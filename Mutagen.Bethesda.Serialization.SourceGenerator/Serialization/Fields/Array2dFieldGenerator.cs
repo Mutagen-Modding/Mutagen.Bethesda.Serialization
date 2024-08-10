@@ -107,7 +107,8 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                         fieldAccessor: $"{fieldAccessor}[x, y]", 
                         defaultValueAccessor: null,
                         sb: sb,
-                        cancel: cancel);
+                        cancel: cancel,
+                        isInsideCollection: true);
                     sb.AppendLine($"{kernelAccessor}.EndArray2dXItem({writerAccessor});");
                 }
                 sb.AppendLine($"{kernelAccessor}.EndArray2dYSection({writerAccessor});");
@@ -197,7 +198,8 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
                         fieldName: fieldName, 
                         fieldAccessor: "var item = ",
                         sb: sb,
-                        cancel: cancel);
+                        cancel: cancel,
+                        isInsideCollection: true);
                     sb.AppendLine($"{fieldAccessor}[x, y] = item;");
                     sb.AppendLine($"{kernelAccessor}.EndArray2dXItem({readerAccessor});");
                     sb.AppendLine($"x++;");

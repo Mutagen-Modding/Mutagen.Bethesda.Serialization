@@ -98,7 +98,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 metaDataAccessor: metaAccessor,
                 defaultValueAccessor: null,
                 sb: sb, 
-                cancel: cancel);
+                cancel: cancel,
+                isInsideCollection: true);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryKey({writerAccessor});");
             sb.AppendLine($"{kernelAccessor}.StartDictionaryValue({writerAccessor});");
             _forFieldGenerator().Value.GenerateSerializeForField(
@@ -112,7 +113,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 metaDataAccessor: metaAccessor,
                 defaultValueAccessor: null,
                 sb: sb, 
-                cancel: cancel);
+                cancel: cancel,
+                isInsideCollection: true);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryValue({writerAccessor});");
             sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({writerAccessor});");
         }
@@ -183,7 +185,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldName: fieldName, 
                 fieldAccessor: "var key = ",
                 sb: sb,
-                cancel: cancel);
+                cancel: cancel,
+                isInsideCollection: true);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryKey({readerAccessor});");
             sb.AppendLine($"{kernelAccessor}.StartDictionaryValue({readerAccessor});");
             _forFieldGenerator().Value.GenerateDeserializeForField(
@@ -196,7 +199,8 @@ public class DictFieldGenerator : ISerializationForFieldGenerator
                 fieldName: fieldName, 
                 fieldAccessor: "var val = ",
                 sb: sb,
-                cancel: cancel);
+                cancel: cancel,
+                isInsideCollection: true);
             sb.AppendLine($"{kernelAccessor}.EndDictionaryValue({readerAccessor});");
             sb.AppendLine($"{fieldAccessor}[key] = val;");
             sb.AppendLine($"{kernelAccessor}.EndDictionaryItem({readerAccessor});");

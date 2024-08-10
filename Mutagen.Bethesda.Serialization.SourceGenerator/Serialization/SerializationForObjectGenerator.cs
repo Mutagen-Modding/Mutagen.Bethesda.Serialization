@@ -625,7 +625,7 @@ public class SerializationForObjectGenerator
 
             var hasInvariable = properties.InOrder.Any(x =>
             {
-                var gen = _forFieldGenerator.GetGenerator(obj, compilation, x.Property.Type, x.Property.Name);
+                var gen = _forFieldGenerator.GetGenerator(obj, compilation, x.Property.Type, x.Property.Name, isInsideCollection: false);
                 return !gen?.HasVariableHasSerialize ?? true;
             });
 

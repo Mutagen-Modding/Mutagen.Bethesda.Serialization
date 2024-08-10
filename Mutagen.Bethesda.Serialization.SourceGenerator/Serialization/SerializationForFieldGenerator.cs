@@ -34,10 +34,11 @@ public class SerializationFieldGenerator
         string kernelAccessor,
         string metaDataAccessor,
         StructuredStringBuilder sb,
-        CancellationToken cancel)
+        CancellationToken cancel,
+        bool isInsideCollection)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName, isInsideCollection: isInsideCollection);
         if (gen != null)
         {
             gen.GenerateForSerialize(compilation,
@@ -103,10 +104,11 @@ public class SerializationFieldGenerator
         string metaDataAccessor,
         string fieldAccessor,
         StructuredStringBuilder sb,
-        CancellationToken cancel)
+        CancellationToken cancel,
+        bool isInsideCollection)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName, isInsideCollection: isInsideCollection);
         if (gen != null)
         {
             gen.GenerateForDeserializeSingleFieldInto(compilation,
@@ -207,7 +209,7 @@ public class SerializationFieldGenerator
         CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        var gen = GetGenerator(obj, compilation, fieldType, fieldName);
+        var gen = GetGenerator(obj, compilation, fieldType, fieldName, isInsideCollection: false);
         if (gen != null)
         {
             gen.GenerateForHasSerialize(compilation, obj, fieldType, fieldName, fieldAccessor, defaultValueAccessor, "metaData", sb, cancel);
@@ -244,7 +246,8 @@ public class SerializationFieldGenerator
         LoquiTypeSet obj,
         CompilationUnit compilation,
         ITypeSymbol fieldType, 
-        string? fieldName)
+        string? fieldName,
+        bool isInsideCollection)
     {
         compilation.Context.CancellationToken.ThrowIfCancellationRequested();
         if (_fieldGeneratorDict.TryGetValue(fieldType.ToString(), out var gen))
@@ -256,7 +259,7 @@ public class SerializationFieldGenerator
             foreach (var fieldGenerator in _variableFieldGenerators)
             {
                 compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                if (fieldGenerator.Applicable(obj, compilation.Customization, fieldType, fieldName, false))
+                if (fieldGenerator.Applicable(obj, compilation.Customization, fieldType, fieldName, isInsideCollection))
                 {
                     return fieldGenerator;
                 }
