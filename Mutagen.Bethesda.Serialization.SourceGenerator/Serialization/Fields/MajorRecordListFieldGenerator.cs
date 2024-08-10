@@ -33,6 +33,7 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         string? fieldName)
     {
         if (!customization.Overall.FilePerRecord) return false;
+        if (customization.EmbedRecordForProperty(fieldName)) return false;
         if (!base.Applicable(obj, customization, typeSymbol, fieldName)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (ShouldSkip(customization.Overall, obj, null)) return false;

@@ -1,4 +1,4 @@
-//HintName: TestMajorRecord_Serializations.g.cs
+﻿//HintName: TestMajorRecord_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;

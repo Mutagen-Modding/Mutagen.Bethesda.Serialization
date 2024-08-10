@@ -29,20 +29,11 @@ public class ListFieldGenerator : AListFieldGenerator
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
-        return Applicable(obj, customization.Overall, typeSymbol, fieldName);
-    }
-
-    public bool Applicable(
-        LoquiTypeSet obj, 
-        CustomizationSpecifications customization, 
-        ITypeSymbol typeSymbol, 
-        string? fieldName)
-    {
         if (!_isListTester.Applicable(typeSymbol)) return false;
 
-        if (ShouldSkip(customization, obj, fieldName)) return true;
+        if (ShouldSkip(customization.Overall, obj, fieldName)) return true;
         
-        if (customization.FilePerRecord)
+        if (customization.Overall.FilePerRecord && !customization.EmbedRecordForProperty(fieldName))
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             return !_isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);

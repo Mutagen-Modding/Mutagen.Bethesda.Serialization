@@ -1,4 +1,4 @@
-//HintName: TestMajorRecord_Serializations.g.cs
+﻿//HintName: SomeRecord_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization;
@@ -19,11 +19,11 @@ using System.Threading.Tasks;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
-internal static class TestMajorRecord_Serialization
+internal static class SomeRecord_Serialization
 {
     public static async Task Serialize<TKernel, TWriteObject>(
         TWriteObject writer,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeRecordGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
@@ -39,36 +39,47 @@ internal static class TestMajorRecord_Serialization
 
     public static async Task SerializeFields<TKernel, TWriteObject>(
         TWriteObject writer,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeRecordGetter item,
         MutagenSerializationWriterKernel<TKernel, TWriteObject> kernel,
         SerializationMetaData metaData)
         where TKernel : ISerializationWriterKernel<TWriteObject>, new()
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        kernel.WriteString(writer, "String", item.String, default(string));
+        kernel.WriteInt32(writer, "SomeMember1", item.SomeMember1, default(int));
+        if (item.SomeList is {} checkedSomeList
+            && checkedSomeList.Count > 0)
+        {
+            kernel.StartListSection(writer, "SomeList");
+            foreach (var listItem in checkedSomeList)
+            {
+                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+            }
+            kernel.EndListSection(writer);
+        }
+        kernel.WriteInt32(writer, "SomeMember2", item.SomeMember2, default(int));
     }
 
     public static bool HasSerializationItems(
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecordGetter? item,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeRecordGetter? item,
         SerializationMetaData metaData)
     {
         metaData.Cancel.ThrowIfCancellationRequested();
         if (item == null) return false;
-        if (!EqualityComparer<string>.Default.Equals(item.String, default(string))) return true;
+        if (!EqualityComparer<int>.Default.Equals(item.SomeMember1, default(int))) return true;
+        if (item.SomeList.Count > 0) return true;
+        if (!EqualityComparer<int>.Default.Equals(item.SomeMember2, default(int))) return true;
         return false;
     }
 
-    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord> Deserialize<TReadObject>(
+    public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord> Deserialize<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord(
-            kernel.ExtractFormKey(reader),
-            metaData.Release.ToSerialization.SourceGenerator.TestsRelease());
+        var obj = new Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord();
         await DeserializeInto<TReadObject>(
             reader: reader,
             kernel: kernel,
@@ -80,7 +91,7 @@ internal static class TestMajorRecord_Serialization
     public static async Task DeserializeSingleFieldInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecord obj,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeRecord obj,
         SerializationMetaData metaData,
         string name)
         where TReadObject : IContainStreamPackage
@@ -88,8 +99,20 @@ internal static class TestMajorRecord_Serialization
         metaData.Cancel.ThrowIfCancellationRequested();
         switch (name)
         {
-            case "String":
-                obj.String = SerializationHelper.StripNull(kernel.ReadString(reader), name: "String");
+            case "SomeMember1":
+                obj.SomeMember1 = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeMember1");
+                break;
+            case "SomeList":
+                kernel.StartListSection(reader);
+                while (kernel.TryHasNextItem(reader))
+                {
+                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList");
+                    obj.SomeList.Add(item);
+                }
+                kernel.EndListSection(reader);
+                break;
+            case "SomeMember2":
+                obj.SomeMember2 = SerializationHelper.StripNull(kernel.ReadInt32(reader), name: "SomeMember2");
                 break;
             default:
                 kernel.Skip(reader);
@@ -100,7 +123,7 @@ internal static class TestMajorRecord_Serialization
     public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
-        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ITestMajorRecord obj,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeRecord obj,
         SerializationMetaData metaData)
         where TReadObject : IContainStreamPackage
     {

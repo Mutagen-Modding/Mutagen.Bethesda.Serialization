@@ -8,14 +8,14 @@ public record CustomizationCatalog(
 {
     public bool EmbedRecordForProperty(IPropertySymbol prop)
     {
-        return RecordSpecs?.ToEmbedRecordsInSameFile != null
-               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(prop.Name);
+        return EmbedRecordForProperty(prop.Name);
     }
     
-    public bool EmbedRecordForProperty(ITypeSymbol prop)
+    public bool EmbedRecordForProperty(string? name)
     {
-        return RecordSpecs?.ToEmbedRecordsInSameFile != null
-               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(prop.Name);
+        return name != null
+               && RecordSpecs?.ToEmbedRecordsInSameFile != null
+               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(name);
     }
 }
 
