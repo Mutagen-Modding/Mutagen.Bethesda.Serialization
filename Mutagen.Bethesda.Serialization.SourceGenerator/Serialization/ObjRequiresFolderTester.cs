@@ -6,10 +6,14 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 public class ObjRequiresFolderTester
 {
+    private readonly IsMajorRecordTester _isMajorRecordTester;
     private readonly MajorRecordListFieldGenerator _majorRecordListFieldGenerator;
 
-    public ObjRequiresFolderTester(MajorRecordListFieldGenerator majorRecordListFieldGenerator)
+    public ObjRequiresFolderTester(
+        IsMajorRecordTester isMajorRecordTester,
+        MajorRecordListFieldGenerator majorRecordListFieldGenerator)
     {
+        _isMajorRecordTester = isMajorRecordTester;
         _majorRecordListFieldGenerator = majorRecordListFieldGenerator;
     }
 
@@ -21,6 +25,7 @@ public class ObjRequiresFolderTester
         foreach (var prop in typeSymbol.GetMembers().OfType<IPropertySymbol>())
         {
             if (customization.EmbedRecordForProperty(prop)) continue;
+            if (_isMajorRecordTester.IsMajorRecord(prop.Type)) return true;
             if (_majorRecordListFieldGenerator.Applicable(obj, customization, prop.Type, prop.Name, false))
             {
                 return true;

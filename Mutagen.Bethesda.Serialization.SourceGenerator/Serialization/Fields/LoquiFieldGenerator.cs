@@ -45,14 +45,17 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
 {
     private readonly LoquiSerializationNaming _loquiSerializationNaming;
     private readonly ObjRequiresFolderTester _objRequiresFolder;
+    private readonly IsMajorRecordTester _majorRecordTester;
     private readonly IsLoquiFieldTester _isLoquiObjectTester;
     public IEnumerable<string> AssociatedTypes => Enumerable.Empty<string>();
 
     public LoquiFieldGenerator(
+        IsMajorRecordTester majorRecordTester,
         IsLoquiFieldTester isLoquiObjectTester,
         LoquiSerializationNaming loquiSerializationNaming,
         ObjRequiresFolderTester objRequiresFolder)
     {
+        _majorRecordTester = majorRecordTester;
         _isLoquiObjectTester = isLoquiObjectTester;
         _loquiSerializationNaming = loquiSerializationNaming;
         _objRequiresFolder = objRequiresFolder;
@@ -72,6 +75,14 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         bool isInsideCollection)
     {
+        if (fieldName != null
+            && !isInsideCollection
+            && customization.Overall.FilePerRecord 
+            && !customization.EmbedRecordForProperty(fieldName)
+            && _majorRecordTester.IsMajorRecord(typeSymbol))
+        {
+            return false;
+        }
         return _isLoquiObjectTester.Applicable(obj, customization, typeSymbol, fieldName)
                && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, fieldName, customization);
     }

@@ -7,7 +7,6 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public class SliceListGenerator : ISerializationForFieldGenerator
 {
-    
     private readonly ByteArrayFieldGenerator _byteArrGenerator;
     
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
