@@ -64,4 +64,10 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Customization\FilePerFolderCustomizationTests.Group#SomeMajorRecord_Serializations.g.verified.cs">
+        <DependentUpon>FilePerFolderCustomizationTests.cs</DependentUpon>
+      </None>
+    </ItemGroup>
+
 </Project>
