@@ -207,4 +207,129 @@ public class EmbeddedFilePerFolderCustomizationTests : ATestsBase
 
         return TestHelper.VerifySerialization(sb.ToString());
     }
-}
+    
+    [Fact]
+    public Task CellSubBlock()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        GetObjWithMember(sb, sb =>
+            {
+                sb.AppendLine("public int SomeMember1 { get; set; } = 1;");
+                sb.AppendLine("public List<TestMajorRecord> MajorRecord { get; set; } = null!;");
+            },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "CellSubBlock");
+        
+        GenerateGroup(sb);
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void Customize"))
+            {
+                f.Add("ICustomizationBuilder builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine(".FilePerRecord();");
+                }
+            }
+        }
+
+        sb.AppendLine();
+        using (var c = sb.Class("EmbedCustomization"))
+        {
+            c.Interfaces.Add("ICustomize<SomeRecord>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<ISomeRecordGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine(".EmbedRecordsInSameFile(x => x.MajorRecord);");
+                }
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
+    
+    [Fact]
+    public Task WorldspaceSubBlock()
+    {
+        var sb = new StructuredStringBuilder();
+        
+        GetObjWithMember(sb, sb =>
+            {
+                sb.AppendLine("public int SomeMember1 { get; set; } = 1;");
+                sb.AppendLine("public List<TestMajorRecord> MajorRecord { get; set; } = null!;");
+            },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "WorldspaceSubBlock");
+        
+        GenerateGroup(sb);
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void Customize"))
+            {
+                f.Add("ICustomizationBuilder builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine(".FilePerRecord();");
+                }
+            }
+        }
+
+        sb.AppendLine();
+        using (var c = sb.Class("EmbedCustomization"))
+        {
+            c.Interfaces.Add("ICustomize<SomeRecord>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<ISomeRecordGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("builder");
+                using (sb.IncreaseDepth())
+                {
+                    sb.AppendLine(".EmbedRecordsInSameFile(x => x.MajorRecord);");
+                }
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }}
