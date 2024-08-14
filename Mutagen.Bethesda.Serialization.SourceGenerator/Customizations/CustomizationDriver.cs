@@ -29,7 +29,7 @@ public class CustomizationDriver
                     var isTarget = _isGroupTester.IsGroup(x.Property.Type)
                         || _majorRecordListFieldGenerator.Applicable(
                             obj,
-                            compilation.Customization,
+                            compilation,
                             x.Property.Type,
                             x.Property.Name,
                             isInsideCollection: false);

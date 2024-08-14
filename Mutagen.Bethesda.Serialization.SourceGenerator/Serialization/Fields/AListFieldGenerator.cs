@@ -55,7 +55,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     
     public virtual bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization,
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)

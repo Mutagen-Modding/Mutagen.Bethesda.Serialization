@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Mutagen.Bethesda.Serialization.Exceptions;
+﻿namespace Mutagen.Bethesda.Serialization.Exceptions;
 
 public class BadStateException : Exception
 {

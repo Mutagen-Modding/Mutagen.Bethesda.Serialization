@@ -30,7 +30,7 @@ public class FormLinkOrIndexFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)

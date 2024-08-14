@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
-using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 

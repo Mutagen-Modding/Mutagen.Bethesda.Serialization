@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -35,7 +34,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation, 
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)

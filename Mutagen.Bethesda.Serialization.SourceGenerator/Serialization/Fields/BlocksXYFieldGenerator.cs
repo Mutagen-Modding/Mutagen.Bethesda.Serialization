@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
@@ -24,12 +23,12 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization,
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)
     {
-        if (!customization.Overall.FilePerRecord) return false;
+        if (!compilation.Customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeArguments.Length == 1)
         {
@@ -107,12 +106,12 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customizations,
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)
     {
-        if (!customizations.Overall.FilePerRecord) return false;
+        if (!compilation.Customization.Overall.FilePerRecord) return false;
         if (!GroupTester.IsGroup(typeSymbol)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         var subType = namedTypeSymbol.TypeArguments[0];

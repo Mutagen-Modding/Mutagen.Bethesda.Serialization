@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -20,13 +19,17 @@ public class SingleMajorRecordFieldGenerator : ISerializationForFieldGenerator
         _majorRecordTester = majorRecordTester;
     }
     
-    public bool Applicable(LoquiTypeSet obj, CustomizationCatalog customization, ITypeSymbol typeSymbol, string? fieldName,
+    public bool Applicable(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol,
+        string? fieldName,
         bool isInsideCollection)
     {
         if (isInsideCollection) return false;
         if (fieldName == null) return false;
-        if (!customization.Overall.FilePerRecord) return false;
-        if (customization.EmbedRecordForProperty(fieldName)) return false;
+        if (!compilation.Customization.Overall.FilePerRecord) return false;
+        if (compilation.Customization.EmbedRecordForProperty(fieldName)) return false;
         var ret = _majorRecordTester.IsMajorRecord(typeSymbol);
         return ret;
     }

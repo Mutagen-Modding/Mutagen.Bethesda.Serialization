@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -37,14 +36,14 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)
     {
-        if (_blocksFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection)
-            || _blocksXyFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection)
-            || _folderPerRecordGroupFieldGenerator.Applicable(obj, customization, typeSymbol, fieldName, isInsideCollection))
+        if (_blocksFieldGenerator.Applicable(obj, compilation, typeSymbol, fieldName, isInsideCollection)
+            || _blocksXyFieldGenerator.Applicable(obj, compilation, typeSymbol, fieldName, isInsideCollection)
+            || _folderPerRecordGroupFieldGenerator.Applicable(obj, compilation, typeSymbol, fieldName, isInsideCollection))
         {
             return false;
         }
@@ -55,7 +54,7 @@ public class GroupFieldGenerator : ISerializationForFieldGenerator
             var name = _nameRetriever.GetNames(typeSymbol.Name);
             if (name.Direct == "ListGroup")
             {
-                return !customization.Overall.FilePerRecord;
+                return !compilation.Customization.Overall.FilePerRecord;
             }
             
             if (name.Direct.EndsWith("Group"))

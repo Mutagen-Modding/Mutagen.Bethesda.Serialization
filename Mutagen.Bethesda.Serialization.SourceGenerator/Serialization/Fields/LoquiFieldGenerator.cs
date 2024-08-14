@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -23,7 +22,7 @@ public class IsLoquiFieldTester
 
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation, 
         ITypeSymbol typeSymbol, 
         string? fieldName)
     {
@@ -70,21 +69,21 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
     
     public bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation, 
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)
     {
         if (fieldName != null
             && !isInsideCollection
-            && customization.Overall.FilePerRecord 
-            && !customization.EmbedRecordForProperty(fieldName)
+            && compilation.Customization.Overall.FilePerRecord 
+            && !compilation.Customization.EmbedRecordForProperty(fieldName)
             && _majorRecordTester.IsMajorRecord(typeSymbol))
         {
             return false;
         }
-        return _isLoquiObjectTester.Applicable(obj, customization, typeSymbol, fieldName)
-               && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, fieldName, customization);
+        return _isLoquiObjectTester.Applicable(obj, compilation, typeSymbol, fieldName)
+               && !_objRequiresFolder.ObjRequiresFolder(obj, typeSymbol, fieldName, compilation);
     }
     
     public void GenerateForSerialize(

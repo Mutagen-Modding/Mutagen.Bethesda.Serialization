@@ -37,13 +37,17 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
     public IEnumerable<string> RequiredNamespaces(LoquiTypeSet obj, CompilationUnit compilation, ITypeSymbol typeSymbol)
         => Enumerable.Empty<string>();
 
-    public bool Applicable(LoquiTypeSet obj, CustomizationCatalog customization, ITypeSymbol typeSymbol, string? fieldName,
+    public bool Applicable(
+        LoquiTypeSet obj,
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol,
+        string? fieldName,
         bool isInsideCollection)
     {
-        if (!customization.Overall.FilePerRecord) return false;
+        if (!compilation.Customization.Overall.FilePerRecord) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (!_isListTester.Applicable(typeSymbol)) return false;
-        return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], fieldName, customization);
+        return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], fieldName, compilation);
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;

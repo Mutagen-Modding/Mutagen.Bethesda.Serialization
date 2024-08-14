@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 using StrongInject;
@@ -25,16 +24,16 @@ public class ListFieldGenerator : AListFieldGenerator
 
     public override bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation,
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection)
     {
         if (!_isListTester.Applicable(typeSymbol)) return false;
 
-        if (ShouldSkip(customization.Overall, obj, fieldName)) return true;
+        if (ShouldSkip(compilation.Customization.Overall, obj, fieldName)) return true;
         
-        if (customization.Overall.FilePerRecord && !customization.EmbedRecordForProperty(fieldName))
+        if (compilation.Customization.Overall.FilePerRecord && !compilation.Customization.EmbedRecordForProperty(fieldName))
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             return !_isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);

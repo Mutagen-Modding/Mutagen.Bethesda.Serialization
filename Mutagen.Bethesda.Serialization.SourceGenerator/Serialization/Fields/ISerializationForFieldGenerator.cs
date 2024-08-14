@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -15,7 +14,7 @@ public interface ISerializationForFieldGenerator
 
     bool Applicable(
         LoquiTypeSet obj, 
-        CustomizationCatalog customization, 
+        CompilationUnit compilation, 
         ITypeSymbol typeSymbol, 
         string? fieldName,
         bool isInsideCollection);

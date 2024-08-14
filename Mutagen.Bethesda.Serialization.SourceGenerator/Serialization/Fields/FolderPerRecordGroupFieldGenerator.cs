@@ -28,12 +28,14 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
     public IEnumerable<string> RequiredNamespaces(LoquiTypeSet obj, CompilationUnit compilation, ITypeSymbol typeSymbol)
         => Enumerable.Empty<string>();
 
-    public bool Applicable(LoquiTypeSet obj, 
-        CustomizationCatalog customization,
-        ITypeSymbol typeSymbol, string? fieldName,
+    public bool Applicable(
+        LoquiTypeSet obj, 
+        CompilationUnit compilation,
+        ITypeSymbol typeSymbol, 
+        string? fieldName,
         bool isInsideCollection)
     {
-        if (!customization.Overall.FilePerRecord) return false;
+        if (!compilation.Customization.Overall.FilePerRecord) return false;
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol
             && namedTypeSymbol.TypeParameters.Length == 1)
         {
@@ -43,7 +45,7 @@ public class FolderPerRecordGroupFieldGenerator : ISerializationForFieldGenerato
 
             var subObj = namedTypeSymbol.TypeArguments[0];
 
-            if (_objRequiresFolder.ObjRequiresFolder(obj, subObj, fieldName, customization)) return true;
+            if (_objRequiresFolder.ObjRequiresFolder(obj, subObj, fieldName, compilation)) return true;
         }
 
         return false;

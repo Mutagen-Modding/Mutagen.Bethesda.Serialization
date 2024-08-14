@@ -259,7 +259,7 @@ public class SerializationFieldGenerator
             foreach (var fieldGenerator in _variableFieldGenerators)
             {
                 compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                if (fieldGenerator.Applicable(obj, compilation.Customization, fieldType, fieldName, isInsideCollection))
+                if (fieldGenerator.Applicable(obj, compilation, fieldType, fieldName, isInsideCollection))
                 {
                     return fieldGenerator;
                 }

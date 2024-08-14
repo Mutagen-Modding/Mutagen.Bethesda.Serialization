@@ -3,7 +3,6 @@ using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Plugins.Utility;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
-using Noggog.WorkEngine;
 
 namespace Mutagen.Bethesda.Serialization.Utility;
 
