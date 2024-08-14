@@ -46,14 +46,11 @@ internal static class SomeBaseRecord_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        await SerializationHelper.WriteRecordAsFolder(
-            streamPackage: writer.StreamPackage,
-            obj: item.SomeRecord,
-            fieldName: "SomeRecord",
-            metaData: metaData,
-            kernel: kernel,
-            itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            hasSerializationItems: static (i, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.HasSerializationItems(i, m));
+        if (item.SomeRecord is {} SomeRecordChecked
+            && Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.HasSerializationItems(SomeRecordChecked, metaData))
+        {
+            await kernel.WriteLoqui(writer, "SomeRecord", SomeRecordChecked, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+        }
     }
 
     public static bool HasSerializationItems(
@@ -82,6 +79,26 @@ internal static class SomeBaseRecord_Serialization
         return obj;
     }
 
+    public static async Task DeserializeSingleFieldInto<TReadObject>(
+        TReadObject reader,
+        ISerializationReaderKernel<TReadObject> kernel,
+        Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Mutagen.Bethesda.Serialization.SourceGenerator.Tests.ISomeBaseRecord obj,
+        SerializationMetaData metaData,
+        string name)
+        where TReadObject : IContainStreamPackage
+    {
+        metaData.Cancel.ThrowIfCancellationRequested();
+        switch (name)
+        {
+            case "SomeRecord":
+                obj.SomeRecord = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeRecord");
+                break;
+            default:
+                kernel.Skip(reader);
+                break;
+        }
+    }
+    
     public static async Task DeserializeInto<TReadObject>(
         TReadObject reader,
         ISerializationReaderKernel<TReadObject> kernel,
@@ -90,12 +107,16 @@ internal static class SomeBaseRecord_Serialization
         where TReadObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        obj.SomeRecord = await SerializationHelper.ReadRecordAsFolder<ISerializationReaderKernel<TReadObject>, TReadObject, SomeRecord>(
-            streamPackage: reader.StreamPackage,
-            fieldName: "SomeRecord",
-            metaData: metaData,
-            kernel: kernel,
-            itemReader: static async (r, k, m) => (await k.ReadLoqui(r, m, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeRecord_Serialization.Deserialize<TReadObject>)).StripNull("SomeRecord"));
+        while (kernel.TryGetNextField(reader, out var name))
+        {
+            await DeserializeSingleFieldInto<TReadObject>(
+                reader: reader,
+                kernel: kernel,
+                obj: obj,
+                metaData: metaData,
+                name: name);
+        }
+
     }
 
 }

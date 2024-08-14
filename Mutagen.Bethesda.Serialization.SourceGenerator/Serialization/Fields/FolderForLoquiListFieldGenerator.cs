@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -45,6 +45,7 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
         bool isInsideCollection)
     {
         if (!compilation.Customization.Overall.FilePerRecord) return false;
+        if (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? false) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (!_isListTester.Applicable(typeSymbol)) return false;
         return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], fieldName, compilation);

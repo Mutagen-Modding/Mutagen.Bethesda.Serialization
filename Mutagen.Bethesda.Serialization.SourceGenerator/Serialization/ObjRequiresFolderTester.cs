@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
+using Noggog;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
@@ -18,15 +19,21 @@ public class ObjRequiresFolderTester
     }
 
     public bool ObjRequiresFolder(
-        LoquiTypeSet obj,
+        LoquiTypeSet obj, 
         ITypeSymbol typeSymbol,
         string? fieldName,
         CompilationUnit compilation)
     {
         if (!compilation.Customization.Overall.FilePerRecord) return false;
+        RecordCustomizationSpecifications? targetRecordCustomizations = null;
+        if (compilation.Mapping.TryGetTypeSet(typeSymbol, out var loqui)
+            && compilation.Customization.RecordSpecs.TryGetValue(loqui, out targetRecordCustomizations))
+        {
+        }
         foreach (var prop in typeSymbol.GetMembers().OfType<IPropertySymbol>())
         {
-            if (compilation.Customization.EmbedRecordForProperty(prop)) continue;
+            if (targetRecordCustomizations != null
+                && targetRecordCustomizations.EmbedRecordForProperty(prop)) return false;
             if (_isMajorRecordTester.IsMajorRecord(prop.Type)) return true;
             if (_majorRecordListFieldGenerator.Applicable(obj, compilation, prop.Type, prop.Name, false))
             {

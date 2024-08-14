@@ -34,7 +34,7 @@ public class CustomizationDriver
                             x.Property.Name,
                             isInsideCollection: false);
                     if (isTarget
-                        && compilation.Customization.EmbedRecordForProperty(x.Property))
+                        && (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(x.Property) ?? false))
                     {
                         return false;
                     }
@@ -116,14 +116,14 @@ public class CustomizationDriver
             }
         }
 
-        if (compilation.Customization.RecordSpecs == null)
+        if (compilation.Customization.TargetRecordSpecs == null)
         {
             toDo();
             return;
         }
 
-        if (compilation.Customization.RecordSpecs.ToOmit == null
-            || !compilation.Customization.RecordSpecs.ToOmit.TryGetValue(name, out _))
+        if (compilation.Customization.TargetRecordSpecs.ToOmit == null
+            || !compilation.Customization.TargetRecordSpecs.ToOmit.TryGetValue(name, out _))
         {
             toDo();
             return;

@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Noggog.StructuredStrings;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
@@ -29,7 +29,7 @@ public class SingleMajorRecordFieldGenerator : ISerializationForFieldGenerator
         if (isInsideCollection) return false;
         if (fieldName == null) return false;
         if (!compilation.Customization.Overall.FilePerRecord) return false;
-        if (compilation.Customization.EmbedRecordForProperty(fieldName)) return false;
+        if (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? false) return false;
         var ret = _majorRecordTester.IsMajorRecord(typeSymbol);
         return ret;
     }

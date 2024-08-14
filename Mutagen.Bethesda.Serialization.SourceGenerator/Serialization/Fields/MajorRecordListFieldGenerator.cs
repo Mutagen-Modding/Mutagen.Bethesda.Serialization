@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
@@ -34,7 +34,7 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         bool isInsideCollection)
     {
         if (!compilation.Customization.Overall.FilePerRecord) return false;
-        if (compilation.Customization.EmbedRecordForProperty(fieldName)) return false;
+        if (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? false) return false;
         if (!base.Applicable(obj, compilation, typeSymbol, fieldName, isInsideCollection)) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (ShouldSkip(compilation.Customization.Overall, obj, null)) return false;

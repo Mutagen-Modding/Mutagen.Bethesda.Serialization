@@ -10,4 +10,16 @@ public record RecordCustomizationSpecifications(ITypeSymbol CustomizationClass, 
 {
     public Dictionary<string, Omission>? ToOmit;
     public HashSet<string>? ToEmbedRecordsInSameFile;
+    
+    public bool EmbedRecordForProperty(IPropertySymbol prop)
+    {
+        return EmbedRecordForProperty(prop.Name);
+    }
+    
+    public bool EmbedRecordForProperty(string? name)
+    {
+        return name != null
+               && ToEmbedRecordsInSameFile != null
+               && ToEmbedRecordsInSameFile.Contains(name);
+    }
 }

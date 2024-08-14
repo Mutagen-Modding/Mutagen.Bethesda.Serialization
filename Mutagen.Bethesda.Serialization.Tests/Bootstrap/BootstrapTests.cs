@@ -272,33 +272,79 @@ public class SerializationTests
     [Fact]
     public async Task SkyrimModFilePerRecordGenerationBootstrapper()
     {
-        var source = @"
-using Mutagen.Bethesda.Serialization.Tests;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
-using Mutagen.Bethesda.Skyrim;
-using Noggog.WorkEngine;
+        var source =
+            """
+            using Mutagen.Bethesda.Serialization.Tests;
+            using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+            using Mutagen.Bethesda.Skyrim;
+            using Noggog.WorkEngine;
 
-namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+            namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 
-public class SerializationTests
-{
-    public void EmptySkyrimMod()
-    { 
-        var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
-        var stream = new MemoryStream();
-        var workEngine = new InlineWorkDropoff();
+            public class SerializationTests
+            {
+                public void EmptySkyrimMod()
+                {
+                    var mod = new SkyrimMod(Constants.Skyrim, SkyrimRelease.SkyrimSE);
+                    var stream = new MemoryStream();
+                    var workEngine = new InlineWorkDropoff();
+            
+                    MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+                }
+            }
 
-        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
-    }
-}
-
-public class Customization : ICustomize
-{
-    public void Customize(ICustomizationBuilder builder)
-    {
-        builder.FilePerRecord();
-    }
-}";
+            public class Customization : ICustomize
+            {
+                public void Customize(ICustomizationBuilder builder)
+                {
+                    builder.FilePerRecord();
+                }
+            }
+            
+            public class ModHeaderCustomization : ICustomize<ISkyrimModHeaderGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<ISkyrimModHeaderGetter> builder)
+                {
+                    builder.Omit(x => x.OverriddenForms);
+                }
+            }
+            
+            public class ModHeaderStatsCustomization : ICustomize<IModStatsGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<IModStatsGetter> builder)
+                {
+                    builder.Omit(x => x.NextFormID);
+                    builder.Omit(x => x.NumRecords);
+                }
+            }
+            
+            public class ConditionCustomization : ICustomize<IConditionGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<IConditionGetter> builder)
+                {z
+                    builder.Omit(x => x.Unknown1);
+                }
+            }
+            
+            public class CellCustomization : ICustomize<ICellGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<ICellGetter> builder)
+                {
+                    builder.EmbedRecordsInSameFile(x => x.Temporary)
+                        .EmbedRecordsInSameFile(x => x.Persistent)
+                        .EmbedRecordsInSameFile(x => x.NavigationMeshes)
+                        .EmbedRecordsInSameFile(x => x.Landscape);
+                }
+            }
+            
+            public class WorldspaceCustomization : ICustomize<IWorldspace>
+            {
+                public void CustomizeFor(ICustomizationBuilder<IWorldspace> builder)
+                {
+                    builder.EmbedRecordsInSameFile(x => x.TopCell);
+                }
+            }
+            """;
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)

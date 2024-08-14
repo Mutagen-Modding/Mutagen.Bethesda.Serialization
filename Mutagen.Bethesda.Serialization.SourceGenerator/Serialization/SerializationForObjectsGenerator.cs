@@ -83,7 +83,8 @@ public class SerializationForObjectsGenerator
                     i.Left.Left.Right,
                     new CustomizationCatalog(
                         i.Right,
-                        recordCustomization),
+                        recordCustomization,
+                        i.Left.Right),
                     compilation);
                 _serializationForObjectGenerator.Generate(
                     compUnit,

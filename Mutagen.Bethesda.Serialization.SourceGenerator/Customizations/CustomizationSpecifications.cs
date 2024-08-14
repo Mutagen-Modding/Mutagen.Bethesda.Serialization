@@ -1,22 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
 public record CustomizationCatalog(
     CustomizationSpecifications Overall,
-    RecordCustomizationSpecifications? RecordSpecs)
+    RecordCustomizationSpecifications? TargetRecordSpecs,
+    ImmutableDictionary<LoquiTypeSet, RecordCustomizationSpecifications> RecordSpecs)
 {
-    public bool EmbedRecordForProperty(IPropertySymbol prop)
-    {
-        return EmbedRecordForProperty(prop.Name);
-    }
-    
-    public bool EmbedRecordForProperty(string? name)
-    {
-        return name != null
-               && RecordSpecs?.ToEmbedRecordsInSameFile != null
-               && RecordSpecs.ToEmbedRecordsInSameFile.Contains(name);
-    }
 }
 
 public record CustomizationSpecifications(ITypeSymbol? CustomizationClass)

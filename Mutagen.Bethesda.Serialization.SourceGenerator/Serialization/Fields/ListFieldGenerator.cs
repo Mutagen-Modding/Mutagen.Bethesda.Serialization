@@ -33,7 +33,8 @@ public class ListFieldGenerator : AListFieldGenerator
 
         if (ShouldSkip(compilation.Customization.Overall, obj, fieldName)) return true;
         
-        if (compilation.Customization.Overall.FilePerRecord && !compilation.Customization.EmbedRecordForProperty(fieldName))
+        if (compilation.Customization.Overall.FilePerRecord 
+            && (!compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? true))
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
             return !_isMajorRecordTester.IsMajorRecord(namedTypeSymbol.TypeArguments[0]);

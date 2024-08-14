@@ -77,7 +77,7 @@ public class LoquiFieldGenerator : ISerializationForFieldGenerator
         if (fieldName != null
             && !isInsideCollection
             && compilation.Customization.Overall.FilePerRecord 
-            && !compilation.Customization.EmbedRecordForProperty(fieldName)
+            && (!compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? true)
             && _majorRecordTester.IsMajorRecord(typeSymbol))
         {
             return false;
