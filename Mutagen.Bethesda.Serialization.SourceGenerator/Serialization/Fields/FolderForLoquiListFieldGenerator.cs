@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -7,8 +6,6 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
 {
-    private readonly LoquiFieldGenerator _loquiFieldGenerator;
-    private readonly IsLoquiFieldTester _loquiFieldTester;
     private readonly ObjRequiresFolderTester _objRequiresFolderTester;
     private readonly LoquiSerializationNaming _serializationNaming;
     private readonly IsListTester _isListTester;
@@ -19,16 +16,12 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
     public bool HasVariableHasSerialize => true;
 
     public FolderForLoquiListFieldGenerator(
-        IsLoquiFieldTester loquiFieldTester,
         ObjRequiresFolderTester objRequiresFolderTester, 
-        LoquiFieldGenerator loquiFieldGenerator,
         LoquiSerializationNaming serializationNaming, 
         IsListTester isListTester,
         LoquiNameRetriever nameRetriever)
     {
-        _loquiFieldTester = loquiFieldTester;
         _objRequiresFolderTester = objRequiresFolderTester;
-        _loquiFieldGenerator = loquiFieldGenerator;
         _serializationNaming = serializationNaming;
         _isListTester = isListTester;
         _nameRetriever = nameRetriever;
