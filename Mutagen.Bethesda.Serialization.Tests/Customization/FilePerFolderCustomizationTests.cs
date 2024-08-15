@@ -1,4 +1,4 @@
-﻿using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
+using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 

@@ -38,6 +38,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 [Register<NamespaceSuffixRetriever>]
 [Register<HasFormVersionRetriever>]
 [Register<IsListTester>]
+[Register<ShouldSkipDuringSerializationTester>]
 [Register(typeof(TranslatedStringFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(FloatFieldGenerator), typeof(ISerializationForFieldGenerator))]
 [Register(typeof(BoolFieldGenerator), typeof(ISerializationForFieldGenerator))]

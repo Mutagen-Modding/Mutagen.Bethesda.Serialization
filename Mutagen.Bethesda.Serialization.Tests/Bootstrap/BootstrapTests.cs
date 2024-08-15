@@ -141,25 +141,100 @@ public class SerializationTests
     [Fact]
     public async Task OblivionModGenerationBootstrapper()
     {
-        var source = @"
-using Mutagen.Bethesda.Serialization.Tests;
-using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
-using Mutagen.Bethesda.Oblivion;
-using Noggog.WorkEngine;
+        var source = 
+            """
+            using Mutagen.Bethesda.Serialization.Tests;
+            using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+            using Mutagen.Bethesda.Oblivion;
+            using Noggog.WorkEngine;
 
-namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+            namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
 
-public class SerializationTests
-{
-    public void EmptyOblivionMod()
-    { 
-        var mod = new OblivionMod(ModKey.Null);
-        var stream = new MemoryStream();
-        var workEngine = new InlineWorkDropoff();
+            public class SerializationTests
+            {
+                public void EmptyOblivionMod()
+                { 
+                    var mod = new OblivionMod(ModKey.Null);
+                    var stream = new MemoryStream();
+                    var workEngine = new InlineWorkDropoff();
 
-        MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+                    MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+                }
+            }
+            """;
+        var result = TestHelper.RunSourceGenerator(source);
+        result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .Should().BeEmpty();
+        result.Diagnostics
+            .Where(
+                d => d.Severity == DiagnosticSeverity.Warning && 
+                     d.Id == "CS8785")
+            .Should().BeEmpty();
     }
-}";
+    
+    [Fact]
+    public async Task OblivionFilePerRecordGenerationBootstrapper()
+    {
+        var source = 
+            """
+            using Mutagen.Bethesda.Serialization.Tests;
+            using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
+            using Mutagen.Bethesda.Oblivion;
+            using Noggog.WorkEngine;
+
+            namespace Mutagen.Bethesda.Serialization.Tests.SerializationTests;
+
+            public class SerializationTests
+            {
+                public void EmptyOblivionMod()
+                { 
+                    var mod = new OblivionMod(ModKey.Null);
+                    var stream = new MemoryStream();
+                    var workEngine = new InlineWorkDropoff();
+
+                    MutagenTestConverter.Instance.Serialize(mod, stream, workEngine: workEngine);
+                }
+            }
+            
+            public class Customization : ICustomize
+            {
+                public void Customize(ICustomizationBuilder builder)
+                {
+                    builder
+                        .OmitLastModifiedData()
+                        .OmitTimestampData()
+                        .FilePerRecord();
+                }
+            }
+            
+            public class ModHeaderStatsCustomization : ICustomize<IModStatsGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<IModStatsGetter> builder)
+                {
+                    builder.Omit(x => x.NextFormID);
+                    builder.Omit(x => x.NumRecords);
+                }
+            }
+            
+            public class CellCustomization : ICustomize<ICellGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<ICellGetter> builder)
+                {
+                    builder.EmbedRecordsInSameFile(x => x.Temporary)
+                        .EmbedRecordsInSameFile(x => x.Persistent)
+                        .EmbedRecordsInSameFile(x => x.Landscape);
+                }
+            }
+            
+            public class WorldspaceCustomization : ICustomize<IWorldspaceGetter>
+            {
+                public void CustomizeFor(ICustomizationBuilder<IWorldspaceGetter> builder)
+                {
+                    builder.EmbedRecordsInSameFile(x => x.TopCell);
+                }
+            }
+            """;
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)

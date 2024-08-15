@@ -7,7 +7,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 {
-    protected readonly IsGroupTester GroupTester;
+    protected ShouldSkipDuringSerializationTester ShouldSkipDuringSerialization { get; }
     protected readonly Func<IOwned<SerializationFieldGenerator>> ForFieldGenerator;
     private readonly IsListTester _isListTester;
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
@@ -15,11 +15,11 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     public AListFieldGenerator(
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
         IsListTester isListTester,
-        IsGroupTester groupTester)
+        ShouldSkipDuringSerializationTester shouldSkipDuringSerialization)
     {
+        ShouldSkipDuringSerialization = shouldSkipDuringSerialization;
         ForFieldGenerator = forFieldGenerator;
         _isListTester = isListTester;
-        GroupTester = groupTester;
     }
 
     public bool ShouldGenerate(IPropertySymbol propertySymbol) => true;
@@ -40,17 +40,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         LoquiTypeSet obj, 
         string? fieldName)
     {
-        if (GroupTester.IsGroup(obj.Getter)) return true;
-        if (customization.FilePerRecord)
-        {
-            if (obj.Direct == null) return false;
-            if (obj.Direct.Name.Equals("CellBlock")) return true;
-            if (obj.Direct.Name.Equals("CellSubBlock")) return true;
-            if (obj.Direct.Name.Equals("WorldspaceBlock")) return true;
-            if (obj.Direct.Name.Equals("WorldspaceSubBlock")) return true;
-            if (obj.Direct.Name == "Worldspace" && fieldName == "SubCells") return true;
-        }
-        return false;
+        return ShouldSkipDuringSerialization.ShouldSkip(customization, obj, fieldName);
     }
     
     public virtual bool Applicable(

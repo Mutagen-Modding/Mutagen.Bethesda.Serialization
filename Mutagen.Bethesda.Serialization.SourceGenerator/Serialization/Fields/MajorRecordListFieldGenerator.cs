@@ -17,8 +17,8 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         LoquiNameRetriever nameRetriever,
         LoquiSerializationNaming serializationNaming,
         IsListTester listTester,
-        IsGroupTester groupTester) 
-        : base(forFieldGenerator, listTester, groupTester)
+        ShouldSkipDuringSerializationTester shouldSkipDuringSerialization) 
+        : base(forFieldGenerator, listTester, shouldSkipDuringSerialization)
     {
         _isMajorRecordTester = isMajorRecordTester;
         _nameRetriever = nameRetriever;

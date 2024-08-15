@@ -7,6 +7,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Serialization.Fields;
 
 public class BlocksXYFieldMemberBlocker : AListFieldGenerator
 {
+    public IsGroupTester GroupTester { get; }
     private readonly LoquiNameRetriever _nameRetriever;
     private readonly IsListTester _listTester;
 
@@ -14,9 +15,11 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
         LoquiNameRetriever nameRetriever,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
         IsListTester listTester,
-        IsGroupTester groupTester) 
-        : base(forFieldGenerator, listTester, groupTester)
+        IsGroupTester groupTester,
+        ShouldSkipDuringSerializationTester shouldSkipDuringSerialization) 
+        : base(forFieldGenerator, listTester, shouldSkipDuringSerialization)
     {
+        GroupTester = groupTester;
         _nameRetriever = nameRetriever;
         _listTester = listTester;
     }
@@ -89,6 +92,7 @@ public class BlocksXYFieldMemberBlocker : AListFieldGenerator
 
 public class BlocksXYFieldGenerator : AListFieldGenerator
 {
+    public IsGroupTester GroupTester { get; }
     private readonly LoquiSerializationNaming _serializationNaming;
     private readonly LoquiNameRetriever _nameRetriever;
 
@@ -97,9 +101,11 @@ public class BlocksXYFieldGenerator : AListFieldGenerator
         LoquiNameRetriever nameRetriever,
         Func<IOwned<SerializationFieldGenerator>> forFieldGenerator,
         IsListTester listTester,
-        IsGroupTester groupTester) 
-        : base(forFieldGenerator, listTester, groupTester)
+        IsGroupTester groupTester,
+        ShouldSkipDuringSerializationTester shouldSkipDuringSerialization) 
+        : base(forFieldGenerator, listTester, shouldSkipDuringSerialization)
     {
+        GroupTester = groupTester;
         _serializationNaming = serializationNaming;
         _nameRetriever = nameRetriever;
     }

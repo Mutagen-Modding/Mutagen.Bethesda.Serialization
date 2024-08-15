@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
 
@@ -10,7 +11,8 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
     private readonly LoquiSerializationNaming _serializationNaming;
     private readonly IsListTester _isListTester;
     private readonly LoquiNameRetriever _nameRetriever;
-    
+    private readonly ShouldSkipDuringSerializationTester _shouldSkipDuringSerialization;
+
     public IEnumerable<string> AssociatedTypes => Array.Empty<string>();
 
     public bool HasVariableHasSerialize => true;
@@ -19,12 +21,14 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
         ObjRequiresFolderTester objRequiresFolderTester, 
         LoquiSerializationNaming serializationNaming, 
         IsListTester isListTester,
-        LoquiNameRetriever nameRetriever)
+        LoquiNameRetriever nameRetriever,
+        ShouldSkipDuringSerializationTester shouldSkipDuringSerialization)
     {
         _objRequiresFolderTester = objRequiresFolderTester;
         _serializationNaming = serializationNaming;
         _isListTester = isListTester;
         _nameRetriever = nameRetriever;
+        _shouldSkipDuringSerialization = shouldSkipDuringSerialization;
     }
     
     public IEnumerable<string> RequiredNamespaces(LoquiTypeSet obj, CompilationUnit compilation, ITypeSymbol typeSymbol)
@@ -41,6 +45,7 @@ public class FolderForLoquiListFieldGenerator : ISerializationForFieldGenerator
         if (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? false) return false;
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol) return false;
         if (!_isListTester.Applicable(typeSymbol)) return false;
+        if (_shouldSkipDuringSerialization.ShouldSkip(compilation.Customization.Overall, obj, fieldName)) return false;
         return _objRequiresFolderTester.ObjRequiresFolder(obj, namedTypeSymbol.TypeArguments[0], fieldName, compilation);
     }
 
