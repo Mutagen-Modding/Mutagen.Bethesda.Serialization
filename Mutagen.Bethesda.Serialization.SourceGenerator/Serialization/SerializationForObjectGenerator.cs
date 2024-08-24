@@ -22,6 +22,7 @@ public class SerializationForObjectGenerator
     private readonly ReleaseRetriever _releaseRetriever;
     private readonly ISerializationInterceptor[] _serializationInterceptors;
     private readonly HasFormVersionRetriever _hasFormVersionRetriever;
+    private readonly Blacklist _blacklist;
 
     public SerializationForObjectGenerator(
         LoquiNameRetriever nameRetriever,
@@ -33,7 +34,8 @@ public class SerializationForObjectGenerator
         ObjectTypeTester modObjectTypeTester,
         ReleaseRetriever releaseRetriever,
         ISerializationInterceptor[] serializationInterceptors, 
-        HasFormVersionRetriever hasFormVersionRetriever)
+        HasFormVersionRetriever hasFormVersionRetriever,
+        Blacklist blacklist)
     {
         _nameRetriever = nameRetriever;
         _forFieldGenerator = forFieldGenerator;
@@ -45,12 +47,14 @@ public class SerializationForObjectGenerator
         _releaseRetriever = releaseRetriever;
         _serializationInterceptors = serializationInterceptors;
         _hasFormVersionRetriever = hasFormVersionRetriever;
+        _blacklist = blacklist;
     }
     
     public void Generate(
         CompilationUnit compilation, 
         LoquiTypeSet typeSet)
     {
+        if (_blacklist.ShouldSkip(typeSet)) return;
         compilation.Context.CancellationToken.ThrowIfCancellationRequested();
         
         var baseType = compilation.Mapping.TryGetBaseClass(typeSet);
