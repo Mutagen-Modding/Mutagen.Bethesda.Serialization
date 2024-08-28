@@ -3,13 +3,13 @@
   "GameRelease": "Fallout4",
   "ModHeader": {
     "Stats": {
-      "NextFormID": 3
+      "NextFormID": 2
     }
   },
   "Npcs": {
     "Records": [
       {
-        "FormKey": "000001:InputMod.esp",
+        "FormKey": "000000:InputMod.esp",
         "Level": {
           "MutagenObjectType": "PcLevelMult",
           "LevelMult": 1.3
@@ -20,7 +20,7 @@
         }
       },
       {
-        "FormKey": "000002:InputMod.esp",
+        "FormKey": "000001:InputMod.esp",
         "Level": {
           "MutagenObjectType": "NpcLevel"
         },

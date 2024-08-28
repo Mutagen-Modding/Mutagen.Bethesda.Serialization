@@ -15,22 +15,22 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Mutagen.Bethesda.Core">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Fallout4">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Skyrim">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Starfield">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Oblivion">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Testing">
-      <Version>0.46.0.1-nightly-20240826-095673</Version>
+      <Version>0.46.0.1-nightly-20240827-232520</Version>
     </PackageVersion>
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
