@@ -21,8 +21,8 @@ public abstract class PassthroughTestBattery
         fileSystem.Directory.CreateDirectory(testFolder);
         
         await mod.BeginWrite
-            .WithNoLoadOrder()
             .ToPath(path)
+            .WithNoLoadOrder()
             .WithFileSystem(fileSystem: fileSystem)
             .WriteAsync();
 
@@ -74,8 +74,8 @@ public abstract class PassthroughTestBattery
 
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await mod.BeginWrite
-            .WithNoLoadOrder()
             .ToPath(path)
+            .WithNoLoadOrder()
             .WithFileSystem(fileSystem: fileSystem)
             .WriteAsync();
 
@@ -111,8 +111,8 @@ public abstract class PassthroughTestBattery
 
         fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await mod.BeginWrite
-            .WithNoLoadOrder()
             .ToPath(path)
+            .WithNoLoadOrder()
             .WithFileSystem(fileSystem: fileSystem)
             .WriteAsync();
 

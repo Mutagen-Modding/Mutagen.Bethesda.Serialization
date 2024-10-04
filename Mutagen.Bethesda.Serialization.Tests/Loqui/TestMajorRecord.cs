@@ -229,7 +229,7 @@ public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>
 
     FormKey IFormKeyGetter.FormKey => FormKey;
 
-    string? IMajorRecordIdentifier.EditorID => throw new NotImplementedException();
+    string? IMajorRecordIdentifierGetter.EditorID => throw new NotImplementedException();
 
     public Type Type => throw new NotImplementedException();
     public bool Equals(IFormLinkGetter? other)
