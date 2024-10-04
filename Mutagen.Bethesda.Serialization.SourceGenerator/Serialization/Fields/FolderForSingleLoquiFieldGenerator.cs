@@ -88,7 +88,6 @@ public class FolderForSingleLoquiFieldGenerator : ISerializationForFieldGenerato
         bool canSet, StructuredStringBuilder sb, CancellationToken cancel)
     {
         if (!compilation.Customization.Overall.FilePerRecord) return;
-        if (compilation.Customization.TargetRecordSpecs?.EmbedRecordForProperty(fieldName) ?? false) return;
         if (!_serializationNaming.TryGetSerializationItems(field, out var fieldSerializationNames)) return;
         var names = _nameRetriever.GetNames(field);
         
