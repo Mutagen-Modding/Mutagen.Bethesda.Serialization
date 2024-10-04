@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
@@ -21,7 +22,8 @@ public class JsonWritingUnit : IDisposable, IContainStreamPackage
         var sw = new StreamWriter(stream.Stream, leaveOpen: true);
         Writer = new JsonTextWriter(sw)
         {
-            Formatting = Formatting.Indented
+            Formatting = Formatting.Indented,
+            Culture = TargetCulture.English
         };
     }
 
@@ -229,7 +231,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item);
+            writer.Writer.WriteValue(item.Value);
         }
     }
 
@@ -243,7 +245,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue(item);
+            writer.Writer.WriteValue(item.Value);
         }
     }
 
@@ -303,7 +305,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}");
         }
     }
 
@@ -317,7 +319,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}");
         }
     }
 
@@ -331,7 +333,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}");
         }
     }
 
@@ -345,7 +347,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}");
         }
     }
 
@@ -359,7 +361,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}, {item.Value.Z.ToString(TargetCulture.English)}");
         }
     }
 
@@ -373,7 +375,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}, {item.Value.Z.ToString(TargetCulture.English)}");
         }
     }
 
@@ -387,7 +389,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}, {item.Value.Z.ToString(TargetCulture.English)}");
         }
     }
 
@@ -401,7 +403,7 @@ public class NewtonsoftJsonSerializationWriterKernel : ISerializationWriterKerne
         }
         else
         {
-            writer.Writer.WriteValue($"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+            writer.Writer.WriteValue($"{item.Value.X.ToString(TargetCulture.English)}, {item.Value.Y.ToString(TargetCulture.English)}, {item.Value.Z.ToString(TargetCulture.English)}");
         }
     }
 

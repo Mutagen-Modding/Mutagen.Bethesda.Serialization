@@ -98,52 +98,52 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteInt8(YamlWritingUnit writer, string? fieldName, sbyte? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteInt16(YamlWritingUnit writer, string? fieldName, short? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteInt32(YamlWritingUnit writer, string? fieldName, int? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteInt64(YamlWritingUnit writer, string? fieldName, long? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteUInt8(YamlWritingUnit writer, string? fieldName, byte? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteUInt16(YamlWritingUnit writer, string? fieldName, ushort? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteUInt32(YamlWritingUnit writer, string? fieldName, uint? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteUInt64(YamlWritingUnit writer, string? fieldName, ulong? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteFloat(YamlWritingUnit writer, string? fieldName, float? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteDouble(YamlWritingUnit writer, string? fieldName, double? item)
     {
-        WriteString(writer, fieldName, item?.ToString());
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteModKey(YamlWritingUnit writer, string? fieldName, ModKey? item)
@@ -176,47 +176,47 @@ public class YamlSerializationWriterKernel : ISerializationWriterKernel<YamlWrit
 
     public void WriteP2Int(YamlWritingUnit writer, string? fieldName, P2Int? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP2Int16(YamlWritingUnit writer, string? fieldName, P2Int16? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP2UInt8(YamlWritingUnit writer, string? fieldName, P2UInt8? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP2Float(YamlWritingUnit writer, string? fieldName, P2Float? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP3Float(YamlWritingUnit writer, string? fieldName, P3Float? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP3UInt8(YamlWritingUnit writer, string? fieldName, P3UInt8? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP3Int16(YamlWritingUnit writer, string? fieldName, P3Int16? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WriteP3UInt16(YamlWritingUnit writer, string? fieldName, P3UInt16? item)
     {
-        WriteString(writer, fieldName, item == null ? null : $"{item.Value.X}, {item.Value.Y}, {item.Value.Z}");
+        WriteString(writer, fieldName, item?.ToString(TargetCulture.English));
     }
 
     public void WritePercent(YamlWritingUnit writer, string? fieldName, Percent? item)
     {
-        WriteString(writer, fieldName, item == null ? null : item.Value.Value.ToString(CultureInfo.InvariantCulture));
+        WriteString(writer, fieldName, item?.Value.ToString(TargetCulture.English));
     }
 
     public void WriteColor(YamlWritingUnit writer, string? fieldName, Color? item)

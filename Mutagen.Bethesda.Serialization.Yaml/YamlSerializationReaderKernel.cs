@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
@@ -281,14 +282,14 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        return float.Parse(str);
+        return float.Parse(str, TargetCulture.English);
     }
 
     public double? ReadDouble(YamlReadingUnit reader)
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        return double.Parse(str);
+        return double.Parse(str, TargetCulture.English);
     }
 
     public ModKey? ReadModKey(YamlReadingUnit reader)
@@ -327,7 +328,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P2Int.TryParse(str, out var pt))
+        if (P2Int.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -339,7 +340,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P2Int16.TryParse(str, out var pt))
+        if (P2Int16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -351,7 +352,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P2UInt8.TryParse(str, out var pt))
+        if (P2UInt8.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -363,7 +364,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P2Float.TryParse(str, out var pt))
+        if (P2Float.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -375,7 +376,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P3Float.TryParse(str, out var pt))
+        if (P3Float.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -387,7 +388,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P3UInt8.TryParse(str, out var pt))
+        if (P3UInt8.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -399,7 +400,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P3Int16.TryParse(str, out var pt))
+        if (P3Int16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -411,7 +412,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (P3UInt16.TryParse(str, out var pt))
+        if (P3UInt16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -423,7 +424,7 @@ public class YamlSerializationReaderKernel : ISerializationReaderKernel<YamlRead
     {
         var str = ReadString(reader);
         if (str.IsNullOrWhitespace()) return null;
-        if (double.TryParse(str, out var d))
+        if (double.TryParse(str, NumberStyles.Any, TargetCulture.English, out var d))
         {
             return new Percent(d);
         }

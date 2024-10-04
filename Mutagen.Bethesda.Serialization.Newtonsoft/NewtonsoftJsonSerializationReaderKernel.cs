@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using System.Numerics;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -353,7 +354,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P2Int.TryParse(str, out var pt))
+        if (P2Int.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -366,7 +367,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P2Int16.TryParse(str, out var pt))
+        if (P2Int16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -379,7 +380,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P2UInt8.TryParse(str, out var pt))
+        if (P2UInt8.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -392,7 +393,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P2Float.TryParse(str, out var pt))
+        if (P2Float.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -405,7 +406,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P3Float.TryParse(str, out var pt))
+        if (P3Float.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -418,7 +419,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P3UInt8.TryParse(str, out var pt))
+        if (P3UInt8.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -431,7 +432,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P3Int16.TryParse(str, out var pt))
+        if (P3Int16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
@@ -444,7 +445,7 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
         SkipPropertyName(reader);
         var str = (string?)reader.Reader.Value!;
         if (str.IsNullOrEmpty()) return null;
-        if (P3UInt16.TryParse(str, out var pt))
+        if (P3UInt16.TryParse(str, out var pt, TargetCulture.English))
         {
             return pt;
         }
