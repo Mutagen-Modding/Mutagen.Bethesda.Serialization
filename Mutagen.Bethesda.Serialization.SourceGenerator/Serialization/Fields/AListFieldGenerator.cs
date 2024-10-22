@@ -71,7 +71,8 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
             {
                 if (t is IArrayTypeSymbol arr)
                 {
-                    if (arr.ElementType.Name.StartsWith("IFormLink"))
+                    if (arr.ElementType.Name.StartsWith("IFormLink")
+                        || EnumFieldGenerator.IsApplicable(arr.ElementType))
                     {
                         return LengthAccess;
                     }

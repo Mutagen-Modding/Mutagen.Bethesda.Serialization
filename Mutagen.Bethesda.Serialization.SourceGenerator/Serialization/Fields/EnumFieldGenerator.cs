@@ -16,6 +16,14 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         return Enumerable.Empty<string>();
     }
 
+    public static bool IsApplicable(ITypeSymbol typeSymbol)
+    {
+        typeSymbol = typeSymbol.PeelNullable();
+        return typeSymbol.TypeKind == TypeKind.Enum
+                  || (typeSymbol.BaseType is { Name: "Enum" } 
+                      && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
+    }
+
     public bool Applicable(
         LoquiTypeSet obj, 
         CompilationUnit compilation,
@@ -23,11 +31,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
         string? fieldName,
         bool isInsideCollection)
     {
-        typeSymbol = typeSymbol.PeelNullable();
-        var ret = typeSymbol.TypeKind == TypeKind.Enum
-            || (typeSymbol.BaseType is { Name: "Enum" } 
-                && typeSymbol.BaseType.ContainingNamespace.ToString() == "System");
-        if (ret) return true;
+        if (IsApplicable(typeSymbol)) return true;
 
         if (obj.Getter is INamedTypeSymbol namedTypeSymbol)
         {
