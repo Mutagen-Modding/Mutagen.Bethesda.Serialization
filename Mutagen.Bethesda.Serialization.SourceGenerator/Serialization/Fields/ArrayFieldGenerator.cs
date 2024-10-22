@@ -101,7 +101,7 @@ public class ArrayFieldGenerator : ISerializationForFieldGenerator
         StructuredStringBuilder sb, 
         CancellationToken cancel)
     {
-        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}.Length > 0) return true;");
+        sb.AppendLine($"if ({fieldAccessor}{field.NullChar()}{AListFieldGenerator.GetCountAccessor(field)} > 0) return true;");
     }
 
     public void GenerateForSerialize(

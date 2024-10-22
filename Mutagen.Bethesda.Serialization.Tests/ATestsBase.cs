@@ -62,10 +62,13 @@ public abstract class ATestsBase
 
     protected string GetObjWithMember(
         Action<StructuredStringBuilder> memberBuilder,
-        Action<StructuredStringBuilder>? outsideBuilder = null)
+        Action<StructuredStringBuilder>? outsideBuilder = null,
+        Action<StructuredStringBuilder>? getterMemberBuilder = null)
     {
         var sb = new StructuredStringBuilder();
-        return GetObjWithMember(sb, memberBuilder, outsideBuilder);
+        return GetObjWithMember(sb, memberBuilder, 
+            outsideBuilder: outsideBuilder,
+            getterMemberBuilder: getterMemberBuilder);
     }
 
     protected string GetObjWithMember(
@@ -73,6 +76,7 @@ public abstract class ATestsBase
         Action<StructuredStringBuilder> memberBuilder,
         Action<StructuredStringBuilder>? namespaceBuilder = null,
         Action<StructuredStringBuilder>? outsideBuilder = null,
+        Action<StructuredStringBuilder>? getterMemberBuilder = null,
         string objName = "SomeObject")
     {
         sb.AppendLine("using Noggog;");
@@ -96,7 +100,7 @@ public abstract class ATestsBase
         sb.AppendLine($"public partial interface I{objName}Getter : ILoquiObject");
         using (sb.CurlyBrace())
         {
-            memberBuilder(sb);
+            (getterMemberBuilder ?? memberBuilder)(sb);
         }
         
         using (var c = sb.Class($"{objName}_Registration"))

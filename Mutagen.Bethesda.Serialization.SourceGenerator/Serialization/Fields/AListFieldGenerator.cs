@@ -55,7 +55,10 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
 
     protected ITypeSymbol GetSubtype(INamedTypeSymbol t) => t.TypeArguments[0];
 
-    protected string GetCountAccessor(ITypeSymbol t)
+    private const string CountAccess = ".Count";
+    private const string LengthAccess = ".Length";
+    
+    public static string GetCountAccessor(ITypeSymbol t)
     {
         switch (t.Name)
         {
@@ -63,9 +66,30 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
             case "IReadOnlyList":
             case "IList":
             case "ExtendedList":
-                return ".Count";
+                return CountAccess;
             default:
-                return ".Length";
+            {
+                if (t is IArrayTypeSymbol arr)
+                {
+                    if (arr.ElementType.Name.StartsWith("IFormLink"))
+                    {
+                        return LengthAccess;
+                    }
+
+                    switch (arr.ElementType.Name)
+                    {
+                        case "String":
+                        case "float":
+                        case "float?":
+                        case "Single":
+                        case "Single?":
+                            return LengthAccess;
+                        default:
+                            return CountAccess;
+                    }
+                }
+            }
+                return CountAccess;
         }
     }
 

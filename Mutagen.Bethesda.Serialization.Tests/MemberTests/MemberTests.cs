@@ -360,7 +360,7 @@ public class MemberTests : ATestsBase
                 sb.AppendLine("public ExtendedList<TestMajorRecord> SomeList3 { get; set; }");
                 sb.AppendLine("public TestMajorRecord[] SomeList4 { get; set; }");
             },
-            sb =>
+            outsideBuilder: sb =>
             {
                 CustomizeForFolderRecord(sb);
             });
@@ -378,7 +378,7 @@ public class MemberTests : ATestsBase
                 sb.AppendLine("public ExtendedList<TestMajorRecordWithNested> SomeList3 { get; set; }");
                 sb.AppendLine("public TestMajorRecordWithNested[] SomeList4 { get; set; }");
             },
-            sb =>
+            outsideBuilder: sb =>
             {
                 CustomizeForFolderRecord(sb);
             });
@@ -518,6 +518,44 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public string[]? SomeArray2 { get; set; }");
             sb.AppendLine("public string[] SomeArray3 { get; } = new string[4];");
         });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
+    public Task ArrayWithListGetters()
+    {
+        var source = GetObjWithMember(sb =>
+        {
+            sb.AppendLine("public CloudLayer[] SomeArray { get; set; }");
+            sb.AppendLine("public CloudLayer[]? SomeArray2 { get; set; }");
+            sb.AppendLine("public CloudLayer[] SomeArray3 { get; } = new string[4];");
+        },
+        getterMemberBuilder: sb =>
+        {
+            sb.AppendLine("public IReadOnlyList<CloudLayer> SomeArray { get; set; }");
+            sb.AppendLine("public IReadOnlyList<CloudLayer>? SomeArray2 { get; set; }");
+            sb.AppendLine("public IReadOnlyList<CloudLayer> SomeArray3 { get; } = new string[4];");
+        });
+       
+        return TestHelper.VerifySerialization(source);
+    }
+    
+    [Fact]
+    public Task ArraySliceGetter()
+    {
+        var source = GetObjWithMember(sb =>
+            {
+                sb.AppendLine("public float[] SomeArray { get; set; }");
+                sb.AppendLine("public float[]? SomeArray2 { get; set; }");
+                sb.AppendLine("public float[] SomeArray3 { get; } = new string[4];");
+            },
+            getterMemberBuilder: sb =>
+            {
+                sb.AppendLine("public ReadOnlyMemorySlice<float> SomeArray { get; set; }");
+                sb.AppendLine("public ReadOnlyMemorySlice<float>? SomeArray2 { get; set; }");
+                sb.AppendLine("public ReadOnlyMemorySlice<float> SomeArray3 { get; } = new string[4];");
+            });
        
         return TestHelper.VerifySerialization(source);
     }

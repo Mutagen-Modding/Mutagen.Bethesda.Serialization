@@ -46,43 +46,32 @@ internal static class SomeObject_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        if (item.SomeList is {} checkedSomeList
-            && checkedSomeList.Count > 0)
+        if (item.SomeArray is {} checkedSomeArray
+            && checkedSomeArray.Count > 0)
         {
-            kernel.StartListSection(writer, "SomeList");
-            foreach (var listItem in checkedSomeList)
+            kernel.StartListSection(writer, "SomeArray");
+            foreach (var listItem in checkedSomeArray)
             {
-                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                throw new NotImplementedException("Unknown type: CloudLayer for field ");
             }
             kernel.EndListSection(writer);
         }
-        if (item.SomeList2 is {} checkedSomeList2
-            && checkedSomeList2.Count > 0)
+        if (item.SomeArray2 is {} checkedSomeArray2)
         {
-            kernel.StartListSection(writer, "SomeList2");
-            foreach (var listItem in checkedSomeList2)
+            kernel.StartListSection(writer, "SomeArray2");
+            foreach (var listItem in checkedSomeArray2)
             {
-                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                throw new NotImplementedException("Unknown type: CloudLayer for field ");
             }
             kernel.EndListSection(writer);
         }
-        if (item.SomeList3 is {} checkedSomeList3
-            && checkedSomeList3.Count > 0)
+        if (item.SomeArray3 is {} checkedSomeArray3
+            && checkedSomeArray3.Count > 0)
         {
-            kernel.StartListSection(writer, "SomeList3");
-            foreach (var listItem in checkedSomeList3)
+            kernel.StartListSection(writer, "SomeArray3");
+            foreach (var listItem in checkedSomeArray3)
             {
-                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
-            }
-            kernel.EndListSection(writer);
-        }
-        if (item.SomeList4 is {} checkedSomeList4
-            && checkedSomeList4.Count > 0)
-        {
-            kernel.StartListSection(writer, "SomeList4");
-            foreach (var listItem in checkedSomeList4)
-            {
-                await kernel.WriteLoqui(writer, null, listItem, metaData, static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m));
+                throw new NotImplementedException("Unknown type: CloudLayer for field ");
             }
             kernel.EndListSection(writer);
         }
@@ -94,10 +83,9 @@ internal static class SomeObject_Serialization
     {
         metaData.Cancel.ThrowIfCancellationRequested();
         if (item == null) return false;
-        if (item.SomeList.Count > 0) return true;
-        if (item.SomeList2.Count > 0) return true;
-        if (item.SomeList3.Count > 0) return true;
-        if (item.SomeList4.Count > 0) return true;
+        if (item.SomeArray.Count > 0) return true;
+        if (item.SomeArray2?.Count > 0) return true;
+        if (item.SomeArray3.Count > 0) return true;
         return false;
     }
 
@@ -128,42 +116,40 @@ internal static class SomeObject_Serialization
         metaData.Cancel.ThrowIfCancellationRequested();
         switch (name)
         {
-            case "SomeList":
-                kernel.StartListSection(reader);
-                while (kernel.TryHasNextItem(reader))
+            case "SomeArray":
                 {
-                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList");
-                    obj.SomeList.Add(item);
-                }
-                kernel.EndListSection(reader);
-                break;
-            case "SomeList2":
-                kernel.StartListSection(reader);
-                while (kernel.TryHasNextItem(reader))
-                {
-                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList2");
-                    obj.SomeList2.Add(item);
-                }
-                kernel.EndListSection(reader);
-                break;
-            case "SomeList3":
-                kernel.StartListSection(reader);
-                while (kernel.TryHasNextItem(reader))
-                {
-                    var item = SerializationHelper.StripNull(await kernel.ReadLoqui(reader, metaData, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList3");
-                    obj.SomeList3.Add(item);
-                }
-                kernel.EndListSection(reader);
-                break;
-            case "SomeList4":
-                {
-                    obj.SomeList4 = await SerializationHelper.ReadArray<ISerializationReaderKernel<TReadObject>, TReadObject, Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui>(
+                    obj.SomeArray = await SerializationHelper.ReadArray<ISerializationReaderKernel<TReadObject>, TReadObject, CloudLayer>(
                         reader: reader,
                         kernel: kernel,
                         metaData: metaData,
                         itemReader: static async (r, k, m) =>
                         {
-                            return SerializationHelper.StripNull(await k.ReadLoqui(r, m, static (r, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.SomeLoqui_Serialization.Deserialize<TReadObject>(r, k, m)), name: "SomeList4");
+                            throw new NotImplementedException("Unknown type: CloudLayer for field SomeArray");
+                        });
+                }
+                break;
+            case "SomeArray2":
+                {
+                    obj.SomeArray2 = await SerializationHelper.ReadArray<ISerializationReaderKernel<TReadObject>, TReadObject, CloudLayer>(
+                        reader: reader,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: static async (r, k, m) =>
+                        {
+                            throw new NotImplementedException("Unknown type: CloudLayer for field SomeArray2");
+                        });
+                }
+                break;
+            case "SomeArray3":
+                {
+                    await SerializationHelper.ReadIntoArray<ISerializationReaderKernel<TReadObject>, TReadObject, CloudLayer>(
+                        reader: reader,
+                        arr: obj.SomeArray3,
+                        kernel: kernel,
+                        metaData: metaData,
+                        itemReader: static async (r, k, m) =>
+                        {
+                            throw new NotImplementedException("Unknown type: CloudLayer for field SomeArray3");
                         });
                 }
                 break;
