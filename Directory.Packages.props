@@ -21,6 +21,7 @@
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="[$(Version)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="[$(Version)]" />
+      <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <PackageVersion Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageVersion>
