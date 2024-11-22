@@ -118,7 +118,7 @@ jobs:
       run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release /p:GeneratePackageOnBuild=false -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
     - name: Pack
       if: ${{ success() }}
-      run: dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --include-symbols -p:SymbolPackageFormat=snupkg -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
+      run: dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
     - name: Publish to Github
       uses: svenstaro/upload-release-action@v2
       if: ${{ success() && !github.event.release.prerelease && github.event_name == 'release' }}
