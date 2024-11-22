@@ -48,6 +48,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.0.3
+        with:
+          versionSpec: '6.x'
+      - name: Determine Version
+        id: version_step # step id used as reference for output values
+        uses: gittools/actions/gitversion/execute@v3.0.3
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -57,12 +64,10 @@ jobs:
           dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
           dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
           dotnet nuget locals all --clear
-      - name: Install dependencies for Main Solution
-        run: dotnet restore Mutagen.Bethesda.Serialization.sln
       - name: Build Main Solution
-        run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore
+        run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
       - name: Test Main Solution
-        run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
+        run: dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
       - name: Add results to local nuget cache
         run: |
           workingDir="$(cd "$(dirname "./")"; pwd)/$(basename "./")"
@@ -75,12 +80,10 @@ jobs:
           dotnet nuget enable source CISourceGenerator
           dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Yaml/bin/Release" --name CIYaml
           dotnet nuget enable source CIYaml
-      - name: Install dependencies for Test Solution
-        run: dotnet restore Mutagen.Bethesda.Serialization.Tests.sln
       - name: Build Test Solution
-        run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+        run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release /p:GeneratePackageOnBuild=false -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
       - name: Test Test Solution
-        run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
+        run: dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
 
 
   build-test-push:
@@ -96,18 +99,26 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.0.3
+      with:
+        versionSpec: '6.x'
+    - name: Determine Version
+      id: version_step # step id used as reference for output values
+      uses: gittools/actions/gitversion/execute@v3.0.3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.*
     - name: Clean dependencies
       run: |
         dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
         dotnet nuget locals all --clear
-    - name: Install dependencies for Main Solution
-      run: dotnet restore Mutagen.Bethesda.Serialization.sln
     - name: Build Main Solution
-      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
+      run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release /p:GeneratePackageOnBuild=false -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
     - name: Pack
       if: ${{ success() }}
-      run: | 
-        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --include-symbols
+      run: dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --include-symbols -p:SymbolPackageFormat=snupkg -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
     - name: Publish to Github
       uses: svenstaro/upload-release-action@v2
       if: ${{ success() && !github.event.release.prerelease && github.event_name == 'release' }}
