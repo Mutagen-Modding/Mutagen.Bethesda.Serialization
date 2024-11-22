@@ -102,12 +102,8 @@ jobs:
       run: dotnet restore Mutagen.Bethesda.Serialization.sln
     - name: Build Main Solution
       run: dotnet build Mutagen.Bethesda.Serialization.sln -c Release --no-restore /p:GeneratePackageOnBuild=false
-    - name: Pack Preview
-      if: ${{ success() && (github.event.release.prerelease || github.event_name != 'release') }}
-      run: |
-        dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --version-suffix "nightly-${{ steps.current-time.outputs.formattedTime }}" --include-symbols
-    - name: Pack Release
-      if: ${{ success() && !github.event.release.prerelease && github.event_name == 'release' }}
+    - name: Pack
+      if: ${{ success() }}
       run: | 
         dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out --include-symbols
     - name: Publish to Github
