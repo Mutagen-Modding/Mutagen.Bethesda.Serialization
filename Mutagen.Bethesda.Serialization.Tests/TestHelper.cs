@@ -56,7 +56,7 @@ public static class TestHelper
             syntaxTrees: new[] { syntaxTree },
             references: references);
 
-        // Create an instance of our EnumGenerator incremental source generator
+        // Create an instance of our incremental source generator
         var generator = new SerializationSourceGenerator(generateMixIns: false);
 
         // The GeneratorDriver is used to run our generator against a compilation
