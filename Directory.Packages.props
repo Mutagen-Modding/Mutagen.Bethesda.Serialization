@@ -18,10 +18,10 @@
     <PackageVersion Include="Mutagen.Bethesda.Starfield" Version="0.48.0" />
     <PackageVersion Include="Mutagen.Bethesda.Oblivion" Version="0.48.0" />
     <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.48.0" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(Version)]" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(Version)]" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="[$(Version)]" />
-    <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="[$(Version)]" />
+      <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(GitVersion_NuGetVersion)]" />
+      <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(GitVersion_NuGetVersion)]" />
+      <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="[$(GitVersion_NuGetVersion)]" />
+      <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="[$(GitVersion_NuGetVersion)]" />
       <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <PackageVersion Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
