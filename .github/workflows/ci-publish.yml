@@ -46,10 +46,12 @@ jobs:
           
     steps:
       - uses: actions/checkout@v4
-      - name: Setup .NET 8
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.*
+          dotnet-version: 9.0.*
       - name: Clean dependencies
         run: |
           dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
@@ -125,7 +127,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Reset nightly to master
+    - name: Reset nightly to main
       run: |
         head_sha=$(git rev-parse --verify HEAD)
         echo "head_sha=$head_sha"
