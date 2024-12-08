@@ -28,7 +28,7 @@ public class LoquiNameRetriever
         {
             name = name.Substring(1);
         }
-        name = name.TrimEnd("Getter");
+        name = name.TrimStringFromEnd("Getter");
         return new Names(
             name,
             $"I{name}Getter",
