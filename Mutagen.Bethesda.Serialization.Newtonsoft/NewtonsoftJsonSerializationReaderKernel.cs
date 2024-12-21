@@ -304,15 +304,47 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
     public float? ReadFloat(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);
-        if (reader.Reader.Value is null or "") return null;
-        return (float)(double)reader.Reader.Value!;
+        switch (reader.Reader.Value)
+        {
+            case null:
+            case "":
+                return null;
+            case float f:
+                return f;
+            case double d:
+                return (float)d;
+            case decimal m:
+                return (float)m;
+            case int i:
+                return (float)i;
+            case long l:
+                return (float)l;
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     public double? ReadDouble(JsonReadingUnit reader)
     {
         SkipPropertyName(reader);
-        if (reader.Reader.Value is null or "") return null;
-        return (double)reader.Reader.Value!;
+        switch (reader.Reader.Value)
+        {
+            case null:
+            case "":
+                return null;
+            case float f:
+                return (double)f;
+            case double d:
+                return d;
+            case decimal m:
+                return (double)m;
+            case int i:
+                return (double)i;
+            case long l:
+                return (double)l;
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     public ModKey? ReadModKey(JsonReadingUnit reader)
@@ -455,10 +487,9 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
 
     public Percent? ReadPercent(JsonReadingUnit reader)
     {
-        SkipPropertyName(reader);
-        if (reader.Reader.Value is null or "") return null;
-        var d = (double)reader.Reader.Value!;
-        return new Percent(d);
+        var d = ReadDouble(reader);
+        if (d == null) return null;
+        return new Percent(d.Value);
     }
 
     public TimeOnly? ReadTimeOnly(JsonReadingUnit reader)

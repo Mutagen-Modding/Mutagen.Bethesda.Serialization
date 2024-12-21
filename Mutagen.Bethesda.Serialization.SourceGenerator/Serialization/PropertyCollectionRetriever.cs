@@ -89,7 +89,7 @@ public class PropertyCollectionRetriever
         {
             if (!field.IsStatic || !field.IsReadOnly) continue;
             if (!field.Name.EndsWith("Default")) continue;
-            if (collection.Lookup.TryGetValue(field.Name.TrimEnd("Default"), out var prop))
+            if (collection.Lookup.TryGetValue(field.Name.TrimStringFromEnd("Default"), out var prop))
             {
                 prop.Default = field;
             }
