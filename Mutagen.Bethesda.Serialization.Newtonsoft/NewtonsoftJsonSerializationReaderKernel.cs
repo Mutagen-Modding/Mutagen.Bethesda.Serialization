@@ -319,6 +319,8 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
                 return (float)i;
             case long l:
                 return (float)l;
+            case string s:
+                return float.Parse(s);
             default:
                 throw new NotImplementedException();
         }
@@ -342,6 +344,8 @@ public class NewtonsoftJsonSerializationReaderKernel : ISerializationReaderKerne
                 return (double)i;
             case long l:
                 return (double)l;
+            case string s:
+                return double.Parse(s);
             default:
                 throw new NotImplementedException();
         }

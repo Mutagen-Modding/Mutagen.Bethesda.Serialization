@@ -345,7 +345,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             -5,
             5,
             float.MinValue,
-            float.MaxValue);
+            float.MaxValue,
+            float.NaN);
     }
 
     [Fact]
@@ -493,7 +494,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P2Float(),
             new P2Float(1, -3),
             new P2Float(float.MaxValue, float.MaxValue),
-            new P2Float(float.MinValue, float.MinValue));
+            new P2Float(float.MinValue, float.MinValue),
+            new P2Float(float.NaN, float.NaN));
     }
 
     [Fact]
@@ -507,7 +509,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             new P3Float(),
             new P3Float(1, -3, 0),
             new P3Float(float.MaxValue, float.MaxValue, float.MaxValue),
-            new P3Float(float.MinValue, float.MinValue, float.MinValue));
+            new P3Float(float.MinValue, float.MinValue, float.MinValue),
+            new P3Float(float.NaN, float.NaN, float.NaN));
     }
 
     [Fact]
