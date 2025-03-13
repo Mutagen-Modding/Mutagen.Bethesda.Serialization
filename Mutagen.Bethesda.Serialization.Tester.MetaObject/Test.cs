@@ -7,6 +7,7 @@ using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.Tester.MetaObject;
 
@@ -88,8 +89,8 @@ public class Test : IPassthroughTest
             streamCreator: streamCreator,
             extraMeta: meta);
 
-        meta.String.Should().Be("Hello");
-        meta.Number.Should().Be(23);
+        meta.String.ShouldBe("Hello");
+        meta.Number.ShouldBe(23);
 
         return ret;
     }
