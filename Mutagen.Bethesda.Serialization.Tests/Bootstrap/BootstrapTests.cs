@@ -1,8 +1,8 @@
-using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 using Noggog.StructuredStrings;
 using Noggog.StructuredStrings.CSharp;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.Bootstrap;
 
@@ -130,12 +130,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -165,12 +165,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -238,12 +238,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -271,12 +271,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -304,12 +304,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -336,12 +336,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -423,12 +423,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -464,12 +464,12 @@ public class Customization : ICustomize
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -503,12 +503,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -549,12 +549,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
     
     [Fact]
@@ -579,12 +579,12 @@ public class SerializationTests
         var result = TestHelper.RunSourceGenerator(source);
         result.Diagnostics
             .Where(d => d.Severity == DiagnosticSeverity.Error)
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
         result.Diagnostics
             .Where(
                 d => d.Severity == DiagnosticSeverity.Warning && 
                      d.Id == "CS8785")
-            .Should().BeEmpty();
+            .ShouldBeEmpty();
     }
 
     [Fact]

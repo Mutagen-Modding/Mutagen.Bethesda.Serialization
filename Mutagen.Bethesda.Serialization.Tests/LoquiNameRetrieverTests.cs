@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Noggog.Testing.AutoFixture;
 
@@ -11,9 +11,9 @@ public class LoquiNameRetrieverTests
     public void Direct(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("SomeClass");
-        names.Direct.Should().Be("SomeClass");
-        names.Getter.Should().Be("ISomeClassGetter");
-        names.Setter.Should().Be("ISomeClass");
+        names.Direct.ShouldBe("SomeClass");
+        names.Getter.ShouldBe("ISomeClassGetter");
+        names.Setter.ShouldBe("ISomeClass");
     }
     
     [Theory]
@@ -21,9 +21,9 @@ public class LoquiNameRetrieverTests
     public void Getter(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("ISomeClassGetter");
-        names.Direct.Should().Be("SomeClass");
-        names.Getter.Should().Be("ISomeClassGetter");
-        names.Setter.Should().Be("ISomeClass");
+        names.Direct.ShouldBe("SomeClass");
+        names.Getter.ShouldBe("ISomeClassGetter");
+        names.Setter.ShouldBe("ISomeClass");
     }
     
     [Theory]
@@ -31,9 +31,9 @@ public class LoquiNameRetrieverTests
     public void Setter(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("ISomeClass");
-        names.Direct.Should().Be("SomeClass");
-        names.Getter.Should().Be("ISomeClassGetter");
-        names.Setter.Should().Be("ISomeClass");
+        names.Direct.ShouldBe("SomeClass");
+        names.Getter.ShouldBe("ISomeClassGetter");
+        names.Setter.ShouldBe("ISomeClass");
     }
     
     [Theory]
@@ -41,9 +41,9 @@ public class LoquiNameRetrieverTests
     public void InterfaceStartsWithI(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("IIngredient");
-        names.Direct.Should().Be("Ingredient");
-        names.Getter.Should().Be("IIngredientGetter");
-        names.Setter.Should().Be("IIngredient");
+        names.Direct.ShouldBe("Ingredient");
+        names.Getter.ShouldBe("IIngredientGetter");
+        names.Setter.ShouldBe("IIngredient");
     }
     
     [Theory]
@@ -51,9 +51,9 @@ public class LoquiNameRetrieverTests
     public void ClassStartsWithI(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("Ingredient");
-        names.Direct.Should().Be("Ingredient");
-        names.Getter.Should().Be("IIngredientGetter");
-        names.Setter.Should().Be("IIngredient");
+        names.Direct.ShouldBe("Ingredient");
+        names.Getter.ShouldBe("IIngredientGetter");
+        names.Setter.ShouldBe("IIngredient");
     }
     
     [Theory]
@@ -61,8 +61,8 @@ public class LoquiNameRetrieverTests
     public void Abstract(LoquiNameRetriever sut)
     {
         var names = sut.GetNames("IAIngredient");
-        names.Direct.Should().Be("AIngredient");
-        names.Getter.Should().Be("IAIngredientGetter");
-        names.Setter.Should().Be("IAIngredient");
+        names.Direct.ShouldBe("AIngredient");
+        names.Getter.ShouldBe("IAIngredientGetter");
+        names.Setter.ShouldBe("IAIngredient");
     }
 }

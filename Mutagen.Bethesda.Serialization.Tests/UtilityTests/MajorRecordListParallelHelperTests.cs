@@ -1,5 +1,4 @@
 ﻿using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
@@ -8,6 +7,8 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Testing.AutoData;
 using Noggog;
 using Noggog.Testing.AutoFixture;
+using Noggog.Testing.Extensions;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.UtilityTests;
 
@@ -55,7 +56,7 @@ public class MajorRecordListParallelHelperTests
                 throw new NotImplementedException();
             },
             withNumbering: true);
-        fileSystem.Directory.Exists(dir).Should().BeFalse();
+        fileSystem.Directory.Exists(dir).ShouldBeFalse();
     }
     
     [Theory, MutagenAutoData]
@@ -101,19 +102,19 @@ public class MajorRecordListParallelHelperTests
                 k.WriteFloat(w, "Height", o.Height, 0);
             },
             withNumbering: false);
-        fileSystem.Directory.Exists(dir).Should().BeTrue();
+        fileSystem.Directory.Exists(dir).ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 1{Environment.NewLine}");
+            .ShouldBe($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 2{Environment.NewLine}");
+            .ShouldBe($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 3{Environment.NewLine}");
+            .ShouldBe($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -159,19 +160,19 @@ public class MajorRecordListParallelHelperTests
                 k.WriteFloat(w, "Height", o.Height, 0);
             },
             withNumbering: true);
-        fileSystem.Directory.Exists(dir).Should().BeTrue();
+        fileSystem.Directory.Exists(dir).ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 1{Environment.NewLine}");
+            .ShouldBe($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 2{Environment.NewLine}");
+            .ShouldBe($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}.yaml"))
-            .Should().Be($"Height: 3{Environment.NewLine}");
+            .ShouldBe($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -218,19 +219,19 @@ public class MajorRecordListParallelHelperTests
             },
             withNumbering: false,
             eachRecordInFolder: true);
-        fileSystem.Directory.Exists(dir).Should().BeTrue();
+        fileSystem.Directory.Exists(dir).ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 1{Environment.NewLine}");
+            .ShouldBe($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 2{Environment.NewLine}");
+            .ShouldBe($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"{e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 3{Environment.NewLine}");
+            .ShouldBe($"Height: 3{Environment.NewLine}");
     }
     
     [Theory, MutagenAutoData]
@@ -277,19 +278,19 @@ public class MajorRecordListParallelHelperTests
             },
             withNumbering: true,
             eachRecordInFolder: true);
-        fileSystem.Directory.Exists(dir).Should().BeTrue();
+        fileSystem.Directory.Exists(dir).ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.Exists(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().BeTrue();
+            .ShouldBeTrue();
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[0] {e1} - {f1.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 1{Environment.NewLine}");
+            .ShouldBe($"Height: 1{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[1] {e2} - {f2.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 2{Environment.NewLine}");
+            .ShouldBe($"Height: 2{Environment.NewLine}");
         fileSystem.File.ReadAllText(Path.Combine(dir, fieldName, $"[2] {e3} - {f3.ToFilesafeString()}", $"RecordData.yaml"))
-            .Should().Be($"Height: 3{Environment.NewLine}");
+            .ShouldBe($"Height: 3{Environment.NewLine}");
     }
 
     [Theory, MutagenAutoData]
@@ -327,10 +328,10 @@ public class MajorRecordListParallelHelperTests
             readerKernel,
             async (r, k, m) =>
             {
-                r.StreamPackage.Path!.Value.Path.Should().Be(expectedStreamPackagePath);
-                k.ReadString(r).Should().Be("FormKey");
+                r.StreamPackage.Path!.Value.Path.ShouldBe(expectedStreamPackagePath);
+                k.ReadString(r).ShouldBe("FormKey");
                 var formKey = k.ReadString(r);
-                k.ReadString(r).Should().Be("Height");
+                k.ReadString(r).ShouldBe("Height");
                 var height = k.ReadFloat(r);
                 return new Npc(FormKey.Factory(formKey), SkyrimRelease.SkyrimSE)
                 {
@@ -340,9 +341,9 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: false);
 
         npcs.Select(x => x.FormKey)
-            .Should().Equal(f1, f2);
+            .ShouldEqual(f1, f2);
         npcs.Select(x => x.Height)
-            .Should().Equal(1, 2);
+            .ShouldEqual(1, 2);
     }
 
     [Theory, MutagenAutoData]
@@ -380,10 +381,10 @@ public class MajorRecordListParallelHelperTests
             readerKernel,
             async (r, k, m) =>
             {
-                r.StreamPackage.Path!.Value.Path.Should().Be(expectedStreamPackagePath);
-                k.ReadString(r).Should().Be("FormKey");
+                r.StreamPackage.Path!.Value.Path.ShouldBe(expectedStreamPackagePath);
+                k.ReadString(r).ShouldBe("FormKey");
                 var formKey = k.ReadString(r);
-                k.ReadString(r).Should().Be("Height");
+                k.ReadString(r).ShouldBe("Height");
                 var height = k.ReadFloat(r);
                 return new Npc(FormKey.Factory(formKey), SkyrimRelease.SkyrimSE)
                 {
@@ -393,9 +394,9 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: false);
 
         npcs.Select(x => x.FormKey)
-            .Should().Equal(f1, f2);
+            .ShouldEqual(f1, f2);
         npcs.Select(x => x.Height)
-            .Should().Equal(1, 2);
+            .ShouldEqual(1, 2);
     }
 
     [Theory, MutagenAutoData]
@@ -432,17 +433,17 @@ public class MajorRecordListParallelHelperTests
             readerKernel,
             async (r, k, m) =>
             {
-                k.ReadString(r).Should().Be("FormKey");
+                k.ReadString(r).ShouldBe("FormKey");
                 var formKey = k.ReadString(r);
-                k.ReadString(r).Should().Be("Height");
+                k.ReadString(r).ShouldBe("Height");
                 var height = k.ReadFloat(r);
                 if (formKey == f1.ToString())
                 {
-                    r.StreamPackage.Path!.Value.Path.Should().Be(Path.Combine(existingDir.Path, fieldName, e1));
+                    r.StreamPackage.Path!.Value.Path.ShouldBe(Path.Combine(existingDir.Path, fieldName, e1));
                 }
                 else
                 {
-                    r.StreamPackage.Path!.Value.Path.Should().Be(Path.Combine(existingDir.Path, fieldName, e2));
+                    r.StreamPackage.Path!.Value.Path.ShouldBe(Path.Combine(existingDir.Path, fieldName, e2));
                 }
                 return new Npc(FormKey.Factory(formKey), SkyrimRelease.SkyrimSE)
                 {
@@ -452,8 +453,8 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: true);
 
         npcs.Select(x => x.FormKey)
-            .Should().Equal(f1, f2);
+            .ShouldEqual(f1, f2);
         npcs.Select(x => x.Height)
-            .Should().Equal(1, 2);
+            .ShouldEqual(1, 2);
     }
 }

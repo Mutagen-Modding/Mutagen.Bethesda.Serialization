@@ -1,9 +1,9 @@
 ﻿using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 using Noggog.IO;
 using Noggog.Testing.AutoFixture;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
@@ -35,11 +35,11 @@ public class ReportedCleanupStreamCreateWrapperTests
         sut.GetStreamFor(fileSystem, file3, write: true);
         sut.Dispose();
 
-        fileSystem.File.Exists(file1).Should().BeFalse();
-        fileSystem.File.Exists(file2).Should().BeTrue();
-        fileSystem.File.Exists(file3).Should().BeTrue();
-        fileSystem.File.Exists(file4).Should().BeFalse();
-        fileSystem.Directory.Exists(subDir3).Should().BeFalse();
+        fileSystem.File.Exists(file1).ShouldBeFalse();
+        fileSystem.File.Exists(file2).ShouldBeTrue();
+        fileSystem.File.Exists(file3).ShouldBeTrue();
+        fileSystem.File.Exists(file4).ShouldBeFalse();
+        fileSystem.Directory.Exists(subDir3).ShouldBeFalse();
     }
     
     [Theory, DefaultAutoData]
@@ -59,8 +59,8 @@ public class ReportedCleanupStreamCreateWrapperTests
         sut.GetStreamFor(fileSystem, file2, write: true);
         sut.Dispose();
 
-        fileSystem.File.Exists(file1).Should().BeTrue();
-        fileSystem.File.Exists(file2).Should().BeTrue();
-        fileSystem.File.Exists(file3).Should().BeFalse();
+        fileSystem.File.Exists(file1).ShouldBeTrue();
+        fileSystem.File.Exists(file2).ShouldBeTrue();
+        fileSystem.File.Exists(file3).ShouldBeFalse();
     }
 }
