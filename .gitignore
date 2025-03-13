@@ -295,3 +295,5 @@ GenerationLines.txt
 
 *.received.*
 Mutagen.Bethesda.Serialization.Tests/Generated/
+
+nupkg/
