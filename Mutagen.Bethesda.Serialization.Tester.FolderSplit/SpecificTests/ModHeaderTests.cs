@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using Mutagen.Bethesda.Serialization.Streams;
+﻿using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Yaml;
-using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;

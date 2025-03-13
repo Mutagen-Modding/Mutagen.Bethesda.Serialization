@@ -12,6 +12,7 @@
         <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" />
         <PackageReference Include="Mutagen.Bethesda.Fallout4" />
         <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" />
+        <PackageReference Include="Shouldly" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.SourceGenerators" />
         <PackageReference Include="Verify.Xunit" />

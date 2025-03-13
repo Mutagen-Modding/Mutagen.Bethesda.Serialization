@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Testing.Passthrough;
@@ -48,8 +47,8 @@ public class Test : IPassthroughTest
             streamCreator: streamCreator,
             extraMeta: meta);
 
-        meta.String.Should().Be("Hello");
-        meta.Number.Should().Be(23);
+        meta.String.ShouldBe("Hello");
+        meta.Number.ShouldBe(23);
 
         return ret;
     }

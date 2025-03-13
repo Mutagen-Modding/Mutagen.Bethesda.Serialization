@@ -28,6 +28,7 @@
     </PackageVersion>
     <PackageVersion Include="Noggog.CSharpExt" Version="2.70.0" />
     <PackageVersion Include="Noggog.Testing" Version="2.70.0" />
+    <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
     <PackageVersion Include="System.IO.Abstractions" Version="21.1.3" />
