@@ -50,14 +50,8 @@ jobs:
         run: |
           workingDir="$(cd "$(dirname "./")"; pwd)/$(basename "./")"
           echo "workingDir=$workingDir"
-          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization/bin/Release" --name CISerialization
-          dotnet nuget enable source CISerialization
-          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Newtonsoft/bin/Release" --name CINewtonsoft
-          dotnet nuget enable source CINewtonsoft
-          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.SourceGenerator/bin/Release" --name CISourceGenerator
-          dotnet nuget enable source CISourceGenerator
-          dotnet nuget add source "${workingDir}/Mutagen.Bethesda.Serialization.Yaml/bin/Release" --name CIYaml
-          dotnet nuget enable source CIYaml
+          dotnet nuget add source "${workingDir}/nupkg" --name SelfNugetPackages
+          dotnet nuget enable source SelfNugetPackages
       - name: Build Test Solution
         run: dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release /p:GeneratePackageOnBuild=false -p:GitVersion_NuGetVersion=${{ steps.version_step.outputs.fullSemVer }}
       - name: Test Test Solution
