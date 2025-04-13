@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.IO.Abstractions;
 using System.Text;
-using FluentAssertions;
 using Mutagen.Bethesda.Fallout4;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -11,7 +10,9 @@ using Mutagen.Bethesda.Strings;
 using Noggog;
 using Noggog.IO;
 using Noggog.Testing.AutoFixture;
+using Noggog.Testing.Extensions;
 using Noggog.WorkEngine;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.KernelTests;
 
@@ -81,16 +82,16 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             if (Expected is IReadOnlyList<object> e)
             {
                 var list = (IReadOnlyList<object>)val!;
-                list.Should().Equal(e);
+                list.ShouldEqual(e);
             }
             else if (Expected is ReadOnlyMemorySlice<byte> bytes)
             {
                 var slice = val as ReadOnlyMemorySlice<byte>?;
-                ((IEnumerable<byte>)Expected).Should().Equal(slice);
+                ((IEnumerable<byte>)Expected).ShouldEqual(slice);
             }
             else
             {
-                val.Should().Be(Expected);
+                val.ShouldBe(Expected);
             }
         }
     }
@@ -426,7 +427,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         var stream = GetStreamPackage(new MemoryStream(Encoding.UTF8.GetBytes(str)));
         var readerObj = kernel.GetNewObject(stream);
         kernel.ExtractFormKey(readerObj)
-            .Should().Be(fk);
+            .ShouldBe(fk);
     }
 
     [Fact]
@@ -614,7 +615,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             return kernel.GetNextType(reader, "Mutagen.Bethesda.Fallout4");
         });
 
-        readItem.Should().Be(typeof(NpcLevel));
+        readItem.ShouldBe(typeof(NpcLevel));
     }
 
     [Fact]
@@ -635,7 +636,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             return kernel.GetNextType(reader, "Mutagen.Bethesda.Fallout4");
         });
 
-        readItem.Should().Be(typeof(AObjectModProperty<Npc.Property>));
+        readItem.ShouldBe(typeof(AObjectModProperty<Npc.Property>));
     }
 
     [Fact]
@@ -847,7 +848,8 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             kernel.EndArray2dSection(reader);
             return ret;
         });
-        readItem.Should().Equal(
+        readItem.ShouldNotBeNull();
+        readItem.ShouldEqual(
             (0, 0, 1),
             (1, 0, 2),
             (0, 1, 4));
@@ -1058,7 +1060,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 };
             });
 
-        g.Equals(objs).Should().BeTrue();
+        g.Equals(objs).ShouldBeTrue();
     }
     
     [Theory, DefaultAutoData]
@@ -1215,7 +1217,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 return new TestMajorRecord(fk, s);
             });
 
-        g.Equals(objs).Should().BeTrue();
+        g.Equals(objs).ShouldBeTrue();
     }
 
     
@@ -1423,7 +1425,7 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
                 b.Blocks.SetTo(blocks);
             });
 
-        outGroup.Equals(group).Should().BeTrue();
+        outGroup.Equals(group).ShouldBeTrue();
     }
 
     public enum SomeEnum

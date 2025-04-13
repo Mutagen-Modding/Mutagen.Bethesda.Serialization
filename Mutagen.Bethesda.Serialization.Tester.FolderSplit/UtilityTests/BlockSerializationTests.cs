@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -9,6 +8,7 @@ using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit.UtilityTests;
 
@@ -99,59 +99,59 @@ public class BlockSerializationTests
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Cells")).Should().BeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Cells")).ShouldBeTrue();
         var headerDataPath = Path.Combine(existingDir, "Cells", "GroupRecordData.json");
-        fileSystem.File.Exists(headerDataPath).Should().BeTrue();
+        fileSystem.File.Exists(headerDataPath).ShouldBeTrue();
         var settings = new VerifySettings();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(headerDataPath), settings);
 
         var oneFolder = Path.Combine(existingDir, "Cells", "[0] 1");
-        fileSystem.Directory.Exists(oneFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(oneFolder).ShouldBeTrue();
         var oneHeaderDataPath = Path.Combine(existingDir, "Cells", "[0] 1", "GroupRecordData.json");
-        fileSystem.File.Exists(oneHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(oneHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(oneHeaderDataPath), settings);
 
         var fourFolder = Path.Combine(existingDir, "Cells", "[1] 4");
-        fileSystem.Directory.Exists(fourFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(fourFolder).ShouldBeTrue();
         var fourHeaderDataPath = Path.Combine(existingDir, "Cells", "[1] 4", "GroupRecordData.json");
-        fileSystem.File.Exists(fourHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(fourHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_4_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(fourHeaderDataPath), settings);
 
         var subOneThreeFolder = Path.Combine(existingDir, "Cells", "[0] 1", "[0] 3");
-        fileSystem.Directory.Exists(subOneThreeFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(subOneThreeFolder).ShouldBeTrue();
         var oneThreeHeaderDataPath = Path.Combine(existingDir, "Cells", "[0] 1", "[0] 3", "GroupRecordData.json");
-        fileSystem.File.Exists(oneThreeHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(oneThreeHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_3_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(oneThreeHeaderDataPath), settings);
 
         var subOneSixFolder = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6");
-        fileSystem.Directory.Exists(subOneSixFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(subOneSixFolder).ShouldBeTrue();
         var oneSixHeaderDataPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "GroupRecordData.json");
-        fileSystem.File.Exists(oneSixHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(oneSixHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(oneSixHeaderDataPath), settings);
         
         var cellDirPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp");
-        fileSystem.Directory.Exists(cellDirPath).Should().BeTrue();
+        fileSystem.Directory.Exists(cellDirPath).ShouldBeTrue();
         var cellPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp", "RecordData.json");
-        fileSystem.File.Exists(cellPath).Should().BeTrue();
+        fileSystem.File.Exists(cellPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(cellPath), settings);
         
         var tempPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp", "Temporary");
-        fileSystem.Directory.Exists(tempPath).Should().BeTrue();
+        fileSystem.Directory.Exists(tempPath).ShouldBeTrue();
         var placed1Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp", "Temporary", "[0] Placed1 - 000001_Mod0.esp.json");
-        fileSystem.File.Exists(placed1Path).Should().BeTrue();
+        fileSystem.File.Exists(placed1Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid_Temporary_Placed1.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed1Path), settings);
         
         var perstPath = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp", "Persistent");
-        fileSystem.Directory.Exists(perstPath).Should().BeTrue();
+        fileSystem.Directory.Exists(perstPath).ShouldBeTrue();
         var placed2Path = Path.Combine(existingDir, "Cells", "[0] 1", "[1] 6", "[0] TestCell - 000000_Mod0.esp", "Persistent", "[0] Placed2 - 000002_Mod0.esp.json");
-        fileSystem.File.Exists(placed2Path).Should().BeTrue();
+        fileSystem.File.Exists(placed2Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddBlocksToWork)}_1_6_TestEdid_Persistent_Placed2.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed2Path), settings);
     }

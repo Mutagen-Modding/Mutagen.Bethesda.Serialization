@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
@@ -8,6 +7,7 @@ using Mutagen.Bethesda.Serialization.Yaml;
 using Noggog;
 using Noggog.IO;
 using Noggog.Testing.AutoFixture;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
@@ -46,8 +46,8 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             ReaderKernel, null, null, 
             CancellationToken.None,
             out var readModKey, out var readGameRelease);
-        readModKey.Should().Be(modKey);
-        readGameRelease.Should().Be(Release);
+        readModKey.ShouldBe(modKey);
+        readGameRelease.ShouldBe(Release);
     }
     
     [Theory, DefaultAutoData]
@@ -97,8 +97,8 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             ReaderKernel, null, null, 
             CancellationToken.None,
             out var readModKey, out var readGameRelease);
-        readModKey.Should().Be(modKey);
-        readGameRelease.Should().Be(Release);
+        readModKey.ShouldBe(modKey);
+        readGameRelease.ShouldBe(Release);
     }
     
     [Theory, DefaultAutoData]
@@ -148,8 +148,8 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             ReaderKernel, null, null, 
             CancellationToken.None,
             out var readModKey, out var readGameRelease);
-        readModKey.Should().Be(modKey);
-        readGameRelease.Should().Be(Release);
+        readModKey.ShouldBe(modKey);
+        readGameRelease.ShouldBe(Release);
     }
     
     [Theory, DefaultAutoData]
@@ -182,8 +182,8 @@ public abstract class AExtractMetaTests<TWriterKernal, TWriterObj, TReaderKernel
             ReaderKernel, null, null, 
             CancellationToken.None,
             out var readModKey, out var readGameRelease);
-        readModKey.Should().Be(modKey);
-        readGameRelease.Should().Be(Release);
+        readModKey.ShouldBe(modKey);
+        readGameRelease.ShouldBe(Release);
     }
 }
 

@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -9,6 +8,7 @@ using Mutagen.Bethesda.Testing.AutoData;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit.UtilityTests;
 
@@ -114,61 +114,61 @@ public class XYBlockSerializationTests
             majorWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Cell_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: true);
         
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).Should().BeTrue();
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp")).Should().BeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).ShouldBeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp")).ShouldBeTrue();
         
         var headerDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "RecordData.json");
-        fileSystem.File.Exists(headerDataPath).Should().BeTrue();
+        fileSystem.File.Exists(headerDataPath).ShouldBeTrue();
         var settings = new VerifySettings();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(headerDataPath), settings);
         
         var fourFiveFolder = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5");
-        fileSystem.Directory.Exists(fourFiveFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(fourFiveFolder).ShouldBeTrue();
         var fourFiveHeaderDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "GroupRecordData.json");
-        fileSystem.File.Exists(fourFiveHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(fourFiveHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(fourFiveHeaderDataPath), settings);
 
         var fourSixFolder = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[1] 4, 6");
-        fileSystem.Directory.Exists(fourSixFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(fourSixFolder).ShouldBeTrue();
         var fourSixHeaderDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[1] 4, 6", "GroupRecordData.json");
-        fileSystem.File.Exists(fourSixHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(fourSixHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_6_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(fourSixHeaderDataPath), settings);
         
         var fourFiveThreeNineFolder = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[0] 3, 9");
-        fileSystem.Directory.Exists(fourFiveThreeNineFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(fourFiveThreeNineFolder).ShouldBeTrue();
         var fourFiveThreeNineHeaderDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[0] 3, 9", "GroupRecordData.json");
-        fileSystem.File.Exists(fourFiveThreeNineHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(fourFiveThreeNineHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_3_9_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(fourFiveThreeNineHeaderDataPath), settings);
         
         var fourFiveSixFourFolder = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[1] 6, 4");
-        fileSystem.Directory.Exists(fourFiveSixFourFolder).Should().BeTrue();
+        fileSystem.Directory.Exists(fourFiveSixFourFolder).ShouldBeTrue();
         var fourFiveSixFourHeaderDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[1] 6, 4", "GroupRecordData.json");
-        fileSystem.File.Exists(fourFiveSixFourHeaderDataPath).Should().BeTrue();
+        fileSystem.File.Exists(fourFiveSixFourHeaderDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_6_4_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(fourFiveSixFourHeaderDataPath), settings);
         
         var cellDirPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[1] 6, 4", "[0] TestCell - 000001_modKey.esp");
-        fileSystem.Directory.Exists(cellDirPath).Should().BeTrue();
+        fileSystem.Directory.Exists(cellDirPath).ShouldBeTrue();
         var cellDataPath = Path.Combine(existingDir, "Worldspaces", "[0] MyWorldspace - 000000_modKey.esp", "[0] 4, 5", "[1] 6, 4", "[0] TestCell - 000001_modKey.esp", "RecordData.json");
-        fileSystem.File.Exists(cellDataPath).Should().BeTrue();
+        fileSystem.File.Exists(cellDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_6_4_TestCellRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(cellDataPath), settings);
 
         var tempPath = Path.Combine(cellDirPath, "Temporary");
-        fileSystem.Directory.Exists(tempPath).Should().BeTrue();
+        fileSystem.Directory.Exists(tempPath).ShouldBeTrue();
         var placed1Path = Path.Combine(tempPath, "[0] Placed1 - 000002_modKey.esp.json");
-        fileSystem.File.Exists(placed1Path).Should().BeTrue();
+        fileSystem.File.Exists(placed1Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_6_4_TestCell_Temporary_Placed1.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed1Path), settings);
         
         var persistentPath = Path.Combine(cellDirPath, "Persistent");
-        fileSystem.Directory.Exists(persistentPath).Should().BeTrue();
+        fileSystem.Directory.Exists(persistentPath).ShouldBeTrue();
         var placed2Path = Path.Combine(persistentPath, "[0] Placed2 - 000003_modKey.esp.json");
-        fileSystem.File.Exists(placed2Path).Should().BeTrue();
+        fileSystem.File.Exists(placed2Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(AddXYBlocksToWork)}_4_5_6_4_TestCell_Persistent_Placed2.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed2Path), settings);
     }
@@ -241,33 +241,33 @@ public class XYBlockSerializationTests
 
         var wsFolder = $"[0] MyWorldspace - {ws.FormKey.ToFilesafeString()}";
         
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).Should().BeTrue();
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces", wsFolder)).Should().BeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces")).ShouldBeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Worldspaces", wsFolder)).ShouldBeTrue();
         
         var headerDataPath = Path.Combine(existingDir, "Worldspaces", wsFolder, "RecordData.json");
-        fileSystem.File.Exists(headerDataPath).Should().BeTrue();
+        fileSystem.File.Exists(headerDataPath).ShouldBeTrue();
         var settings = new VerifySettings();
         settings.UseFileName($"{nameof(TopLevelRecord)}_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(headerDataPath), settings);
         
         var cellDirPath = Path.Combine(existingDir, "Worldspaces", wsFolder, "TopCell");
-        fileSystem.Directory.Exists(cellDirPath).Should().BeTrue();
+        fileSystem.Directory.Exists(cellDirPath).ShouldBeTrue();
         var cellDataPath = Path.Combine(existingDir, "Worldspaces", wsFolder, "TopCell", "RecordData.json");
-        fileSystem.File.Exists(cellDataPath).Should().BeTrue();
+        fileSystem.File.Exists(cellDataPath).ShouldBeTrue();
         settings.UseFileName($"{nameof(TopLevelRecord)}_4_5_6_4_TestCellRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(cellDataPath), settings);
 
         var tempPath = Path.Combine(cellDirPath, "Temporary");
-        fileSystem.Directory.Exists(tempPath).Should().BeTrue();
+        fileSystem.Directory.Exists(tempPath).ShouldBeTrue();
         var placed1Path = Path.Combine(tempPath, "[0] Placed1 - 000002_modKey.esp.json");
-        fileSystem.File.Exists(placed1Path).Should().BeTrue();
+        fileSystem.File.Exists(placed1Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(TopLevelRecord)}_4_5_6_4_TestCell_Temporary_Placed1.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed1Path), settings);
         
         var persistentPath = Path.Combine(cellDirPath, "Persistent");
-        fileSystem.Directory.Exists(persistentPath).Should().BeTrue();
+        fileSystem.Directory.Exists(persistentPath).ShouldBeTrue();
         var placed2Path = Path.Combine(persistentPath, "[0] Placed2 - 000003_modKey.esp.json");
-        fileSystem.File.Exists(placed2Path).Should().BeTrue();
+        fileSystem.File.Exists(placed2Path).ShouldBeTrue();
         settings.UseFileName($"{nameof(TopLevelRecord)}_4_5_6_4_TestCell_Persistent_Placed2.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(placed2Path), settings);
     }

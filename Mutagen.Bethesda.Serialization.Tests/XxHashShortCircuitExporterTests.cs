@@ -1,8 +1,8 @@
 ﻿using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Serialization.Streams;
 using Noggog;
 using Noggog.Testing.AutoFixture;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
 
@@ -26,15 +26,15 @@ public class XxHashShortCircuitExporterTests
         XxHashShortCircuitExporter sut)
     {
         var memStream = new MemoryStream(GetBytes());
-        fileSystem.File.Exists(filePath).Should().BeFalse();
+        fileSystem.File.Exists(filePath).ShouldBeFalse();
         var result = await sut.WriteOut(memStream, fileSystem, filePath, CancellationToken.None);
-        result.Should().BeTrue();
-        fileSystem.File.Exists(filePath).Should().BeTrue();
+        result.ShouldBeTrue();
+        fileSystem.File.Exists(filePath).ShouldBeTrue();
         var writeTime = fileSystem.File.GetLastWriteTime(filePath);
         memStream.Position = 0;
         result = await sut.WriteOut(memStream, fileSystem, filePath, CancellationToken.None);
-        result.Should().BeFalse();
-        fileSystem.File.GetLastWriteTime(filePath).Should().Be(writeTime);
+        result.ShouldBeFalse();
+        fileSystem.File.GetLastWriteTime(filePath).ShouldBe(writeTime);
     }
     
     [Theory, DefaultAutoData]
@@ -45,13 +45,13 @@ public class XxHashShortCircuitExporterTests
     {
         var hashPath = XxHashShortCircuitExporter.GetHashPath(existingFilePath);
         await fileSystem.File.WriteAllTextAsync(hashPath, "Gibberish");
-        fileSystem.File.Exists(existingFilePath).Should().BeTrue();
+        fileSystem.File.Exists(existingFilePath).ShouldBeTrue();
         var writeTime = fileSystem.File.GetLastWriteTime(existingFilePath);
         
         var memStream = new MemoryStream(GetBytes());
         var result = await sut.WriteOut(memStream, fileSystem, existingFilePath, CancellationToken.None);
-        result.Should().BeTrue();
-        fileSystem.File.GetLastWriteTime(existingFilePath).Should().BeAfter(writeTime);
+        result.ShouldBeTrue();
+        fileSystem.File.GetLastWriteTime(existingFilePath).ShouldBeGreaterThan(writeTime);
     }
     
     [Theory, DefaultAutoData]
@@ -60,12 +60,12 @@ public class XxHashShortCircuitExporterTests
         FilePath existingFilePath,
         XxHashShortCircuitExporter sut)
     {
-        fileSystem.File.Exists(existingFilePath).Should().BeTrue();
+        fileSystem.File.Exists(existingFilePath).ShouldBeTrue();
         var writeTime = fileSystem.File.GetLastWriteTime(existingFilePath);
         
         var memStream = new MemoryStream(GetBytes());
         var result = await sut.WriteOut(memStream, fileSystem, existingFilePath, CancellationToken.None);
-        result.Should().BeTrue();
-        fileSystem.File.GetLastWriteTime(existingFilePath).Should().BeAfter(writeTime);
+        result.ShouldBeTrue();
+        fileSystem.File.GetLastWriteTime(existingFilePath).ShouldBeGreaterThan(writeTime);
     }
 }

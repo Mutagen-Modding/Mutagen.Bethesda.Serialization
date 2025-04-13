@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using FluentAssertions;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Serialization.Streams;
@@ -9,6 +8,7 @@ using Mutagen.Bethesda.Fallout4;
 using Noggog;
 using Noggog.IO;
 using Noggog.WorkEngine;
+using Shouldly;
 
 namespace Mutagen.Bethesda.Serialization.Tester.FolderSplit.UtilityTests;
 
@@ -47,13 +47,13 @@ public class GroupFolderParallelSerializationTests
             itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Fallout4.Npc_Serialization.Serialize<NewtonsoftJsonSerializationWriterKernel, JsonWritingUnit>(w, i, k, m),
             withNumbering: false);
         
-        fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).Should().BeTrue();
+        fileSystem.Directory.Exists(Path.Combine(existingDir, "Npcs")).ShouldBeTrue();
         var headerDataPath = Path.Combine(existingDir, "Npcs", "GroupRecordData.json");
-        fileSystem.File.Exists(headerDataPath).Should().BeTrue();
+        fileSystem.File.Exists(headerDataPath).ShouldBeTrue();
         var npcPath1 = Path.Combine(existingDir, "Npcs", $"TestEdid - 123456_Fallout4.esm", "RecordData.json");
-        fileSystem.File.Exists(npcPath1).Should().BeTrue();
+        fileSystem.File.Exists(npcPath1).ShouldBeTrue();
         var npcPath2 = Path.Combine(existingDir, "Npcs", "123457_Fallout4.esm", "RecordData.json");
-        fileSystem.File.Exists(npcPath2).Should().BeTrue();
+        fileSystem.File.Exists(npcPath2).ShouldBeTrue();
         var settings = new VerifySettings();
         settings.UseFileName($"{nameof(WriteFolderPerRecord)}_GroupRecordData.json");
         await Verifier.Verify(fileSystem.File.ReadAllText(headerDataPath), settings);

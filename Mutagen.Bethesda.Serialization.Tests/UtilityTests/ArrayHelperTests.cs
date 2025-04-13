@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
-using Mutagen.Bethesda.Serialization.Streams;
+﻿using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Serialization.Utility;
 using Mutagen.Bethesda.Serialization.Yaml;
 using Noggog.Testing.AutoFixture;
+using Noggog.Testing.Extensions;
 
 namespace Mutagen.Bethesda.Serialization.SourceGenerator.Tests.UtilityTests;
 
@@ -33,7 +33,7 @@ public class ArrayHelperTests : UtilityTests
             {
                 return k.ReadInt32(r);
             });
-        i.Should().Equal(4, 5, 6);
+        i.ShouldEqual(4, 5, 6);
     }
     
     [Theory, DefaultAutoData]
@@ -59,7 +59,7 @@ public class ArrayHelperTests : UtilityTests
             {
                 return k.ReadInt32(r);
             });
-        i.Should().Equal(4, 5, 6);
+        i.ShouldEqual(4, 5, 6);
     }
     
     [Theory, DefaultAutoData]
