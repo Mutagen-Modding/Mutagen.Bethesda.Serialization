@@ -597,7 +597,10 @@ public class MixinGenerator
                         if (isMod)
                         {
                             c.AddPassArg("modKey");
-                            c.AddPassArg("release");
+                            if (_releaseRetriever.HasRelease(bootstrap.ObjectRegistration))
+                            {
+                                c.AddPassArg("release");
+                            }
                             c.AddPassArg("workDropoff");
                             c.AddPassArg("fileSystem");
                             c.AddPassArg("streamCreator");
