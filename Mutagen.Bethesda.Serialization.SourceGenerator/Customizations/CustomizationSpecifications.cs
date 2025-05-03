@@ -15,6 +15,7 @@ public record CustomizationSpecifications(ITypeSymbol? CustomizationClass)
 {
     public bool FilePerRecord { get; set; }
     public bool EnforceRecordOrder { get; set; }
+    public bool SkipRecordsWithErrors { get; set; }
     public bool OmitLastModifiedData { get; set; }
     public bool OmitTimestampData { get; set; }
 }

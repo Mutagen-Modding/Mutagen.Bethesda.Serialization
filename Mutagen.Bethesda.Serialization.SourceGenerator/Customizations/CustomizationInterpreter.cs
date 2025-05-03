@@ -47,6 +47,8 @@ public class CustomizationInterpreter
                 return HandleOmitTimestampData(specifications, invoke, member);
             case "EnforceRecordOrder" when invoke.ArgumentList.Arguments.Count is 0:
                 return EnforceRecordOrder(specifications, invoke, member);
+            case "SkipRecordsWithErrors" when invoke.ArgumentList.Arguments.Count is 0:
+                return SkipRecordsWithErrors(specifications, invoke, member);
             default:
                 return false;
         }
@@ -67,6 +69,15 @@ public class CustomizationInterpreter
         MemberAccessExpressionSyntax memberAccess)
     {
         specifications.EnforceRecordOrder = true;
+        return true;
+    }
+
+    private bool SkipRecordsWithErrors(
+        CustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        specifications.SkipRecordsWithErrors = true;
         return true;
     }
 
