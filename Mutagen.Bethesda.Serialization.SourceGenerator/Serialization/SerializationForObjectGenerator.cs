@@ -546,7 +546,7 @@ public class SerializationForObjectGenerator
         }
         
         var isMod = _modObjectTypeTester.IsModObject(obj.Setter);
-        var isMajorRecord = _modObjectTypeTester.IsModObject(obj.Setter);
+        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(obj.Setter);
 
         using (sb.CurlyBrace())
         {

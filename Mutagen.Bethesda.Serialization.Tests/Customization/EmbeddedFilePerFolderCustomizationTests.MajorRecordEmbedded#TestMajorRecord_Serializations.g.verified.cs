@@ -47,7 +47,19 @@ internal static class TestMajorRecord_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        kernel.WriteString(writer, "String", item.String, default(string));
+        try
+        {
+            kernel.WriteString(writer, "String", item.String, default(string));
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            SubrecordException.EnrichAndThrow(e, item);
+            throw;
+        }
     }
 
     public static bool HasSerializationItems(
