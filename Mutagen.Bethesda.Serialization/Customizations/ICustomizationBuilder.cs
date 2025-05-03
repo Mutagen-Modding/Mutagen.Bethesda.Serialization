@@ -8,6 +8,7 @@ public interface ICustomizationBuilder
     IFilePerRecordCustomizationBuilder FilePerRecord();
     ICustomizationBuilder OmitLastModifiedData();
     ICustomizationBuilder OmitTimestampData();
+    ICustomizationBuilder SkipRecordsWithErrors();
 }
 
 public interface IFilePerRecordCustomizationBuilder : ICustomizationBuilder

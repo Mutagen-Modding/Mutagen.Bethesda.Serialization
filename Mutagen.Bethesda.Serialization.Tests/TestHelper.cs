@@ -19,7 +19,7 @@ namespace Mutagen.Bethesda.Serialization.Tests.SourceGenerators;
 
 public static class TestHelper
 {
-    private static bool AutoVerify = false;
+    private static bool AutoVerify = true;
 
     private static VerifySettings GetVerifySettings()
     {

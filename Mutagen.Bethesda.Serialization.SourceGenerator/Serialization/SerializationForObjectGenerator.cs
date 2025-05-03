@@ -546,7 +546,7 @@ public class SerializationForObjectGenerator
         }
         
         var isMod = _modObjectTypeTester.IsModObject(obj.Setter);
-        var isMajorRecord = _modObjectTypeTester.IsModObject(obj.Setter);
+        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(obj.Setter);
 
         using (sb.CurlyBrace())
         {
@@ -604,11 +604,22 @@ public class SerializationForObjectGenerator
                         sb.AppendLine("throw;");
                     }
 
-                    sb.AppendLine("catch (Exception e)");
-                    using (sb.CurlyBrace())
+                    if (compilation.Customization.Overall.SkipRecordsWithErrors)
                     {
-                        sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
-                        sb.AppendLine("throw;");
+                        sb.AppendLine("catch (Exception)");
+                        using (sb.CurlyBrace())
+                        {
+                            // Swallow exception
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendLine("catch (Exception e)");
+                        using (sb.CurlyBrace())
+                        {
+                            sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                            sb.AppendLine("throw;");
+                        }
                     }
                 }
                 else
@@ -708,11 +719,23 @@ public class SerializationForObjectGenerator
                     {
                         sb.AppendLine("throw;");
                     }
-                    sb.AppendLine("catch (Exception e)");
-                    using (sb.CurlyBrace())
+
+                    if (compilation.Customization.Overall.SkipRecordsWithErrors)
                     {
-                        sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
-                        sb.AppendLine("throw;");
+                        sb.AppendLine("catch (Exception)");
+                        using (sb.CurlyBrace())
+                        {
+                            // Swallow exception
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendLine("catch (Exception e)");
+                        using (sb.CurlyBrace())
+                        {
+                            sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                            sb.AppendLine("throw;");
+                        }
                     }
                 }
                 else
@@ -894,11 +917,23 @@ public class SerializationForObjectGenerator
                 {
                     sb.AppendLine("throw;");
                 }
-                sb.AppendLine("catch (Exception e)");
-                using (sb.CurlyBrace())
+
+                if (compilation.Customization.Overall.SkipRecordsWithErrors)
                 {
-                    sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
-                    sb.AppendLine("throw;");
+                    sb.AppendLine("catch (Exception)");
+                    using (sb.CurlyBrace())
+                    {
+                        // Swallow exception
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("catch (Exception e)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                        sb.AppendLine("throw;");
+                    }
                 }
             }
         }

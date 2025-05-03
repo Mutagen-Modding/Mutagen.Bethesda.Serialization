@@ -47,17 +47,29 @@ internal static class TestMajorRecordWithNested_Serialization
         where TWriteObject : IContainStreamPackage
     {
         metaData.Cancel.ThrowIfCancellationRequested();
-        var tasks = new List<Task>();
-        kernel.WriteString(writer, "String", item.String, default(string));
-        tasks.Add(SerializationHelper.WriteMajorRecordList<TKernel, TWriteObject, ITestMajorRecordGetter>(
-            streamPackage: writer.StreamPackage,
-            list: item.NestedRecords,
-            fieldName: "NestedRecords",
-            metaData: metaData,
-            kernel: kernel,
-            itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
-            withNumbering: false));
-        await Task.WhenAll(tasks.ToArray());
+        try
+        {
+            var tasks = new List<Task>();
+            kernel.WriteString(writer, "String", item.String, default(string));
+            tasks.Add(SerializationHelper.WriteMajorRecordList<TKernel, TWriteObject, ITestMajorRecordGetter>(
+                streamPackage: writer.StreamPackage,
+                list: item.NestedRecords,
+                fieldName: "NestedRecords",
+                metaData: metaData,
+                kernel: kernel,
+                itemWriter: static (w, i, k, m) => Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecord_Serialization.Serialize<TKernel, TWriteObject>(w, i, k, m),
+                withNumbering: false));
+            await Task.WhenAll(tasks.ToArray());
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            SubrecordException.EnrichAndThrow(e, item);
+            throw;
+        }
     }
 
     public static bool HasSerializationItems(
