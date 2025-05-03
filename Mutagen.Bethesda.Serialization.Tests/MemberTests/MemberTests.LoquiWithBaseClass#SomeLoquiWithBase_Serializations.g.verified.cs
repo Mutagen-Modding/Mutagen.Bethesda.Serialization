@@ -1,6 +1,7 @@
 ﻿//HintName: SomeLoquiWithBase_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.Exceptions;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;

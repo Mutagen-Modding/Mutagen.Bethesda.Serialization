@@ -546,6 +546,7 @@ public class SerializationForObjectGenerator
         }
         
         var isMod = _modObjectTypeTester.IsModObject(obj.Setter);
+        var isMajorRecord = _modObjectTypeTester.IsModObject(obj.Setter);
 
         using (sb.CurlyBrace())
         {
@@ -555,20 +556,21 @@ public class SerializationForObjectGenerator
                 sb.AppendLine($"kernel.WriteModKey(writer, \"ModKey\", item.ModKey, default, checkDefaults: false);");
                 sb.AppendLine($"kernel.WriteEnum<GameRelease>(writer, \"GameRelease\", item.GameRelease, default, checkDefaults: false);");
             }
-            
+
+            StructuredStringBuilder sbInternal = new();
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
-                sb.AppendLine(
+                sbInternal.AppendLine(
                     $"await {baseSerializationItems.SerializationCall()}{genString}(writer, item, kernel, metaData);");
             }
 
-            _customizationDriver.SerializationPreWork(obj, compilation, sb, properties);
+            _customizationDriver.SerializationPreWork(obj, compilation, sbInternal, properties);
             
             foreach (var prop in properties.InOrder)
             {
                 compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                _customizationDriver.WrapOmission(compilation, sb, prop, () =>
+                _customizationDriver.WrapOmission(compilation, sbInternal, prop, () =>
                 {
                     _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
@@ -579,12 +581,41 @@ public class SerializationForObjectGenerator
                         fieldAccessor: $"item.{prop.Property.Name}",
                         defaultValueAccessor: prop.DefaultString,
                         prop.Generator,
-                        sb: sb,
+                        sb: sbInternal,
                         cancel: compilation.Context.CancellationToken);
                 });
             }
 
-            _customizationDriver.SerializationPostWork(obj, compilation, sb, properties);
+            _customizationDriver.SerializationPostWork(obj, compilation, sbInternal, properties);
+
+            if (!sbInternal.Empty)
+            {
+                if (isMod || isMajorRecord)
+                {
+                    sb.AppendLine("try");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLines(sbInternal);
+                    }
+
+                    sb.AppendLine("catch (OperationCanceledException)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("throw;");
+                    }
+
+                    sb.AppendLine("catch (Exception e)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                        sb.AppendLine("throw;");
+                    }
+                }
+                else
+                {
+                    sb.AppendLines(sbInternal);
+                }
+            }
         }
         sb.AppendLine();
     }
@@ -598,6 +629,7 @@ public class SerializationForObjectGenerator
         SerializationGenerics generics)
     {
         var isMod = _modObjectTypeTester.IsModObject(obj.Getter);
+        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(obj.Getter);
         using (var args = sb.Function($"public static bool HasSerializationItems{generics.WriterGenericsString(forHas: true)}"))
         {
             args.Add($"{obj.SerializeSymbol}? item");
@@ -616,14 +648,16 @@ public class SerializationForObjectGenerator
         {
             sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
             sb.AppendLine("if (item == null) return false;");
+            StructuredStringBuilder sbInternal = new();
+
             if (isMod)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
+                GenerateMetaConstruction(sbInternal, "item", "null!", "null!", "null!", CancelAccessor(isMod));
             }
             if (baseType != null
                 && _loquiSerializationNaming.TryGetSerializationItems(baseType, out var baseSerializationItems))
             {
-                sb.AppendLine(
+                sbInternal.AppendLine(
                     $"if ({baseSerializationItems.HasSerializationCall()}{generics.WriterGenericsString(forHas: true)}(item, metaData)) return true;");
             }
 
@@ -635,14 +669,14 @@ public class SerializationForObjectGenerator
 
             if (hasInvariable)
             {
-                sb.AppendLine("return true;");
+                sbInternal.AppendLine("return true;");
             }
             else
             {
                 foreach (var prop in properties.InOrder)
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                    _customizationDriver.WrapOmission(compilation, sb, prop, () =>
+                    _customizationDriver.WrapOmission(compilation, sbInternal, prop, () =>
                     {
                         _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,
@@ -652,12 +686,39 @@ public class SerializationForObjectGenerator
                             fieldAccessor: $"item.{prop.Property.Name}", 
                             defaultValueAccessor: prop.DefaultString,
                             prop.Generator,
-                            sb: sb, 
+                            sb: sbInternal, 
                             cancel: compilation.Context.CancellationToken);
                     });
                 }
             
-                sb.AppendLine("return false;");
+                sbInternal.AppendLine("return false;");
+            }
+            
+            if (!sbInternal.Empty)
+            {
+                if (isMod || isMajorRecord)
+                {
+                    sb.AppendLine("try");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLines(sbInternal);
+                    }
+                    sb.AppendLine("catch (OperationCanceledException)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("throw;");
+                    }
+                    sb.AppendLine("catch (Exception e)");
+                    using (sb.CurlyBrace())
+                    {
+                        sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                        sb.AppendLine("throw;");
+                    }
+                }
+                else
+                {
+                    sb.AppendLines(sbInternal);
+                }
             }
         }
         sb.AppendLine();
@@ -742,6 +803,8 @@ public class SerializationForObjectGenerator
     {
         if (typeSet.Getter == null) return;
         var isMod = _modObjectTypeTester.IsModObject(typeSet.Getter);
+        var isMajorRecord = _modObjectTypeTester.IsMajorRecordObject(typeSet.Getter);
+        var doCatch = isMod || isMajorRecord;
         using (var args = sb.Function($"public static async Task SerializeWithCheck{generics.WriterGenericsString(forHas: false)}"))
         {
             args.Add($"TWriteObject writer");
@@ -760,58 +823,82 @@ public class SerializationForObjectGenerator
         }
         using (sb.CurlyBrace())
         {
-            sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
-            if (isMod)
+            if (doCatch)
             {
-                GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
+                sb.AppendLine("try");
             }
-            sb.AppendLine($"kernel.WriteType(writer, item.GetType());");
-            sb.AppendLine("switch (item)");
-            using (sb.CurlyBrace())
+            using (sb.CurlyBrace(doIt: doCatch))
             {
-                foreach (var inherit in inheriting
-                             .Select(x => x.Getter)
-                             .NotNull()
-                             .OrderBy(x => x.Name))
+                sb.AppendLine($"{CancelAccessor(isMod)}.ThrowIfCancellationRequested();");
+                if (isMod)
                 {
-                    compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                    var names = _nameRetriever.GetNames(inherit);
-                    if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
-                        continue;
-                    if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
-                    if (inheritTypes.Direct?.IsAbstract ?? true) continue;
-                    
-                    var genString = "";
-                    if (inherit is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
-                    {
-                        genString = $"<{string.Join(", ", namedTypeSymbol.TypeArguments)}>";
-                    }
-                    
-                    sb.AppendLine($"case {inherit.ContainingNamespace}.{names.Getter}{genString} {names.Direct}Getter:");
-                    using (sb.IncreaseDepth())
-                    {
-                        sb.AppendLine(
-                            $"await {inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
-                        sb.AppendLine("break;");
-                    }
-                }
-                
-                if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter, out var curSerializationItems)
-                    && (!typeSet.Direct?.IsAbstract ?? false))
-                {
-                    sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
-                    using (sb.IncreaseDepth())
-                    {
-                        sb.AppendLine(
-                            $"await {curSerializationItems.SerializationCall()}(writer, {typeSet.Getter.Name}, kernel, metaData);");
-                        sb.AppendLine("break;");
-                    }
+                    GenerateMetaConstruction(sb, "item", "null!", "null!", "null!", CancelAccessor(isMod));
                 }
 
-                sb.AppendLine("default:");
-                using (sb.IncreaseDepth())
+                sb.AppendLine($"kernel.WriteType(writer, item.GetType());");
+                sb.AppendLine("switch (item)");
+                using (sb.CurlyBrace())
                 {
-                    sb.AppendLine($"throw new NotImplementedException($\"Unknown object {{item}}\");");
+                    foreach (var inherit in inheriting
+                                 .Select(x => x.Getter)
+                                 .NotNull()
+                                 .OrderBy(x => x.Name))
+                    {
+                        compilation.Context.CancellationToken.ThrowIfCancellationRequested();
+                        var names = _nameRetriever.GetNames(inherit);
+                        if (!_loquiSerializationNaming.TryGetSerializationItems(inherit, out var inheritSerializeItems))
+                            continue;
+                        if (!compilation.Mapping.TryGetTypeSet(inherit, out var inheritTypes)) continue;
+                        if (inheritTypes.Direct?.IsAbstract ?? true) continue;
+
+                        var genString = "";
+                        if (inherit is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length > 0)
+                        {
+                            genString = $"<{string.Join(", ", namedTypeSymbol.TypeArguments)}>";
+                        }
+
+                        sb.AppendLine(
+                            $"case {inherit.ContainingNamespace}.{names.Getter}{genString} {names.Direct}Getter:");
+                        using (sb.IncreaseDepth())
+                        {
+                            sb.AppendLine(
+                                $"await {inheritSerializeItems.SerializationCall()}(writer, {names.Direct}Getter, kernel, metaData);");
+                            sb.AppendLine("break;");
+                        }
+                    }
+
+                    if (_loquiSerializationNaming.TryGetSerializationItems(typeSet.Getter,
+                            out var curSerializationItems)
+                        && (!typeSet.Direct?.IsAbstract ?? false))
+                    {
+                        sb.AppendLine($"case {typeSet.Getter} {typeSet.Getter.Name}:");
+                        using (sb.IncreaseDepth())
+                        {
+                            sb.AppendLine(
+                                $"await {curSerializationItems.SerializationCall()}(writer, {typeSet.Getter.Name}, kernel, metaData);");
+                            sb.AppendLine("break;");
+                        }
+                    }
+
+                    sb.AppendLine("default:");
+                    using (sb.IncreaseDepth())
+                    {
+                        sb.AppendLine($"throw new NotImplementedException($\"Unknown object {{item}}\");");
+                    }
+                }
+            }
+            if (doCatch)
+            {
+                sb.AppendLine("catch (OperationCanceledException)");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("throw;");
+                }
+                sb.AppendLine("catch (Exception e)");
+                using (sb.CurlyBrace())
+                {
+                    sb.AppendLine("SubrecordException.EnrichAndThrow(e, item);");
+                    sb.AppendLine("throw;");
                 }
             }
         }
@@ -916,6 +1003,7 @@ public class SerializationForObjectGenerator
             .And("Loqui")
             .And("Noggog")
             .And("Noggog.IO")
+            .And("Mutagen.Bethesda.Plugins.Exceptions")
             .And(obj.GetAny().ContainingNamespace.ToString())
             .Distinct()
             .OrderBy(x => x)
