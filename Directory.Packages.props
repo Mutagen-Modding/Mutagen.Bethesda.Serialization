@@ -12,16 +12,16 @@
         </PackageVersion>
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Fallout4" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Starfield" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Oblivion" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.50.0-alpha.77" />
-        <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="1.33.0-alpha.1" />
-        <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="1.33.0-alpha.1" />
-        <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="1.33.0-alpha.1" />
-        <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="1.33.0-alpha.1" />
+        <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Fallout4" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Starfield" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Oblivion" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.50.0-alpha.79" />
+        <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(GitVersion_NuGetVersion)]" />
+        <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(GitVersion_NuGetVersion)]" />
+        <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="[$(GitVersion_NuGetVersion)]" />
+        <PackageVersion Include="Mutagen.Bethesda.Serialization.Yaml" Version="[$(GitVersion_NuGetVersion)]" />
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
         <PackageVersion Include="Newtonsoft.Json">
             <Version>13.0.3</Version>

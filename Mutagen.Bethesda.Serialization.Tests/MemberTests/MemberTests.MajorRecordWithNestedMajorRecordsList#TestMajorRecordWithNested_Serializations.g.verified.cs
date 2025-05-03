@@ -1,6 +1,7 @@
 ﻿//HintName: TestMajorRecordWithNested_Serializations.g.cs
 using Loqui;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Serialization;
 using Mutagen.Bethesda.Serialization.Exceptions;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Tests;
@@ -65,9 +66,21 @@ internal static class TestMajorRecordWithNested_Serialization
     {
         metaData.Cancel.ThrowIfCancellationRequested();
         if (item == null) return false;
-        if (!EqualityComparer<string>.Default.Equals(item.String, default(string))) return true;
-        if (item.NestedRecords.Count > 0) return true;
-        return false;
+        try
+        {
+            if (!EqualityComparer<string>.Default.Equals(item.String, default(string))) return true;
+            if (item.NestedRecords.Count > 0) return true;
+            return false;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            SubrecordException.EnrichAndThrow(e, item);
+            throw;
+        }
     }
 
     public static async Task<Mutagen.Bethesda.Serialization.SourceGenerator.Tests.TestMajorRecordWithNested> Deserialize<TReadObject>(
