@@ -161,6 +161,12 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
         }
 
         var nullable = field.IsNullable();
+        var forFieldGenerator = _forFieldGenerator().Value;
+        var subGenerator = forFieldGenerator.GetGenerator(obj, compilation, subType, fieldName, isInsideCollection: true);
+        if (subGenerator == null)
+        {
+            throw new NotImplementedException();
+        }
 
         if (nullable)
         {
@@ -168,7 +174,7 @@ public class Array2dFieldGenerator : ISerializationForFieldGenerator
             {
                 throw new NullReferenceException("Object with Array2D was not concrete");
             }
-            sb.AppendLine($"{fieldAccessor} = new Array2d<{subType.Name}>({obj.Direct.Name}.{fieldName}FixedSize, default);");
+            sb.AppendLine($"{fieldAccessor} = new Array2d<{subType}>({obj.Direct.Name}.{fieldName}FixedSize, {subGenerator.GetDefault(subType)});");
         }
         using (var i = sb.If(ands: true))
         {

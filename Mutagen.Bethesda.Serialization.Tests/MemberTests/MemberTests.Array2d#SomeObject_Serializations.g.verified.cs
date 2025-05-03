@@ -143,6 +143,54 @@ internal static class SomeObject_Serialization
             }
             kernel.EndArray2dSection(writer);
         }
+        if (item.SomeArray7 is {} checkedSomeArray7)
+        {
+            kernel.StartArray2dSection(writer, "SomeArray7");
+            for (int y = 0; y < checkedSomeArray7.Height; y++)
+            {
+                kernel.StartArray2dYSection(writer);
+                for (int x = 0; x < checkedSomeArray7.Width; x++)
+                {
+                    kernel.StartArray2dXItem(writer);
+                    kernel.WriteFormKey(writer, null, checkedSomeArray7[x, y].FormKeyNullable, default(FormKey), checkDefaults: false);
+                    kernel.EndArray2dXItem(writer);
+                }
+                kernel.EndArray2dYSection(writer);
+            }
+            kernel.EndArray2dSection(writer);
+        }
+        if (item.SomeArray8 is {} checkedSomeArray8)
+        {
+            kernel.StartArray2dSection(writer, "SomeArray8");
+            for (int y = 0; y < checkedSomeArray8.Height; y++)
+            {
+                kernel.StartArray2dYSection(writer);
+                for (int x = 0; x < checkedSomeArray8.Width; x++)
+                {
+                    kernel.StartArray2dXItem(writer);
+                    kernel.WriteFormKey(writer, null, checkedSomeArray8[x, y].FormKeyNullable, default(FormKey), checkDefaults: false);
+                    kernel.EndArray2dXItem(writer);
+                }
+                kernel.EndArray2dYSection(writer);
+            }
+            kernel.EndArray2dSection(writer);
+        }
+        if (item.SomeArray9 is {} checkedSomeArray9)
+        {
+            kernel.StartArray2dSection(writer, "SomeArray9");
+            for (int y = 0; y < checkedSomeArray9.Height; y++)
+            {
+                kernel.StartArray2dYSection(writer);
+                for (int x = 0; x < checkedSomeArray9.Width; x++)
+                {
+                    kernel.StartArray2dXItem(writer);
+                    kernel.WriteFormKey(writer, null, checkedSomeArray9[x, y].FormKeyNullable, default(FormKey), checkDefaults: false);
+                    kernel.EndArray2dXItem(writer);
+                }
+                kernel.EndArray2dYSection(writer);
+            }
+            kernel.EndArray2dSection(writer);
+        }
     }
 
     public static bool HasSerializationItems(
@@ -251,7 +299,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray4":
-                obj.SomeArray4 = new Array2d<String>(SomeObject.SomeArray4FixedSize, default);
+                obj.SomeArray4 = new Array2d<string>(SomeObject.SomeArray4FixedSize, default(string));
                 if (obj.SomeArray4 is {} checkedSomeArray4)
                 {
                     kernel.StartArray2dSection(reader);
@@ -275,7 +323,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray5":
-                obj.SomeArray5 = new Array2d<String>(SomeObject.SomeArray5FixedSize, default);
+                obj.SomeArray5 = new Array2d<string>(SomeObject.SomeArray5FixedSize, default(string));
                 if (obj.SomeArray5 is {} checkedSomeArray5)
                 {
                     kernel.StartArray2dSection(reader);
@@ -299,7 +347,7 @@ internal static class SomeObject_Serialization
                 }
                 break;
             case "SomeArray6":
-                obj.SomeArray6 = new Array2d<String>(SomeObject.SomeArray6FixedSize, default);
+                obj.SomeArray6 = new Array2d<string>(SomeObject.SomeArray6FixedSize, default(string));
                 if (obj.SomeArray6 is {} checkedSomeArray6)
                 {
                     kernel.StartArray2dSection(reader);
@@ -313,6 +361,78 @@ internal static class SomeObject_Serialization
                             kernel.StartArray2dXItem(reader);
                             var item = SerializationHelper.StripNull(kernel.ReadString(reader), name: "SomeArray6");
                             obj.SomeArray6[x, y] = item;
+                            kernel.EndArray2dXItem(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            case "SomeArray7":
+                obj.SomeArray7 = new Array2d<IFormLink<ISurfaceBlockGetter>>(SomeObject.SomeArray7FixedSize, FormLink<ISurfaceBlockGetter>.Null);
+                if (obj.SomeArray7 is {} checkedSomeArray7)
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dXItem(reader))
+                        {
+                            kernel.StartArray2dXItem(reader);
+                            var item = kernel.ReadFormKey(reader).StripNull("SomeArray7").ToLink<ISurfaceBlockGetter>();
+                            obj.SomeArray7[x, y] = item;
+                            kernel.EndArray2dXItem(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            case "SomeArray8":
+                obj.SomeArray8 = new Array2d<IFormLink<ISurfaceBlockGetter>>(SomeObject.SomeArray8FixedSize, FormLink<ISurfaceBlockGetter>.Null);
+                if (obj.SomeArray8 is {} checkedSomeArray8)
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dXItem(reader))
+                        {
+                            kernel.StartArray2dXItem(reader);
+                            var item = kernel.ReadFormKey(reader).StripNull("SomeArray8").ToLink<ISurfaceBlockGetter>();
+                            obj.SomeArray8[x, y] = item;
+                            kernel.EndArray2dXItem(reader);
+                            x++;
+                        }
+                        kernel.EndArray2dYSection(reader);
+                        y++;
+                    }
+                    kernel.EndArray2dSection(reader);
+                }
+                break;
+            case "SomeArray9":
+                obj.SomeArray9 = new Array2d<IFormLinkGetter<ISurfaceBlockGetter>>(SomeObject.SomeArray9FixedSize, FormLink<ISurfaceBlockGetter>.Null);
+                if (obj.SomeArray9 is {} checkedSomeArray9)
+                {
+                    kernel.StartArray2dSection(reader);
+                    int y = 0;
+                    while (kernel.TryHasNextArray2dYSection(reader))
+                    {
+                        kernel.StartArray2dYSection(reader);
+                        int x = 0;
+                        while (kernel.TryHasNextArray2dXItem(reader))
+                        {
+                            kernel.StartArray2dXItem(reader);
+                            var item = kernel.ReadFormKey(reader).StripNull("SomeArray9").ToLink<ISurfaceBlockGetter>();
+                            obj.SomeArray9[x, y] = item;
                             kernel.EndArray2dXItem(reader);
                             x++;
                         }

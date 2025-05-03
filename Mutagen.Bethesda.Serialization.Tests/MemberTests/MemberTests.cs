@@ -571,6 +571,9 @@ public class MemberTests : ATestsBase
             sb.AppendLine("public Array2d<string>? SomeArray4 { get; set; }");
             sb.AppendLine("public IArray2d<string>? SomeArray5 { get; set; }");
             sb.AppendLine("public IReadOnlyArray2d<string>? SomeArray6 { get; set; }");
+            sb.AppendLine("public Array2d<IFormLink<ISurfaceBlockGetter>>? SomeArray7 { get; set; }");
+            sb.AppendLine("public IArray2d<IFormLink<ISurfaceBlockGetter>>? SomeArray8 { get; set; }");
+            sb.AppendLine("public IReadOnlyArray2d<IFormLinkGetter<ISurfaceBlockGetter>>? SomeArray9 { get; set; }");
         });
        
         return TestHelper.VerifySerialization(source);
