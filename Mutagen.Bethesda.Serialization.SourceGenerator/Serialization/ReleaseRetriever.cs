@@ -20,10 +20,6 @@ public class ReleaseRetriever
     {
         // ToDo
         // Upgrade to something with reflection perhaps
-        return _namespaceSuffixRetriever.TryGet(typeSymbol) switch
-        {
-            "Oblivion" => false,
-            _ => true
-        };
+        return true;
     }
 }
