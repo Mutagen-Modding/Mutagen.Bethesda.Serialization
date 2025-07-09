@@ -341,9 +341,9 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: false);
 
         npcs.Select(x => x.FormKey)
-            .ShouldEqual(f1, f2);
+            .ShouldEqualEnumerable(f1, f2);
         npcs.Select(x => x.Height)
-            .ShouldEqual(1, 2);
+            .ShouldEqualEnumerable(1, 2);
     }
 
     [Theory, MutagenAutoData]
@@ -394,9 +394,9 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: false);
 
         npcs.Select(x => x.FormKey)
-            .ShouldEqual(f1, f2);
+            .ShouldEqualEnumerable(f1, f2);
         npcs.Select(x => x.Height)
-            .ShouldEqual(1, 2);
+            .ShouldEqualEnumerable(1, 2);
     }
 
     [Theory, MutagenAutoData]
@@ -453,8 +453,8 @@ public class MajorRecordListParallelHelperTests
             eachRecordInFolder: true);
 
         npcs.Select(x => x.FormKey)
-            .ShouldEqual(f1, f2);
+            .ShouldEqualEnumerable(f1, f2);
         npcs.Select(x => x.Height)
-            .ShouldEqual(1, 2);
+            .ShouldEqualEnumerable(1, 2);
     }
 }
