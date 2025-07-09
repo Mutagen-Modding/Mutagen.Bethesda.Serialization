@@ -79,15 +79,15 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
         public async Task Check(TReaderKernel kernel, TReader reader)
         {
             var val = await Reader(kernel, reader);
-            if (Expected is IReadOnlyList<object> e)
+            if (Expected is IEnumerable<object> e)
             {
-                var list = (IReadOnlyList<object>)val!;
-                list.ShouldEqual(e);
+                var list = (IEnumerable<object>)val!;
+                list.ShouldEqualEnumerable(e);
             }
             else if (Expected is ReadOnlyMemorySlice<byte> bytes)
             {
                 var slice = val as ReadOnlyMemorySlice<byte>?;
-                ((IEnumerable<byte>)Expected).ShouldEqual(slice);
+                ((IEnumerable<byte>)bytes).ShouldEqualEnumerable((IEnumerable<byte>)slice!);
             }
             else
             {
@@ -849,10 +849,10 @@ public abstract class AKernelTest<TWriterKernel, TWriter, TReaderKernel, TReader
             return ret;
         });
         readItem.ShouldNotBeNull();
-        readItem.ShouldEqual(
-            (0, 0, 1),
-            (1, 0, 2),
-            (0, 1, 4));
+        readItem.ShouldEqualEnumerable(
+            new ValueTuple<int, int, int?>(0, 0, 1),
+            new ValueTuple<int, int, int?>(1, 0, 2),
+            new ValueTuple<int, int, int?>(0, 1, 4));
     }
 
     [Fact]

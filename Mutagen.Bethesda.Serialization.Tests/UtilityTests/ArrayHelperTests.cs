@@ -33,7 +33,7 @@ public class ArrayHelperTests : UtilityTests
             {
                 return k.ReadInt32(r);
             });
-        i.ShouldEqual(4, 5, 6);
+        i.ShouldEqualEnumerable(4, 5, 6);
     }
     
     [Theory, DefaultAutoData]
@@ -59,7 +59,7 @@ public class ArrayHelperTests : UtilityTests
             {
                 return k.ReadInt32(r);
             });
-        i.ShouldEqual(4, 5, 6);
+        i.ShouldEqualEnumerable(4, 5, 6);
     }
     
     [Theory, DefaultAutoData]
