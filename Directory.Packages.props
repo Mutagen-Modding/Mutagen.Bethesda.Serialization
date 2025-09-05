@@ -5,7 +5,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Loqui" Version="2.73.0" />
+    <PackageVersion Include="Loqui" Version="2.73.2" />
     <PackageVersion Include="Loqui.Generation">
       <Version>2.70.0</Version>
     </PackageVersion>
@@ -15,12 +15,12 @@
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.52.0-alpha.10" />
-    <PackageVersion Include="Mutagen.Bethesda.Fallout4" Version="0.52.0-alpha.10" />
-    <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.52.0-alpha.10" />
-    <PackageVersion Include="Mutagen.Bethesda.Starfield" Version="0.52.0-alpha.10" />
-    <PackageVersion Include="Mutagen.Bethesda.Oblivion" Version="0.52.0-alpha.10" />
-    <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.52.0-alpha.10" />
+    <PackageVersion Include="Mutagen.Bethesda.Core" Version="0.52.0-alpha.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Fallout4" Version="0.52.0-alpha.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Skyrim" Version="0.52.0-alpha.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Starfield" Version="0.52.0-alpha.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Oblivion" Version="0.52.0-alpha.2" />
+    <PackageVersion Include="Mutagen.Bethesda.Testing" Version="0.52.0-alpha.2" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization" Version="[$(GitVersion_NuGetVersion)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="[$(GitVersion_NuGetVersion)]" />
     <PackageVersion Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="[$(GitVersion_NuGetVersion)]" />
@@ -29,8 +29,8 @@
     <PackageVersion Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageVersion>
-    <PackageVersion Include="Noggog.CSharpExt" Version="2.73.0" />
-    <PackageVersion Include="Noggog.Testing" Version="2.73.0" />
+    <PackageVersion Include="Noggog.CSharpExt" Version="2.73.2" />
+    <PackageVersion Include="Noggog.Testing" Version="2.73.2" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
