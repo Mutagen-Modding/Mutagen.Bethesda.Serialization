@@ -29,8 +29,8 @@
     <PackageVersion Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageVersion>
-    <PackageVersion Include="Noggog.CSharpExt" Version="2.73.2" />
-    <PackageVersion Include="Noggog.Testing" Version="2.73.2" />
+    <PackageVersion Include="Noggog.CSharpExt" Version="2.73.3" />
+    <PackageVersion Include="Noggog.Testing" Version="2.73.3" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="StrongInject" Version="1.4.4" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
