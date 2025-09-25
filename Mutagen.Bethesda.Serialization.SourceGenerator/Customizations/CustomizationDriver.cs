@@ -116,6 +116,17 @@ public class CustomizationDriver
             }
         }
 
+        if (compilation.Customization.Overall.OmitUnknownGroupData)
+        {
+            switch (name)
+            {
+                case "UnknownGroupData":
+                case "PersistentUnknownGroupData":
+                case "TemporaryUnknownGroupData":
+                    return;
+            }
+        }
+
         if (compilation.Customization.TargetRecordSpecs == null)
         {
             toDo();
