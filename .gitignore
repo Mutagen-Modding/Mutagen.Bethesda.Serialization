@@ -297,3 +297,6 @@ GenerationLines.txt
 Mutagen.Bethesda.Serialization.Tests/Generated/
 
 nupkg/
+
+# Claude Code files
+.claude
