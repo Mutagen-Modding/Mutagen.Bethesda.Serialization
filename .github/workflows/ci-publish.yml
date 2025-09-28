@@ -55,10 +55,10 @@ jobs:
       - name: Determine Version
         id: version_step # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.0.3
-      - name: Setup .NET
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.*
+          dotnet-version: 10.0.*
       - name: Clean dependencies
         run: |
           dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
@@ -103,7 +103,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.*
+        dotnet-version: |
+          8.0.*
+          9.0.*
+          10.0.*
+        include-prerelease: true
     - name: Clean dependencies
       run: |
         dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
