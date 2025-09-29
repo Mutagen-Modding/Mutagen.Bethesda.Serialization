@@ -103,17 +103,28 @@ public class ListFieldGenerator : AListFieldGenerator
         using (sb.CurlyBrace())
         {
             sb.AppendLine($"{kernelAccessor}.StartListSection({writerAccessor}, \"{fieldName}\");");
-            sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
+
+            // Generate sorted list if needed
+            if (FieldSortingHelper.ShouldApplyContainerSorting(compilation, fieldName))
+            {
+                FieldSortingHelper.GenerateContainerSortedListAccess(compilation, fieldName, fieldAccessor, "sortedItems", sb);
+                sb.AppendLine($"foreach (var listItem in sortedItems)");
+            }
+            else
+            {
+                sb.AppendLine($"foreach (var listItem in {fieldAccessor})");
+            }
+
             using (sb.CurlyBrace())
             {
                 ForFieldGenerator().Value.GenerateSerializeForField(
                     compilation: compilation,
                     obj: obj,
                     fieldType: subType,
-                    writerAccessor: writerAccessor, 
+                    writerAccessor: writerAccessor,
                     kernelAccessor: kernelAccessor,
                     metaDataAccessor: metaAccessor,
-                    fieldName: null, 
+                    fieldName: null,
                     fieldAccessor: "listItem",
                     defaultValueAccessor: null,
                     sb: sb,

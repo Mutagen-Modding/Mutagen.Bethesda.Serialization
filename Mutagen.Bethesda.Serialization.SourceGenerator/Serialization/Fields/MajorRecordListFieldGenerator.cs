@@ -54,11 +54,19 @@ public class MajorRecordListFieldGenerator : AListFieldGenerator
         
         if (!_serializationNaming.TryGetSerializationItems(subType, out var subSerializationNames)) return;
 
+        // Generate sorted list access if needed
+        string listAccessor = fieldAccessor;
+        if (FieldSortingHelper.ShouldApplyContainerSorting(compilation, fieldName))
+        {
+            FieldSortingHelper.GenerateContainerSortedListAccess(compilation, fieldName, fieldAccessor, "sortedMajorRecords", sb);
+            listAccessor = "sortedMajorRecords";
+        }
+
         using (var f = sb.Call($"tasks.Add(SerializationHelper.WriteMajorRecordList<TKernel, TWriteObject, {subNames.Getter}>",
                    suffixLine: ")"))
         {
             f.Add($"streamPackage: {writerAccessor}.StreamPackage");
-            f.Add($"list: {fieldAccessor}");
+            f.Add($"list: {listAccessor}");
             f.Add($"fieldName: {(fieldName == null ? "null" : $"\"{fieldName}\"")}");
             f.Add($"metaData: {metaAccessor}");
             f.Add($"kernel: {kernelAccessor}");
