@@ -9,6 +9,7 @@ public interface ICustomizationBuilder
     ICustomizationBuilder OmitLastModifiedData();
     ICustomizationBuilder OmitTimestampData();
     ICustomizationBuilder OmitUnknownGroupData();
+    ICustomizationBuilder OmitUnusedConditionDataFields();
     ICustomizationBuilder SkipRecordsWithErrors();
 }
 

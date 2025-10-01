@@ -19,4 +19,5 @@ public record CustomizationSpecifications(ITypeSymbol? CustomizationClass)
     public bool OmitLastModifiedData { get; set; }
     public bool OmitTimestampData { get; set; }
     public bool OmitUnknownGroupData { get; set; }
+    public bool OmitUnusedConditionDataFields { get; set; }
 }

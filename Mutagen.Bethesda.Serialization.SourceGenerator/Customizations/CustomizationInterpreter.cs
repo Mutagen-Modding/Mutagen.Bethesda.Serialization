@@ -47,6 +47,8 @@ public class CustomizationInterpreter
                 return HandleOmitTimestampData(specifications, invoke, member);
             case "OmitUnknownGroupData" when invoke.ArgumentList.Arguments.Count is 0:
                 return HandleOmitUnknownGroupData(specifications, invoke, member);
+            case "OmitUnusedConditionDataFields" when invoke.ArgumentList.Arguments.Count is 0:
+                return HandleOmitUnusedConditionDataFields(specifications, invoke, member);
             case "EnforceRecordOrder" when invoke.ArgumentList.Arguments.Count is 0:
                 return EnforceRecordOrder(specifications, invoke, member);
             case "SkipRecordsWithErrors" when invoke.ArgumentList.Arguments.Count is 0:
@@ -107,6 +109,15 @@ public class CustomizationInterpreter
         MemberAccessExpressionSyntax memberAccess)
     {
         specifications.OmitUnknownGroupData = true;
+        return true;
+    }
+
+    private bool HandleOmitUnusedConditionDataFields(
+        CustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        specifications.OmitUnusedConditionDataFields = true;
         return true;
     }
 }
