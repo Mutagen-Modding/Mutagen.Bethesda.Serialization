@@ -285,4 +285,176 @@ public class SortFieldTests : ATestsBase
 
         return TestHelper.VerifySerialization(sb.ToString());
     }
+    
+    [Fact]
+    public Task SortListWithNullForgivingOperator()
+    {
+        var sb = new StructuredStringBuilder();
+
+        GetObjWithMember(sb, sb =>
+        {
+            sb.AppendLine("public string Name { get; set; } = \"DefaultName\";");
+            sb.AppendLine("public int Priority { get; set; } = 0;");
+        },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "SortableItem");
+
+        // Add a container object with a nullable list of sortable items
+        sb.AppendLine();
+        sb.AppendLine("public partial interface IContainerObject : IContainerObjectGetter");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public new List<SortableItem>? Items { get; set; }");
+        }
+
+        sb.AppendLine("public partial interface IContainerObjectGetter : ILoquiObject");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public List<SortableItem>? Items { get; set; }");
+        }
+
+        using (var c = sb.Class("ContainerObject_Registration"))
+        {
+            c.Partial = true;
+            c.BaseClass = "ARegistration";
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 18, 0);");
+            sb.AppendLine("public override Type ClassType => typeof(ContainerObject);");
+            sb.AppendLine("public override Type GetterType => typeof(IContainerObjectGetter);");
+            sb.AppendLine("public override Type SetterType => typeof(IContainerObject);");
+            sb.AppendLine("public override string Name => nameof(ContainerObject);");
+        }
+
+        using (var c = sb.Class("ContainerObject"))
+        {
+            c.Partial = true;
+            c.Interfaces.Add("IContainerObject");
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public List<SortableItem>? Items { get; set; }");
+            sb.AppendLine("public ILoquiRegistration Registration { get; } = new ContainerObject_Registration();");
+            sb.AppendLine();
+            using (var f = sb.Function("public void SomeFunction"))
+            {
+            }
+
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var theObj = new ContainerObject();");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(theObj);");
+            }
+        }
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize<IContainerObjectGetter>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<IContainerObjectGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                // Test the null-forgiving operator here!
+                sb.AppendLine("builder.SortList(x => x.Items!).ByField(x => x.Name);");
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
+
+    [Fact]
+    public Task SortListWithoutNullForgivingOperator()
+    {
+        var sb = new StructuredStringBuilder();
+
+        GetObjWithMember(sb, sb =>
+        {
+            sb.AppendLine("public string Name { get; set; } = \"DefaultName\";");
+            sb.AppendLine("public int Priority { get; set; } = 0;");
+        },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "SortableItem");
+
+        // Add a container object with a nullable list of sortable items
+        sb.AppendLine();
+        sb.AppendLine("public partial interface IContainerObject : IContainerObjectGetter");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public new List<SortableItem>? Items { get; set; }");
+        }
+
+        sb.AppendLine("public partial interface IContainerObjectGetter : ILoquiObject");
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public List<SortableItem>? Items { get; set; }");
+        }
+
+        using (var c = sb.Class("ContainerObject_Registration"))
+        {
+            c.Partial = true;
+            c.BaseClass = "ARegistration";
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public override ObjectKey ObjectKey { get; } = new(StaticProtocolKey, 19, 0);");
+            sb.AppendLine("public override Type ClassType => typeof(ContainerObject);");
+            sb.AppendLine("public override Type GetterType => typeof(IContainerObjectGetter);");
+            sb.AppendLine("public override Type SetterType => typeof(IContainerObject);");
+            sb.AppendLine("public override string Name => nameof(ContainerObject);");
+        }
+
+        using (var c = sb.Class("ContainerObject"))
+        {
+            c.Partial = true;
+            c.Interfaces.Add("IContainerObject");
+        }
+        using (sb.CurlyBrace())
+        {
+            sb.AppendLine("public List<SortableItem>? Items { get; set; }");
+            sb.AppendLine("public ILoquiRegistration Registration { get; } = new ContainerObject_Registration();");
+            sb.AppendLine();
+            using (var f = sb.Function("public void SomeFunction"))
+            {
+            }
+
+            using (sb.CurlyBrace())
+            {
+                sb.AppendLine("var theObj = new ContainerObject();");
+                sb.AppendLine("MutagenTestConverter.Instance.Convert(theObj);");
+            }
+        }
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize<IContainerObjectGetter>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<IContainerObjectGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                // Test without null-forgiving operator - should work with updated interface!
+                sb.AppendLine("builder.SortList(x => x.Items).ByField(x => x.Name);");
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
 }

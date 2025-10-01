@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
@@ -117,8 +118,20 @@ public class RecordCustomizationInterpreter
     }
 
 
-    private string GetFullMemberAccessPath(MemberAccessExpressionSyntax memberAccess)
+    private string GetFullMemberAccessPath(ExpressionSyntax expression)
     {
+        // Handle null-forgiving operator (!) by extracting the underlying expression
+        if (expression is PostfixUnaryExpressionSyntax postfixUnary &&
+            postfixUnary.OperatorToken.IsKind(SyntaxKind.ExclamationToken))
+        {
+            expression = postfixUnary.Operand;
+        }
+
+        if (expression is not MemberAccessExpressionSyntax memberAccess)
+        {
+            return string.Empty;
+        }
+
         var parts = new List<string>();
         var current = memberAccess;
 
@@ -130,6 +143,13 @@ public class RecordCustomizationInterpreter
             if (current.Expression is MemberAccessExpressionSyntax parentMember)
             {
                 current = parentMember;
+            }
+            else if (current.Expression is PostfixUnaryExpressionSyntax parentPostfix &&
+                     parentPostfix.OperatorToken.IsKind(SyntaxKind.ExclamationToken) &&
+                     parentPostfix.Operand is MemberAccessExpressionSyntax parentMemberFromPostfix)
+            {
+                // Handle null-forgiving operator in the chain (e.g., x.Parent!.Child)
+                current = parentMemberFromPostfix;
             }
             else
             {
@@ -152,9 +172,15 @@ public class RecordCustomizationInterpreter
     {
         var arg = invoke.ArgumentList.Arguments[0];
         if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
-        if (simpleLambda.ExpressionBody is not MemberAccessExpressionSyntax memberAccessExpressionSyntax) return false;
 
-        var listFieldName = GetFullMemberAccessPath(memberAccessExpressionSyntax);
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var listFieldName = GetFullMemberAccessPath(expressionBody);
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(listFieldName)) return false;
 
         // Store the current list field name for use by subsequent ByField calls
         specifications.CurrentListField = listFieldName;
@@ -168,12 +194,18 @@ public class RecordCustomizationInterpreter
     {
         var arg = invoke.ArgumentList.Arguments[0];
         if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
-        if (simpleLambda.ExpressionBody is not MemberAccessExpressionSyntax memberAccessExpressionSyntax) return false;
 
-        var itemFieldName = GetFullMemberAccessPath(memberAccessExpressionSyntax);
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var itemFieldName = GetFullMemberAccessPath(expressionBody);
 
         // Get the list field name from the preceding SortList call
         if (string.IsNullOrEmpty(specifications.CurrentListField)) return false;
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(itemFieldName)) return false;
 
         specifications.ContainerSortFields ??= new();
 
@@ -190,12 +222,18 @@ public class RecordCustomizationInterpreter
     {
         var arg = invoke.ArgumentList.Arguments[0];
         if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
-        if (simpleLambda.ExpressionBody is not MemberAccessExpressionSyntax memberAccessExpressionSyntax) return false;
 
-        var itemFieldName = GetFullMemberAccessPath(memberAccessExpressionSyntax);
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var itemFieldName = GetFullMemberAccessPath(expressionBody);
 
         // Get the list field name from the current sorting context
         if (string.IsNullOrEmpty(specifications.CurrentListField)) return false;
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(itemFieldName)) return false;
 
         specifications.ContainerSortFields ??= new();
 
