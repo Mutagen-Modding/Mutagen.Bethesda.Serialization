@@ -86,3 +86,41 @@ Source generators read these customizations and generate optimized, customized s
 - Tests include verified snapshot files (.verified.txt, .verified.json, .verified.yaml)
 - The library works with Mutagen objects from the Mutagen.Bethesda ecosystem
 - Related downstream project: **Spriggit** (provides UI for end users)
+
+## Writing Source Generator Tests
+
+When writing tests for source generator features in `Mutagen.Bethesda.Serialization.Tests`:
+
+### Test Writing Process
+
+1. **Ensure DisableDiff is enabled in TestHelper**
+   - This prevents UI popups during automated testing
+   - Check that `TestHelper.VerifySerialization()` has `DisableDiff` enabled
+
+2. **Write unit tests**
+   - Use the test helper methods like `GetObjWithMember()` to scaffold test objects
+   - Write customization code that exercises the feature
+   - Use descriptive test names following the existing pattern
+
+3. **Create expected verification files**
+   - Manually write the `.g.verified.cs` files in the `Customization` folder
+   - Follow the naming pattern: `TestClass.TestMethod#GeneratedClass_Serializations.g.verified.cs`
+   - These files should contain the expected generated source code
+   - Key patterns to include:
+     - Proper using statements (include `System.Linq` for sorting)
+     - Generated serialization methods with correct sorting logic
+     - Proper null handling and type conversions
+
+4. **Run tests iteratively**
+   - Build the solution: `dotnet build Mutagen.Bethesda.Serialization.sln -c Release`
+   - Run the specific test: `dotnet test --filter "FullyQualifiedName~YourTestName"`
+   - If tests fail, compare `.received.cs` files with `.verified.cs` files
+   - Update verification files until output matches expectations
+   - Verify the generated code contains the desired features
+
+5. **Test validation checklist**
+   - [ ] Generated code compiles without errors
+   - [ ] Sorting/customization logic is correctly applied
+   - [ ] Null handling is appropriate
+   - [ ] All edge cases are covered
+   - [ ] Verification files are committed to source control

@@ -457,4 +457,112 @@ public class SortFieldTests : ATestsBase
 
         return TestHelper.VerifySerialization(sb.ToString());
     }
+
+    [Fact]
+    public Task SortListOfStringsWithoutByField()
+    {
+        var sb = new StructuredStringBuilder();
+
+        GetObjWithMember(sb, sb =>
+        {
+            sb.AppendLine("public List<string> Names { get; set; } = new();");
+        },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "StringContainer");
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize<IStringContainerGetter>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<IStringContainerGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                // Sort strings directly without ByField
+                sb.AppendLine("builder.SortList(x => x.Names);");
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
+
+    [Fact]
+    public Task SortListOfIntsWithoutByField()
+    {
+        var sb = new StructuredStringBuilder();
+
+        GetObjWithMember(sb, sb =>
+        {
+            sb.AppendLine("public List<int> Numbers { get; set; } = new();");
+        },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "IntContainer");
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize<IIntContainerGetter>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<IIntContainerGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                // Sort integers directly without ByField
+                sb.AppendLine("builder.SortList(x => x.Numbers);");
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
+
+    [Fact]
+    public Task SortNullableListOfStringsWithoutByField()
+    {
+        var sb = new StructuredStringBuilder();
+
+        GetObjWithMember(sb, sb =>
+        {
+            sb.AppendLine("public List<string>? Names { get; set; }");
+        },
+            namespaceBuilder: sb =>
+            {
+                sb.AppendLine("using Mutagen.Bethesda.Serialization.Customizations;");
+            },
+            objName: "NullableStringContainer");
+
+        sb.AppendLine();
+        using (var c = sb.Class("Customization"))
+        {
+            c.Interfaces.Add("ICustomize<INullableStringContainerGetter>");
+        }
+        using (sb.CurlyBrace())
+        {
+            using (var f = sb.Function("public void CustomizeFor"))
+            {
+                f.Add("ICustomizationBuilder<INullableStringContainerGetter> builder");
+            }
+            using (sb.CurlyBrace())
+            {
+                // Sort nullable list of strings directly without ByField
+                sb.AppendLine("builder.SortList(x => x.Names);");
+            }
+        }
+
+        return TestHelper.VerifySerialization(sb.ToString());
+    }
 }

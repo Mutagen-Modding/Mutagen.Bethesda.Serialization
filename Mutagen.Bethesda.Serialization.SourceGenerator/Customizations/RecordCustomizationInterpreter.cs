@@ -50,6 +50,9 @@ public class RecordCustomizationInterpreter
             }
         }
 
+        // Finalize any pending list sorting without ByField
+        FinalizePendingListSort(driver);
+
         return driver;
     }
 
@@ -182,8 +185,12 @@ public class RecordCustomizationInterpreter
         // Ensure we got a valid field name
         if (string.IsNullOrEmpty(listFieldName)) return false;
 
+        // Finalize any previous pending list sort
+        FinalizePendingListSort(specifications);
+
         // Store the current list field name for use by subsequent ByField calls
         specifications.CurrentListField = listFieldName;
+        specifications.HasByFieldForCurrentList = false;
         return true;
     }
 
@@ -211,6 +218,7 @@ public class RecordCustomizationInterpreter
 
         var priority = 0; // First field always has priority 0
         specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, itemFieldName, priority));
+        specifications.HasByFieldForCurrentList = true;
         return true;
     }
 
@@ -240,5 +248,15 @@ public class RecordCustomizationInterpreter
         var priority = specifications.ContainerSortFields.Count;
         specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, itemFieldName, priority));
         return true;
+    }
+
+    private void FinalizePendingListSort(RecordCustomizationSpecifications specifications)
+    {
+        // If we have a pending list sort without ByField, add it with null ItemFieldName
+        if (!string.IsNullOrEmpty(specifications.CurrentListField) && !specifications.HasByFieldForCurrentList)
+        {
+            specifications.ContainerSortFields ??= new();
+            specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, null, 0));
+        }
     }
 }

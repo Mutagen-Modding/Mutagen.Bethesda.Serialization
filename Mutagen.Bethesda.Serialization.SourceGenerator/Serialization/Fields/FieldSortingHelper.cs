@@ -37,7 +37,16 @@ public static class FieldSortingHelper
         {
             var sortField = containerSortFields[i];
             var method = i == 0 ? "OrderBy" : "ThenBy";
-            sb.AppendLine($"    .{method}(x => x.{sortField.ItemFieldName})");
+
+            // If ItemFieldName is null, sort by the item itself
+            if (sortField.ItemFieldName == null)
+            {
+                sb.AppendLine($"    .{method}(x => x)");
+            }
+            else
+            {
+                sb.AppendLine($"    .{method}(x => x.{sortField.ItemFieldName})");
+            }
         }
 
         sb.AppendLine("    .ToList();");

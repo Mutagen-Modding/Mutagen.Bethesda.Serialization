@@ -26,7 +26,7 @@ public interface ICustomizationBuilder<TObject>
     IListSortBuilder<TObject, TItem> SortList<TItem>(Expression<Func<TObject, IEnumerable<TItem>?>> listField);
 }
 
-public interface IListSortBuilder<TObject, TItem>
+public interface IListSortBuilder<TObject, TItem> : ICustomizationBuilder<TObject>
 {
     IListSortFieldChainBuilder<TObject, TItem> ByField<TField>(Expression<Func<TItem, TField>> itemField);
 }

@@ -6,7 +6,7 @@ namespace Mutagen.Bethesda.Serialization.SourceGenerator.Customizations;
 
 public record Omission(string Name, ExpressionSyntax? Filter);
 
-public record ContainerSortField(string ListFieldName, string ItemFieldName, int Priority);
+public record ContainerSortField(string ListFieldName, string? ItemFieldName, int Priority);
 
 public record RecordCustomizationSpecifications(ITypeSymbol CustomizationClass, LoquiTypeSet Target)
 {
@@ -14,6 +14,7 @@ public record RecordCustomizationSpecifications(ITypeSymbol CustomizationClass, 
     public HashSet<string>? ToEmbedRecordsInSameFile;
     public List<ContainerSortField>? ContainerSortFields;
     public string? CurrentListField;
+    public bool HasByFieldForCurrentList;
 
     public bool EmbedRecordForProperty(IPropertySymbol prop)
     {
