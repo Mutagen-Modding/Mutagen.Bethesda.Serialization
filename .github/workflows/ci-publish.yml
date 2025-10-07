@@ -83,7 +83,7 @@ jobs:
   build-test-push:
     needs: [build-test, activity-short-circuit]
     if: needs.activity-short-circuit.outputs.same_sha == 'false'
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Get timestamp
       uses: 1466587594/get-current-time@v1
