@@ -93,7 +93,8 @@ public class CustomizationDriver
     
     public void WrapOmission(
         CompilationUnit compilation,
-        StructuredStringBuilder sb, 
+        StructuredStringBuilder sb,
+        LoquiTypeSet obj,
         PropertyMetadata property,
         Action toDo)
     {
@@ -113,6 +114,27 @@ public class CustomizationDriver
                 case "TemporaryTimestamp":
                 case "SubCellsTimestamp":
                     return;
+            }
+        }
+
+        if (compilation.Customization.Overall.OmitUnknownGroupData)
+        {
+            switch (name)
+            {
+                case "UnknownGroupData":
+                case "PersistentUnknownGroupData":
+                case "TemporaryUnknownGroupData":
+                    return;
+            }
+        }
+
+        if (compilation.Customization.Overall.OmitUnusedConditionDataFields)
+        {
+            var objName = obj.GetAny().Name;
+            if (objName.Contains("ConditionData", StringComparison.Ordinal)
+                && name.Contains("unused", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
             }
         }
 

@@ -325,7 +325,7 @@ public class SerializationForObjectGenerator
                 foreach (var prop in properties.InOrder)
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                    _customizationDriver.WrapOmission(compilation, sb, prop, () =>
+                    _customizationDriver.WrapOmission(compilation, sb, obj, prop, () =>
                     {
                         var subSb = new StructuredStringBuilder();
                         _forFieldGenerator.GenerateDeserializeForField(
@@ -446,7 +446,7 @@ public class SerializationForObjectGenerator
         foreach (var prop in properties.InOrder)
         {
             compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-            _customizationDriver.WrapOmission(compilation, sb, prop, () =>
+            _customizationDriver.WrapOmission(compilation, sb, obj, prop, () =>
             {
                 _forFieldGenerator.GenerateForDeserializeSection(
                     compilation: compilation,
@@ -570,7 +570,7 @@ public class SerializationForObjectGenerator
             foreach (var prop in properties.InOrder)
             {
                 compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                _customizationDriver.WrapOmission(compilation, sbInternal, prop, () =>
+                _customizationDriver.WrapOmission(compilation, sbInternal, obj, prop, () =>
                 {
                     _forFieldGenerator.GenerateSerializeForField(
                         compilation: compilation,
@@ -687,7 +687,7 @@ public class SerializationForObjectGenerator
                 foreach (var prop in properties.InOrder)
                 {
                     compilation.Context.CancellationToken.ThrowIfCancellationRequested();
-                    _customizationDriver.WrapOmission(compilation, sbInternal, prop, () =>
+                    _customizationDriver.WrapOmission(compilation, sbInternal, obj, prop, () =>
                     {
                         _forFieldGenerator.GenerateHasSerializeForField(
                             compilation: compilation,

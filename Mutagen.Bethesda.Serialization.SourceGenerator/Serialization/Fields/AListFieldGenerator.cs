@@ -32,7 +32,16 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
         var subType = GetSubtype((INamedTypeSymbol)typeSymbol);
         var gen = ForFieldGenerator().Value
             .GetGenerator(obj, compilation, subType, fieldName: null, isInsideCollection: true);
-        return gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
+        var namespaces = gen?.RequiredNamespaces(obj, compilation, subType) ?? Enumerable.Empty<string>();
+
+        // Add System.Linq if container sorting is needed
+        if (compilation.Customization.TargetRecordSpecs?.HasContainerSortFields == true ||
+            compilation.Customization.RecordSpecs.Values.Any(r => r.HasContainerSortFields))
+        {
+            namespaces = namespaces.Concat(new[] { "System.Linq" });
+        }
+
+        return namespaces;
     }
     
     protected bool ShouldSkip(

@@ -1,4 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Serialization;
 using Mutagen.Bethesda.Serialization.SourceGenerator.Utility;
@@ -30,7 +33,14 @@ public class RecordCustomizationInterpreter
             return default;
         }
         var driver = new RecordCustomizationSpecifications(decl.ContainingClass, typeSet);
-        foreach (var invoke in decl.MethodSyntax.DescendantNodes().OfType<InvocationExpressionSyntax>())
+
+        // Process invocations in source order to handle method chaining correctly
+        var invocations = decl.MethodSyntax.DescendantNodes().OfType<InvocationExpressionSyntax>()
+            .OrderBy(x => x.SpanStart)
+            .Reverse() // Process from innermost to outermost calls
+            .ToList();
+
+        foreach (var invoke in invocations)
         {
             cancel.ThrowIfCancellationRequested();
             if (!AddCustomization(driver, invoke))
@@ -39,6 +49,9 @@ public class RecordCustomizationInterpreter
                 // Add error
             }
         }
+
+        // Finalize any pending list sorting without ByField
+        FinalizePendingListSort(driver);
 
         return driver;
     }
@@ -54,6 +67,12 @@ public class RecordCustomizationInterpreter
                 return HandleOmit(specifications, invoke, member);
             case "EmbedRecordsInSameFile" when invoke.ArgumentList.Arguments.Count is 1:
                 return HandleEmbedRecordsInSameFile(specifications, invoke, member);
+            case "SortList" when invoke.ArgumentList.Arguments.Count is 1:
+                return HandleSortList(specifications, invoke, member);
+            case "ByField" when invoke.ArgumentList.Arguments.Count is 1:
+                return HandleByField(specifications, invoke, member);
+            case "ThenByField" when invoke.ArgumentList.Arguments.Count is 1:
+                return HandleContainerThenByField(specifications, invoke, member);
             default:
                 return false;
         }
@@ -99,5 +118,145 @@ public class RecordCustomizationInterpreter
         specifications.ToEmbedRecordsInSameFile ??= new();
         specifications.ToEmbedRecordsInSameFile.Add(name);
         return true;
+    }
+
+
+    private string GetFullMemberAccessPath(ExpressionSyntax expression)
+    {
+        // Handle null-forgiving operator (!) by extracting the underlying expression
+        if (expression is PostfixUnaryExpressionSyntax postfixUnary &&
+            postfixUnary.OperatorToken.IsKind(SyntaxKind.ExclamationToken))
+        {
+            expression = postfixUnary.Operand;
+        }
+
+        if (expression is not MemberAccessExpressionSyntax memberAccess)
+        {
+            return string.Empty;
+        }
+
+        var parts = new List<string>();
+        var current = memberAccess;
+
+        // Walk up the member access chain to collect all parts
+        while (current != null)
+        {
+            parts.Add(current.Name.ToString());
+
+            if (current.Expression is MemberAccessExpressionSyntax parentMember)
+            {
+                current = parentMember;
+            }
+            else if (current.Expression is PostfixUnaryExpressionSyntax parentPostfix &&
+                     parentPostfix.OperatorToken.IsKind(SyntaxKind.ExclamationToken) &&
+                     parentPostfix.Operand is MemberAccessExpressionSyntax parentMemberFromPostfix)
+            {
+                // Handle null-forgiving operator in the chain (e.g., x.Parent!.Child)
+                current = parentMemberFromPostfix;
+            }
+            else
+            {
+                // We've reached the parameter (e.g., "x"), so we're done
+                break;
+            }
+        }
+
+        // Reverse the parts since we collected them in reverse order
+        parts.Reverse();
+
+        // Join with dots to create the full path (e.g., "Grid.X")
+        return string.Join(".", parts);
+    }
+
+    private bool HandleSortList(
+        RecordCustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        var arg = invoke.ArgumentList.Arguments[0];
+        if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
+
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var listFieldName = GetFullMemberAccessPath(expressionBody);
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(listFieldName)) return false;
+
+        // Finalize any previous pending list sort
+        FinalizePendingListSort(specifications);
+
+        // Store the current list field name for use by subsequent ByField calls
+        specifications.CurrentListField = listFieldName;
+        specifications.HasByFieldForCurrentList = false;
+        return true;
+    }
+
+    private bool HandleByField(
+        RecordCustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        var arg = invoke.ArgumentList.Arguments[0];
+        if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
+
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var itemFieldName = GetFullMemberAccessPath(expressionBody);
+
+        // Get the list field name from the preceding SortList call
+        if (string.IsNullOrEmpty(specifications.CurrentListField)) return false;
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(itemFieldName)) return false;
+
+        specifications.ContainerSortFields ??= new();
+
+        var priority = 0; // First field always has priority 0
+        specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, itemFieldName, priority));
+        specifications.HasByFieldForCurrentList = true;
+        return true;
+    }
+
+
+    private bool HandleContainerThenByField(
+        RecordCustomizationSpecifications specifications,
+        InvocationExpressionSyntax invoke,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        var arg = invoke.ArgumentList.Arguments[0];
+        if (arg.Expression is not SimpleLambdaExpressionSyntax simpleLambda) return false;
+
+        // Handle both MemberAccessExpressionSyntax and PostfixUnaryExpressionSyntax (null-forgiving operator)
+        var expressionBody = simpleLambda.ExpressionBody;
+        if (expressionBody is not (MemberAccessExpressionSyntax or PostfixUnaryExpressionSyntax)) return false;
+
+        var itemFieldName = GetFullMemberAccessPath(expressionBody);
+
+        // Get the list field name from the current sorting context
+        if (string.IsNullOrEmpty(specifications.CurrentListField)) return false;
+
+        // Ensure we got a valid field name
+        if (string.IsNullOrEmpty(itemFieldName)) return false;
+
+        specifications.ContainerSortFields ??= new();
+
+        var priority = specifications.ContainerSortFields.Count;
+        specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, itemFieldName, priority));
+        return true;
+    }
+
+    private void FinalizePendingListSort(RecordCustomizationSpecifications specifications)
+    {
+        // If we have a pending list sort without ByField, add it with null ItemFieldName
+        if (!string.IsNullOrEmpty(specifications.CurrentListField) && !specifications.HasByFieldForCurrentList)
+        {
+            specifications.ContainerSortFields ??= new();
+            specifications.ContainerSortFields.Add(new ContainerSortField(specifications.CurrentListField!, null, 0));
+        }
     }
 }
