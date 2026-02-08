@@ -28,6 +28,22 @@ dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
 dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out
 ```
 
+### Releases
+- Create release tags using semantic versioning format: `<major>.<minor>.<patch>`
+- Always include the patch number, even if it's zero (e.g., `3.1.0`, not `3.1`)
+- **Do not prefix with `v`** (e.g., use `3.1.0`, not `v3.1.0`)
+- This format is required for GitVersion compatibility
+
+#### Creating GitHub Release Drafts
+1. Find the last release tag: `git tag --sort=-version:refname`
+2. Get commits since last release: `git log --oneline <last-tag>..HEAD`
+3. Construct release notes by categorizing commits:
+   - **Enhancements**: New features, performance improvements, major changes
+   - **Bug Fixes**: Bug fixes and corrections
+   - **Testing & Documentation**: Test additions, documentation updates
+4. Create draft release: `gh release create <version> --draft --title "<version>" --notes "<release-notes>" --target main`
+5. Include full changelog link: `**Full Changelog**: https://github.com/Mutagen-Modding/Mutagen.Bethesda.Serialization/compare/<last-tag>...<new-tag>`
+
 **Clean:**
 ```bash
 # Clean dependencies
