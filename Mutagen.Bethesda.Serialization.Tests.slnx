@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Mutagen.Bethesda.Serialization.Tester.FolderSplit/Mutagen.Bethesda.Serialization.Tester.FolderSplit.csproj" />
+  <Project Path="Mutagen.Bethesda.Serialization.Tester.MetaObject/Mutagen.Bethesda.Serialization.Tester.MetaObject.csproj" />
+  <Project Path="Mutagen.Bethesda.Serialization.Tester.NoCustomization/Mutagen.Bethesda.Serialization.Tester.NoCustomization.csproj" />
+  <Project Path="Mutagen.Bethesda.Serialization.Testing/Mutagen.Bethesda.Serialization.Testing.csproj" />
+  <Project Path="Noggog.Verify.FileAbstractions/Noggog.Verify.FileAbstractions.csproj" />
+</Solution>

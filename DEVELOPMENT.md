@@ -7,25 +7,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Building:**
 ```bash
 # Build main solution
-dotnet build Mutagen.Bethesda.Serialization.sln -c Release
+dotnet build Mutagen.Bethesda.Serialization.slnx -c Release
 
 # Build test solution (after building main)
-dotnet build Mutagen.Bethesda.Serialization.Tests.sln -c Release
+dotnet build Mutagen.Bethesda.Serialization.Tests.slnx -c Release
 ```
 
 **Testing:**
 ```bash
 # Test main solution
-dotnet test Mutagen.Bethesda.Serialization.sln -c Release --no-build
+dotnet test Mutagen.Bethesda.Serialization.slnx -c Release --no-build
 
 # Test the test solution
-dotnet test Mutagen.Bethesda.Serialization.Tests.sln -c Release --no-build
+dotnet test Mutagen.Bethesda.Serialization.Tests.slnx -c Release --no-build
 ```
 
 **Packaging:**
 ```bash
 # Create NuGet packages
-dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restore -o out
+dotnet pack Mutagen.Bethesda.Serialization.slnx -c Release --no-build --no-restore -o out
 ```
 
 ### Releases
@@ -47,8 +47,8 @@ dotnet pack Mutagen.Bethesda.Serialization.sln -c Release --no-build --no-restor
 **Clean:**
 ```bash
 # Clean dependencies
-dotnet clean Mutagen.Bethesda.Serialization.sln -c Release
-dotnet clean Mutagen.Bethesda.Serialization.Tests.sln -c Release
+dotnet clean Mutagen.Bethesda.Serialization.slnx -c Release
+dotnet clean Mutagen.Bethesda.Serialization.Tests.slnx -c Release
 dotnet nuget locals all --clear
 ```
 
@@ -128,7 +128,7 @@ When writing tests for source generator features in `Mutagen.Bethesda.Serializat
      - Proper null handling and type conversions
 
 4. **Run tests iteratively**
-   - Build the solution: `dotnet build Mutagen.Bethesda.Serialization.sln -c Release`
+   - Build the solution: `dotnet build Mutagen.Bethesda.Serialization.slnx -c Release`
    - Run the specific test: `dotnet test --filter "FullyQualifiedName~YourTestName"`
    - If tests fail, compare `.received.cs` files with `.verified.cs` files
    - Update verification files until output matches expectations
