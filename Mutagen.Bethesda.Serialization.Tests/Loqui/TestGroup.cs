@@ -12,7 +12,7 @@ public class TestGroup : IGroup<TestMajorRecord>, IEquatable<TestGroup>
     public bool SomeGroupField { get; set; }
     public Cache<TestMajorRecord, FormKey> Records { get; init; } = new(x => x.FormKey);
 
-    public IEnumerable<IFormLinkGetter> EnumerateFormLinks()
+    public IEnumerable<IFormLinkGetter> EnumerateFormLinks(bool iterateNestedRecords = true)
     {
         throw new NotImplementedException();
     }

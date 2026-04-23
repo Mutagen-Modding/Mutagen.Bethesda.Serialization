@@ -31,7 +31,7 @@ public class TestMajorRecord : ITestMajorRecord, IEquatable<TestMajorRecord>
         FormKey = i;
     }
     
-    public IEnumerable<IFormLinkGetter> EnumerateFormLinks()
+    public IEnumerable<IFormLinkGetter> EnumerateFormLinks(bool iterateNestedRecords = true)
     {
         throw new NotImplementedException();
     }

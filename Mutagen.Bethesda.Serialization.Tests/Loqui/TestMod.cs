@@ -70,7 +70,7 @@ public partial class TestMod : AMod, ILoquiObject, IModGetter, IMajorRecordEnume
         throw new NotImplementedException();
     }
 
-    public IEnumerable<IFormLinkGetter> EnumerateFormLinks()
+    public IEnumerable<IFormLinkGetter> EnumerateFormLinks(bool iterateNestedRecords = true)
     {
         throw new NotImplementedException();
     }
