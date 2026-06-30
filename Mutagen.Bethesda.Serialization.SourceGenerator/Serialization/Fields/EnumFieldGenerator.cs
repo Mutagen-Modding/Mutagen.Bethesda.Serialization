@@ -88,7 +88,7 @@ public class EnumFieldGenerator : ISerializationForFieldGenerator
 
     public string? GetDefault(ITypeSymbol field)
     {
-        throw new NotImplementedException($"No GetDefault defined for {typeof(EnumFieldGenerator)}");
+        return $"default({field})";
     }
 
     public void GenerateForHasSerialize(CompilationUnit compilation,
