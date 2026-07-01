@@ -69,6 +69,7 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
     
     public static string GetCountAccessor(ITypeSymbol t)
     {
+        t = t.PeelNullable();
         switch (t.Name)
         {
             case "List":
@@ -76,6 +77,9 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
             case "IList":
             case "ExtendedList":
                 return CountAccess;
+            case "MemorySlice":
+            case "ReadOnlyMemorySlice":
+                return LengthAccess;
             default:
             {
                 if (t is IArrayTypeSymbol arr)
@@ -86,13 +90,20 @@ public abstract class AListFieldGenerator : ISerializationForFieldGenerator
                         return LengthAccess;
                     }
 
-                    switch (arr.ElementType.Name)
+                    switch (arr.ElementType.PeelNullable().Name)
                     {
                         case "String":
-                        case "float":
-                        case "float?":
                         case "Single":
-                        case "Single?":
+                        case "Double":
+                        case "Byte":
+                        case "SByte":
+                        case "Int16":
+                        case "UInt16":
+                        case "Int32":
+                        case "UInt32":
+                        case "Int64":
+                        case "UInt64":
+                        case "Boolean":
                             return LengthAccess;
                         default:
                             return CountAccess;
