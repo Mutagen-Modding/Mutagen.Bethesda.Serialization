@@ -7,12 +7,13 @@ namespace Mutagen.Bethesda.Serialization.Streams;
 public class XxHashShortCircuitExporter : IExporter
 {
     public static readonly IxxHash _hash = xxHashFactory.Instance.Create();
+    public const string HashExtension = ".xxhash";
 
     public static FilePath GetHashPath(FilePath path)
     {
         return Path.Combine(
             Path.GetDirectoryName(path)!,
-            $"{Path.GetFileNameWithoutExtension(path)}.xxhash");
+            $"{Path.GetFileNameWithoutExtension(path)}{HashExtension}");
     }
     
     public async Task<bool> WriteOut(Stream stream, IFileSystem fileSystem, FilePath path,

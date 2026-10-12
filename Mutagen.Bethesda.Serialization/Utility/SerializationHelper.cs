@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using System.Reactive.Disposables;
+using System.Text;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Exceptions;
 using Mutagen.Bethesda.Plugins.Records;
@@ -45,26 +46,50 @@ public static partial class SerializationHelper
         return $"GroupRecordData{expectedExtension}";
     }
 
-    private static string EdidStringProcessor(IMajorRecordGetter recordGetter)
-    {
-        var edid = recordGetter.EditorID;
-        if (edid == null) return string.Empty;
-        return $"{edid} - ";
-    }
-    
+    // ext4 holds a file name of at most 255 bytes, and NTFS one of 255 UTF-16 units, which a name of
+    // at most 255 UTF-8 bytes never exceeds.
+    private const int MaxFileNameBytes = 255;
+
     public static string RecordFileNameProvider(
         IMajorRecordGetter recordGetter, 
         string expectedExtension,
         int? number)
     {
-        return DecorateWithNumber($"{EdidStringProcessor(recordGetter)}{recordGetter.FormKey.ToFilesafeString()}{expectedExtension}", number);
+        // A file's xxhash sibling swaps its extension for one that may be longer, so its name must fit too.
+        var longestExtension = expectedExtension.Length == 0 || expectedExtension.Length >= XxHashShortCircuitExporter.HashExtension.Length
+            ? expectedExtension
+            : XxHashShortCircuitExporter.HashExtension;
+        return RecordName(recordGetter, expectedExtension, longestExtension, number);
     }
     
     public static string RecordNameProvider(
         IMajorRecordGetter recordGetter,
         int? number)
     {
-        return DecorateWithNumber($"{EdidStringProcessor(recordGetter)}{recordGetter.FormKey.ToFilesafeString()}", number);
+        return RecordName(recordGetter, string.Empty, string.Empty, number);
+    }
+
+    private static string RecordName(IMajorRecordGetter recordGetter, string extension, string longestExtension, int? number)
+    {
+        var formKey = recordGetter.FormKey.ToFilesafeString();
+        var edid = recordGetter.EditorID;
+        if (edid == null) return DecorateWithNumber($"{formKey}{extension}", number);
+        var tail = $" - {formKey}";
+        var budget = MaxFileNameBytes - Encoding.UTF8.GetByteCount(DecorateWithNumber($"{tail}{longestExtension}", number));
+        return DecorateWithNumber($"{Utf8PrefixWithin(edid, budget)}{tail}{extension}", number);
+    }
+
+    private static string Utf8PrefixWithin(string str, int maxBytes)
+    {
+        var bytes = 0;
+        var length = 0;
+        foreach (var rune in str.EnumerateRunes())
+        {
+            bytes += rune.Utf8SequenceLength;
+            if (bytes > maxBytes) break;
+            length += rune.Utf16SequenceLength;
+        }
+        return str[..length];
     }
 
     public static string DecorateWithNumber(string str, int? number)
